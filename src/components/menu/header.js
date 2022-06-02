@@ -479,7 +479,7 @@ const Header = function () {
                       })
                     : ""}
                 </ul>
-                {scolns.length > 0 && <a className="view_all_bdr search_view_all mb-3" href="/marketplacecollection">View All</a>}
+                {scolns.length > 3 && <a className="view_all_bdr search_view_all mb-3" href="/marketplacecollection">View All</a>}
                 {sNfts.length > 0 && <p>NFTs</p>}
                 <ul>
                   {sNfts
@@ -488,7 +488,7 @@ const Header = function () {
                       })
                     : ""}
                 </ul>
-                {sNfts.length > 0 && <a className="view_all_bdr search_view_all" href="/marketplace">View All</a>}
+                {sNfts.length > 3 && <a className="view_all_bdr search_view_all" href="/marketplace">View All</a>}
               </div>
             ) : (
               ""
