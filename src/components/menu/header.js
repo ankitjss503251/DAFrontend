@@ -475,18 +475,20 @@ const Header = function () {
                   {scolns
                     ? scolns.map((item) => {
                         return (
-                        <li> <a href={`/collection/`}>{item.name}</a></li>)
+                        <a href={`/collection/`}><li> {item.name}</li></a>)
                       })
                     : ""}
                 </ul>
+                {scolns.length > 0 && <a className="view_all_bdr search_view_all mb-3" href="/marketplacecollection">View All</a>}
                 {sNfts.length > 0 && <p>NFTs</p>}
                 <ul>
                   {sNfts
                     ? sNfts.map((item) => {
-                        return <li><a href={`/NFTdetails/${item._id}`}>{item.name}</a></li>;
+                        return <a href={`/NFTdetails/${item.id}`}><li>{item.name}</li></a>;
                       })
                     : ""}
                 </ul>
+                {sNfts.length > 0 && <a className="view_all_bdr search_view_all" href="/marketplace">View All</a>}
               </div>
             ) : (
               ""

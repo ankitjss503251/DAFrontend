@@ -1196,13 +1196,13 @@ header#myHeader {
 
 .logoImg_con {
   position: absolute;
-    width: 100px;
-    border-radius: 100%;
-    height: 100px;
-    right: 10px;
-    top: -50px;
+  width: 100px;
+  border-radius: 100%;
+  height: 100px;
+  right: 10px;
+  top: -50px;
 }
-.logoImg_con img{
+.logoImg_con img {
   height: 100%;
   width: 100%;
   object-fit: cover;
@@ -3833,9 +3833,9 @@ a:hover {
   position: relative;
   margin-bottom: 10px;
   background: transparent;
-    width: 100%;
-    text-align: left;
-    border: 0;
+  width: 100%;
+  text-align: left;
+  border: 0;
 }
 .drop_down_tlt svg {
   position: absolute;
@@ -4215,7 +4215,6 @@ a:hover {
   object-fit: cover;
 }
 
-
 .Clock-days,
 .Clock-hours,
 .Clock-minutes {
@@ -4227,14 +4226,12 @@ a:hover {
   width: 100%;
 }
 
-
-
 /****Search*******/
-.navbar_form{
+.navbar_form {
   position: relative;
 }
 
-.searched_div{
+.searched_div {
   position: absolute;
   top: 75px;
   color: #fff;
@@ -4242,10 +4239,10 @@ a:hover {
   min-width: 300px;
   padding: 10px 24px;
   border-radius: 10px;
- display: none;
+  display: none;
 }
 
-.searched_div.active{
+.searched_div.active {
   display: block;
 }
 
@@ -4253,10 +4250,44 @@ a:hover {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 4px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 5px;
+  border-radius: 10px;
 }
 
-.searched_div ul{
+.searched_div ul {
   list-style-type: none;
   padding: 0 4px;
 }
 
+.searched_div ul li {
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.searched_div ul li:hover {
+  background: rgb(0 0 0 / 16%);
+}
+
+.searched_div ul a {
+  color: #fff;
+  font-size: 16px;
+}
+
+.search_view_all {
+  background: transparent;
+  font-size: 16px;
+  width: 100%;
+  padding: 6px;
+  font-weight: 700;
+  border: 1px solid #ef981d;
+  transition: all 0.1s ease;
+}
+
+.search_view_all:hover {
+  background: linear-gradient(180deg, #ef981d 56.77%, #f9bf50 100%);
+  color: #fff !important;
+}
