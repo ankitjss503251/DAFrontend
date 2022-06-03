@@ -533,6 +533,33 @@ export const createOrder = async (data) => {
   }
 };
 
+export const getImportedNFTs = async (data) => {
+  const requestOptions = {
+    method: "GET",
+    // headers: {
+    //   "x-api-key": "8c0e14f4-bb85-4646-84ba-e8467dce55be",
+    // },
+  };
+
+  try {
+    console.log("put on marketplace");
+
+    let response = await fetch(
+      `https://api-us-west1.tatum.io/v3/nft/collection/MATIC/${data.collection}?pageSize=10`,
+      requestOptions
+    );
+
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas;
+  } catch (err) {
+    return err;
+  }
+};
+
 // export const GetMyLikedNft = async (data) => {
 //   const requestOptions = {
 //     method: "POST",

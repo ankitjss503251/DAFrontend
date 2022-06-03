@@ -438,6 +438,8 @@ export const GetOwnedNftList = async (data) => {
   }
 };
 
+
+
 // export const getUsersCollections = async () => {
 //   const requestOptions = {
 //     method: "GET",

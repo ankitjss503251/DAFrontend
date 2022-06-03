@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import Sidebar from "../components/Sidebar";
-import { connect } from "react-redux";
 import {
   createCollection,
   exportInstance,
   getAllCategory,
   GetBrand,
+  getImportedNFTs,
   GetMyCollectionsList,
 } from "../../apiServices";
 import contracts from "../../config/contracts";
@@ -39,7 +39,9 @@ function CreateCollection() {
   const [brands, setBrands] = useState([]);
   const [myCollections, setMyCollections] = useState([]);
   const [nftType, setNftType] = useState("1");
-  const [isModal, setModal] = useState("");
+  const [isModal, setModal] = useState(false);
+  const [importModal, setImportModal] = useState(false);
+  const [importedAddress, setImportedAddress] = useState("");
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -47,6 +49,14 @@ function CreateCollection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let data = await getImportedNFTs();
+      console.log("dataaaa", data);
+    };
+    fetch();
+  }, []);
 
   useEffect(() => {
     if (currentUser) {
@@ -81,9 +91,12 @@ function CreateCollection() {
     if (!ev.target["validity"].valid) return;
     const dt = ev.target["value"] + ":00Z";
     const ct = moment().toISOString();
-    if(dt < ct)
-    {
-      NotificationManager.error("Start date should not be of past date","",800);
+    if (dt < ct) {
+      NotificationManager.error(
+        "Start date should not be of past date",
+        "",
+        800
+      );
       return;
     }
     console.log("start date---->", dt, ct);
@@ -93,9 +106,12 @@ function CreateCollection() {
   function handleChange2(evv) {
     if (!evv.target["validity"].valid) return;
     const dtt = evv.target["value"] + ":00Z";
-    if(dtt < preSaleStartTime)
-    {
-      NotificationManager.error("End date should be greater than Start date","",800);
+    if (dtt < preSaleStartTime) {
+      NotificationManager.error(
+        "End date should be greater than Start date",
+        "",
+        800
+      );
       return;
     }
     setDatetime2(dtt);
@@ -238,7 +254,10 @@ function CreateCollection() {
 
   //handle collection creator
 
-  const handleCollectionCreation = async () => {
+  const handleCollectionCreation = async (
+    isImport = false,
+    importedAddress = "0x"
+  ) => {
     let res1;
     let creator;
     if (handleValidationCheck()) {
@@ -258,19 +277,21 @@ function CreateCollection() {
 
       try {
         setLoading(true);
-        nftType == "1"
-          ? (res1 = await creator.deployExtendedERC721(
-              title,
-              symbol,
-              "www.uri.com",
-              royalty * 100,
-              contracts.USDT
-            ))
-          : (res1 = await creator.deployExtendedERC1155(
-              "www.uri.com",
-              royalty * 100,
-              contracts.USDT
-            ));
+        if (!isImport) {
+          nftType == "1"
+            ? (res1 = await creator.deployExtendedERC721(
+                title,
+                symbol,
+                "www.uri.com",
+                royalty * 100,
+                contracts.USDT
+              ))
+            : (res1 = await creator.deployExtendedERC1155(
+                "www.uri.com",
+                royalty * 100,
+                contracts.USDT
+              ));
+        }
       } catch (e) {
         console.log(e);
         NotificationManager.error(e.message, "", 1500);
@@ -279,10 +300,18 @@ function CreateCollection() {
           window.location.href = "/createcollection";
         }, 1000);
       }
-      let hash = res1;
-      res1 = await res1.wait();
+      let contractAddress = importedAddress;
 
-      console.log("res1 is--->", res1);
+      if (!isImport) {
+        let hash = res1;
+        res1 = await res1.wait();
+        contractAddress = await readReceipt(hash);
+
+        console.log("res1 is--->", res1);
+      } else {
+        res1.status = 1;
+      }
+      console.log("contract address is--->", contractAddress);
       if (res1.status === 1) {
         let type;
         if (nftType == "1") {
@@ -290,8 +319,7 @@ function CreateCollection() {
         } else {
           type = 2;
         }
-        let contractAddress = await readReceipt(hash);
-        console.log("contract address is--->", contractAddress);
+
         var fd = new FormData();
         fd.append("name", title);
         fd.append("symbol", symbol);
@@ -366,6 +394,17 @@ function CreateCollection() {
             onClick={() => setModal("active")}
           >
             + Add Collection
+          </button>
+        </div>
+        <div className="add_btn mb-4 d-flex justify-content-end">
+          <button
+            className="btn btn-admin text-light"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal1"
+            onClick={() => setImportModal("active")}
+          >
+            + Import Collection
           </button>
         </div>
         <div className="adminbody table-widget text-light box-background">
@@ -573,12 +612,16 @@ function CreateCollection() {
                       if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
                     }}
                     onChange={(e) => {
-                      if(e.target.value > 100)
-                      {
-                        NotificationManager.error("Royalty can't be greater than 100", "",800);
+                      if (e.target.value > 100) {
+                        NotificationManager.error(
+                          "Royalty can't be greater than 100",
+                          "",
+                          800
+                        );
                         return;
                       }
-                      setRoyalty(e.target.value)}}
+                      setRoyalty(e.target.value);
+                    }}
                   />
                 </div>
                 <div className="col-md-6 mb-1">
@@ -724,6 +767,306 @@ function CreateCollection() {
                 type="button"
                 className="btn btn-admin text-light"
                 onClick={handleCollectionCreation}
+              >
+                Create Collection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={`modal fade importCol ${importModal}`}
+        id="exampleModal1"
+        tabindex="-1"
+        aria-labelledby="exampleModal1Label"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5
+                className="modal-title text-yellow font-24 font-600"
+                id="exampleModal1Label"
+              >
+                Import Existing Collection
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form className="row">
+                <div className="mb-1 col-md-4">
+                  <label for="recipient-name" className="col-form-label">
+                    Upload Image *
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      ref={imageUploader}
+                      style={{
+                        display: "none",
+                      }}
+                    />
+                    <div
+                      className="update_btn"
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        position: "relative",
+                      }}
+                      onClick={() => imageUploader.current.click()}
+                    >
+                      <p className="text-center">Click or Drop here</p>
+                      <img
+                        alt=""
+                        ref={uploadedImage}
+                        src={"../images/upload.png"}
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          margin: "auto",
+                        }}
+                        className="img-fluid profile_circle_img"
+                      />
+                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="mb-1 col-md-8">
+                  <label for="recipient-name" className="col-form-label">
+                    Upload Collection Cover Image *
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload2}
+                      ref={imageUploader2}
+                      style={{
+                        display: "none",
+                      }}
+                    />
+                    <div
+                      className="update_btn"
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        position: "relative",
+                      }}
+                      onClick={() => imageUploader2.current.click()}
+                    >
+                      <h4 className="text-center">Click or Drop here</h4>
+                      <img
+                        alt=""
+                        ref={uploadedImage2}
+                        src={"../images/upload.png"}
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          margin: "auto",
+                        }}
+                        className="img-fluid profile_circle_img"
+                      />
+                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Title *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    name="title"
+                    value={title}
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Collection Address *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={importedAddress}
+                    name="address"
+                    onChange={(e) => {
+                      setImportedAddress(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Start Date *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={(preSaleStartTime || "").toString().substring(0, 16)}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    End Date *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={(datetime2 || "").toString().substring(0, 16)}
+                    onChange={handleChange2}
+                    className="form-control"
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Max Supply *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={maxSupply}
+                    onChange={(e) => {
+                      let maxSupply = parseInt(e.target.value, 10);
+                      console.log(
+                        "max supply is-->",
+                        e.target.value,
+                        typeof maxSupply
+                      );
+                      setMaxSupply(e.target.value);
+                    }}
+                    onKeyPress={(e) => {
+                      if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Price *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={price}
+                    onChange={(e) => numberInputCheck(e)}
+                    onKeyPress={(e) => {
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Category *
+                  </label>
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    <option selected>Open this select menu</option>
+                    {categories && categories.length > 0
+                      ? categories.map((c, i) => {
+                          return <option value={c._id}>{c.name}</option>;
+                        })
+                      : ""}
+                  </select>
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Brand *
+                  </label>
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                  >
+                    <option selected>Open this select menu</option>
+                    {console.log("brands--", brands)}
+                    {brands && brands.length > 0
+                      ? brands.map((b, i) => {
+                          return <option value={b._id}>{b.name}</option>;
+                        })
+                      : ""}
+                  </select>
+                </div>
+                <div className="col-md-12 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Symbol *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={symbol}
+                    onChange={(e) => setSymbol(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-12 mb-1">
+                  <label for="message-text" className="col-form-label">
+                    Description *
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="message-text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  ></textarea>
+                </div>
+
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    NFT Type *
+                  </label>
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    value={nftType}
+                    onChange={(e) => setNftType(e.target.value)}
+                  >
+                    <option selected>Open this select menu</option>
+                    <option value="1">Single</option>;
+                    <option value="2">Multiple</option>;
+                  </select>
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer justify-content-center">
+              <button
+                type="button"
+                className="btn btn-admin text-light"
+                onClick={() => {
+                  handleCollectionCreation(true);
+                }}
               >
                 Create Collection
               </button>
