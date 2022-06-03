@@ -475,7 +475,7 @@ const Header = function () {
                   {scolns
                     ? scolns.map((item) => {
                         return (
-                        <a href={`/collection/`}><li> {item.name}</li></a>)
+                        <a href={`/marketplacecollection/`}><li> {item.name}</li></a>)
                       })
                     : ""}
                 </ul>
