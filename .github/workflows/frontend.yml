@@ -20,6 +20,9 @@ jobs:
           cd /var/www/html/DAFrontend
           pwd
           ls -la
-          sudo git pull 
-          sudo npm install
-          sudo npm run build
+          sudo git pull origin main
+          sudo rm -rf build
+          sudo yarn 
+          sudo yarn run build
+          sudo pm2 ls
+          sudo pm2 restart all 
