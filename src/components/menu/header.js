@@ -473,9 +473,9 @@ const Header = function () {
                 {scolns.length > 0 && <p>Collections</p>}
                 <ul>
                   {scolns
-                    ? scolns.map((item) => {
+                    ? scolns.slice(0,3).map((item) => {
                         return (
-                        <a href={`/marketplacecollection/`}><li> {item.name}</li></a>)
+                        <a href={`/collection/${item._id}`}><li> {item.name}</li></a>)
                       })
                     : ""}
                 </ul>
@@ -483,7 +483,7 @@ const Header = function () {
                 {sNfts.length > 0 && <p>NFTs</p>}
                 <ul>
                   {sNfts
-                    ? sNfts.map((item) => {
+                    ? sNfts.slice(0,3).map((item) => {
                         return <a href={`/NFTdetails/${item.id}`}><li>{item.name}</li></a>;
                       })
                     : ""}

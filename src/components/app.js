@@ -67,7 +67,7 @@ const App = (props) => {
         <Route path="/updateProfile" element={<UpdateProfile />} />
         <Route path="/userprofile"element={<UserProfile />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/collection" element={<Collection />} />
+        <Route path="/collection/:id" element={<Collection />} />
         <Route path="/collectionwithcollection" element={<CollectionWithCollection />} />
         <Route path="/collectionActivity" element={<CollectionActivity />} />
         <Route path="/Notifications" element={<Notifications />} />

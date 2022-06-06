@@ -170,7 +170,7 @@ function Marketplacecollection() {
               <div className="row">
                 {allCollections.map((card) => (
                   <div className="col-lg-4 col-md-6 mb-5">
-                    <Link to={"/collection"}>
+                    <Link to={`/collection/${card._id}`}>
                       <div className="collection_slide">
                         <img className="img-fluid" src={card.logoImg} alt="" />
                         <div className="collection_text">

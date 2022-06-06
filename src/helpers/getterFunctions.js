@@ -549,7 +549,8 @@ export const getCollections = async (req) => {
           saleEndTime: coll.preSaleEndTime,
           price: coll.price.$numberDecimal,
           items: coll.nftCount,
-          totalSupply: coll.totalSupply
+          totalSupply: coll.totalSupply,
+          contractAddress: coll.contractAddress
         };
       })
     : (formattedData[0] = {});

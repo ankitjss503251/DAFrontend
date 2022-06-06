@@ -2263,9 +2263,40 @@ button.filter_btn.active {
   text-align: center;
   color: #ffffff;
 }
+
+ .coppycode .ctc{
+  display: flex !important;
+  width: max-content !important;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+
+.coppycode .ctc textarea{
+  text-align: center;
+}
+
+.coppycode .ctc button{
+  background: none;
+  border: none;
+
+}
+.coppycode .ctc button svg{
+  margin-left: 0;
+}
+
 .coppycode span img {
   margin-right: 10px;
 }
+
+.coppycode span textarea {
+  background: none !important;
+  color: #fff !important;
+  border: none !important;
+  resize: none !important;
+}
+
 .coppycode span svg {
   margin-left: 20px;
 }
@@ -4108,6 +4139,7 @@ a:hover {
     padding: 8px 15px;
     font-size: 15px;
   }
+
   .nftdetails button.slick-arrow.slick-prev {
     left: 0px;
   }
@@ -4291,3 +4323,213 @@ a:hover {
   background: linear-gradient(180deg, #ef981d 56.77%, #f9bf50 100%);
   color: #fff !important;
 }
+
+.filter{
+  display: none;
+}
+
+.filter.filtershow {
+  height: 100%;
+  display: flex;
+}
+.filter {
+  background: #0d171e;
+  border: 1px solid #ef981d;
+  border-radius: 10px;
+  padding: 30px;
+  display: none;
+  grid-gap: 30px;
+  gap: 30px;
+}
+
+.filtercol {
+  width: 25%;
+}
+
+.drop_down_tlt {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 29px;
+  color: #ffffff;
+  display: block;
+  position: relative;
+  margin-bottom: 10px;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  border: 0;
+}
+
+.filtercol ul {
+  padding: 0px;
+}
+
+.filtercol li {
+  margin-bottom: 20px;
+  list-style: none;
+}
+.status_ul li {
+  grid-gap: 4%;
+  gap: 4%;
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.filter_border {
+  background: #0d171e;
+  border: 1px solid #ef981d;
+  border-radius: 5px;
+  display: inline-block;
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 22px;
+  color: #ffffff;
+  width: 48%;
+  text-align: center;
+  padding: 10px 10px;
+}
+
+.filter-text-left {
+  text-align: left;
+}
+.filter_apply {
+  background: #0d171e;
+  border: 1px solid #ef981d;
+  border-radius: 5px;
+  display: block;
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 22px;
+  color: #ffffff;
+  width: 100%;
+  text-align: center;
+  padding: 10px 10px;
+}
+
+.filter_apply.filter-text-left {
+  text-align: left;
+}
+
+.range_input {
+  display: flex;
+}
+
+.range_input input.form-control {
+  background: #0d171e;
+  border: 1px solid #ef981d;
+  border-radius: 5px;
+  width: 45%;
+  color: #fff;
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 22px;
+}
+
+.span_class {
+  display: inline-block;
+  width: 10%;
+  font-size: 16px;
+  color: #fff;
+  text-align: center;
+  margin-top: 6px;
+}
+
+.filter_padd {
+  padding-left: 30px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAGoSURBVHgBrVRdTsJAEJ5pJUZjTPtiTDBmPYF4AuEEeAR9k/gAnAB6AuCJ4It6Az1BuYHcwCZqYuJDSXwTu+vMdhFa/hrkSzadbWe+nZn9pggpfHaPilsWlkHBBW2FfolqAAppjTy38hHAAuDYCO8cB773G6BUDZajDdtfnns1HKY/WBOiPV8TKRjS06NVcq9fkRdE9plU8GBiauyrY+ZlFvaOWyajAJRdcitBMC+lsCsEYOSb8tt0UD1BFnYPySH3onfKPllElCCE6JnScHT2lbf+pEzMNYx9v4qIwT4SVIdtifqSYIpMFbQVyQ5kBDW6b4LLyfcKNZl78z6AjJgqTaQO2RyYLGAjJLFmDQpv83FrQCWqsaiZT2xIsIqQFdKqxgYmySwFj8aoapmsyir2uYwTs70EGTdTX7Ui3WDOX0ZoNOmb7YyU4gloCQd2JY9TYew4IqkcmBuOh986B0lTwmKNQdMyKk0P/mTQiVDu/DRJO1VYChas1pdIE+JsKUJIiJrUw9OxBjmIL4r7y21JzegfIcKamEe4NtkMIWId/gsmDHt5/UP9Bf3oyFiPMqtRAAAAAElFTkSuQmCC);
+  background-size: 16px;
+  background-position: 8px;
+  background-repeat: no-repeat;
+}
+
+.sub-items {
+  color: #fff;
+  font-size: 16px;
+}
+
+.filtercol .sub-items {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  color: #ffffff;
+}
+
+.filtercol .sub-items svg {
+  margin-right: 10px;
+}
+
+/* Radio Button */
+[type="radio"]:checked,
+[type="radio"]:not(:checked) {
+  position: absolute;
+  left: -9999px;
+}
+[type="radio"]:checked + label,
+[type="radio"]:not(:checked) + label {
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+  line-height: 20px;
+  display: inline-block;
+}
+[type="radio"]:checked + label {
+  color: #ef981d;
+}
+[type="radio"]:not(:checked) + label {
+  color: #666;
+}
+[type="radio"]:checked + label:before,
+[type="radio"]:not(:checked) + label:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ddd;
+  border-radius: 100%;
+  background: #fff;
+  background: #0d171e;
+  border: 1px solid #626262;
+}
+[type="radio"]:checked + label:after,
+[type="radio"]:not(:checked) + label:after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: #ef981d;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  border-radius: 100%;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+[type="radio"]:not(:checked) + label:after {
+  opacity: 0;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+}
+[type="radio"]:checked + label:after {
+  opacity: 1;
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+.checked_form .form-check {
+  display: block;
+  width: 100%;
+  padding-left: 0px;
+}
+
+
+
