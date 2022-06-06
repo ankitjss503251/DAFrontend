@@ -154,9 +154,9 @@ function Marketplace() {
                                 src={"../img/collections/check.png"}
                               />
                             </div>
-                            <div className='profile_right'>
+                            {/* <div className='profile_right'>
                               <span>sfs</span>
-                            </div>
+                            </div> */}
                           </div>
                           <img
                             alt=''

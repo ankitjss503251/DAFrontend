@@ -39,9 +39,9 @@ function Marketplacecart() {
                     <img alt="" className="profile_img" src={card.logoImage} />
                     <img alt="" className="icheck_img" src={card.logoImage} />
                   </div>
-                  <div className="profile_right">
+                  {/* <div className="profile_right">
                     <span>sfs</span>
-                  </div>
+                  </div> */}
                 </div>
                 <img alt="" src={card.image} class="img-fluid items_img" />
                 <div className="items_text">

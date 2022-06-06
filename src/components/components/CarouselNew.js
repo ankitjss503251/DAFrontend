@@ -102,7 +102,7 @@ function ItemsList() {
               </div>
               <div className='coverImg_cont'>
 
-            <img alt='' src={card.image} class="img-fluid items_img" />
+            <img alt='' src={card.image} class="img-fluid items_img my-3" />
               </div>
             <div className='items_text'>
               <div className='items_info'>

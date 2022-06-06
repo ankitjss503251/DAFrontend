@@ -4538,3 +4538,10 @@ a:hover {
   color: #439757;
   font-weight: 600;
 }
+
+.notifi_text{
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+}
