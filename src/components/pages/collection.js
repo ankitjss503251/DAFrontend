@@ -15,6 +15,7 @@ import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -26,7 +27,7 @@ const bgImgStyle = {
 };
 
 const bgImage = {
-  // backgroundImage: "url(./img/collections/collection_bg.jpg)",
+  backgroundImage: "url(./img/collections/collection_bg.jpg)",
   backgroundSize: "cover",
   backgroundPosition: "center",
 };
@@ -61,12 +62,9 @@ function Collection() {
   const [currentUser, setCurrentUser] = useState("");
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [collectionDetails, setCollectionDetails] = useState([]);
-  const [copySuccess, setCopySuccess] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
   const [nftList, setNftList] = useState("");
-  const textAreaRef = useRef(null);
   const { id } = useParams();
-  const navigate = useNavigate();
- 
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -75,6 +73,8 @@ function Collection() {
   }, [currentUser]);
 
   const [togglemode, setTogglemode] = useState("filterhide");
+  const [currPage, setCurrPage] = useState(1);
+  const [loadMore, setLoadMore] = useState(false);
   const filterToggle = () => {
     console.log("filter", togglemode);
     if (togglemode === "filterhide") {
@@ -89,6 +89,7 @@ function Collection() {
   };
 
   useEffect(async () => {
+    let temp = nftList;
     try {
       const reqData = {
         page: 1,
@@ -96,30 +97,23 @@ function Collection() {
         collectionID: id,
       };
       const res = await getCollections(reqData);
-      console.log("collection details page--->", res[0]);
+
       setCollectionDetails(res[0]);
       const data = {
-        page : 1,
-        limit: 12,
-        collectionID: res[0]._id
-      }
+        page: currPage,
+        limit: 1,
+        collectionID: res[0]._id,
+      };
       const nfts = await getNFTs(data);
-      console.log('nft with collection id', res[0]._id, nfts);
-      setNftList(nfts)
+      if (nfts.length > 0) {
+        temp = [...temp, nfts];
+        setNftList(temp);
+        setCurrPage(currPage + 1);
+      }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
-  }, []);
-
-  function copyToClipboard(e) {
-    textAreaRef.current.select();
-    document.execCommand("copy");
-    // This is just personal preference.
-    // I prefer to not show the whole text area selected.
-    // e.target.focus();
-    setCopySuccess("Copied!");
-    NotificationManager.success("Wallet Address Copied!");
-  }
+  }, [loadMore]);
 
   return (
     <div style={bgImgStyle}>
@@ -170,14 +164,21 @@ function Collection() {
           <div className='coppycode text-center'>
             <span className='ctc'>
               <img alt='' src={"../img/favicon.png"} class='img-fluid' />
-              <textarea
-                ref={textAreaRef}
-                value={collectionDetails?.contractAddress.slice(0,8) + "....." + collectionDetails?.contractAddress.slice(32,42)}
-                id='myInput'
-              />
+              <div className=''>
+                {collectionDetails?.contractAddress?.slice(0, 8) +
+                  "...." +
+                  collectionDetails?.contractAddress?.slice(32, 42)}
+              </div>
 
-              {/*<input type="text" value={walletAddress} id="myInput" className="form-control profile_input" />*/}
-              <button type='button' onClick={copyToClipboard}>
+              <CopyToClipboard
+                text={collectionDetails?.contractAddress}
+                onCopy={() => {
+                  console.log("copied!!!");
+                  setIsCopied(true);
+                  setTimeout(() => {
+                    setIsCopied(false);
+                  }, 3000);
+                }}>
                 <svg
                   width='21'
                   height='24'
@@ -189,7 +190,8 @@ function Collection() {
                     fill='#fff'
                   />
                 </svg>
-              </button>
+              </CopyToClipboard>
+              {isCopied ? <p className='copied'>Copied!</p> : ""}
             </span>
           </div>
           <ul className='collection_status mt-5 mb-5'>
@@ -453,20 +455,24 @@ function Collection() {
       <section className='collection_list mb-5 pb-5'>
         <div className='container'>
           <div className='row'>
-            {nftList ? nftList.map((card) => (
-              <div className={grid} key={card.id}>
-                <CollectionList
-                nft={card}
-                collectionName={collectionDetails?.name}
-                  price={collectionDetails?.price / 10**18}
-                />
-              </div>
-            )) : ""}
+            {nftList
+              ? nftList.map((card) => (
+                  <div className={grid} key={card.id}>
+                    <CollectionList
+                      nft={card[0]}
+                      collectionName={collectionDetails?.name}
+                      price={collectionDetails?.price / 10 ** 18}
+                    />
+                  </div>
+                ))
+              : ""}
             ;
             <div class='col-md-12 text-center mt-5'>
-              <Link class='view_all_bdr' to={"/"}>
+              <a
+                class='view_all_bdr'
+                onClick={() => setLoadMore(!loadMore)}>
                 Load More
-              </Link>
+              </a>
             </div>
           </div>
         </div>

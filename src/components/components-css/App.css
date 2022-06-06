@@ -4532,4 +4532,9 @@ a:hover {
 }
 
 
-
+.copied{
+  font-size: 18px;
+  margin-left: 6px;
+  color: #439757;
+  font-weight: 600;
+}
