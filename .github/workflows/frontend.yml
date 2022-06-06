@@ -1,4 +1,4 @@
-name: deploy on ec2
+name: remote ssh command
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: |
+        script: whoami
           cd /var/www/html/DAFrontend
           pwd
           ls -la
@@ -25,4 +25,4 @@ jobs:
           sudo yarn 
           sudo yarn run build
           sudo pm2 ls
-          sudo pm2 restart all 
+          sudo pm2 restart all
