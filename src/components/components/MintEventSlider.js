@@ -9,6 +9,8 @@ import { handleBuyNft } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
 import NotificationManager from "react-notifications/lib/NotificationManager";
 import Loader from "./../components/loader";
+import { getCollections } from "./../../helpers/getterFunctions";
+import moment from "moment";
 
 function MintEventSlider(props) {
   var settings = {
@@ -47,6 +49,7 @@ function MintEventSlider(props) {
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [currQty, setCurrQty] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isMintEnabled, setIsMintEnabled] = useState(true);
 
   let mint = [];
 
@@ -59,6 +62,7 @@ function MintEventSlider(props) {
 
   useEffect(() => {
     console.log("props.id", props.id);
+
     const fetch = async () => {
       let reqBody = {
         page: 1,
@@ -67,11 +71,31 @@ function MintEventSlider(props) {
         isLazyMinted: true,
       };
       let nfts = await getNFTList(reqBody);
+
       if (nfts && nfts.results && nfts.results.length > 0) {
         for (let i = 0; i < nfts.results.length; i++) {
           mint[i] = 0;
         }
         setNfts(nfts.results[0]);
+      }
+      try {
+        const res = await getCollections({
+          page: 1,
+          limit: 12,
+          collectionID: props.id,
+        });
+        const st = res[0].saleStartTime;
+        const ct = moment()
+          .add({
+            hours: 5,
+            minutes: 30,
+          })
+          .toISOString();
+        if (ct < st) {
+          setIsMintEnabled(false);
+        } else setIsMintEnabled(true);
+      } catch (e) {
+        console.log("Error", e);
       }
     };
     fetch();
@@ -182,7 +206,8 @@ function MintEventSlider(props) {
                       onClick={async (e) => {
                         console.log("index", i);
                         await handleMint(i);
-                      }}>
+                      }}
+                      disabled={!isMintEnabled}>
                       Mint
                     </button>
                   </div>

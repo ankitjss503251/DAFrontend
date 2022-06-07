@@ -7,6 +7,7 @@ import Twogrid from "../SVG/Twogrid";
 // import { Marketplacecartj } from "../../Data/dummyJSON";
 import { getNFTs } from "../../helpers/getterFunctions";
 import { Link, useParams } from "react-router-dom";
+import { getOrderByNftID } from "./../../helpers/getterFunctions";
 
 var register_bg = {
   backgroundImage: "url(./img/Marketplace/marketplace-bg.jpg)",
@@ -59,6 +60,24 @@ function Marketplace() {
       };
       const res = await getNFTs(reqData);
       if(res.length > 0){
+      for (let i = 0; i < res.length; i++) {
+        const orderDet = await getOrderByNftID({
+          nftId: res[i].id,
+        });
+        console.log("order details", orderDet);
+        if (orderDet.results.length > 0) {
+          res[i] = {
+            ...res[i],
+            isNftOnSale: true,
+          };
+        } else {
+          res[i] = {
+            ...res[i],
+            isNftOnSale: false,
+          };
+        }
+      }
+      
         temp = [...temp, res];
         setAllNFTs(temp);
         setCurrPage(currPage + 1);
@@ -189,7 +208,7 @@ function Marketplace() {
                             <Link
                               to={`/NFTdetails/${card[0].id}`}
                               className='border_btn width-100 title_color'>
-                              Place bids
+                              {card[0].isNftOnSale ? "Buy" : "View"}
                             </Link>
                           </div>
                         </a>
