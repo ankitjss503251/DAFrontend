@@ -1,18 +1,21 @@
-import React, { useState, useEffect, Component } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Footer from "../components/footer";
 import CollectionList from "../components/CollectionList";
 import ItemSVG from "../SVG/ItemSVG";
 import ActivitySVG from "../SVG/ActivitySVG";
 import { Link, NavLink } from "react-router-dom";
 import { CollectionCard } from "../../Data/dummyJSON";
-import Dropdown from "../SVG/dropdown";
+import UpArrow from "../SVG/dropdown";
 import { useCookies } from "react-cookie";
 import { NotificationManager } from "react-notifications";
-import Threegrid from '../SVG/Threegrid';
-import Twogrid from '../SVG/Twogrid';
+import Threegrid from "../SVG/Threegrid";
+import Twogrid from "../SVG/Twogrid";
 import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
+import { useParams, useNavigate } from "react-router-dom";
+import { getCollections, getNFTs } from "../../helpers/getterFunctions";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -34,31 +37,34 @@ var bgImgarrow = {
 };
 
 const options = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
-]
+  { value: "chocolate", label: "Chocolate" },
+  { value: "strawberry", label: "Strawberry" },
+  { value: "vanilla", label: "Vanilla" },
+];
 
 function Collection() {
-
-  const gridtwo =()=>{
+  const gridtwo = () => {
     setgrid("col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4");
     document.getElementById("gridtwo").classList.add("active");
     document.getElementById("gridthree").classList.remove("active");
-  }
-  const gridthree =()=>{
+  };
+  const gridthree = () => {
     setgrid("col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4");
     document.getElementById("gridthree").classList.add("active");
     document.getElementById("gridtwo").classList.remove("active");
-  }
+  };
   useEffect(() => {
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
   }, []);
 
   const [grid, setgrid] = useState("col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4");
 
   const [currentUser, setCurrentUser] = useState("");
   const [cookies, setCookie, removeCookie] = useCookies([]);
+  const [collectionDetails, setCollectionDetails] = useState([]);
+  const [isCopied, setIsCopied] = useState(false);
+  const [nftList, setNftList] = useState("");
+  const { id } = useParams();
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -66,29 +72,61 @@ function Collection() {
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
-
-   
-  const [togglemode, setTogglemode] = useState('filterhide');
-  const filterToggle = ()=> { 
-    if(togglemode === 'filterhide'){ 
-      setTogglemode('filtershow');
+  const [togglemode, setTogglemode] = useState("filterhide");
+  const [currPage, setCurrPage] = useState(1);
+  const [loadMore, setLoadMore] = useState(false);
+  const filterToggle = () => {
+    console.log("filter", togglemode);
+    if (togglemode === "filterhide") {
+      setTogglemode("filtershow");
       document.getElementsByClassName("filter_btn")[0].classList.add("active");
-    }else{
-      setTogglemode('filterhide');
-      document.getElementsByClassName("filter_btn")[0].classList.remove("active");
-    } 
-  }; 
+    } else {
+      setTogglemode("filterhide");
+      document
+        .getElementsByClassName("filter_btn")[0]
+        .classList.remove("active");
+    }
+  };
 
+  useEffect(async () => {
+    let temp = nftList;
+    try {
+      const reqData = {
+        page: 1,
+        limit: 12,
+        collectionID: id,
+      };
+      const res = await getCollections(reqData);
+
+      setCollectionDetails(res[0]);
+      const data = {
+        page: currPage,
+        limit: 1,
+        collectionID: res[0]._id,
+      };
+      const nfts = await getNFTs(data);
+      if (nfts.length > 0) {
+        temp = [...temp, nfts];
+        setNftList(temp);
+        setCurrPage(currPage + 1);
+      }
+    } catch (e) {
+      console.log("Error in fetching all collections list", e);
+    }
+  }, [loadMore]);
 
   return (
     <div style={bgImgStyle}>
-      <section className='collection_banner pdd_8' style={bgImage}></section>
+      <section
+        className='collection_banner pdd_8'
+        backgroundImage={collectionDetails?.coverImg}
+        style={bgImage}></section>
       <section className='collection_info'>
         <div className='container'>
           <div className='collection_pick'>
             <img
               alt=''
-              src={"../img/collections/barrett.png"}
+              src={collectionDetails?.logoImg}
               class='img-fluid collection_profile'
             />
             <img
@@ -97,28 +135,63 @@ function Collection() {
               class='img-fluid check_img'
             />
           </div>
-          <h1 className="collection_title text-center">Barrett Firarms</h1>
-          <ul class="collection_social mb-4">
-            <li><Link to={"/"}><i class="fa fa-facebook fa-lg"></i></Link></li>
-            <li><Link to={"/"}><i class="fa fa-twitter fa-lg"></i></Link></li>
-            <li><Link to={"/"}><i class="fa fa-linkedin fa-lg"></i></Link></li>
-            <li><Link to={"/"}><i class="fa fa-pinterest fa-lg"></i></Link></li>
+          <h1 className='collection_title text-center'>
+            {collectionDetails?.name}
+          </h1>
+          <ul class='collection_social mb-4'>
+            <li>
+              <Link to={"/"}>
+                <i class='fa fa-facebook fa-lg'></i>
+              </Link>
+            </li>
+            <li>
+              <Link to={"/"}>
+                <i class='fa fa-twitter fa-lg'></i>
+              </Link>
+            </li>
+            <li>
+              <Link to={"/"}>
+                <i class='fa fa-linkedin fa-lg'></i>
+              </Link>
+            </li>
+            <li>
+              <Link to={"/"}>
+                <i class='fa fa-pinterest fa-lg'></i>
+              </Link>
+            </li>
           </ul>
+
           <div className='coppycode text-center'>
-            <span>
-              <img alt='' src={"../img/favicon.png"} class='img-fluid' />{" "}
-              0xa1ahjkfga...19cda
-              <svg
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'>
-                <path
-                  d='M18 4.5V0H12.75C11.5073 0 10.5 1.00734 10.5 2.25V15.75C10.5 16.9927 11.5073 18 12.75 18H21.75C22.9927 18 24 16.9927 24 15.75V6H19.5422C18.675 6 18 5.325 18 4.5ZM19.5 0V4.5H24L19.5 0ZM9 16.5V6H2.25C1.00734 6 0 7.00734 0 8.25V21.75C0 22.9927 1.00734 24 2.25 24H11.25C12.4927 24 13.5 22.9927 13.5 21.75V19.5H12C10.3453 19.5 9 18.1547 9 16.5Z'
-                  fill='white'
-                />
-              </svg>
+            <span className='ctc'>
+              <img alt='' src={"../img/favicon.png"} class='img-fluid' />
+              <div className=''>
+                {collectionDetails?.contractAddress?.slice(0, 8) +
+                  "...." +
+                  collectionDetails?.contractAddress?.slice(32, 42)}
+              </div>
+
+              <CopyToClipboard
+                text={collectionDetails?.contractAddress}
+                onCopy={() => {
+                  console.log("copied!!!");
+                  setIsCopied(true);
+                  setTimeout(() => {
+                    setIsCopied(false);
+                  }, 3000);
+                }}>
+                <svg
+                  width='21'
+                  height='24'
+                  viewBox='0 0 21 24'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'>
+                  <path
+                    d='M15 21V22.875C15 23.4963 14.4963 24 13.875 24H1.125C0.503672 24 0 23.4963 0 22.875V5.625C0 5.00367 0.503672 4.5 1.125 4.5H4.5V18.375C4.5 19.8225 5.67755 21 7.125 21H15ZM15 4.875V0H7.125C6.50367 0 6 0.503672 6 1.125V18.375C6 18.9963 6.50367 19.5 7.125 19.5H19.875C20.4963 19.5 21 18.9963 21 18.375V6H16.125C15.5063 6 15 5.49375 15 4.875ZM20.6705 3.42052L17.5795 0.329484C17.3685 0.11852 17.0824 1.55998e-06 16.784 0L16.5 0V4.5H21V4.21598C21 3.91763 20.8815 3.63149 20.6705 3.42052Z'
+                    fill='#fff'
+                  />
+                </svg>
+              </CopyToClipboard>
+              {isCopied ? <p className='copied'>Copied!</p> : ""}
             </span>
           </div>
           <ul className='collection_status mt-5 mb-5'>
@@ -140,15 +213,7 @@ function Collection() {
             </li>
           </ul>
           <div className='collection_description text-center'>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Massa
-              fringilla eget quam fringilla pharetra scelerisque arcu aliquam
-              lacus. Non, tortor et lobortis facilisi nam. Adipiscing non
-              feugiat ultrices natoque a. Imperdiet eget tellus tempor ultricies
-              ipsum vitae. Felis elit nisi nunc sagittis morbi arcu, sed. Diam
-              diam ligula aliquet sollicitudin diam et pellentesque. Tempor
-              turpis nunc turpis ornare facilisis porttitor morbi tellus nullam.
-            </p>
+            <p>{collectionDetails?.desc}</p>
             <span className='top_arrow'>
               <img alt='' src={"../img/top_arrow.png"} class='img-fluid' />
             </span>
@@ -156,10 +221,7 @@ function Collection() {
 
           <div className='row mb-5'>
             <div className='col-md-12 text-center item_active'>
-              <NavLink
-                to={"/collection"}
-                activeclassname='active-link'
-                className='mr-3'>
+              <NavLink activeclassname='active-link' to={-1} className='mr-3'>
                 <span className='mr-3'>
                   <ItemSVG />
                 </span>{" "}
@@ -208,25 +270,33 @@ function Collection() {
                 </select>
                 {/* <div className="market_div"> */}
 
-                  <div id="gridtwo" className="market_grid" onClick={gridtwo}>
-                    <Twogrid />
-                  </div>
-                  <div id="gridthree" className="market_grid" onClick={gridthree}>
-                    <Threegrid />
-                  </div>
+                <div id='gridtwo' className='market_grid' onClick={gridtwo}>
+                  <Twogrid />
+                </div>
+                <div id='gridthree' className='market_grid' onClick={gridthree}>
+                  <Threegrid />
+                </div>
                 {/* </div> */}
-                <button type="button" className="filter_btn" onClick={filterToggle}>Adv.Filter</button>
+                <button
+                  type='button'
+                  className='filter_btn'
+                  onClick={filterToggle}>
+                  Adv.Filter
+                </button>
               </div>
-             
-              </div>
-              <div className={`filter mb-5 ${togglemode}`}>
-                <div className='filtercol'>
-                  <form>
-                  <button type="button" class="drop_down_tlt" data-bs-toggle="collapse" data-bs-target="#demo">
-                    Status <Dropdown />
+            </div>
+            <div className={`filter mb-5 ${togglemode}`}>
+              <div className='filtercol'>
+                <form>
+                  <button
+                    type='button'
+                    class='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo'>
+                    Status <UpArrow />
                   </button>
-                  <div id="demo" class="collapse show">
-                    <ul className="status_ul">
+                  <div id='demo' class='collapse show'>
+                    <ul className='status_ul'>
                       <li>
                         <Link to={"/"} className='filter_border'>
                           Buy Now
@@ -245,12 +315,16 @@ function Collection() {
                       </li>
                     </ul>
                   </div>
-                  
-                  <button type="button" class="drop_down_tlt" data-bs-toggle="collapse" data-bs-target="#demo2">
-                    Price <Dropdown />
+
+                  <button
+                    type='button'
+                    class='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo2'>
+                    Price <UpArrow />
                   </button>
-                  <div id="demo2" class="collapse show">
-                    <ul className="status_ul">
+                  <div id='demo2' class='collapse show'>
+                    <ul className='status_ul'>
                       <li>
                         <select
                           class='form-select filter_apply filter-text-left'
@@ -267,14 +341,14 @@ function Collection() {
                             type='text'
                             class='form-control'
                             id='exampleInputPassword1'
-                            value='min'
+                            placeholder='Min'
                           />
-                          <span className="span_class">to</span>
+                          <span className='span_class'>to</span>
                           <input
                             type='text'
                             class='form-control'
                             id='exampleInputPassword1'
-                            value='max'
+                            placeholder='Max'
                           />
                         </div>
                       </li>
@@ -285,102 +359,120 @@ function Collection() {
                       </li>
                     </ul>
                   </div>
-                  </form>
-                </div>
-                <div className='filtercol'>
-                  <form>
-                    <button type="button" class="drop_down_tlt" data-bs-toggle="collapse" data-bs-target="#demo3">
-                      Collections <Dropdown />
-                    </button>
-                    <div id="demo3" class="collapse show">
-                      <input type='text' value='Filter' className="filter_apply filter-text-left filter_padd" />
-                    </div>
-                  </form>
-                </div>
-                <div className='filtercol'>
-                  <button type="button" class="drop_down_tlt mb-4" data-bs-toggle="collapse" data-bs-target="#demo4">
-                    Categories <Dropdown />
+                </form>
+              </div>
+              <div className='filtercol'>
+                <form>
+                  <button
+                    type='button'
+                    class='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo3'>
+                    Collections <UpArrow />
                   </button>
-                  <div id="demo4" class="collapse show">
-                    <ul>
-                      <li>
-                        <Link to={"/marketplace"} className='sub-items'>
-                          <AllNFTs />
-                          All NFTs
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to={"/marketplaceCollection"} className='sub-items'>
-                          <Firearmsvg />
-                          Firearms
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to={"/Soldiers"} className="sub-items">
-                          <Soldierssvg />
-                          Soldiers
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to={"/Accesories"} className="sub-items">
-                          <Soldierssvg />
-                          Accesories
-                        </Link>
-                      </li>
-                    </ul>
+                  <div id='demo3' class='collapse show'>
+                    <input
+                      type='text'
+                      placeholder='Filter'
+                      className='filter_apply filter-text-left filter_padd'
+                    />
                   </div>
+                </form>
+              </div>
+              <div className='filtercol'>
+                <button
+                  type='button'
+                  class='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo4'>
+                  Categories <UpArrow />
+                </button>
+                <div id='demo4' class='collapse show'>
+                  <ul>
+                    <li>
+                      <Link to={"/marketplace"} className='sub-items'>
+                        <AllNFTs />
+                        All NFTs
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/marketplaceCollection"} className='sub-items'>
+                        <Firearmsvg />
+                        Firearms
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/Soldiers"} className='sub-items'>
+                        <Soldierssvg />
+                        Soldiers
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/Accesories"} className='sub-items'>
+                        <Soldierssvg />
+                        Accesories
+                      </Link>
+                    </li>
+                  </ul>
                 </div>
-                <div className='filtercol'>
-                  <button type="button" class="drop_down_tlt mb-4" data-bs-toggle="collapse" data-bs-target="#demo5">
-                    On Sale In <Dropdown />
-                  </button>
-                  <div id="demo5" class="collapse show">
-                    <ul>
-                      <li>
-                        <input type='text' value='Filter' className="filter_apply filter-text-left filter_padd" />
-                      </li>
-                      <li>
-                      <form action="#" className="checked_form">
-                        <div class="form-check form-check-inline">
-                          <input type="radio" id="test1" name="radio-group" />
-                          <label for="test1">Apple</label>
+              </div>
+              <div className='filtercol'>
+                <button
+                  type='button'
+                  class='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo5'>
+                  On Sale In <UpArrow />
+                </button>
+                <div id='demo5' class='collapse show'>
+                  <ul>
+                    <li>
+                      <input
+                        type='text'
+                        placeholder='Filter'
+                        className='filter_apply  filter-text-left filter_padd'
+                      />
+                    </li>
+                    <li>
+                      <form action='#' className='checked_form'>
+                        <div class='form-check form-check-inline'>
+                          <input type='radio' id='test1' name='radio-group' />
+                          <label for='test1'>Apple</label>
                         </div>
-                        <div class="form-check form-check-inline">
-                          <input type="radio" id="test2" name="radio-group" />
-                          <label for="test2">Apple</label>
+                        <div class='form-check form-check-inline'>
+                          <input type='radio' id='test2' name='radio-group' />
+                          <label for='test2'>Apple</label>
                         </div>
                       </form>
-                      </li>
-                    </ul>
-                  </div>
+                    </li>
+                  </ul>
                 </div>
-              </div> 
+              </div>
             </div>
           </div>
-        
-        
+        </div>
       </section>
       <section className='collection_list mb-5 pb-5'>
         <div className='container'>
           <div className='row'>
-            {CollectionCard.map((card) => (
-              <div className={grid} key={card.id}>
-                <CollectionList
-                  image={card.img}
-                  submenu={card.Subheading}
-                  heading={card.Heading}
-                  price={card.price}
-                  date={card.Date}
-                  button={card.Slug}
-                  link={card.Like}
-                />
-              </div>
-            ))}
+            {nftList
+              ? nftList.map((card) => (
+                  <div className={grid} key={card.id}>
+                    <CollectionList
+                      nft={card[0]}
+                      collectionName={collectionDetails?.name}
+                      price={collectionDetails?.price / 10 ** 18}
+                    />
+                  </div>
+                ))
+              : ""}
             ;
             <div class='col-md-12 text-center mt-5'>
-              <Link class='view_all_bdr' to={"/"}>
+              <a
+                class='view_all_bdr'
+                onClick={() => setLoadMore(!loadMore)}>
                 Load More
-              </Link>
+              </a>
             </div>
           </div>
         </div>

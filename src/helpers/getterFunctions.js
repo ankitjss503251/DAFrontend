@@ -8,17 +8,16 @@ import {
   //   GetMyOnSaleNft,
   //   GetNftDetails,
   getOrderDetails,
+  GetOrdersByNftId,
+  getAllCollections,
+  GetAllUserDetails,
+  getNFTList,
 } from "../apiServices";
 // import { ethers } from "ethers";
 // import contracts from "../config/contracts";
 import erc20Abi from "./../config/abis/erc20.json";
 import erc721Abi from "./../config/abis/simpleERC721.json";
 import erc1155Abi from "./../config/abis/simpleERC1155.json";
-import {
-  getAllCollections,
-  GetAllUserDetails,
-  getNFTList,
-} from "../apiServices";
 import Avatar from "./../assets/images/avatar5.jpg";
 // import { fetchBidNft } from "../apiServices";
 // import { GENERAL_DATE, GENERAL_TIMESTAMP } from "./constants";
@@ -549,7 +548,8 @@ export const getCollections = async (req) => {
           saleEndTime: coll.preSaleEndTime,
           price: coll.price.$numberDecimal,
           items: coll.nftCount,
-          totalSupply: coll.totalSupply
+          totalSupply: coll.totalSupply,
+          contractAddress: coll.contractAddress
         };
       })
     : (formattedData[0] = {});
@@ -633,3 +633,16 @@ export const getAuthors = async () => {
     : (formattedData[0] = {});
   return formattedData;
 };
+
+
+export const getOrderByNftID = async (reqBody) => {
+  let data = [];
+  try{
+    data = await GetOrdersByNftId(reqBody);
+    console.log("get all collections--->", data);
+  }
+  catch(e){
+    console.log("Error in getOrderByNftID api", e);
+  }
+  return data;
+}

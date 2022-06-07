@@ -428,18 +428,22 @@ function NFTDetails() {
                 <NFThistory />
               </div>
             </div>
-
-            <div className="col-md-12">
+            {
+              allNFTs.length > 1 ? <>
+               <div className="col-md-12">
               <h3 className="title_36 mb-4">
-                More from Barrett Firearms Collection
+                More from {NFTDetails.collection?.name} Collection
               </h3>
-              <FirearmsCollection />
+              <FirearmsCollection nfts={allNFTs} currNFTID={NFTDetails.id} collectionName={NFTDetails.collection?.name}/>
             </div>
+           
             <div class="col-md-12 text-center mt-5">
               <a class="view_all_bdr" href="/">
                 View All
               </a>
-            </div>
+            </div></> : ""
+            }
+           
           </div>
         </div>
       </section>

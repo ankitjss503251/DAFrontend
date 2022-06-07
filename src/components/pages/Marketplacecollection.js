@@ -24,20 +24,27 @@ function Marketplacecollection() {
   console.log("window location", window.location.pathname);
 
   const [allCollections, setAllCollections] = useState([]);
+  const [currPage, setCurrPage] = useState(1);
+  const [loadMore, setLoadMore] = useState(false);
+
 
   useEffect(async () => {
+    let temp = allCollections;
     try {
       const reqData = {
-        page: 1,
-        limit: 12,
+        page: currPage,
+        limit: 1,
       };
       const res = await getCollections(reqData);
-      console.log("result of getALLCollections helper fn--->", res);
-      setAllCollections(res);
+      if(res.length > 0){
+      temp = [...temp, res];
+      setAllCollections(temp);
+      setCurrPage(currPage + 1);
+      }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
-  }, []);
+  }, [loadMore]);
 
   return (
     <div>
@@ -170,15 +177,15 @@ function Marketplacecollection() {
               <div className="row">
                 {allCollections.map((card) => (
                   <div className="col-lg-4 col-md-6 mb-5">
-                    <Link to={"/collection"}>
+                    <Link to={`/collection/${card[0]._id}`}>
                       <div className="collection_slide">
-                        <img className="img-fluid" src={card.logoImg} alt="" />
+                        <img className="img-fluid" src={card[0].logoImg} alt="" />
                         <div className="collection_text">
                           <div className="coll_profileimg">
                             <img
                               alt=""
                               className="profile_img"
-                              src={card.coverImg}
+                              src={card[0].coverImg}
                             />
                             <img
                               alt=""
@@ -186,8 +193,8 @@ function Marketplacecollection() {
                               src={"../img/collections/check.png"}
                             />
                           </div>
-                          <h4 className="collname">{card.name}</h4>
-                          <p>{card.desc}</p>
+                          <h4 className="collname">{card[0].name}</h4>
+                          <p>{card[0].desc}</p>
                         </div>
                       </div>
                     </Link>
@@ -195,7 +202,7 @@ function Marketplacecollection() {
                 ))}
                 ;
                 <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
-                  <a class="view_all_bdr" href="/">
+                  <a class="view_all_bdr" onClick={() => setLoadMore(!loadMore)}>
                     Load More
                   </a>
                 </div>

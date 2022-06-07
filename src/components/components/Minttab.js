@@ -174,7 +174,9 @@ function Minttab(props) {
                             <ul className="m-0 p-0">
                               <li>
                                 <img alt="" src={"../img/mint/hntr.svg"} />{" "}
-                                {`${card.price} HNTR`}{" "}
+                                {`${Number(convertToEth(card.price)).toFixed(
+                                  4
+                                )} HNTR`}{" "}
                               </li>
                               <li>
                                 <img alt="" src={"../img/mint/items.svg"} />{" "}

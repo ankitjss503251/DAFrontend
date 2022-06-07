@@ -197,13 +197,13 @@ const Home = () => {
                       minutes: 30,
                     })
                     .toISOString();
-                    const redirectTo = (card.items === card.totalSupply) ? "/collection" : `/multimintingpage/${card._id}`
+                  
                   return (
                     <div
                       className="col-lg-4 col-md-6 col-sm-12 mb-lg-0 mb-xl-0 mb-4"
                       key={key}
                     >
-                      <Link to={redirectTo}>
+                      <Link to={ (card.items === card.totalSupply) ? `/collection/${card._id}` : `/multimintingpage/${card._id}`}>
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
                             <img alt="" src={card.coverImg} class="img-fluid" />

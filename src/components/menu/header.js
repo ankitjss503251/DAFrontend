@@ -473,20 +473,22 @@ const Header = function () {
                 {scolns.length > 0 && <p>Collections</p>}
                 <ul>
                   {scolns
-                    ? scolns.map((item) => {
+                    ? scolns.slice(0,3).map((item) => {
                         return (
-                        <li> <a href={`/collection/`}>{item.name}</a></li>)
+                        <a href={`/collection/${item._id}`}><li> {item.name}</li></a>)
                       })
                     : ""}
                 </ul>
+                {scolns.length > 3 && <a className="view_all_bdr search_view_all mb-3" href="/marketplacecollection">View All</a>}
                 {sNfts.length > 0 && <p>NFTs</p>}
                 <ul>
                   {sNfts
-                    ? sNfts.map((item) => {
-                        return <li><a href={`/NFTdetails/${item._id}`}>{item.name}</a></li>;
+                    ? sNfts.slice(0,3).map((item) => {
+                        return <a href={`/NFTdetails/${item.id}`}><li>{item.name}</li></a>;
                       })
                     : ""}
                 </ul>
+                {sNfts.length > 3 && <a className="view_all_bdr search_view_all" href="/marketplace">View All</a>}
               </div>
             ) : (
               ""
