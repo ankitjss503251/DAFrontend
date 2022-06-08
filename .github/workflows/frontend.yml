@@ -1,25 +1,26 @@
 name: deploy on ec2
 
-
 on:
   push:
-    branches: main
+    branches: [ main ]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Connect and run Scripts
-        uses: appleboy/ssh-action@v0.1.3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HOST: ${{ secrets.HOST }}
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            whoami
-            echo "$HOST"
-            ls -a
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@main
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd /var/www/html/DAFrontend
+          pwd
+          sudo git pull origin main
+          sudo rm -rf build
+          sudo yarn 
+          sudo yarn run build
+          sudo pm2 ls
+          sudo pm2 restart all
