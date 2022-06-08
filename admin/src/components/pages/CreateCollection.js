@@ -6,7 +6,7 @@ import {
   exportInstance,
   getAllCategory,
   GetBrand,
-  getImportedNFTs,
+  // getImportedNFTs,
   GetMyCollectionsList,
 } from "../../apiServices";
 import contracts from "../../config/contracts";
@@ -50,13 +50,13 @@ function CreateCollection() {
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
-  useEffect(() => {
-    const fetch = async () => {
-      let data = await getImportedNFTs();
-      console.log("dataaaa", data);
-    };
-    fetch();
-  }, []);
+  // useEffect(() => {
+  //   const fetch = async () => {
+  //     let data = await getImportedNFTs();
+  //     console.log("dataaaa", data);
+  //   };
+  //   fetch();
+  // }, []);
 
   useEffect(() => {
     if (currentUser) {

@@ -17,7 +17,8 @@ import CreateCategories from "./components/pages/CreateCategories";
 import NotificationPopup from "./components/components/NotificationPopup";
 
 import { NotificationContainer } from "react-notifications";
-import ImportCard from "./components/pages/importCard";
+import ImportCard from "./components/pages/ImportedData/importCard";
+import NftDetail from "./components/pages/ImportedData/nftDetail";
 
 const instaImg = {
   backgroundImage: "url(./images/main_bg.png)",
@@ -80,6 +81,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="importedNfts/:address" element={<ImportCard />} />
+          <Route path="importedNfts/:address/:id" element={<NftDetail />} />
           <Route
             path="createcategories"
             showNotificationPopup={showNotificationPopup}

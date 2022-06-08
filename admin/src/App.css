@@ -806,6 +806,7 @@ tbody td {
   display: flex;
   flex-wrap: wrap;
   counter-reset: section;
+  padding: 2rem;
 }
 
 .author_list_box {
@@ -813,7 +814,7 @@ tbody td {
   border: 1px solid #394956;
   box-sizing: border-box;
   box-shadow: 2px 2px 4px rgb(0 0 0 / 25%);
-  border-radius: 60px;
+  border-radius: 10px;
   padding: 5px 15px;
   display: flex;
   flex-wrap: wrap;
@@ -841,18 +842,42 @@ tbody td {
 }
 
 .import_info h6 {
-    font-family: "Montserrat";
-    font-style: normal;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: inherit;
-    color: #fff;
-  }
-  .import_info p {
-    font-family: "Montserrat";
-    font-style: normal;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: inherit;
-    color: #ef981d;
-  }
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: inherit;
+  color: #fff;
+}
+.import_info p {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: inherit;
+  color: #ef981d;
+}
+.putonmarketplace {
+  cursor: pointer;
+  border-radius: 40px;
+  background-color: #ef971d;
+  border: 1px solid #000000;
+  padding: 5px 15px;
+  display: inline-block;
+  color: white;
+}
+
+/* IMPORT CSS */
+
+.attr_list {
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 5px;
+}
+
+.nftImg {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
