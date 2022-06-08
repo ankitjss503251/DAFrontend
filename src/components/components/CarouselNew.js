@@ -95,7 +95,6 @@ function ItemsList() {
       <Slider {...settings}>
         {putOnSaleItems
           ? putOnSaleItems.map((card, key) => {
-              console.log("first", card.isNftOnSale);
               return (
                 <a href={`/NFTdetails/${card.id}`}>
                   <div className='items_slide'>

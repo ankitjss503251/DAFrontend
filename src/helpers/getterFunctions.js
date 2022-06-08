@@ -12,6 +12,8 @@ import {
   getAllCollections,
   GetAllUserDetails,
   getNFTList,
+  getBrandById,
+  GetIndividualAuthorDetail,
 } from "../apiServices";
 // import { ethers } from "ethers";
 // import contracts from "../config/contracts";
@@ -529,7 +531,6 @@ export const getCollections = async (req) => {
     };
 
     data = await getAllCollections(reqBody);
-    console.log("get all collections--->", data);
   } catch (e) {
     console.log("Error in getCollections API--->", e);
   }
@@ -549,7 +550,9 @@ export const getCollections = async (req) => {
           price: coll.price.$numberDecimal,
           items: coll.nftCount,
           totalSupply: coll.totalSupply,
-          contractAddress: coll.contractAddress
+          contractAddress: coll.contractAddress,
+          brand: coll.brandID,
+          createdBy: coll.createdBy
         };
       })
     : (formattedData[0] = {});
@@ -575,15 +578,12 @@ export const getNFTs = async (req) => {
     };
 
     data = await getNFTList(reqBody);
-    console.log("get all nfts--->", data);
-  } catch (e) {
-    console.log("Error in getNFts API--->", e);
-  }
-  let arr = [];
-  if (data && data.results && data.results.length > 0) arr = data.results[0];
+    let arr = [];
+  if (data  && data.length > 0) 
+  arr = data;
   else return [];
-  arr
-    ? arr.map((nft, key) => {
+
+  arr ? arr.map((nft, key) => {
         formattedData[key] = {
           id: nft._id,
           image: nft.image,
@@ -599,9 +599,15 @@ export const getNFTs = async (req) => {
           authorImage: nft.createdBy?.profileIcon
             ? nft.createdBy?.profileIcon
             : Avatar,
+            
         };
       })
     : (formattedData[0] = {});
+  } catch (e) {
+    console.log("Error in getNFts API--->", e);
+  }
+  
+ 
   return formattedData;
 };
 
@@ -634,15 +640,33 @@ export const getAuthors = async () => {
   return formattedData;
 };
 
-
 export const getOrderByNftID = async (reqBody) => {
   let data = [];
-  try{
+  try {
     data = await GetOrdersByNftId(reqBody);
     console.log("get all collections--->", data);
-  }
-  catch(e){
-    console.log("Error in getOrderByNftID api", e);
+  } catch (e) {
+    console.log("Error in getOrderByNftID API", e);
   }
   return data;
-}
+};
+
+export const getBrandDetailsById = async (reqBody) => {
+  let brand = [];
+  try {
+    brand = await getBrandById(reqBody);
+  } catch (e) {
+    console.log("Error in getBrandByID API", e);
+  }
+  return brand;
+};
+
+export const getUserById = async (reqBody) => {
+  let user = [];
+  try {
+    user = await GetIndividualAuthorDetail(reqBody);
+  } catch (e) {
+    console.log("Error in getUserByID API", e);
+  }
+  return user;
+};

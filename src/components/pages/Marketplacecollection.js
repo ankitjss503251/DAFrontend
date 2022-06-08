@@ -3,6 +3,7 @@ import Footer from "../components/footer";
 import { Link } from "react-router-dom";
 import { getCollections } from "../../helpers/getterFunctions";
 import { marketPlaceCollection } from "../../Data/dummyJSON";
+import { useParams } from "react-router-dom";
 
 var register_bg = {
   backgroundImage: "url(../img/marketplace/marketplace-bg.jpg)",
@@ -21,423 +22,413 @@ var bgImgStyle = {
 };
 
 function Marketplacecollection() {
-  console.log("window location", window.location.pathname);
-
   const [allCollections, setAllCollections] = useState([]);
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
-
+  const { searchedText } = useParams();
 
   useEffect(async () => {
     let temp = allCollections;
     try {
       const reqData = {
         page: currPage,
-        limit: 1,
-        // isOnMarketplace: 1
+        limit: 12,
+        searchText: searchedText ? searchedText : "",
       };
       const res = await getCollections(reqData);
-      if(res.length > 0){
-      temp = [...temp, res];
-      setAllCollections(temp);
-      setCurrPage(currPage + 1);
+      if (res.length > 0) {
+        temp = [...temp, res];
+        setAllCollections(temp);
+        setCurrPage(currPage + 1);
       }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
+   
   }, [loadMore]);
 
   return (
     <div>
-      <section className="register_hd pdd_12" style={register_bg}>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
+      <section className='register_hd pdd_12' style={register_bg}>
+        <div className='container'>
+          <div className='row'>
+            <div className='col-md-12'>
               <h1>Marketplace</h1>
             </div>
           </div>
         </div>
       </section>
-      <section className="marketplace-tab pdd_8" style={bgImgStyle}>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
+      <section className='marketplace-tab pdd_8' style={bgImgStyle}>
+        <div className='container'>
+          <div className='row'>
+            <div className='col-md-12'>
               <ul
-                className="tab_btn mb-5 nav nav-pills1"
-                id="pills-tab"
-                role="tablist"
-              >
-                <li class="nav-item" role="presentation">
+                className='tab_btn mb-5 nav nav-pills1'
+                id='pills-tab'
+                role='tablist'>
+                <li class='nav-item' role='presentation'>
                   <button
-                    class="nav-link active"
-                    id="pills-home-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-home"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-home"
-                    aria-selected="true"
-                  >
+                    class='nav-link active'
+                    id='pills-home-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-home'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-home'
+                    aria-selected='true'>
                     Trending
                   </button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class='nav-item' role='presentation'>
                   <button
-                    class="nav-link"
-                    id="pills-profile-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-profile"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-profile"
-                    aria-selected="true"
-                  >
+                    class='nav-link'
+                    id='pills-profile-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-profile'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-profile'
+                    aria-selected='true'>
                     Top
                   </button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class='nav-item' role='presentation'>
                   <button
-                    class="nav-link"
-                    id="pills-Firearms-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-Firearms"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-Firearms"
-                    aria-selected="true"
-                  >
+                    class='nav-link'
+                    id='pills-Firearms-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-Firearms'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-Firearms'
+                    aria-selected='true'>
                     Firearms
                   </button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class='nav-item' role='presentation'>
                   <button
-                    class="nav-link"
-                    id="pills-Soldiers-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-Soldiers"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-Soldiers"
-                    aria-selected="true"
-                  >
+                    class='nav-link'
+                    id='pills-Soldiers-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-Soldiers'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-Soldiers'
+                    aria-selected='true'>
                     Soldiers
                   </button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class='nav-item' role='presentation'>
                   <button
-                    class="nav-link"
-                    id="pills-Hot-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-Hot"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-Hot"
-                    aria-selected="true"
-                  >
+                    class='nav-link'
+                    id='pills-Hot-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-Hot'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-Hot'
+                    aria-selected='true'>
                     Hot List
                   </button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class='nav-item' role='presentation'>
                   <button
-                    class="nav-link"
-                    id="pills-Ranking-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-Ranking"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-Ranking"
-                    aria-selected="true"
-                  >
+                    class='nav-link'
+                    id='pills-Ranking-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-Ranking'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-Ranking'
+                    aria-selected='true'>
                     NFT Ranking
                   </button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class='nav-item' role='presentation'>
                   <button
-                    class="nav-link"
-                    id="pills-Auctions-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-Auctions"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-Auctions"
-                    aria-selected="true"
-                  >
+                    class='nav-link'
+                    id='pills-Auctions-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-Auctions'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-Auctions'
+                    aria-selected='true'>
                     Live Auctions
                   </button>
                 </li>
               </ul>
             </div>
           </div>
-          <div class="tab-content" id="pills-tabContent">
+          <div class='tab-content' id='pills-tabContent'>
             <div
-              class="tab-pane fade show active"
-              id="pills-home"
-              role="tabpanel"
-              aria-labelledby="pills-home-tab"
-            >
-              <div className="row">
-                {allCollections.map((card) => (
-                  <div className="col-lg-4 col-md-6 mb-5">
-                    <Link to={`/collection/${card[0]._id}`}>
-                      <div className="collection_slide">
-                        <img className="img-fluid" src={card[0].logoImg} alt="" />
-                        <div className="collection_text">
-                          <div className="coll_profileimg">
+              class='tab-pane fade show active'
+              id='pills-home'
+              role='tabpanel'
+              aria-labelledby='pills-home-tab'>
+              <div className='row'>
+                {allCollections[0] ? allCollections[0].map((card) => (
+                  <div className='col-lg-4 col-md-6 mb-5'>
+                    <Link to={`/collection/${card._id}`}>
+                      <div className='collection_slide'>
+                        <img
+                          className='img-fluid'
+                          src={card.coverImg}
+                          alt=''
+                        />
+                        <div className='collection_text'>
+                          <div className='coll_profileimg'>
                             <img
-                              alt=""
-                              className="profile_img"
-                              src={card[0].coverImg}
+                              alt=''
+                              className='profile_img'
+                              src={card.logoImg}
                             />
                             <img
-                              alt=""
-                              className="check_img"
+                              alt=''
+                              className='check_img'
                               src={"../img/collections/check.png"}
                             />
                           </div>
-                          <h4 className="collname">{card[0].name}</h4>
-                          <p>{card[0].desc}</p>
+                          <h4 className='collname'>{card.name}</h4>
+                          <p>{card.desc}</p>
                         </div>
                       </div>
                     </Link>
                   </div>
-                ))}
+                )) : ""}
                 ;
-                <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
-                  <a class="view_all_bdr" onClick={() => setLoadMore(!loadMore)}>
+                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <a
+                    class='view_all_bdr'
+                    onClick={() => setLoadMore(!loadMore)}>
                     Load More
                   </a>
                 </div>
               </div>
             </div>
             <div
-              class="tab-pane fade"
-              id="pills-profile"
-              role="tabpanel"
-              aria-labelledby="pills-profile-tab"
-            >
-              <div className="row">
+              class='tab-pane fade'
+              id='pills-profile'
+              role='tabpanel'
+              aria-labelledby='pills-profile-tab'>
+              <div className='row'>
                 {marketPlaceCollection.map((card) => (
-                  <div className="col-lg-4 col-md-6 mb-5">
+                  <div className='col-lg-4 col-md-6 mb-5'>
                     <Link to={"/collection"}>
-                      <div className="collection_slide">
-                        <img className="img-fluid" src={card.img} alt="" />
-                        <div className="collection_text">
-                          <div className="coll_profileimg">
+                      <div className='collection_slide'>
+                        <img className='img-fluid' src={card.img} alt='' />
+                        <div className='collection_text'>
+                          <div className='coll_profileimg'>
                             <img
-                              alt=""
-                              className="profile_img"
+                              alt=''
+                              className='profile_img'
                               src={"../img/collections/profile1.png"}
                             />
                             <img
-                              alt=""
-                              className="check_img"
+                              alt=''
+                              className='check_img'
                               src={"../img/collections/check.png"}
                             />
                           </div>
-                          <h4 className="collname">{card.heading}</h4>
+                          <h4 className='collname'>{card.heading}</h4>
                           <p>ERC-73</p>
                         </div>
                       </div>
                     </Link>
                   </div>
                 ))}
-                <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
-                  <a class="view_all_bdr" href="/">
+                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <a class='view_all_bdr' href='/'>
                     Load More
                   </a>
                 </div>
               </div>
             </div>
             <div
-              class="tab-pane fade"
-              id="pills-Firearms"
-              role="tabpanel"
-              aria-labelledby="pills-Firearms-tab"
-            >
-              <div className="row">
+              class='tab-pane fade'
+              id='pills-Firearms'
+              role='tabpanel'
+              aria-labelledby='pills-Firearms-tab'>
+              <div className='row'>
                 {marketPlaceCollection.map((card) => (
-                  <div className="col-lg-4 col-md-6 mb-5">
+                  <div className='col-lg-4 col-md-6 mb-5'>
                     <Link to={"/collection"}>
-                      <div className="collection_slide">
-                        <img className="img-fluid" src={card.img} alt="" />
-                        <div className="collection_text">
-                          <div className="coll_profileimg">
+                      <div className='collection_slide'>
+                        <img className='img-fluid' src={card.img} alt='' />
+                        <div className='collection_text'>
+                          <div className='coll_profileimg'>
                             <img
-                              alt=""
-                              className="profile_img"
+                              alt=''
+                              className='profile_img'
                               src={"../img/collections/profile1.png"}
                             />
                             <img
-                              alt=""
-                              className="check_img"
+                              alt=''
+                              className='check_img'
                               src={"../img/collections/check.png"}
                             />
                           </div>
-                          <h4 className="collname">{card.heading}</h4>
+                          <h4 className='collname'>{card.heading}</h4>
                           <p>ERC-73</p>
                         </div>
                       </div>
                     </Link>
                   </div>
                 ))}
-                <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
-                  <a class="view_all_bdr" href="/">
+                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <a class='view_all_bdr' href='/'>
                     Load More
                   </a>
                 </div>
               </div>
             </div>
             <div
-              class="tab-pane fade"
-              id="pills-Soldiers"
-              role="tabpanel"
-              aria-labelledby="pills-Soldiers-tab"
-            >
-              <div className="row">
+              class='tab-pane fade'
+              id='pills-Soldiers'
+              role='tabpanel'
+              aria-labelledby='pills-Soldiers-tab'>
+              <div className='row'>
                 {marketPlaceCollection.map((card) => (
-                  <div className="col-lg-4 col-md-6 mb-5">
+                  <div className='col-lg-4 col-md-6 mb-5'>
                     <Link to={"/collection"}>
-                      <div className="collection_slide">
-                        <img className="img-fluid" src={card.img} alt="" />
-                        <div className="collection_text">
-                          <div className="coll_profileimg">
+                      <div className='collection_slide'>
+                        <img className='img-fluid' src={card.img} alt='' />
+                        <div className='collection_text'>
+                          <div className='coll_profileimg'>
                             <img
-                              alt=""
-                              className="profile_img"
+                              alt=''
+                              className='profile_img'
                               src={"../img/collections/profile1.png"}
                             />
                             <img
-                              alt=""
-                              className="check_img"
+                              alt=''
+                              className='check_img'
                               src={"../img/collections/check.png"}
                             />
                           </div>
-                          <h4 className="collname">{card.heading}</h4>
+                          <h4 className='collname'>{card.heading}</h4>
                           <p>ERC-73</p>
                         </div>
                       </div>
                     </Link>
                   </div>
                 ))}
-                <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
-                  <a class="view_all_bdr" href="/">
+                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <a class='view_all_bdr' href='/'>
                     Load More
                   </a>
                 </div>
               </div>
             </div>
             <div
-              class="tab-pane fade"
-              id="pills-Hot"
-              role="tabpanel"
-              aria-labelledby="pills-Hot-tab"
-            >
-              <div className="row">
+              class='tab-pane fade'
+              id='pills-Hot'
+              role='tabpanel'
+              aria-labelledby='pills-Hot-tab'>
+              <div className='row'>
                 {marketPlaceCollection.map((card) => (
-                  <div className="col-lg-4 col-md-6 mb-5">
+                  <div className='col-lg-4 col-md-6 mb-5'>
                     <Link to={"/collection"}>
-                      <div className="collection_slide">
-                        <img className="img-fluid" src={card.img} alt="" />
-                        <div className="collection_text">
-                          <div className="coll_profileimg">
+                      <div className='collection_slide'>
+                        <img className='img-fluid' src={card.img} alt='' />
+                        <div className='collection_text'>
+                          <div className='coll_profileimg'>
                             <img
-                              alt=""
-                              className="profile_img"
+                              alt=''
+                              className='profile_img'
                               src={"../img/collections/profile1.png"}
                             />
                             <img
-                              alt=""
-                              className="check_img"
+                              alt=''
+                              className='check_img'
                               src={"../img/collections/check.png"}
                             />
                           </div>
-                          <h4 className="collname">{card.heading}</h4>
+                          <h4 className='collname'>{card.heading}</h4>
                           <p>ERC-73</p>
                         </div>
                       </div>
                     </Link>
                   </div>
                 ))}
-                <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
-                  <a class="view_all_bdr" href="/">
+                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <a class='view_all_bdr' href='/'>
                     Load More
                   </a>
                 </div>
               </div>
             </div>
             <div
-              class="tab-pane fade"
-              id="pills-Ranking"
-              role="tabpanel"
-              aria-labelledby="pills-Ranking-tab"
-            >
-              <div className="row">
+              class='tab-pane fade'
+              id='pills-Ranking'
+              role='tabpanel'
+              aria-labelledby='pills-Ranking-tab'>
+              <div className='row'>
                 {marketPlaceCollection.map((card) => (
-                  <div className="col-lg-4 col-md-6 mb-5">
+                  <div className='col-lg-4 col-md-6 mb-5'>
                     <Link to={"/collection"}>
-                      <div className="collection_slide">
-                        <img className="img-fluid" src={card.img} alt="" />
-                        <div className="collection_text">
-                          <div className="coll_profileimg">
+                      <div className='collection_slide'>
+                        <img className='img-fluid' src={card.img} alt='' />
+                        <div className='collection_text'>
+                          <div className='coll_profileimg'>
                             <img
-                              alt=""
-                              className="profile_img"
+                              alt=''
+                              className='profile_img'
                               src={"../img/collections/profile1.png"}
                             />
                             <img
-                              alt=""
-                              className="check_img"
+                              alt=''
+                              className='check_img'
                               src={"../img/collections/check.png"}
                             />
                           </div>
-                          <h4 className="collname">{card.heading}</h4>
+                          <h4 className='collname'>{card.heading}</h4>
                           <p>ERC-73</p>
                         </div>
                       </div>
                     </Link>
                   </div>
                 ))}
-                <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
-                  <a class="view_all_bdr" href="/">
+                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <a class='view_all_bdr' href='/'>
                     Load More
                   </a>
                 </div>
               </div>
             </div>
             <div
-              class="tab-pane fade"
-              id="pills-Auctions"
-              role="tabpanel"
-              aria-labelledby="pills-Auctions-tab"
-            >
-              <div className="row">
+              class='tab-pane fade'
+              id='pills-Auctions'
+              role='tabpanel'
+              aria-labelledby='pills-Auctions-tab'>
+              <div className='row'>
                 {marketPlaceCollection.map((card) => (
-                  <div className="col-lg-4 col-md-6 mb-5">
+                  <div className='col-lg-4 col-md-6 mb-5'>
                     <Link to={"/collection"}>
-                      <div className="collection_slide">
-                        <img className="img-fluid" src={card.img} alt="" />
-                        <div className="collection_text">
-                          <div className="coll_profileimg">
+                      <div className='collection_slide'>
+                        <img className='img-fluid' src={card.img} alt='' />
+                        <div className='collection_text'>
+                          <div className='coll_profileimg'>
                             <img
-                              alt=""
-                              className="profile_img"
+                              alt=''
+                              className='profile_img'
                               src={"../img/collections/profile1.png"}
                             />
                             <img
-                              alt=""
-                              className="check_img"
+                              alt=''
+                              className='check_img'
                               src={"../img/collections/check.png"}
                             />
                           </div>
-                          <h4 className="collname">{card.heading}</h4>
+                          <h4 className='collname'>{card.heading}</h4>
                           <p>ERC-73</p>
                         </div>
                       </div>
                     </Link>
                   </div>
                 ))}
-                <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
-                  <a class="view_all_bdr" href="/">
+                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <a class='view_all_bdr' href='/'>
                     Load More
                   </a>
                 </div>

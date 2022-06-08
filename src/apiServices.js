@@ -438,6 +438,29 @@ export const GetOwnedNftList = async (data) => {
   }
 };
 
+export const getBrandById = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL +
+        `/utils/getBrandByID/${data}`,
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+} 
+
 // export const getUsersCollections = async () => {
 //   const requestOptions = {
 //     method: "GET",
@@ -827,3 +850,4 @@ export const GetOwnedNftList = async (data) => {
 //     return err;
 //   }
 // };
+

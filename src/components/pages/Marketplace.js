@@ -47,42 +47,44 @@ function Marketplace() {
   const [grid, setgrid] = useState("col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4");
 
   const [allNFTs, setAllNFTs] = useState([]);
-  const { id } = useParams();
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
+  const { searchedText } = useParams();
+
+  console.log("searchedText", searchedText);
 
   useEffect(async () => {
     let temp = allNFTs;
     try {
       const reqData = {
         page: currPage,
-        limit: 1,
+        limit: 12,
+        searchText: searchedText ? searchedText : "",
       };
       const res = await getNFTs(reqData);
-      if(res.length > 0){
-      for (let i = 0; i < res.length; i++) {
-        const orderDet = await getOrderByNftID({
-          nftId: res[i].id,
-        });
-        console.log("order details", orderDet);
-        if (orderDet.results.length > 0) {
-          res[i] = {
-            ...res[i],
-            isNftOnSale: true,
-          };
-        } else {
-          res[i] = {
-            ...res[i],
-            isNftOnSale: false,
-          };
+      if (res.length > 0) {
+        for (let i = 0; i < res.length; i++) {
+          const orderDet = await getOrderByNftID({
+            nftId: res[i].id,
+          });
+          console.log("order details", orderDet);
+          if (orderDet.results.length > 0) {
+            res[i] = {
+              ...res[i],
+              isNftOnSale: true,
+            };
+          } else {
+            res[i] = {
+              ...res[i],
+              isNftOnSale: false,
+            };
+          }
         }
-      }
-      
+
         temp = [...temp, res];
         setAllNFTs(temp);
         setCurrPage(currPage + 1);
       }
-      
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
     }
@@ -154,18 +156,19 @@ function Marketplace() {
             </div> */}
 
           <div className='row'>
-            {allNFTs
-              ? allNFTs.map((card, key) => {
+            {allNFTs[0]
+              ? allNFTs[0].map((card, key) => {
+              
                   return (
                     <div className={grid}>
-                      <div className='items_slide'>
-                        <a href={`/NFTdetails/${card[0].id}`}>
+                      <div className='items_slide' key={key}>
+                        <a href={`/NFTdetails/${card.id}`}>
                           <div className='items_profileimg' key={key}>
                             <div className='profile_left'>
                               <img
                                 alt=''
                                 className='profile_img'
-                                src={card[0].authorImage}
+                                src={card.authorImage}
                               />
                               <img
                                 alt=''
@@ -179,14 +182,14 @@ function Marketplace() {
                           </div>
                           <img
                             alt=''
-                            src={card[0].image}
+                            src={card.image}
                             class='img-fluid items_img width-100 my-3'
                           />
                           <div className='items_text'>
                             <div className='items_info '>
                               <div className='items_left'>
-                                <h3 className=''>{card[0].name}</h3>
-                                <p>{card[0].desc}</p>
+                                <h3 className=''>{card.name}</h3>
+                                <p>{card.desc}</p>
                               </div>
                               <div className='items_right justify-content-end d-flex'>
                                 <span>
@@ -201,14 +204,14 @@ function Marketplace() {
                                       fill='#AAAAAA'
                                     />
                                   </svg>
-                                  {card[0].like}
+                                  {card.like}
                                 </span>
                               </div>
                             </div>
                             <Link
-                              to={`/NFTdetails/${card[0].id}`}
+                              to={`/NFTdetails/${card.id}`}
                               className='border_btn width-100 title_color'>
-                              {card[0].isNftOnSale ? "Buy" : "View"}
+                              {card.isNftOnSale ? "Buy" : "View"}
                             </Link>
                           </div>
                         </a>

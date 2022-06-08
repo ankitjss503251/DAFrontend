@@ -4,7 +4,7 @@ import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
 import NFToffer from "../components/NFToffer";
 import NFThistory from "../components/NFThistory";
-import { getNFTs } from "../../helpers/getterFunctions";
+import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { useParams } from "react-router-dom";
 import { convertToEth } from "../../helpers/numberFormatter";
 
@@ -25,6 +25,8 @@ function NFTDetails() {
 
   const [NFTDetails, setNFTDetails] = useState([]);
   const [allNFTs, setAllNFTs] = useState([]);
+  const [collection, setCollection] = useState([]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -34,18 +36,20 @@ function NFTDetails() {
       const reqData = {
         page: 1,
         limit: 12,
-        nftID: id
+        nftID: id,
       };
       const res = await getNFTs(reqData);
-      console.log("first--->", res);
+
       setNFTDetails(res[0]);
+      const c = await getCollections({ collectionID: res[0].collection });
+      console.log("in here", c[0]);
+      setCollection(c[0]);
       const reqData1 = {
         page: 1,
         limit: 12,
-        collectionID: res[0]?.collection?._id,
+        collectionID: res[0].collection,
       };
       const nfts = await getNFTs(reqData1);
-    
       setAllNFTs(nfts);
     } catch (e) {
       console.log("Error in fetching nft Details", e);
@@ -62,7 +66,7 @@ function NFTDetails() {
             </div>
             <div className='col-lg-6 nft_details'>
               <p className='mb-0'>
-                {NFTDetails?.collection?.name} Collection{" "}
+                {collection?.name} Collection{" "}
                 <img src={"../img/check.png"} class='img-fluid' alt='' />
               </p>
               <h1 className='mb-3'>{NFTDetails?.name}</h1>
@@ -70,7 +74,7 @@ function NFTDetails() {
                 <p>
                   Owned by{" "}
                   <span style={textColor}>
-                    {NFTDetails?.collection?.createdBy}
+                    {collection?.createdBy}
                   </span>
                 </p>
                 <span className='add_wishlist'>
@@ -281,7 +285,7 @@ function NFTDetails() {
                 <div className='price_div'>
                   <img src={"../img/favicon.png"} class='img-fluid' alt='' />
                   {Number(
-                    convertToEth(NFTDetails?.collection?.price.$numberDecimal)
+                    convertToEth(collection?.price)
                   ).toFixed(4)}{" "}
                   HNTR
                 </div>
@@ -301,19 +305,19 @@ function NFTDetails() {
             </div>
             <div className='col-lg-6 mb-5'>
               <h3 className='title_36 mb-4'>
-                About {NFTDetails?.collection?.name} Collection
+                About {collection?.name} Collection
               </h3>
               <div className='row'>
                 <div className='col-md-4 nftDetails_img_con'>
                   <img
-                    src={NFTDetails?.collection?.logoImage}
+                    src={collection?.logoImg}
                     alt=''
                     class='img-fluid'
                   />
                 </div>
                 <div className='col-md-8'>
                   <p className='textdes'>
-                    {NFTDetails?.collection?.description}{" "}
+                    {collection?.description}{" "}
                   </p>
                 </div>
               </div>
@@ -347,9 +351,9 @@ function NFTDetails() {
                 <li>
                   <span className='asset_title'>Contact Address</span>
                   <span className='asset_detail'>
-                    {NFTDetails?.collection?.contractAddress?.slice(0, 4) +
+                    {collection?.contractAddress?.slice(0, 4) +
                       "..." +
-                      NFTDetails?.collection?.contractAddress?.slice(38, 42)}
+                      collection?.contractAddress?.slice(38, 42)}
                   </span>
                 </li>
                 <li>
@@ -420,12 +424,12 @@ function NFTDetails() {
               <>
                 <div className='col-md-12'>
                   <h3 className='title_36 mb-4'>
-                    More from {NFTDetails?.collection?.name} Collection
+                    More from {collection?.name} Collection
                   </h3>
                   <FirearmsCollection
                     nfts={allNFTs}
                     currNFTID={NFTDetails?.id}
-                    collectionName={NFTDetails?.collection?.name}
+                    collectionName={collection?.name}
                   />
                 </div>
 
