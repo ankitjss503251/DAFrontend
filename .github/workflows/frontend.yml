@@ -1,15 +1,15 @@
 name: deploy on ec2
-
 on:
   push:
     branches: 
-      - main
+       - main
 
+       
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy frontend
+    - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -19,9 +19,9 @@ jobs:
         script: |
           cd /var/www/html/project/DAFrontend
           pwd
-          sudo git pull origin main
-          sudo rm -rf build
-          sudo yarn 
+          ls -la
+          sudo git pull
+          sudo yarn
           sudo yarn run build
           sudo pm2 ls
           sudo pm2 restart all
