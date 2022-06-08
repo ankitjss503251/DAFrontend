@@ -152,10 +152,10 @@ function CollectionWithCollection() {
       <section className="collection_list mb-5 pb-5">
         <div className="container">
           <div className='row'>
-            {CollectionCard.map(card =>(
-              <div className={grid} key={card.id}>
-                <CollectionList image={card.img} submenu={card.Subheading} heading={card.Heading} price={card.price} date={card.Date}
-                button={card.Slug} link={card.Like} />
+            {CollectionCard?.map(card =>(
+              <div className={grid} key={card?.id}>
+                <CollectionList image={card?.img} submenu={card?.Subheading} heading={card?.Heading} price={card?.price} date={card.Date}
+                button={card?.Slug} link={card?.Like} />
               </div>
             ))};
             <div class="col-md-12 text-center mt-5"><a class="view_all_bdr" href="/">Load More</a></div>

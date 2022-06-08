@@ -4545,3 +4545,8 @@ a:hover {
   outline: none;
   color: #fff;
 }
+
+.accept_btn:hover{
+  color: yellow;
+  background: #fff;
+}

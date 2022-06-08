@@ -34,6 +34,7 @@ function Marketplacecollection() {
       const reqData = {
         page: currPage,
         limit: 1,
+        // isOnMarketplace: 1
       };
       const res = await getCollections(reqData);
       if(res.length > 0){

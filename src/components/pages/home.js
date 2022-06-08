@@ -72,6 +72,7 @@ const Home = () => {
         page: 1,
         limit: 12,
         isExclusive: 1,
+        
       });
       console.log("result of getUpcomingMints helper fn--->", res);
       setUpcomingMints(res);

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function CollectionList(props) {
   return (
-    <Link to={`/NFTdetails/${props.nft.id}`}>
+    <Link to={`/NFTdetails/${props?.nft?.id}`}>
         <div className="collection_items">
             <img alt='' src={props.nft.image} class="img-fluid width-100" />
             <div className="coll_itemstext">

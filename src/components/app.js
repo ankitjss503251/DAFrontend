@@ -62,6 +62,7 @@ const App = (props) => {
         <Route exact path="/login" element={<Login/>} />
         <Route path="/register" element={<Register />} />
         <Route path="/marketplaceCollection" element={<Marketplacecollection />} />
+        <Route path="/marketplaceCollection/:searchTxt" element={<Marketplacecollection />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/NFTdetails/:id" element={<NFTDetails />} />
         <Route path="/updateProfile" element={<UpdateProfile />} />

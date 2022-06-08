@@ -575,7 +575,7 @@ export const getNFTs = async (req) => {
     };
 
     data = await getNFTList(reqBody);
-    console.log("get all collections--->", data);
+    console.log("get all nfts--->", data);
   } catch (e) {
     console.log("Error in getNFts API--->", e);
   }
