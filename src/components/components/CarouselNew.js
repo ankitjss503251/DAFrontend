@@ -20,7 +20,6 @@ function ItemsList() {
         const orderDet = await getOrderByNftID({
           nftId: res[i].id,
         });
-        console.log("order details", orderDet);
         if (orderDet.results.length > 0) {
           res[i] = {
             ...res[i],
@@ -33,7 +32,6 @@ function ItemsList() {
           };
         }
       }
-      console.log("result of getPutOnSaleItems helper fn--->", res);
       setPutOnSaleItems(res);
     } catch (e) {
       console.log("Error in fetching all collections list", e);
@@ -95,7 +93,6 @@ function ItemsList() {
       <Slider {...settings}>
         {putOnSaleItems
           ? putOnSaleItems.map((card, key) => {
-              console.log("first", card.isNftOnSale);
               return (
                 <a href={`/NFTdetails/${card.id}`}>
                   <div className='items_slide'>

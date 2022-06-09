@@ -26,11 +26,6 @@ const bgImgStyle = {
   backgroundColor: "#000",
 };
 
-const bgImage = {
-  backgroundImage: "url(./img/collections/collection_bg.jpg)",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-};
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
   backgroundRepeat: "no-repeat",
@@ -65,6 +60,7 @@ function Collection() {
   const [isCopied, setIsCopied] = useState(false);
   const [nftList, setNftList] = useState("");
   const { id } = useParams();
+
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -110,17 +106,22 @@ function Collection() {
         setNftList(temp);
         setCurrPage(currPage + 1);
       }
+      console.log("collll", res[0]);
+      
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
   }, [loadMore]);
 
+  
+
   return (
     <div style={bgImgStyle}>
-      <section
-        className='collection_banner pdd_8'
-        backgroundImage={collectionDetails?.coverImg}
-        style={bgImage}></section>
+      <section className='collection_banner pdd_8' style={{
+        backgroundImage: `url(${collectionDetails?.coverImg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}></section>
       <section className='collection_info'>
         <div className='container'>
           <div className='collection_pick'>
@@ -468,9 +469,7 @@ function Collection() {
               : ""}
             ;
             <div class='col-md-12 text-center mt-5'>
-              <a
-                class='view_all_bdr'
-                onClick={() => setLoadMore(!loadMore)}>
+              <a class='view_all_bdr' onClick={() => setLoadMore(!loadMore)}>
                 Load More
               </a>
             </div>

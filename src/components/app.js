@@ -62,13 +62,16 @@ const App = (props) => {
         <Route exact path="/login" element={<Login/>} />
         <Route path="/register" element={<Register />} />
         <Route path="/marketplaceCollection" element={<Marketplacecollection />} />
+        <Route path="/marketplaceCollection/:searchedText" element={<Marketplacecollection />} />
         <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/marketplace/:searchedText" element={<Marketplace />} />
         <Route path="/NFTdetails/:id" element={<NFTDetails />} />
         <Route path="/updateProfile" element={<UpdateProfile />} />
         <Route path="/userprofile"element={<UserProfile />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/collection/:id" element={<Collection />} />
         <Route path="/collectionwithcollection" element={<CollectionWithCollection />} />
+        <Route path="/collectionwithcollection/:brandID" element={<CollectionWithCollection />} />
         <Route path="/collectionActivity" element={<CollectionActivity />} />
         <Route path="/Notifications" element={<Notifications />} />
         <Route path="/NotificationsArea" element={<NotificationsArea />} />

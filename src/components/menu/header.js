@@ -126,6 +126,8 @@ const Header = function () {
   const [showSearchDiv, setShowSearchDiv] = useState("");
   const [searchedText, setShowSearchedText] = useState("");
 
+  
+
   useEffect(() => {
     if (cookies["selected_account"]) {
       setAccount(cookies["selected_account"]);
@@ -282,6 +284,7 @@ const Header = function () {
   const disconnectWallet = async () => {
     // const [primaryWallet] = await onboard.state.get().wallets;
     // if (!primaryWallet) return;
+    
     await onboard.disconnectWallet({ label: "Metamask" });
     await Logout(cookies["selected_account"]);
     refreshState();
@@ -479,7 +482,7 @@ const Header = function () {
                       })
                     : ""}
                 </ul>
-                {scolns.length > 3 && <a className="view_all_bdr search_view_all mb-3" href="/marketplacecollection">View All</a>}
+                {scolns.length > 3 && <a className="view_all_bdr search_view_all mb-3" href={`/marketplaceCollection/${searchedText}`}>View All</a>}
                 {sNfts.length > 0 && <p>NFTs</p>}
                 <ul>
                   {sNfts
@@ -488,7 +491,7 @@ const Header = function () {
                       })
                     : ""}
                 </ul>
-                {sNfts.length > 3 && <a className="view_all_bdr search_view_all" href="/marketplace">View All</a>}
+                {sNfts.length > 3 && <a className="view_all_bdr search_view_all" href={`/marketplace/${searchedText}`}>View All</a>}
               </div>
             ) : (
               ""

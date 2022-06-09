@@ -9,7 +9,7 @@ function CollectionList(props) {
             <div className="coll_itemstext">
                 <div className="collection_row mb-3">
                     <div className="collection_col">
-                        <span>{props.collectionName}</span>
+                        <span>{props.nft.collectionName} Collection</span>
                         <h6>{props.nft.name}</h6>
                     </div>
                     <div className="collection_col text-end">
