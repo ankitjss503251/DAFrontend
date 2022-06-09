@@ -124,8 +124,6 @@ const Navbar = (props) => {
     setProvider();
   };
 
- 
-
   useEffect(() => {
     console.log("provider in useEffect", provider);
     if (provider) {
@@ -244,7 +242,6 @@ const Navbar = (props) => {
   };
 
   const disconnectWallet = async () => {
-    
     // const [primaryWallet] = await onboard.state.get().wallets;
     // if (!primaryWallet) return;
     await onboard.disconnectWallet({ label: "Metamask" });
@@ -314,7 +311,8 @@ const Navbar = (props) => {
         <div className="profile_img">
           <img src={"../images/user.jpg"} alt="" className="img-fluid" />
         </div>
-        {props.model} Decryptblock
+        {props.model}
+        <a href="./">Decryptblock</a>
       </div>
       <ul className="p-0 m-0">
         <li className="text-light">

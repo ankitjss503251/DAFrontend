@@ -214,7 +214,7 @@ function CreateNFTs() {
 
       let sellerOrder = [
         currentUser.toLowerCase(),
-        collectionDetail.contractAddress,
+        "0x8A23fe04CdDF650A6A73287Dd62c207F2F0C190A",
         collectionDetail.nextID,
         quantity,
         0,
@@ -238,7 +238,7 @@ function CreateNFTs() {
         let reqParams = {
           nftId: createRes.data._id,
           tokenAddress: contracts.USDT,
-          collection: collectionDetail.contractAddress,
+          collection: "0x8A23fe04CdDF650A6A73287Dd62c207F2F0C190A",
           price: collectionDetail.price.$numberDecimal,
           quantity: quantity,
           saleType: 0,
