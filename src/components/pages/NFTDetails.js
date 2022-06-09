@@ -434,7 +434,7 @@ function NFTDetails() {
                 </div>
 
                 <div class='col-md-12 text-center mt-5'>
-                  <a class='view_all_bdr' href='/'>
+                  <a class='view_all_bdr' href={`/marketplacecollection/${collection?.name}`}>
                     View All
                   </a>
                 </div>

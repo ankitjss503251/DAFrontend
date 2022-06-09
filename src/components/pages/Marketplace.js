@@ -8,6 +8,7 @@ import Twogrid from "../SVG/Twogrid";
 import { getNFTs } from "../../helpers/getterFunctions";
 import { Link, useParams } from "react-router-dom";
 import { getOrderByNftID } from "./../../helpers/getterFunctions";
+import { convertToEth } from "../../helpers/numberFormatter";
 
 var register_bg = {
   backgroundImage: "url(./img/Marketplace/marketplace-bg.jpg)",
@@ -51,8 +52,6 @@ function Marketplace() {
   const [loadMore, setLoadMore] = useState(false);
   const { searchedText } = useParams();
 
-  console.log("searchedText", searchedText);
-
   useEffect(async () => {
     let temp = allNFTs;
     try {
@@ -67,21 +66,25 @@ function Marketplace() {
           const orderDet = await getOrderByNftID({
             nftId: res[i].id,
           });
-          console.log("order details", orderDet);
           if (orderDet.results.length > 0) {
             res[i] = {
               ...res[i],
               isNftOnSale: true,
+              salesType: orderDet?.results[0]?.salesType,
+              price: Number(convertToEth(orderDet?.results[0]?.price?.$numberDecimal) ).toFixed(4),
             };
           } else {
             res[i] = {
               ...res[i],
               isNftOnSale: false,
+              salesType: orderDet?.results[0]?.salesType,
+              price: Number(convertToEth(orderDet?.results[0]?.price?.$numberDecimal) ).toFixed(4),
             };
           }
         }
 
         temp = [...temp, res];
+        console.log("temp--->", temp);
         setAllNFTs(temp);
         setCurrPage(currPage + 1);
       }
@@ -158,7 +161,6 @@ function Marketplace() {
           <div className='row'>
             {allNFTs[0]
               ? allNFTs[0].map((card, key) => {
-              
                   return (
                     <div className={grid}>
                       <div className='items_slide' key={key}>
@@ -189,7 +191,7 @@ function Marketplace() {
                             <div className='items_info '>
                               <div className='items_left'>
                                 <h3 className=''>{card.name}</h3>
-                                <p>{card.desc}</p>
+                                <p>{card.price ? card.price : "-"} HNTR</p>
                               </div>
                               <div className='items_right justify-content-end d-flex'>
                                 <span>
@@ -211,7 +213,7 @@ function Marketplace() {
                             <Link
                               to={`/NFTdetails/${card.id}`}
                               className='border_btn width-100 title_color'>
-                              {card.isNftOnSale ? "Buy" : "View"}
+                              {card.isNftOnSale ? (card.salesType === 0 ? "Buy Now" : "Place Bid") : "View"}
                             </Link>
                           </div>
                         </a>

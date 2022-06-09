@@ -621,7 +621,6 @@ export const getAuthors = async () => {
       searchText: "",
     };
     data = await GetAllUserDetails(reqBody);
-    console.log("get all collections--->", data);
   } catch (e) {
     console.log("Error in getAllUserDetails API--->", e);
   }
@@ -644,7 +643,6 @@ export const getOrderByNftID = async (reqBody) => {
   let data = [];
   try {
     data = await GetOrdersByNftId(reqBody);
-    console.log("get all collections--->", data);
   } catch (e) {
     console.log("Error in getOrderByNftID API", e);
   }

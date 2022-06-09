@@ -126,6 +126,8 @@ const Header = function () {
   const [showSearchDiv, setShowSearchDiv] = useState("");
   const [searchedText, setShowSearchedText] = useState("");
 
+  
+
   useEffect(() => {
     if (cookies["selected_account"]) {
       setAccount(cookies["selected_account"]);
@@ -282,6 +284,7 @@ const Header = function () {
   const disconnectWallet = async () => {
     // const [primaryWallet] = await onboard.state.get().wallets;
     // if (!primaryWallet) return;
+    
     await onboard.disconnectWallet({ label: "Metamask" });
     await Logout(cookies["selected_account"]);
     refreshState();
