@@ -4,11 +4,11 @@ import { NotificationManager } from "react-notifications";
 import {
   // GENERAL_DATE,
   // GENERAL_TIMESTAMP,
-  // MAX_ALLOWANCE_AMOUNT,
+  MAX_ALLOWANCE_AMOUNT,
   CURRENCY,
 } from "./constants";
 // import degnrABI from "./../config/abis/dgnr8.json";
-// import erc20Abi from "./../config/abis/erc20.json";
+import erc20Abi from "./../config/abis/erc20.json";
 import erc1155Abi from "./../config/abis/simpleERC1155.json";
 // import {
 //   createOrder,
@@ -20,7 +20,7 @@ import erc1155Abi from "./../config/abis/simpleERC1155.json";
 // import { createCollection } from "../apiServices";
 import {
   GetOwnerOfToken,
-  // getPaymentTokenInfo,
+  getPaymentTokenInfo,
   // getUsersTokenBalance,
   // // isEmpty,
   // readReceipt,
@@ -59,7 +59,7 @@ export const handleBuyNft = async (
   let status;
   let marketplace;
   try {
-    console.log("order idd",id)
+    console.log("order idd", id);
     order = await buildSellOrder(id);
     details = await getOrderDetails({ orderId: id });
     status = 1;
@@ -142,6 +142,18 @@ export const handleBuyNft = async (
         buyerOrder.push(parseInt(order[key]));
     }
   }
+  let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
+  console.log("allowance", allowance.allowance);
+  if (
+    new BigNumber(allowance.allowance).isLessThan(new BigNumber(buyerOrder[6]))
+  ) {
+    let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
+
+    if (approveRes == false) {
+      return false;
+    }
+  }
+
   console.log("seller and buyer order is", sellerOrder, buyerOrder);
   if (LazyMintingStatus !== 1) {
     try {
@@ -302,6 +314,35 @@ export const handleBuyNft = async (
   setTimeout(() => {
     window.location.href = `/multimintingpage/${collectionId}`;
   }, 1000);
+};
+
+export const handleApproveToken = async (userAddress, tokenAddress) => {
+  try {
+    let token = await exportInstance(tokenAddress, erc20Abi);
+    const options = {
+      from: userAddress,
+      gasLimit: 9000000,
+      value: 0,
+    };
+    let res = await token.approve(
+      contracts.MARKETPLACE,
+      MAX_ALLOWANCE_AMOUNT,
+      options
+    );
+    res = await res.wait();
+    console.log(res);
+    if (res.status === 1) {
+      NotificationManager.success("Approved");
+      // window.location.reload();
+      return res;
+    }
+  } catch (e) {
+    console.log("error in contract function calling", e);
+    if (e.code === 4001) {
+      NotificationManager.error("User denied ");
+      return false;
+    }
+  }
 };
 
 // export const handleRemoveFromSale = async (orderId, account) => {
@@ -1102,33 +1143,4 @@ export const handleBuyNft = async (
 //   }
 //   NotificationManager.success("Bid Accepted Successfully");
 //   slowRefresh();
-// };
-
-// export const handleApproveToken = async (userAddress, tokenAddress) => {
-//   try {
-//     let token = await exportInstance(tokenAddress, erc20Abi);
-//     const options = {
-//       from: userAddress,
-//       gasLimit: 9000000,
-//       value: 0,
-//     };
-//     let res = await token.approve(
-//       contracts.MARKETPLACE,
-//       MAX_ALLOWANCE_AMOUNT,
-//       options
-//     );
-//     res = await res.wait();
-//     console.log(res);
-//     if (res.status === 1) {
-//       NotificationManager.success("Approved");
-//       // window.location.reload();
-//       return res;
-//     }
-//   } catch (e) {
-//     console.log("error in contract function calling", e);
-//     if (e.code === 4001) {
-//       NotificationManager.error("User denied ");
-//       return false;
-//     }
-//   }
 // };

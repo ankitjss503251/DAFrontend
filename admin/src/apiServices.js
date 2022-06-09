@@ -1,4 +1,9 @@
 import { ethers } from "ethers";
+import Web3 from "web3";
+
+const web3 = new Web3(
+  "https://polygon-mumbai.g.alchemy.com/v2/8RAii8kDi0Fwe47iF1_WLjpcSfp3q3R6"
+);
 
 export const exportInstance = async (SCAddress, ABI) => {
   let provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -7,6 +12,16 @@ export const exportInstance = async (SCAddress, ABI) => {
 
   if (a) {
     return a;
+  } else {
+    return {};
+  }
+};
+
+export const exportInstanceThroughWeb3 = async (SCAddress, ABI) => {
+  let contract = new web3.eth.Contract(ABI, SCAddress);
+  // console.log("contract", contract);
+  if (contract) {
+    return contract;
   } else {
     return {};
   }
@@ -477,9 +492,6 @@ export const addCategory = async (data) => {
   }
 };
 
-//CREATE catagories ENDS
-
-//GET Category
 export const getAllCategory = async (id) => {
   const requestOptions = {
     method: "GET",
@@ -532,6 +544,252 @@ export const createOrder = async (data) => {
     return err;
   }
 };
+
+export const importCollection = async (data) =>{
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/import/createCollection",
+      requestOptions
+    );
+
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas;
+  } catch (err) {
+    return err;
+  }
+}
+
+export const importNft = async (data) =>{
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/import/createNft",
+      requestOptions
+    );
+
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas;
+  } catch (err) {
+    return err;
+  }
+}
+
+export const getImportedNFTs = async (data) =>{
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/import/getNFT",
+      requestOptions
+    );
+
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+}
+
+
+export const getImportedCollections = async (data) =>{
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/import/getCollection",
+      requestOptions
+    );
+
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+}
+
+export const DeleteOrder = async (data) => {
+  const requestOptions = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    console.log("remove");
+
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/order/deleteOrder",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const getOrderDetails = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/order/getOrder",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    console.log("get order data is--->", datas);
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const UpdateOrderStatus = async (data) => {
+  const requestOptions = {
+    method: "PUT",
+
+    headers: {
+      Authorization: localStorage.getItem("Authorization"),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/order/updateOrder",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const GetOrdersByNftId = async (data) => {
+  //   {
+  //     "nftId": "6229812aa2c3ed3120651ca6",
+  //     "sortKey": "oTokenId",
+  //     "sortType": -1,
+  //     "page": 1,
+  //     "limit": 4
+  // }
+
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/order/getOrdersByNftId",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+// export const getImportedNFTs = async (data) => {
+//   const requestOptions = {
+//     method: "GET",
+//     // headers: {
+//     //   "x-api-key": "8c0e14f4-bb85-4646-84ba-e8467dce55be",
+//     // },
+//   };
+
+//   try {
+//     console.log("put on marketplace");
+
+//     let response = await fetch(
+//       `https://api-us-west1.tatum.io/v3/nft/collection/MATIC/${data.collection}?pageSize=10`,
+//       requestOptions
+//     );
+
+//     const isJson = response.headers
+//       .get("content-type")
+//       ?.includes("application/json");
+//     const datas = isJson && (await response.json());
+
+//     return datas;
+//   } catch (err) {
+//     return err;
+//   }
+// };
 
 // export const GetMyLikedNft = async (data) => {
 //   const requestOptions = {
@@ -683,37 +941,7 @@ export const createOrder = async (data) => {
 //   }
 // };
 
-// export const GetOrdersByNftId = async (data) => {
-//   //   {
-//   //     "nftId": "6229812aa2c3ed3120651ca6",
-//   //     "sortKey": "oTokenId",
-//   //     "sortType": -1,
-//   //     "page": 1,
-//   //     "limit": 4
-//   // }
 
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/order/getOrdersByNftId",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
 
 // export const Register = async (account) => {
 //   const requestOptions = {
@@ -858,30 +1086,6 @@ export const createOrder = async (data) => {
 
 // export const Like = async () => {};
 
-// export const getOrderDetails = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/order/getOrder",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     console.log("get order data is--->", datas);
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
 
 // export const GetOnSaleItems = async (data) => {
 //   const requestOptions = {
@@ -956,31 +1160,7 @@ export const createOrder = async (data) => {
 //   }
 // };
 
-// export const UpdateOrderStatus = async (data) => {
-//   const requestOptions = {
-//     method: "PUT",
 
-//     headers: {
-//       Authorization: localStorage.getItem("Authorization"),
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/order/updateOrder",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
 
 // export const LikeNft = async (data) => {
 //   const requestOptions = {
@@ -1082,32 +1262,6 @@ export const createOrder = async (data) => {
 //   }
 // };
 
-// export const DeleteOrder = async (data) => {
-//   const requestOptions = {
-//     method: "DELETE",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     console.log("remove");
-
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/order/deleteOrder",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
 
 // export const TransferNfts = async (data) => {
 //   //   {

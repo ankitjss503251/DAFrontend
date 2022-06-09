@@ -14,7 +14,7 @@ import {
   getNFTList,
 } from "../apiServices";
 // import { ethers } from "ethers";
-// import contracts from "../config/contracts";
+import contracts from "../config/contracts";
 import erc20Abi from "./../config/abis/erc20.json";
 import erc721Abi from "./../config/abis/simpleERC721.json";
 import erc1155Abi from "./../config/abis/simpleERC1155.json";
@@ -80,6 +80,22 @@ export const GetOwnerOfToken = async (
   } else balance = await collectionInstance.balanceOf(account, tokenId);
   console.log("balance", balance.toString());
   return balance.toString();
+};
+
+export const getPaymentTokenInfo = async (userWallet, tokenAddress) => {
+  let token = await exportInstance(tokenAddress, erc20Abi);
+  console.log("token is ----->", token);
+  let symbol = await token.symbol();
+  let name = await token.name();
+  let allowance = await token.allowance(userWallet, contracts.MARKETPLACE);
+  let balance = await token.balanceOf(userWallet);
+  console.log("allowance", allowance.toString());
+  return {
+    symbol: symbol,
+    name: name,
+    balance: balance.toString(),
+    allowance: allowance.toString(),
+  };
 };
 
 // export const getUsersNFTs = async (
@@ -373,21 +389,7 @@ export const GetOwnerOfToken = async (
 //   };
 // };
 
-// export const getPaymentTokenInfo = async (userWallet, tokenAddress) => {
-//   let token = await exportInstance(tokenAddress, erc20Abi);
-//   console.log("token is ----->", token);
-//   let symbol = await token.symbol();
-//   let name = await token.name();
-//   let allowance = await token.allowance(userWallet, contracts.MARKETPLACE);
-//   let balance = await token.balanceOf(userWallet);
-//   console.log("allowance", allowance.toString());
-//   return {
-//     symbol: symbol,
-//     name: name,
-//     balance: balance.toString(),
-//     allowance: allowance.toString(),
-//   };
-// };
+
 
 // export const checkIfLiked = async (nftId, authorId) => {
 //   let nftDetails = await GetNftDetails(nftId);

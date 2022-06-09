@@ -1,276 +1,979 @@
-// import { BigNumber } from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 // import { ethers } from "ethers";
-// import { NotificationManager } from "react-notifications";
-// import {
-//   GENERAL_DATE,
-//   GENERAL_TIMESTAMP,
-//   MAX_ALLOWANCE_AMOUNT,
-// } from "./constants";
+import { NotificationManager } from "react-notifications";
+import contracts from "../config/contracts";
+import {
+  GENERAL_DATE,
+  GENERAL_TIMESTAMP,
+  MAX_ALLOWANCE_AMOUNT,
+} from "./constants";
 // import degnrABI from "./../config/abis/dgnr8.json";
 // import erc20Abi from "./../config/abis/erc20.json";
-// import erc1155Abi from "./../config/abis/simpleERC1155.json";
-// import {
-//   createOrder,
-//   TransferNfts,
-//   createBidNft,
-//   updateBidNft,
-//   acceptBid,
-// } from "../apiServices";
+import erc1155Abi from "./../config/abis/simpleERC1155.json";
+import {
+  createOrder,
+  // TransferNfts,
+  // createBidNft,
+  // updateBidNft,
+  // acceptBid,
+} from "../apiServices";
 // import { createCollection } from "../apiServices";
-// import {
-//   GetOwnerOfToken,
-//   getPaymentTokenInfo,
-//   getUsersTokenBalance,
-//   // isEmpty,
-//   readReceipt,
-// } from "./getterFunctions";
-// import {
-//   exportInstance,
-//   getOrderDetails,
-//   UpdateOrderStatus,
-//   DeleteOrder,
-//   InsertHistory,
-// } from "../apiServices";
-// import marketPlaceABI from "./../config/abis/marketplace.json";
+import {
+  buildSellOrder,
+  GetOwnerOfToken,
+  // getPaymentTokenInfo,
+  // getUsersTokenBalance,
+  // // isEmpty,
+  // readReceipt,
+} from "./getterFunctions";
+import {
+  exportInstance,
+  getOrderDetails,
+  UpdateOrderStatus,
+  DeleteOrder,
+  // InsertHistory,
+} from "../apiServices";
+import marketPlaceABI from "./../config/abis/marketplace.json";
 // import contracts from "./../config/contracts";
-// import { buildSellOrder, getNextId, getSignature } from "./getterFunctions";
+import { getSignature } from "./getterFunctions";
 // import simplerERC721ABI from "./../config/abis/simpleERC721.json";
 // import simplerERC1155ABI from "./../config/abis/simpleERC1155.json";
 // import { convertToEth } from "./numberFormatter";
-// import erc721Abi from "./../config/abis/simpleERC721.json";
-// import { slowRefresh } from "./NotifyStatus";
+import erc721Abi from "./../config/abis/simpleERC721.json";
+import { slowRefresh } from "./NotifyStatus";
 
-// export const handleBuyNft = async (id, isERC721, account, balance, qty = 1) => {
-//   let order;
-//   let details;
-//   let status;
-//   let marketplace;
-//   try {
-//     order = await buildSellOrder(id);
-//     details = await getOrderDetails({ orderId: id });
-//     status = 1;
-//     console.log("order and details are", order, qty);
-//   } catch (e) {
-//     console.log("error in API", e);
-//     return;
-//   }
+export const putOnMarketplace = async (account, orderData) => {
+  console.log("Starting NFT create", account, orderData);
+  if (!account) {
+    console.log("empty account");
+    return;
+  }
 
-//   let sellerOrder = [];
-//   let buyerOrder = [];
-//   console.log("details.signature", details.oSignature);
-//   let amount = new BigNumber(order[6].toString())
-//     .multipliedBy(new BigNumber(qty.toString()))
-//     .toString();
-//   console.log(
-//     "price",
-//     new BigNumber(order[6].toString())
-//       .multipliedBy(new BigNumber(order[3].toString()))
-//       .toString(),
-//     isERC721
-//   );
-//   for (let key = 0; key < 11; key++) {
-//     switch (key) {
-//       case 0:
-//         if (isERC721) {
-//           sellerOrder.push(order[key]);
-//           buyerOrder.push(account);
-//           break;
-//         } else {
-//           sellerOrder.push(order[key]);
-//           buyerOrder.push(account);
-//           break;
-//         }
-//       case 1:
-//         sellerOrder.push(order[key]);
-//         buyerOrder.push(order[key]);
-//         break;
-//       case 3:
-//         if (isERC721) {
-//           sellerOrder.push(order[key]);
-//           buyerOrder.push(order[key]);
-//         } else {
-//           sellerOrder.push(order[key]);
-//           buyerOrder.push(Number(qty));
-//         }
+  console.log(orderData.collection);
+  let _deadline;
+  let _price;
+  let _auctionEndDate;
+  let sellerOrder;
+  let abi = [
+    { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "owner",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "approved",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+      ],
+      name: "Approval",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "owner",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "operator",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "bool",
+          name: "approved",
+          type: "bool",
+        },
+      ],
+      name: "ApprovalForAll",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "delegator",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "fromDelegate",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "toDelegate",
+          type: "address",
+        },
+      ],
+      name: "DelegateChanged",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "delegate",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "previousBalance",
+          type: "uint256",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "newBalance",
+          type: "uint256",
+        },
+      ],
+      name: "DelegateVotesChanged",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "minMint",
+          type: "uint256",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "maxMint",
+          type: "uint256",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "minting_fee",
+          type: "uint256",
+        },
+      ],
+      name: "NewStage",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "previousOwner",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "newOwner",
+          type: "address",
+        },
+      ],
+      name: "OwnershipTransferred",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "from",
+          type: "address",
+        },
+        { indexed: true, internalType: "address", name: "to", type: "address" },
+        {
+          indexed: true,
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+      ],
+      name: "Transfer",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "stage",
+          type: "uint256",
+        },
+      ],
+      name: "UpdateStage",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: "address",
+          name: "account",
+          type: "address",
+        },
+        { indexed: false, internalType: "bool", name: "value", type: "bool" },
+      ],
+      name: "UpdateWhitelists",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: "address",
+          name: "account",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "balance",
+          type: "uint256",
+        },
+      ],
+      name: "Withdraw",
+      type: "event",
+    },
+    {
+      inputs: [],
+      name: "DELEGATION_TYPEHASH",
+      outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "DOMAIN_TYPEHASH",
+      outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "MAX_SUPPLY",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "addressBalance",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "to", type: "address" },
+        { internalType: "uint256", name: "tokenId", type: "uint256" },
+      ],
+      name: "approve",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "owner", type: "address" }],
+      name: "balanceOf",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "", type: "address" },
+        { internalType: "uint32", name: "", type: "uint32" },
+      ],
+      name: "checkpoints",
+      outputs: [
+        { internalType: "uint32", name: "fromBlock", type: "uint32" },
+        { internalType: "uint96", name: "votes", type: "uint96" },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "decimals",
+      outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "delegatee", type: "address" }],
+      name: "delegate",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "delegatee", type: "address" },
+        { internalType: "uint256", name: "nonce", type: "uint256" },
+        { internalType: "uint256", name: "expiry", type: "uint256" },
+        { internalType: "uint8", name: "v", type: "uint8" },
+        { internalType: "bytes32", name: "r", type: "bytes32" },
+        { internalType: "bytes32", name: "s", type: "bytes32" },
+      ],
+      name: "delegateBySig",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "delegator", type: "address" }],
+      name: "delegates",
+      outputs: [{ internalType: "address", name: "", type: "address" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "flipSaleState",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+      name: "getApproved",
+      outputs: [{ internalType: "address", name: "", type: "address" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "account", type: "address" }],
+      name: "getCurrentVotes",
+      outputs: [{ internalType: "uint96", name: "", type: "uint96" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "account", type: "address" },
+        { internalType: "uint256", name: "blockNumber", type: "uint256" },
+      ],
+      name: "getPriorVotes",
+      outputs: [{ internalType: "uint96", name: "", type: "uint96" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "owner", type: "address" },
+        { internalType: "address", name: "operator", type: "address" },
+      ],
+      name: "isApprovedForAll",
+      outputs: [{ internalType: "bool", name: "", type: "bool" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "uint256", name: "numberOfTokens", type: "uint256" },
+      ],
+      name: "mint",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "name",
+      outputs: [{ internalType: "string", name: "", type: "string" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "nextOwnerToExplicitlySet",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "", type: "address" }],
+      name: "nonces",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "", type: "address" }],
+      name: "numCheckpoints",
+      outputs: [{ internalType: "uint32", name: "", type: "uint32" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "numberMinted",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "owner",
+      outputs: [{ internalType: "address", name: "", type: "address" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+      name: "ownerOf",
+      outputs: [{ internalType: "address", name: "", type: "address" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "renounceOwnership",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "from", type: "address" },
+        { internalType: "address", name: "to", type: "address" },
+        { internalType: "uint256", name: "tokenId", type: "uint256" },
+      ],
+      name: "safeTransferFrom",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "from", type: "address" },
+        { internalType: "address", name: "to", type: "address" },
+        { internalType: "uint256", name: "tokenId", type: "uint256" },
+        { internalType: "bytes", name: "_data", type: "bytes" },
+      ],
+      name: "safeTransferFrom",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "saleIsActive",
+      outputs: [{ internalType: "bool", name: "", type: "bool" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "operator", type: "address" },
+        { internalType: "bool", name: "approved", type: "bool" },
+      ],
+      name: "setApprovalForAll",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "string", name: "baseURI", type: "string" }],
+      name: "setBaseURI",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      name: "stage",
+      outputs: [
+        { internalType: "uint256", name: "minMint", type: "uint256" },
+        { internalType: "uint256", name: "maxMint", type: "uint256" },
+        { internalType: "uint256", name: "minting_fee", type: "uint256" },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "stageNow",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }],
+      name: "supportsInterface",
+      outputs: [{ internalType: "bool", name: "", type: "bool" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "symbol",
+      outputs: [{ internalType: "string", name: "", type: "string" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "uint256", name: "index", type: "uint256" }],
+      name: "tokenByIndex",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "owner", type: "address" },
+        { internalType: "uint256", name: "index", type: "uint256" },
+      ],
+      name: "tokenOfOwnerByIndex",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+      name: "tokenURI",
+      outputs: [{ internalType: "string", name: "", type: "string" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "totalSupply",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "from", type: "address" },
+        { internalType: "address", name: "to", type: "address" },
+        { internalType: "uint256", name: "tokenId", type: "uint256" },
+      ],
+      name: "transferFrom",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
+      name: "transferOwnership",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "uint256", name: "_stage", type: "uint256" }],
+      name: "updateStage",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "_account", type: "address" }],
+      name: "updateWhitelist",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "delegator", type: "address" }],
+      name: "votesToDelegate",
+      outputs: [{ internalType: "uint96", name: "", type: "uint96" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "address", name: "", type: "address" }],
+      name: "whitelist",
+      outputs: [{ internalType: "bool", name: "", type: "bool" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "withdraw",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+  ];
 
-//         break;
-//       case 5:
-//         sellerOrder.push(order[key]);
-//         buyerOrder.push(order[key]);
-//         break;
-//       case 6:
-//         if (isERC721) {
-//           sellerOrder.push(order[key]);
-//           buyerOrder.push(order[key]);
-//         } else {
-//           buyerOrder.push(amount);
-//           sellerOrder.push(order[key]);
-//         }
+  try {
+    // if (orderData.chosenType === 0) {
+    //   _deadline = GENERAL_TIMESTAMP;
+    //   _auctionEndDate = new Date(GENERAL_DATE);
+    //   _price = ethers.utils.parseEther(orderData.price).toString();
+    // } else if (orderData.chosenType === 1) {
+    //   let endTime = new Date(orderData.endTime).valueOf() / 1000;
+    //   _deadline = endTime;
+    //   _auctionEndDate = orderData.auctionEndDate;
+    //   _price = ethers.utils.parseEther(orderData.minimumBid).toString();
+    // } else if (orderData.chosenType === 2) {
+    //   _deadline = new Date().valueOf() / 1000 + 31536000 * 10;
+    //   _auctionEndDate = new Date(GENERAL_DATE);
+    //   _price = ethers.utils.parseEther(orderData.minimumBid).toString();
+    // }
+    sellerOrder = [
+      account,
+      orderData.collection,
+      orderData.tokenId,
+      1,
+      0,
+      contracts.USDT,
+      100000000,
+      GENERAL_TIMESTAMP,
+      [],
+      [],
+      123,
+    ];
 
-//         break;
-//       case 8:
-//         sellerOrder.push([]);
-//         buyerOrder.push([]);
-//         break;
-//       case 9:
-//         sellerOrder.push([]);
-//         buyerOrder.push([]);
-//         break;
-//       default:
-//         sellerOrder.push(parseInt(order[key]));
-//         buyerOrder.push(parseInt(order[key]));
-//     }
-//   }
+    let usrHaveQuantity = await GetOwnerOfToken(
+      sellerOrder[1],
+      sellerOrder[2],
+      true,
+      sellerOrder[0]
+    );
 
-//   console.log(
-//     "order data---->:",
-//     "nftId",
-//     details.oNftId,
-//     "qty",
-//     qty,
-//     "buyer",
-//     account,
-//     "seller",
-//     details.oSellerWalletAddress
-//   );
+    console.log("usrHaveQuantity", usrHaveQuantity);
+    console.log("sellerOrder is---->", sellerOrder);
+    let NFTcontract = await exportInstance(orderData.collection, abi);
+    console.log("NFTcontract", NFTcontract);
 
-//   console.log("seller and buyer order is", sellerOrder, buyerOrder);
+    let approval = await NFTcontract.isApprovedForAll(
+      account,
+      contracts.MARKETPLACE
+    );
+    let approvalres;
+    const options = {
+      from: account,
+      gasPrice: 10000000000,
+      gasLimit: 9000000,
+      value: 0,
+    };
 
-//   // check if seller still owns that much quantity of current token id
-//   // check if seller still have approval for marketplace
-//   // check if buyer have sufficient matic or not (fixed sale)
-//   let usrHaveQuantity = await GetOwnerOfToken(
-//     sellerOrder[1],
-//     sellerOrder[2],
-//     isERC721,
-//     sellerOrder[0]
-//   );
+    console.log("approval", approval, account);
+    if (!approval) {
+      approvalres = await NFTcontract.setApprovalForAll(
+        contracts.MARKETPLACE,
+        true,
+        options
+      );
 
-//   let NFTcontract = await exportInstance(
-//     sellerOrder[1],
-//     isERC721 ? erc721Abi.abi : erc1155Abi.abi
-//   );
-//   console.log(
-//     "NFTcontract",
-//     NFTcontract,
-//     sellerOrder[0],
-//     contracts.MARKETPLACE
-//   );
+      approvalres = await approvalres.wait();
+      if (approvalres.status === 0) {
+        NotificationManager.error("Transaction failed");
+        return false;
+      }
+    }
+  } catch (e) {
+    if (e.code === 4001) {
+      NotificationManager.error("User denied ");
+      return false;
+    }
+    console.log("error in contract", e);
+    NotificationManager.error("Transaction failed");
+    return false;
+  }
+  try {
+    let signature = [];
 
-//   let approval = await NFTcontract.isApprovedForAll(
-//     sellerOrder[0],
-//     contracts.MARKETPLACE
-//   );
+    signature = await getSignature(account, ...sellerOrder);
+    if (signature === false) {
+      return;
+    }
 
-//   console.log("usrHaveQuantity", usrHaveQuantity);
-//   // if (Number(usrHaveQuantity) < Number(qty)) {
-//   //   NotificationManager.error("Seller don't own that much quantity");
-//   //   return;
-//   // }
+    console.log("signature is---->", signature);
 
-//   if (!approval) {
-//     NotificationManager.error("Seller didn't approved marketplace");
-//     return;
-//   }
+    let reqParams = {
+      seller: account,
+      tokenAddress: contracts.USDT,
+      collection: orderData.collection,
+      price: 100000000,
+      quantity: 1,
+      saleType: 0,
+      validUpto: GENERAL_TIMESTAMP,
+      signature: signature,
+      tokenId: orderData.tokenId,
+      salt: 123,
+    };
 
-//   if (
-//     new BigNumber(balance.toString()).isLessThan(
-//       new BigNumber(order[6].toString()).multipliedBy(
-//         new BigNumber(qty.toString())
-//       )
-//     )
-//   ) {
-//     NotificationManager.error("buyer don't have enough Matic");
-//     return;
-//   }
+    let data = await createOrder(reqParams);
+    console.log("put on sale", data);
 
-//   let signature = details.oSignature;
-//   const options = {
-//     from: account,
-//     gasLimit: 9000000,
-//     value: new BigNumber(order[6].toString())
-//       .multipliedBy(new BigNumber(qty.toString()))
-//       .toString(),
-//   };
+    console.log("seller sign", reqParams);
 
-//   try {
-//     marketplace = await exportInstance(
-//       contracts.MARKETPLACE,
-//       marketPlaceABI.abi
-//     );
+    NotificationManager.success("Order created successfully");
+    slowRefresh();
+    // window.location.href = "/profile";
+  } catch (err) {
+    console.log("error in Api", err);
+    return;
+  }
+};
 
-//     console.log("Sit tight->", signature);
-//     let completeOrder = await marketplace.completeOrder(
-//       sellerOrder,
-//       signature,
-//       buyerOrder,
-//       signature,
-//       options
-//     );
-//     let res = await completeOrder.wait();
-//     if (res.status === 0) {
-//       NotificationManager.error("Transaction failed");
-//       return;
-//     }
-//     console.log("res", res);
-//     console.log("order completed is ---->", completeOrder);
-//   } catch (e) {
-//     console.log("error in contract function calling", e);
-//     if (e.code === 4001) {
-//       NotificationManager.error("User denied ");
-//       return false;
-//     }
-//     return;
-//   }
+export const handleBuyNft = async (id, isERC721, account, balance, qty = 1) => {
+  let order;
+  let details;
+  let status;
+  let marketplace;
+  try {
+    order = await buildSellOrder(id);
+    details = await getOrderDetails({ orderId: id });
+    status = 1;
+    console.log("order and details are", order, qty);
+  } catch (e) {
+    console.log("error in API", e);
+    return;
+  }
 
-//   try {
-//     if (isERC721) {
-//       await UpdateOrderStatus({
-//         orderId: id,
-//         oStatus: status,
-//         oNftId: details.oNftId, //to make sure we update the quantity left : NFTid
-//         oSeller: details.oSellerWalletAddress.toLowerCase(), //to make sure we update the quantity left : walletAddress
-//         oQtyBought: Number(qty),
-//         qty_sold: Number(details.quantity_sold) + Number(qty),
-//         oBuyer: account.toLowerCase(),
-//       });
-//       let historyMetaData = {
-//         nftId: "62428d42f2a67d12e95d3c3c",
-//         userId: "62318683b799e41d5608fb67",
-//         action: "Bids",
-//         actionMeta: "Default",
-//         message: "UserName Created NFT",
-//       };
-//       DeleteOrder({ orderId: id }, historyMetaData);
-//     } else {
-//       await UpdateOrderStatus({
-//         orderId: id,
-//         oStatus: status,
-//         oNftId: details.oNftId, //to make sure we update the quantity left : NFTid
-//         oSeller: details.oSellerWalletAddress.toLowerCase(), //to make sure we update the quantity left : walletAddress
-//         oQtyBought: Number(qty),
-//         qty_sold: Number(details.quantity_sold) + Number(qty),
-//         oBuyer: account.toLowerCase(),
-//       });
-//       let historyMetaData = {
-//         nftId: "62428d42f2a67d12e95d3c3c",
-//         userId: "62318683b799e41d5608fb67",
-//         action: "Bids",
-//         actionMeta: "Default",
-//         message: "UserName Created NFT",
-//       };
-//       if (Number(details.quantity_sold) + Number(qty) >= details.oQuantity) {
-//         DeleteOrder({ orderId: id }, historyMetaData);
-//       }
-//     }
-//   } catch (e) {
-//     console.log("error in updating order data", e);
-//     return;
-//   }
+  let sellerOrder = [];
+  let buyerOrder = [];
+  console.log("details.signature", details.signature);
+  let amount = new BigNumber(order[6].toString())
+    .multipliedBy(new BigNumber(qty.toString()))
+    .toString();
+  console.log(
+    "price",
+    new BigNumber(order[6].toString())
+      .multipliedBy(new BigNumber(order[3].toString()))
+      .toString(),
+    isERC721
+  );
+  for (let key = 0; key < 11; key++) {
+    switch (key) {
+      case 0:
+        if (isERC721) {
+          sellerOrder.push(order[key]);
+          buyerOrder.push(account);
+          break;
+        } else {
+          sellerOrder.push(order[key]);
+          buyerOrder.push(account);
+          break;
+        }
+      case 1:
+        sellerOrder.push(order[key]);
+        buyerOrder.push(order[key]);
+        break;
+      case 3:
+        if (isERC721) {
+          sellerOrder.push(order[key]);
+          buyerOrder.push(order[key]);
+        } else {
+          sellerOrder.push(order[key]);
+          buyerOrder.push(Number(qty));
+        }
 
-//   NotificationManager.success("NFT Purchased Successfully");
-//   slowRefresh();
-// };
+        break;
+      case 5:
+        sellerOrder.push(order[key]);
+        buyerOrder.push(order[key]);
+        break;
+      case 6:
+        if (isERC721) {
+          sellerOrder.push(order[key]);
+          buyerOrder.push(order[key]);
+        } else {
+          buyerOrder.push(amount);
+          sellerOrder.push(order[key]);
+        }
+
+        break;
+      case 8:
+        sellerOrder.push([]);
+        buyerOrder.push([]);
+        break;
+      case 9:
+        sellerOrder.push([]);
+        buyerOrder.push([]);
+        break;
+      default:
+        sellerOrder.push(parseInt(order[key]));
+        buyerOrder.push(parseInt(order[key]));
+    }
+  }
+
+  console.log(
+    "order data---->:",
+    "nftId",
+    details.oNftId,
+    "qty",
+    qty,
+    "buyer",
+    account,
+    "seller",
+    details.oSellerWalletAddress
+  );
+
+  console.log("seller and buyer order is", sellerOrder, buyerOrder);
+
+  // check if seller still owns that much quantity of current token id
+  // check if seller still have approval for marketplace
+  // check if buyer have sufficient matic or not (fixed sale)
+  let usrHaveQuantity = await GetOwnerOfToken(
+    sellerOrder[1],
+    sellerOrder[2],
+    isERC721,
+    sellerOrder[0]
+  );
+
+  let NFTcontract = await exportInstance(
+    sellerOrder[1],
+    isERC721 ? erc721Abi.abi : erc1155Abi.abi
+  );
+  console.log(
+    "NFTcontract",
+    NFTcontract,
+    sellerOrder[0],
+    contracts.MARKETPLACE
+  );
+
+  let approval = await NFTcontract.isApprovedForAll(
+    sellerOrder[0],
+    contracts.MARKETPLACE
+  );
+
+  console.log("usrHaveQuantity", usrHaveQuantity);
+  // if (Number(usrHaveQuantity) < Number(qty)) {
+  //   NotificationManager.error("Seller don't own that much quantity");
+  //   return;
+  // }
+
+  if (!approval) {
+    NotificationManager.error("Seller didn't approved marketplace");
+    return;
+  }
+
+  if (
+    new BigNumber(balance.toString()).isLessThan(
+      new BigNumber(order[6].toString()).multipliedBy(
+        new BigNumber(qty.toString())
+      )
+    )
+  ) {
+    NotificationManager.error("buyer don't have enough Matic");
+    return;
+  }
+
+  let signature = details.oSignature;
+  const options = {
+    from: account,
+    gasLimit: 9000000,
+    value: new BigNumber(order[6].toString())
+      .multipliedBy(new BigNumber(qty.toString()))
+      .toString(),
+  };
+
+  try {
+    marketplace = await exportInstance(
+      contracts.MARKETPLACE,
+      marketPlaceABI.abi
+    );
+
+    console.log("Sit tight->", signature);
+    let completeOrder = await marketplace.completeOrder(
+      sellerOrder,
+      signature,
+      buyerOrder,
+      signature,
+      options
+    );
+    let res = await completeOrder.wait();
+    if (res.status === 0) {
+      NotificationManager.error("Transaction failed");
+      return;
+    }
+    console.log("res", res);
+    console.log("order completed is ---->", completeOrder);
+  } catch (e) {
+    console.log("error in contract function calling", e);
+    if (e.code === 4001) {
+      NotificationManager.error("User denied ");
+      return false;
+    }
+    return;
+  }
+
+  try {
+    if (isERC721) {
+      await UpdateOrderStatus({
+        orderId: id,
+        oStatus: status,
+        oNftId: details.oNftId, //to make sure we update the quantity left : NFTid
+        oSeller: details.oSellerWalletAddress.toLowerCase(), //to make sure we update the quantity left : walletAddress
+        oQtyBought: Number(qty),
+        qty_sold: Number(details.quantity_sold) + Number(qty),
+        oBuyer: account.toLowerCase(),
+      });
+      let historyMetaData = {
+        nftId: "62428d42f2a67d12e95d3c3c",
+        userId: "62318683b799e41d5608fb67",
+        action: "Bids",
+        actionMeta: "Default",
+        message: "UserName Created NFT",
+      };
+      DeleteOrder({ orderId: id }, historyMetaData);
+    } else {
+      await UpdateOrderStatus({
+        orderId: id,
+        oStatus: status,
+        oNftId: details.nftID, //to make sure we update the quantity left : NFTid
+        oSeller: details.sellerID.walletAddress.toLowerCase(), //to make sure we update the quantity left : walletAddress
+        oQtyBought: Number(qty),
+        qty_sold: Number(details.quantity_sold) + Number(qty),
+        oBuyer: account.toLowerCase(),
+      });
+      let historyMetaData = {
+        nftId: "62428d42f2a67d12e95d3c3c",
+        userId: "62318683b799e41d5608fb67",
+        action: "Bids",
+        actionMeta: "Default",
+        message: "UserName Created NFT",
+      };
+      if (Number(details.quantity_sold) + Number(qty) >= details.oQuantity) {
+        DeleteOrder({ orderId: id }, historyMetaData);
+      }
+    }
+  } catch (e) {
+    console.log("error in updating order data", e);
+    return;
+  }
+
+  NotificationManager.success("NFT Purchased Successfully");
+  slowRefresh();
+};
 
 // export const handleRemoveFromSale = async (orderId, account) => {
 //   let marketplace;
@@ -325,143 +1028,6 @@
 //     // console.log("res", res);
 //   } catch (e) {
 //     console.log("error while updating database", e);
-//   }
-// };
-
-// export const putOnMarketplace = async (account, orderData) => {
-//   console.log("Starting NFT create", account, orderData);
-//   if (!account) {
-//     console.log("empty account");
-//     return;
-//   }
-//   let nextId = await getNextId(orderData.collection);
-//   console.log("nextId", nextId, orderData.collection);
-//   let _deadline;
-//   let _price;
-//   let _auctionEndDate;
-//   let sellerOrder;
-//   try {
-//     if (orderData.chosenType === 0) {
-//       _deadline = GENERAL_TIMESTAMP;
-//       _auctionEndDate = new Date(GENERAL_DATE);
-//       _price = ethers.utils.parseEther(orderData.price).toString();
-//     } else if (orderData.chosenType === 1) {
-//       let endTime = new Date(orderData.endTime).valueOf() / 1000;
-//       _deadline = endTime;
-//       _auctionEndDate = orderData.auctionEndDate;
-//       _price = ethers.utils.parseEther(orderData.minimumBid).toString();
-//     } else if (orderData.chosenType === 2) {
-//       _deadline = new Date().valueOf() / 1000 + 31536000 * 10;
-//       _auctionEndDate = new Date(GENERAL_DATE);
-//       _price = ethers.utils.parseEther(orderData.minimumBid).toString();
-//     }
-//     sellerOrder = [
-//       account,
-//       orderData.collection,
-//       orderData.tokenId,
-//       orderData.quantity,
-//       orderData.saleType,
-//       orderData.tokenAddress
-//         ? orderData.tokenAddress
-//         : "0x0000000000000000000000000000000000000000",
-//       _price,
-//       _deadline,
-//       [],
-//       [],
-//       orderData.salt,
-//     ];
-
-//     let usrHaveQuantity = await GetOwnerOfToken(
-//       sellerOrder[1],
-//       sellerOrder[2],
-//       orderData.erc721,
-//       sellerOrder[0]
-//     );
-
-//     console.log("usrHaveQuantity", usrHaveQuantity);
-//     console.log("sellerOrder is---->", sellerOrder);
-//     let NFTcontract = await exportInstance(orderData.collection, erc721Abi.abi);
-//     console.log("NFTcontract", NFTcontract);
-
-//     let approval = await NFTcontract.isApprovedForAll(
-//       account,
-//       contracts.MARKETPLACE
-//     );
-//     let approvalres;
-//     const options = {
-//       from: account,
-//       gasPrice: 10000000000,
-//       gasLimit: 9000000,
-//       value: 0,
-//     };
-
-//     console.log("approval", approval);
-//     if (!approval) {
-//       approvalres = await NFTcontract.setApprovalForAll(
-//         contracts.MARKETPLACE,
-//         true,
-//         options
-//       );
-//       approvalres = await approvalres.wait();
-//       if (approvalres.status === 0) {
-//         NotificationManager.error("Transaction failed");
-//         return false;
-//       }
-//     }
-//   } catch (e) {
-//     if (e.code === 4001) {
-//       NotificationManager.error("User denied ");
-//       return false;
-//     }
-//     console.log("error in contract", e);
-//     NotificationManager.error("Transaction failed");
-//     return false;
-//   }
-//   try {
-//     let signature = [];
-
-//     signature = await getSignature(account, ...sellerOrder);
-//     if (signature === false) {
-//       return;
-//     }
-
-//     console.log("signature is---->", signature);
-
-//     let reqParams = {
-//       nftId: orderData.nftId,
-//       seller: account,
-//       tokenAddress: orderData.tokenAddress
-//         ? orderData.tokenAddress
-//         : "0x0000000000000000000000000000000000000000",
-//       collection: orderData.collection,
-//       price: _price,
-//       quantity: orderData.quantity,
-//       saleType: orderData.saleType,
-//       validUpto: _deadline,
-//       signature: signature,
-//       tokenId: orderData.tokenId,
-//       auctionEndDate: _auctionEndDate,
-//       salt: orderData.salt,
-//     };
-
-//     let historyMetaData = {
-//       nftId: "62428d42f2a67d12e95d3c3c",
-//       userId: "62318683b799e41d5608fb67",
-//       action: "Bids",
-//       actionMeta: "Default",
-//       message: "UserName Created NFT",
-//     };
-//     let data = await createOrder(reqParams, historyMetaData);
-//     console.log("put on sale", data);
-
-//     console.log("seller sign", reqParams);
-
-//     NotificationManager.success("Order created successfully");
-//     slowRefresh();
-//     // window.location.href = "/profile";
-//   } catch (err) {
-//     console.log("error in Api", err);
-//     return;
 //   }
 // };
 
@@ -1100,5 +1666,3 @@
 //     }
 //   }
 // };
-
-
