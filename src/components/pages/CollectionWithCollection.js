@@ -2,18 +2,24 @@ import React, { useState, useEffect } from "react";
 import Footer from "../components/footer";
 import CollectionList from "../components/CollectionList";
 import Relatedcollection from "../components/Relatedcollection";
-import { NavLink, useParams } from "react-router-dom";
-import { CollectionCard } from "../../Data/dummyJSON";
+import { Link, NavLink, useParams } from "react-router-dom";
 import ItemSVG from "../SVG/ItemSVG";
 import ActivitySVG from "../SVG/ActivitySVG";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
+import UpArrow from "../SVG/dropdown";
 import {
   getBrandDetailsById,
   getCollections,
   getNFTs,
   getUserById,
 } from "../../helpers/getterFunctions";
+import AllNFTs from "../SVG/AllNFTs";
+import Firearmsvg from "../SVG/Firearmsvg";
+import Soldierssvg from "../SVG/Soldierssvg";
+import arrow from "./../../assets/images/ep_arrow-right-bold.png";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+
 
 const bgImgStyle = {
   backgroundImage: "url(./../../assets/images/background.jpg)",
@@ -24,17 +30,33 @@ const bgImgStyle = {
   backgroundColor: "#000",
 };
 
-var bgImgarrow = {
-  backgroundImage: "url(./img/ep_arrow-right-bold.png)",
-  backgroundRepeat: "no-repeat",
-};
 
 function CollectionWithCollection() {
   const { brandID } = useParams();
   const [brandDetails, setBrandDetails] = useState([]);
   const [user, setUser] = useState([]);
   const [collections, setCollections] = useState([]);
+  const [togglemode, setTogglemode] = useState("filterhide");
   const [nfts, setNfts] = useState([]);
+  const [isCopied, setIsCopied] = useState(false);
+
+  const filterToggle = () => {
+    console.log("filter", togglemode);
+    if (togglemode === "filterhide") {
+      setTogglemode("filtershow");
+      document.getElementsByClassName("filter_btn")[0].classList.add("active");
+    } else {
+      setTogglemode("filterhide");
+      document
+        .getElementsByClassName("filter_btn")[0]
+        .classList.remove("active");
+    }
+  };
+
+  var bgImgarrow = {
+    backgroundImage: `url(${arrow})`,
+    backgroundRepeat: "no-repeat",
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,9 +79,11 @@ function CollectionWithCollection() {
     try {
       const brand = await getBrandDetailsById(brandID);
       setBrandDetails(brand);
-      const user = await getUserById({ page: 1,
+      const user = await getUserById({
+        page: 1,
         limit: 3,
-        userID: brand.createdBy });
+        userID: brand.createdBy,
+      });
       setUser(user);
       const cols = await getCollections({
         brandID: brandID,
@@ -68,17 +92,22 @@ function CollectionWithCollection() {
       console.log("collections with brand id", brandID, cols);
       let temp = [];
       let cnt = 0;
-      for(let i =0; i < cols.length; i++){
-        const nft = await getNFTs({ page:1, limit:3,collectionID: cols[i]._id });
+      for (let i = 0; i < cols.length; i++) {
+        const nft = await getNFTs({
+          page: 1,
+          limit: 3,
+          collectionID: cols[i]._id,
+        });
         nft.map((n) => {
-          temp[cnt] = {...n, collectionName: cols[i].name}
+          temp[cnt] = {
+            ...n,
+            collectionName: cols[i].name,
+            price: cols[i].price,
+          };
           cnt++;
-        })
-         
+        });
       }
       setNfts(temp);
-     
-      console.log("nfts with brand id", brandID, nfts);
     } catch (e) {
       console.log("error in get brandbyID", e);
     }
@@ -131,22 +160,39 @@ function CollectionWithCollection() {
             </li>
           </ul>
           <div className='coppycode text-center'>
-            <span>
-              <img alt='' src={"../img/favicon.png"} class='img-fluid' />{" "}
-              {user?.walletAddress}
-              <svg
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'>
-                <path
-                  d='M18 4.5V0H12.75C11.5073 0 10.5 1.00734 10.5 2.25V15.75C10.5 16.9927 11.5073 18 12.75 18H21.75C22.9927 18 24 16.9927 24 15.75V6H19.5422C18.675 6 18 5.325 18 4.5ZM19.5 0V4.5H24L19.5 0ZM9 16.5V6H2.25C1.00734 6 0 7.00734 0 8.25V21.75C0 22.9927 1.00734 24 2.25 24H11.25C12.4927 24 13.5 22.9927 13.5 21.75V19.5H12C10.3453 19.5 9 18.1547 9 16.5Z'
-                  fill='white'
-                />
-              </svg>
+            <span className='ctc'>
+              <img alt='' src={"../img/favicon.png"} class='img-fluid' />
+              <div className=''>
+                {user?.walletAddress?.slice(0, 8) +
+                  "...." +
+                  user?.walletAddress?.slice(32, 42)}
+              </div>
+
+              <CopyToClipboard
+                text={user?.walletAddress}
+                onCopy={() => {
+                  console.log("copied!!!");
+                  setIsCopied(true);
+                  setTimeout(() => {
+                    setIsCopied(false);
+                  }, 3000);
+                }}>
+                <svg
+                  width='21'
+                  height='24'
+                  viewBox='0 0 21 24'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'>
+                  <path
+                    d='M15 21V22.875C15 23.4963 14.4963 24 13.875 24H1.125C0.503672 24 0 23.4963 0 22.875V5.625C0 5.00367 0.503672 4.5 1.125 4.5H4.5V18.375C4.5 19.8225 5.67755 21 7.125 21H15ZM15 4.875V0H7.125C6.50367 0 6 0.503672 6 1.125V18.375C6 18.9963 6.50367 19.5 7.125 19.5H19.875C20.4963 19.5 21 18.9963 21 18.375V6H16.125C15.5063 6 15 5.49375 15 4.875ZM20.6705 3.42052L17.5795 0.329484C17.3685 0.11852 17.0824 1.55998e-06 16.784 0L16.5 0V4.5H21V4.21598C21 3.91763 20.8815 3.63149 20.6705 3.42052Z'
+                    fill='#fff'
+                  />
+                </svg>
+              </CopyToClipboard>
+              {isCopied ? <p className='copied'>Copied!</p> : ""}
             </span>
           </div>
+        
           <ul className='collection_status mt-5 mb-5'>
             <li>
               <h4>{brandDetails?.nftCount}</h4>
@@ -177,7 +223,7 @@ function CollectionWithCollection() {
               <h4 className='second_hd text-center mb-3'>Collection</h4>
             </div>
           </div>
-          <Relatedcollection collections={collections}/>
+          <Relatedcollection collections={collections} />
 
           <div className='row mb-5'>
             <div className='col-md-12 text-center item_active'>
@@ -239,11 +285,175 @@ function CollectionWithCollection() {
                   <Threegrid />
                 </div>
                 {/* </div> */}
-                <button type='button' className='filter_btn'>
+                <button type='button' className='filter_btn' onClick={filterToggle}>
                   Adv.Filter
                 </button>
               </div>
               {/* <div className='search_qt mt-3'>10,000 items</div> */}
+            </div>
+            <div className={`filter mb-5 ${togglemode}`}>
+              <div className='filtercol'>
+                <form>
+                  <button
+                    type='button'
+                    class='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo'>
+                    Status <UpArrow />
+                  </button>
+                  <div id='demo' class='collapse show'>
+                    <ul className='status_ul'>
+                      <li>
+                        <Link to={"/"} className='filter_border'>
+                          Buy Now
+                        </Link>
+                        <Link to={"/"} className='filter_border'>
+                          On Auction
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to={"/"} className='filter_border'>
+                          Now
+                        </Link>
+                        <Link to={"/"} className='filter_border'>
+                          Offers
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <button
+                    type='button'
+                    class='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo2'>
+                    Price <UpArrow />
+                  </button>
+                  <div id='demo2' class='collapse show'>
+                    <ul className='status_ul'>
+                      <li>
+                        <select
+                          class='form-select filter_apply filter-text-left'
+                          aria-label='Default select example'>
+                          <option selected>$ Australian Dollar (AUD)</option>
+                          <option value='1'>One</option>
+                          <option value='2'>Two</option>
+                          <option value='3'>Three</option>
+                        </select>
+                      </li>
+                      <li>
+                        <div class='range_input'>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='exampleInputPassword1'
+                            placeholder='Min'
+                          />
+                          <span className='span_class'>to</span>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='exampleInputPassword1'
+                            placeholder='Max'
+                          />
+                        </div>
+                      </li>
+                      <li>
+                        <button type='submit' class='filter_apply'>
+                          Apply
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </form>
+              </div>
+              <div className='filtercol'>
+                <form>
+                  <button
+                    type='button'
+                    class='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo3'>
+                    Collections <UpArrow />
+                  </button>
+                  <div id='demo3' class='collapse show'>
+                    <input
+                      type='text'
+                      placeholder='Filter'
+                      className='filter_apply filter-text-left filter_padd'
+                    />
+                  </div>
+                </form>
+              </div>
+              <div className='filtercol'>
+                <button
+                  type='button'
+                  class='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo4'>
+                  Categories <UpArrow />
+                </button>
+                <div id='demo4' class='collapse show'>
+                  <ul>
+                    <li>
+                      <Link to={"/marketplace"} className='sub-items'>
+                        <AllNFTs />
+                        All NFTs
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/marketplaceCollection"} className='sub-items'>
+                        <Firearmsvg />
+                        Firearms
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/Soldiers"} className='sub-items'>
+                        <Soldierssvg />
+                        Soldiers
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/Accesories"} className='sub-items'>
+                        <Soldierssvg />
+                        Accesories
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className='filtercol'>
+                <button
+                  type='button'
+                  class='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo5'>
+                  On Sale In <UpArrow />
+                </button>
+                <div id='demo5' class='collapse show'>
+                  <ul>
+                    <li>
+                      <input
+                        type='text'
+                        placeholder='Filter'
+                        className='filter_apply  filter-text-left filter_padd'
+                      />
+                    </li>
+                    <li>
+                      <form action='#' className='checked_form'>
+                        <div class='form-check form-check-inline'>
+                          <input type='radio' id='test1' name='radio-group' />
+                          <label for='test1'>Apple</label>
+                        </div>
+                        <div class='form-check form-check-inline'>
+                          <input type='radio' id='test2' name='radio-group' />
+                          <label for='test2'>Apple</label>
+                        </div>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -251,19 +461,20 @@ function CollectionWithCollection() {
       <section className='collection_list mb-5 pb-5'>
         <div className='container'>
           <div className='row'>
-            {nfts?.map((card) => (
-              <div className={grid} key={card.id}>
-                <CollectionList
-                  nft={card}
-                />
+            {nfts?.map((card) => {
+              return (
+                <div className={grid} key={card.id}>
+                  <CollectionList nft={card} />
+                </div>
+              );
+            })}
+            {nfts.length > 6 && (
+              <div class='col-md-12 text-center mt-5'>
+                <a class='view_all_bdr' href='/'>
+                  Load More
+                </a>
               </div>
-            ))}
-            ;
-            <div class='col-md-12 text-center mt-5'>
-              <a class='view_all_bdr' href='/'>
-                Load More
-              </a>
-            </div>
+            )}
           </div>
         </div>
       </section>

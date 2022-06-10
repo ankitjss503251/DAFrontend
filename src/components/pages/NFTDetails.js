@@ -422,7 +422,7 @@ function NFTDetails() {
             </div>
             {allNFTs.length > 1 ? (
               <>
-                <div className='col-md-12'>
+                <div className='col-md-12 '>
                   <h3 className='title_36 mb-4'>
                     More from {collection?.name} Collection
                   </h3>
@@ -432,12 +432,14 @@ function NFTDetails() {
                     collectionName={collection?.name}
                   />
                 </div>
-
-                <div class='col-md-12 text-center mt-5'>
+                {
+                  allNFTs.length > 4 ?    <div class='col-md-12 text-center mt-5'>
                   <a class='view_all_bdr' href={`/marketplacecollection/${collection?.name}`}>
                     View All
                   </a>
-                </div>
+                </div> : ""
+                }
+             
               </>
             ) : (
               ""

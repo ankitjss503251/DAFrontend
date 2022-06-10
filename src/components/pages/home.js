@@ -197,15 +197,14 @@ const Home = () => {
                     <div
                       className='col-lg-4 col-md-6 col-sm-12 mb-lg-0 mb-xl-0 mb-4'
                       key={key}>
-                      <Link
-                        to={
+                        <div className='mint_box' style={mint_bg}>
+                        <a href={
                           card.items === card.totalSupply
                             ? `/collection/${card._id}`
                             : `/multimintingpage/${card._id}`
                         }>
-                        <div className='mint_box' style={mint_bg}>
                           <div className='mint_img'>
-                            <img alt='' src={card.coverImg} class='img-fluid' />
+                        <img alt='' src={card.coverImg} class='img-fluid' />
                             {ct >= st && ct < et ? (
                               ""
                             ) : (
@@ -217,6 +216,7 @@ const Home = () => {
                               </div>
                             )}
                           </div>
+                          </a>
                           <div className='mint_text p-4'>
                             <div className='logoImg_con'>
                               <a
@@ -498,7 +498,7 @@ const Home = () => {
                             )}
                           </div>
                         </div>
-                      </Link>
+                    
                     </div>
                   );
                 })

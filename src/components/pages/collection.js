@@ -16,6 +16,7 @@ import Soldierssvg from "../SVG/Soldierssvg";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 
 const bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -26,10 +27,7 @@ const bgImgStyle = {
   backgroundColor: "#000",
 };
 
-var bgImgarrow = {
-  backgroundImage: "url(./img/ep_arrow-right-bold.png)",
-  backgroundRepeat: "no-repeat",
-};
+
 
 const options = [
   { value: "chocolate", label: "Chocolate" },
@@ -38,6 +36,11 @@ const options = [
 ];
 
 function Collection() {
+  var bgImgarrow = {
+    backgroundImage: `url(${arrow})`,
+    backgroundRepeat: "no-repeat",
+  };
+
   const gridtwo = () => {
     setgrid("col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4");
     document.getElementById("gridtwo").classList.add("active");
@@ -60,7 +63,6 @@ function Collection() {
   const [isCopied, setIsCopied] = useState(false);
   const [nftList, setNftList] = useState("");
   const { id } = useParams();
-
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -107,21 +109,20 @@ function Collection() {
         setCurrPage(currPage + 1);
       }
       console.log("collll", res[0]);
-      
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
   }, [loadMore]);
 
-  
-
   return (
     <div style={bgImgStyle}>
-      <section className='collection_banner pdd_8' style={{
-        backgroundImage: `url(${collectionDetails?.coverImg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center"
-      }}></section>
+      <section
+        className='collection_banner pdd_8'
+        style={{
+          backgroundImage: `url(${collectionDetails?.coverImg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}></section>
       <section className='collection_info'>
         <div className='container'>
           <div className='collection_pick'>
@@ -457,22 +458,24 @@ function Collection() {
         <div className='container'>
           <div className='row'>
             {nftList
-              ? nftList.map((card) => (
-                  <div className={grid} key={card.id}>
-                    <CollectionList
-                      nft={card[0]}
-                      collectionName={collectionDetails?.name}
-                      price={collectionDetails?.price / 10 ** 18}
-                    />
-                  </div>
-                ))
+              ? nftList.map((card) => {
+                  card[0] = { ...card[0], price: collectionDetails?.price };
+                  return (
+                    <div className={grid} key={card.id}>
+                      <CollectionList
+                        nft={card[0]}
+                        collectionName={collectionDetails?.name}
+                      />
+                    </div>
+                  );
+                })
               : ""}
-            ;
-            <div class='col-md-12 text-center mt-5'>
+            {nftList.length > 4 ?  <div class='col-md-12 text-center mt-5'>
               <a class='view_all_bdr' onClick={() => setLoadMore(!loadMore)}>
                 Load More
               </a>
-            </div>
+            </div> : ""}
+           
           </div>
         </div>
       </section>
