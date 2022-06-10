@@ -4,6 +4,7 @@ import {
   exportInstanceThroughWeb3,
   getOrderDetails,
   GetOrdersByNftId,
+  UpdateNft,
 } from "../../../apiServices";
 import { useCookies } from "react-cookie";
 import NotificationManager from "react-notifications/lib/NotificationManager";
@@ -357,7 +358,13 @@ const NftDetail = () => {
           </div>
 
           <div className="col">
-            <button className="putonmarketplace" onClick={fetchMetaData}>
+            <button
+              className="putonmarketplace"
+              onClick={async () => {
+                await fetchMetaData();
+                await UpdateNft({ collectionAddress: address, tokenID: id });
+              }}
+            >
               Refresh
             </button>
           </div>

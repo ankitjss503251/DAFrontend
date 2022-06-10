@@ -516,7 +516,7 @@ export const getAllCategory = async (id) => {
   }
 };
 
-export const createOrder = async (data) => {
+export const createOrder = async (data, isImported) => {
   const requestOptions = {
     method: "POST",
     headers: {
@@ -528,11 +528,18 @@ export const createOrder = async (data) => {
 
   try {
     console.log("put on marketplace");
-
-    let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/order/createOrderImport",
-      requestOptions
-    );
+    let response;
+    if (isImported) {
+      response = await fetch(
+        process.env.REACT_APP_API_BASE_URL + "/order/createOrderImport",
+        requestOptions
+      );
+    } else {
+      response = await fetch(
+        process.env.REACT_APP_API_BASE_URL + "/order/createOrder",
+        requestOptions
+      );
+    }
 
     const isJson = response.headers
       .get("content-type")
@@ -545,7 +552,7 @@ export const createOrder = async (data) => {
   }
 };
 
-export const importCollection = async (data) =>{
+export const importCollection = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
@@ -555,7 +562,6 @@ export const importCollection = async (data) =>{
   };
 
   try {
-
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/import/createCollection",
       requestOptions
@@ -570,9 +576,9 @@ export const importCollection = async (data) =>{
   } catch (err) {
     return err;
   }
-}
+};
 
-export const importNft = async (data) =>{
+export const importNft = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
@@ -582,7 +588,6 @@ export const importNft = async (data) =>{
   };
 
   try {
-
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/import/createNft",
       requestOptions
@@ -597,9 +602,9 @@ export const importNft = async (data) =>{
   } catch (err) {
     return err;
   }
-}
+};
 
-export const getImportedNFTs = async (data) =>{
+export const getImportedNFTs = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
@@ -609,7 +614,6 @@ export const getImportedNFTs = async (data) =>{
   };
 
   try {
-
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/import/getNFT",
       requestOptions
@@ -624,10 +628,9 @@ export const getImportedNFTs = async (data) =>{
   } catch (err) {
     return err;
   }
-}
+};
 
-
-export const getImportedCollections = async (data) =>{
+export const getImportedCollections = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
@@ -637,7 +640,6 @@ export const getImportedCollections = async (data) =>{
   };
 
   try {
-
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/import/getCollection",
       requestOptions
@@ -652,7 +654,33 @@ export const getImportedCollections = async (data) =>{
   } catch (err) {
     return err;
   }
-}
+};
+
+export const UpdateNft = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/import/updateNFT",
+      requestOptions
+    );
+
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas;
+  } catch (err) {
+    return err;
+  }
+};
 
 export const DeleteOrder = async (data) => {
   const requestOptions = {
@@ -941,8 +969,6 @@ export const GetOrdersByNftId = async (data) => {
 //   }
 // };
 
-
-
 // export const Register = async (account) => {
 //   const requestOptions = {
 //     method: "POST",
@@ -1086,7 +1112,6 @@ export const GetOrdersByNftId = async (data) => {
 
 // export const Like = async () => {};
 
-
 // export const GetOnSaleItems = async (data) => {
 //   const requestOptions = {
 //     method: "POST",
@@ -1159,8 +1184,6 @@ export const GetOrdersByNftId = async (data) => {
 //     return err;
 //   }
 // };
-
-
 
 // export const LikeNft = async (data) => {
 //   const requestOptions = {
@@ -1261,7 +1284,6 @@ export const GetOrdersByNftId = async (data) => {
 //     return err;
 //   }
 // };
-
 
 // export const TransferNfts = async (data) => {
 //   //   {
