@@ -530,7 +530,7 @@ export const createOrder = async (data) => {
     console.log("put on marketplace");
 
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/order/createOrder",
+      process.env.REACT_APP_API_BASE_URL + "/order/createOrderImport",
       requestOptions
     );
 

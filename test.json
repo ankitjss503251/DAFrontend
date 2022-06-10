@@ -1,0 +1,19 @@
+{
+    "seller": "0xb8a4cf2e058ff8e1d654832256c331b723342310",
+    "tokenAddress": "0xe8D6c1942AFBE47750eEbd0cFDaA6C6702166a7F",
+    "collection": "0xbcb4da834f01c0e8d231d0ad36a29559d69d9f2c",
+    "price": 100000000,
+    "quantity": 1,
+    "deadline": 2214189165,
+    "saleType": 0,
+    "validUpto": 2214189165,
+    "signature": [
+        27,
+        "0x3d08245df936f9a9d4dd36755a5f5994d84b46b3c84b91e906769ea324ff3781",
+        "0x3b2c606687fabf2e0f67b93782b3546924b9c55b001dd4423db4d933f61d0054"
+    ],
+    "tokenId": 2,
+    "salt": 123,
+    "nftId": "62a0855bc78fb714e23145ba",
+    "creatorAddress": "0x52cE5F25394Fd1A5d4042c1E8aB963E5f947893b"
+}
