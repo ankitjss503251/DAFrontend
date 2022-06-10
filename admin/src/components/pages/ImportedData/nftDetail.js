@@ -313,7 +313,8 @@ const NftDetail = () => {
       setNftDetails(data);
 
       let orders = await GetOrdersByNftId({
-        nftId: "62a19b72127e078f08afa5d6",
+        tokenId: id,
+        collectionAddress: address,
       });
       if (orders && orders.results && orders.results.length > 0) {
         setOrders(orders.results);

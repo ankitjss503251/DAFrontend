@@ -370,14 +370,13 @@ export const GetOwnerOfToken = async (
   account
 ) => {
   console.log("collection token owner", collection, tokenId, isERC721, account);
-  let collectionInstance = await exportInstanceThroughWeb3(collection, abi);
+  let collectionInstance = await exportInstance(collection, abi);
   console.log("collectionInsatnce", collectionInstance);
   let balance = 0;
   try {
     if (isERC721) {
-      let owner = await collectionInstance.methods
-        .ownerOf(Number(tokenId))
-        .call();
+      let owner = await collectionInstance
+        .ownerOf(Number(tokenId));
       // balance = await collectionInstance.methods.balanceOf(account).call();
       console.log("owner123", owner);
       return owner;

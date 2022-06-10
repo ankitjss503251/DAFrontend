@@ -410,9 +410,9 @@ export const putOnMarketplace = async (account, orderData) => {
       saleType: 0,
       validUpto: GENERAL_TIMESTAMP,
       signature: signature,
-      tokenId: Number(orderData.tokenId),
+      tokenID: Number(orderData.tokenId),
       salt: 123,
-      nftId: "62a199e310d89f17b061b600",
+      nftID: "62a199e310d89f17b061b600",
       creatorAddress: "0x52cE5F25394Fd1A5d4042c1E8aB963E5f947893b",
     };
 
@@ -436,6 +436,14 @@ export const handleBuyNft = async (id, isERC721, account, balance, qty = 1) => {
   let status;
   let marketplace;
   try {
+    console.log(
+      "id, isERC721, account, balance, qty = 1",
+      id,
+      isERC721,
+      account,
+      balance,
+      (qty = 1)
+    );
     order = await buildSellOrder(id);
     details = await getOrderDetails({ orderId: id });
     status = 1;
