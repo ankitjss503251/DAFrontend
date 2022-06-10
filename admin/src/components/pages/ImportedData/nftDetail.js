@@ -8,7 +8,11 @@ import {
 import { useCookies } from "react-cookie";
 import NotificationManager from "react-notifications/lib/NotificationManager";
 import { GetOwnerOfToken } from "../../../helpers/getterFunctions";
-import { handleBuyNft, putOnMarketplace } from "../../../helpers/sendFunctions";
+import {
+  handleBuyNft,
+  putOnMarketplace,
+  handleRemoveFromSale,
+} from "../../../helpers/sendFunctions";
 
 const NftDetail = () => {
   let { address, id } = useParams();
@@ -76,81 +80,6 @@ const NftDetail = () => {
         {
           indexed: true,
           internalType: "address",
-          name: "delegator",
-          type: "address",
-        },
-        {
-          indexed: true,
-          internalType: "address",
-          name: "fromDelegate",
-          type: "address",
-        },
-        {
-          indexed: true,
-          internalType: "address",
-          name: "toDelegate",
-          type: "address",
-        },
-      ],
-      name: "DelegateChanged",
-      type: "event",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: "address",
-          name: "delegate",
-          type: "address",
-        },
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "previousBalance",
-          type: "uint256",
-        },
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "newBalance",
-          type: "uint256",
-        },
-      ],
-      name: "DelegateVotesChanged",
-      type: "event",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "minMint",
-          type: "uint256",
-        },
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "maxMint",
-          type: "uint256",
-        },
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "minting_fee",
-          type: "uint256",
-        },
-      ],
-      name: "NewStage",
-      type: "event",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: "address",
           name: "previousOwner",
           type: "address",
         },
@@ -185,80 +114,6 @@ const NftDetail = () => {
       type: "event",
     },
     {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "stage",
-          type: "uint256",
-        },
-      ],
-      name: "UpdateStage",
-      type: "event",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: false,
-          internalType: "address",
-          name: "account",
-          type: "address",
-        },
-        { indexed: false, internalType: "bool", name: "value", type: "bool" },
-      ],
-      name: "UpdateWhitelists",
-      type: "event",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: false,
-          internalType: "address",
-          name: "account",
-          type: "address",
-        },
-        {
-          indexed: false,
-          internalType: "uint256",
-          name: "balance",
-          type: "uint256",
-        },
-      ],
-      name: "Withdraw",
-      type: "event",
-    },
-    {
-      inputs: [],
-      name: "DELEGATION_TYPEHASH",
-      outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "DOMAIN_TYPEHASH",
-      outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "MAX_SUPPLY",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "addressBalance",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
       inputs: [
         { internalType: "address", name: "to", type: "address" },
         { internalType: "uint256", name: "tokenId", type: "uint256" },
@@ -276,56 +131,8 @@ const NftDetail = () => {
       type: "function",
     },
     {
-      inputs: [
-        { internalType: "address", name: "", type: "address" },
-        { internalType: "uint32", name: "", type: "uint32" },
-      ],
-      name: "checkpoints",
-      outputs: [
-        { internalType: "uint32", name: "fromBlock", type: "uint32" },
-        { internalType: "uint96", name: "votes", type: "uint96" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "decimals",
-      outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "delegatee", type: "address" }],
-      name: "delegate",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [
-        { internalType: "address", name: "delegatee", type: "address" },
-        { internalType: "uint256", name: "nonce", type: "uint256" },
-        { internalType: "uint256", name: "expiry", type: "uint256" },
-        { internalType: "uint8", name: "v", type: "uint8" },
-        { internalType: "bytes32", name: "r", type: "bytes32" },
-        { internalType: "bytes32", name: "s", type: "bytes32" },
-      ],
-      name: "delegateBySig",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "delegator", type: "address" }],
-      name: "delegates",
-      outputs: [{ internalType: "address", name: "", type: "address" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "flipSaleState",
+      inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+      name: "burn",
       outputs: [],
       stateMutability: "nonpayable",
       type: "function",
@@ -334,23 +141,6 @@ const NftDetail = () => {
       inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
       name: "getApproved",
       outputs: [{ internalType: "address", name: "", type: "address" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "account", type: "address" }],
-      name: "getCurrentVotes",
-      outputs: [{ internalType: "uint96", name: "", type: "uint96" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [
-        { internalType: "address", name: "account", type: "address" },
-        { internalType: "uint256", name: "blockNumber", type: "uint256" },
-      ],
-      name: "getPriorVotes",
-      outputs: [{ internalType: "uint96", name: "", type: "uint96" }],
       stateMutability: "view",
       type: "function",
     },
@@ -365,46 +155,9 @@ const NftDetail = () => {
       type: "function",
     },
     {
-      inputs: [
-        { internalType: "uint256", name: "numberOfTokens", type: "uint256" },
-      ],
-      name: "mint",
-      outputs: [],
-      stateMutability: "payable",
-      type: "function",
-    },
-    {
       inputs: [],
       name: "name",
       outputs: [{ internalType: "string", name: "", type: "string" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "nextOwnerToExplicitlySet",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "", type: "address" }],
-      name: "nonces",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "", type: "address" }],
-      name: "numCheckpoints",
-      outputs: [{ internalType: "uint32", name: "", type: "uint32" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "numberMinted",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
       stateMutability: "view",
       type: "function",
     },
@@ -425,6 +178,16 @@ const NftDetail = () => {
     {
       inputs: [],
       name: "renounceOwnership",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        { internalType: "address", name: "to", type: "address" },
+        { internalType: "uint256", name: "tokenId", type: "uint256" },
+      ],
+      name: "safeMint",
       outputs: [],
       stateMutability: "nonpayable",
       type: "function",
@@ -453,13 +216,6 @@ const NftDetail = () => {
       type: "function",
     },
     {
-      inputs: [],
-      name: "saleIsActive",
-      outputs: [{ internalType: "bool", name: "", type: "bool" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
       inputs: [
         { internalType: "address", name: "operator", type: "address" },
         { internalType: "bool", name: "approved", type: "bool" },
@@ -467,31 +223,6 @@ const NftDetail = () => {
       name: "setApprovalForAll",
       outputs: [],
       stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "string", name: "baseURI", type: "string" }],
-      name: "setBaseURI",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-      name: "stage",
-      outputs: [
-        { internalType: "uint256", name: "minMint", type: "uint256" },
-        { internalType: "uint256", name: "maxMint", type: "uint256" },
-        { internalType: "uint256", name: "minting_fee", type: "uint256" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "stageNow",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-      stateMutability: "view",
       type: "function",
     },
     {
@@ -557,41 +288,6 @@ const NftDetail = () => {
       stateMutability: "nonpayable",
       type: "function",
     },
-    {
-      inputs: [{ internalType: "uint256", name: "_stage", type: "uint256" }],
-      name: "updateStage",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "_account", type: "address" }],
-      name: "updateWhitelist",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "delegator", type: "address" }],
-      name: "votesToDelegate",
-      outputs: [{ internalType: "uint96", name: "", type: "uint96" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "", type: "address" }],
-      name: "whitelist",
-      outputs: [{ internalType: "bool", name: "", type: "bool" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "withdraw",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
   ];
 
   useEffect(() => {
@@ -617,7 +313,8 @@ const NftDetail = () => {
       setNftDetails(data);
 
       let orders = await GetOrdersByNftId({
-        nftID: "62a0855bc78fb714e23145ba",
+        tokenId: id,
+        collectionAddress: address,
       });
       if (orders && orders.results && orders.results.length > 0) {
         setOrders(orders.results);
@@ -666,7 +363,7 @@ const NftDetail = () => {
           </div>
           <br></br>
           <div className="col">
-            <button
+            {/* <button
               className="putonmarketplace"
               onClick={async () => {
                 await putOnMarketplace(currentUser, {
@@ -675,25 +372,67 @@ const NftDetail = () => {
                 });
               }}
             >
-              {nftDetails?.owner?.toLowerCase() === currentUser?.toLowerCase()
+              {nftDetails?.owner?.toLowerCase() ===
+                currentUser?.toLowerCase() && orders.length == 0
                 ? "Put On Marketplace"
+                : nftDetails?.owner?.toLowerCase() ===
+                  currentUser?.toLowerCase()
+                ? "Remove from sale"
                 : "Not On Sale"}
-            </button>
-            {console.log("order in map", orders)}
-            {orders.length > 0
-              ? orders.map((o, i) => {
-                  return (
-                    <button
-                      className="putonmarketplace"
-                      onClick={async () => {
-                        await handleBuyNft(o._id, true, currentUser,100000000000,);
-                      }}
-                    >
-                      Buy
-                    </button>
-                  );
-                })
-              : ""}
+            </button> */}
+            {nftDetails?.owner?.toLowerCase() === currentUser?.toLowerCase() &&
+            orders.length == 0 ? (
+              <button
+                className="putonmarketplace"
+                onClick={async () => {
+                  {
+                    await putOnMarketplace(currentUser, {
+                      collection: address,
+                      tokenId: id,
+                    });
+                  }
+                }}
+              >
+                Put On Marketplace
+              </button>
+            ) : orders.length > 0 ? (
+              orders.map((o, i) => {
+                return (
+                  <button
+                    className="putonmarketplace"
+                    onClick={async () => {
+                      {
+                        nftDetails?.owner?.toLowerCase() ===
+                          currentUser?.toLowerCase() && orders.length == 0
+                          ? await putOnMarketplace(currentUser, {
+                              collection: address,
+                              tokenId: id,
+                            })
+                          : nftDetails?.owner?.toLowerCase() ===
+                            currentUser?.toLowerCase()
+                          ? await handleRemoveFromSale(o._id, currentUser)
+                          : await handleBuyNft(
+                              o._id,
+                              true,
+                              currentUser,
+                              100000000000
+                            );
+                      }
+                    }}
+                  >
+                    {nftDetails?.owner?.toLowerCase() ===
+                      currentUser?.toLowerCase() && orders.length == 0
+                      ? "Put On Marketplace"
+                      : nftDetails?.owner?.toLowerCase() ===
+                        currentUser?.toLowerCase()
+                      ? "Remove from sale"
+                      : "Buy"}
+                  </button>
+                );
+              })
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>
