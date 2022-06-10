@@ -332,14 +332,6 @@ export const getOrderDetails = async (data) => {
 };
 
 export const GetOrdersByNftId = async (data) => {
-  //   {
-  //     "nftId": "6229812aa2c3ed3120651ca6",
-  //     "sortKey": "oTokenId",
-  //     "sortType": -1,
-  //     "page": 1,
-  //     "limit": 4
-  // }
-
   const requestOptions = {
     method: "POST",
     headers: {
@@ -347,7 +339,6 @@ export const GetOrdersByNftId = async (data) => {
     },
     body: JSON.stringify(data),
   };
-
   try {
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/order/getOrdersByNftId",
@@ -443,12 +434,11 @@ export const getBrandById = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-    }
+    },
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL +
-        `/utils/getBrandByID/${data}`,
+      process.env.REACT_APP_API_BASE_URL + `/utils/getBrandByID/${data}`,
       requestOptions
     );
     const isJson = response.headers
@@ -459,7 +449,7 @@ export const getBrandById = async (data) => {
   } catch (err) {
     return err;
   }
-} 
+};
 
 // export const getUsersCollections = async () => {
 //   const requestOptions = {
@@ -850,4 +840,3 @@ export const getBrandById = async (data) => {
 //     return err;
 //   }
 // };
-

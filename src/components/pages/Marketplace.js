@@ -7,8 +7,12 @@ import Twogrid from "../SVG/Twogrid";
 // import { Marketplacecartj } from "../../Data/dummyJSON";
 import { getNFTs } from "../../helpers/getterFunctions";
 import { Link, useParams } from "react-router-dom";
-import { getOrderByNftID } from "./../../helpers/getterFunctions";
+import { getOrderByNftID, getUserById } from "./../../helpers/getterFunctions";
 import { convertToEth } from "../../helpers/numberFormatter";
+import AllNFTs from "../SVG/AllNFTs";
+import Firearmsvg from "../SVG/Firearmsvg";
+import Soldierssvg from "../SVG/Soldierssvg";
+import UpArrow from "../SVG/dropdown";
 
 var register_bg = {
   backgroundImage: "url(./img/Marketplace/marketplace-bg.jpg)",
@@ -49,8 +53,22 @@ function Marketplace() {
 
   const [allNFTs, setAllNFTs] = useState([]);
   const [currPage, setCurrPage] = useState(1);
-  const [loadMore, setLoadMore] = useState(false);
   const { searchedText } = useParams();
+  const [loadMore, setLoadMore] = useState(false);
+  const [togglemode, setTogglemode] = useState("filterhide");
+
+  const filterToggle = () => {
+    console.log("filter", togglemode);
+    if (togglemode === "filterhide") {
+      setTogglemode("filtershow");
+      document.getElementsByClassName("filter_btn")[0].classList.add("active");
+    } else {
+      setTogglemode("filterhide");
+      document
+        .getElementsByClassName("filter_btn")[0]
+        .classList.remove("active");
+    }
+  };
 
   useEffect(async () => {
     let temp = allNFTs;
@@ -61,30 +79,35 @@ function Marketplace() {
         searchText: searchedText ? searchedText : "",
       };
       const res = await getNFTs(reqData);
-      if (res.length > 0) {
+
+      if (res?.length > 0) {
         for (let i = 0; i < res.length; i++) {
-          const orderDet = await getOrderByNftID({
-            nftId: res[i].id,
-          });
-          if (orderDet.results.length > 0) {
+          const ownedBy = await getUserById({ userID: res[i].createdBy });
+          const orderDet = await getOrderByNftID({nftId: res[i].id});
+          if (orderDet?.results?.length > 0) {
             res[i] = {
               ...res[i],
               isNftOnSale: true,
               salesType: orderDet?.results[0]?.salesType,
-              price: Number(convertToEth(orderDet?.results[0]?.price?.$numberDecimal) ).toFixed(4),
+              price: Number(
+                convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
+              ).toFixed(4),
+              creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
             };
           } else {
             res[i] = {
               ...res[i],
               isNftOnSale: false,
               salesType: orderDet?.results[0]?.salesType,
-              price: Number(convertToEth(orderDet?.results[0]?.price?.$numberDecimal) ).toFixed(4),
+              price: Number(
+                convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
+              ).toFixed(4),
+              creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
             };
           }
         }
 
         temp = [...temp, res];
-        console.log("temp--->", temp);
         setAllNFTs(temp);
         setCurrPage(currPage + 1);
       }
@@ -146,9 +169,176 @@ function Marketplace() {
                   <Threegrid />
                 </div>
                 {/* </div> */}
-                <button type='button' className='filter_btn'>
+                <button
+                  type='button'
+                  className='filter_btn'
+                  onClick={filterToggle}>
                   Adv.Filter
                 </button>
+              </div>
+            </div>
+            <div className={`filter mb-5 ${togglemode}`}>
+              <div className='filtercol'>
+                <form>
+                  <button
+                    type='button'
+                    class='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo'>
+                    Status <UpArrow />
+                  </button>
+                  <div id='demo' class='collapse show'>
+                    <ul className='status_ul'>
+                      <li>
+                        <Link to={"/"} className='filter_border'>
+                          Buy Now
+                        </Link>
+                        <Link to={"/"} className='filter_border'>
+                          On Auction
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to={"/"} className='filter_border'>
+                          Now
+                        </Link>
+                        <Link to={"/"} className='filter_border'>
+                          Offers
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <button
+                    type='button'
+                    class='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo2'>
+                    Price <UpArrow />
+                  </button>
+                  <div id='demo2' class='collapse show'>
+                    <ul className='status_ul'>
+                      <li>
+                        <select
+                          class='form-select filter_apply filter-text-left'
+                          aria-label='Default select example'>
+                          <option selected>$ Australian Dollar (AUD)</option>
+                          <option value='1'>One</option>
+                          <option value='2'>Two</option>
+                          <option value='3'>Three</option>
+                        </select>
+                      </li>
+                      <li>
+                        <div class='range_input'>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='exampleInputPassword1'
+                            placeholder='Min'
+                          />
+                          <span className='span_class'>to</span>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='exampleInputPassword1'
+                            placeholder='Max'
+                          />
+                        </div>
+                      </li>
+                      <li>
+                        <button type='submit' class='filter_apply'>
+                          Apply
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </form>
+              </div>
+              <div className='filtercol'>
+                <form>
+                  <button
+                    type='button'
+                    class='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo3'>
+                    Collections <UpArrow />
+                  </button>
+                  <div id='demo3' class='collapse show'>
+                    <input
+                      type='text'
+                      placeholder='Filter'
+                      className='filter_apply filter-text-left filter_padd'
+                    />
+                  </div>
+                </form>
+              </div>
+              <div className='filtercol'>
+                <button
+                  type='button'
+                  class='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo4'>
+                  Categories <UpArrow />
+                </button>
+                <div id='demo4' class='collapse show'>
+                  <ul>
+                    <li>
+                      <Link to={"/marketplace"} className='sub-items'>
+                        <AllNFTs />
+                        All NFTs
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/marketplaceCollection"} className='sub-items'>
+                        <Firearmsvg />
+                        Firearms
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/Soldiers"} className='sub-items'>
+                        <Soldierssvg />
+                        Soldiers
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to={"/Accesories"} className='sub-items'>
+                        <Soldierssvg />
+                        Accesories
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className='filtercol'>
+                <button
+                  type='button'
+                  class='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo5'>
+                  On Sale In <UpArrow />
+                </button>
+                <div id='demo5' class='collapse show'>
+                  <ul>
+                    <li>
+                      <input
+                        type='text'
+                        placeholder='Filter'
+                        className='filter_apply  filter-text-left filter_padd'
+                      />
+                    </li>
+                    <li>
+                      <form action='#' className='checked_form'>
+                        <div class='form-check form-check-inline'>
+                          <input type='radio' id='test1' name='radio-group' />
+                          <label for='test1'>Apple</label>
+                        </div>
+                        <div class='form-check form-check-inline'>
+                          <input type='radio' id='test2' name='radio-group' />
+                          <label for='test2'>Apple</label>
+                        </div>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -164,13 +354,18 @@ function Marketplace() {
                   return (
                     <div className={grid}>
                       <div className='items_slide' key={key}>
-                        <a href={`/NFTdetails/${card.id}`}>
+                       
                           <div className='items_profileimg' key={key}>
+                            <a href={`/author/${card.createdBy}`}>
                             <div className='profile_left'>
                               <img
                                 alt=''
                                 className='profile_img'
-                                src={card.authorImage}
+                                src={
+                                  card.creatorImg
+                                    ? card.creatorImg
+                                    : "../img/collections/profile1.png"
+                                }
                               />
                               <img
                                 alt=''
@@ -178,20 +373,26 @@ function Marketplace() {
                                 src={"../img/collections/check.png"}
                               />
                             </div>
+                            </a>
                             {/* <div className='profile_right'>
                               <span>sfs</span>
                             </div> */}
                           </div>
+                          <a href={`/NFTdetails/${card.id}`}>
                           <img
                             alt=''
                             src={card.image}
                             class='img-fluid items_img width-100 my-3'
                           />
+                          </a>
                           <div className='items_text'>
                             <div className='items_info '>
                               <div className='items_left'>
                                 <h3 className=''>{card.name}</h3>
-                                <p>{card.price ? card.price : "-"} HNTR</p>
+                                <p>
+                                  {card.price !== "NaN" ? card.price : "0.0000"}{" "}
+                                  HNTR
+                                </p>
                               </div>
                               <div className='items_right justify-content-end d-flex'>
                                 <span>
@@ -213,10 +414,14 @@ function Marketplace() {
                             <Link
                               to={`/NFTdetails/${card.id}`}
                               className='border_btn width-100 title_color'>
-                              {card.isNftOnSale ? (card.salesType === 0 ? "Buy Now" : "Place Bid") : "View"}
+                              {card.isNftOnSale
+                                ? card.salesType === 0
+                                  ? "Buy Now"
+                                  : "Place Bid"
+                                : "View"}
                             </Link>
                           </div>
-                        </a>
+                       
                       </div>
                     </div>
                   );

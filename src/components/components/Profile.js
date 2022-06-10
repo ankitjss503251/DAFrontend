@@ -395,6 +395,7 @@ function Profile() {
                     justifyContent: "center",
                     position: "relative",
                   }}
+                  className="profile_div"
                 >
                   <input
                     type="file"
@@ -407,10 +408,10 @@ function Profile() {
                   />
                   <div
                     className="profile_me"
-                    style={{
-                      height: "160px",
-                      width: "160px",
-                    }}
+                    // style={{
+                    //   height: "160px",
+                    //   width: "160px",
+                    // }}
                     onClick={() => imageUploader.current.click()}
                   >
                     <img

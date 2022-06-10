@@ -2301,6 +2301,7 @@ button.filter_btn.active {
 
 .coppycode span svg {
   margin-left: 20px;
+  cursor: pointer;
 }
 .collection_title {
   font-family: "Montserrat";
@@ -2663,12 +2664,23 @@ span.special_text {
   padding: 0px;
   display: flex;
   flex-wrap: wrap;
+  
+}
+
+.profile_images .profile_div{
+  width: 180px;
+  height: 180px;
 }
 .profile_images li {
   list-style: none;
   width: 50%;
   text-align: center;
   margin-bottom: 30px;
+}
+
+.profile_me{
+  height: 100%;
+  width: 100%;
 }
 .profile_images li h4 {
   font-family: "Montserrat";

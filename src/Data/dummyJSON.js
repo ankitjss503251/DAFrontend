@@ -292,7 +292,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 2,
         img: "../img/collections/list2.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -302,7 +302,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 3,
         img: "../img/collections/list3.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -312,7 +312,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 4,
         img: "../img/collections/list4.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -322,7 +322,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 5,
         img: "../img/collections/list5.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -332,7 +332,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 6,
         img: "../img/collections/list6.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -342,7 +342,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 7,
         img: "../img/collections/list7.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -352,7 +352,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 8,
         img: "../img/collections/list8.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -362,7 +362,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 9,
         img: "../img/collections/list9.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -372,7 +372,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 10,
         img: "../img/collections/list10.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -382,7 +382,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 11,
         img: "../img/collections/list11.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
@@ -392,7 +392,7 @@ export const AuthorCard = [
         Slug: "Buy Now"
     },
     {
-        id: 1,
+        id: 12,
         img: "../img/collections/list12.png",
         Subheading: "Barrett Collection",
         Heading: "BARRETT GUNS #2454",
