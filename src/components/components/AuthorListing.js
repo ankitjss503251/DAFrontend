@@ -9,8 +9,8 @@ function AuthorListing(props) {
         <div className="coll_itemstext">
             <div className="collection_row mb-3">
                 <div className="collection_col">
-                    <span>{props.submenu}</span>
-                    <h6>{props.heading}</h6>
+                    <span>{"collection"}</span>
+                    <h6>{props?.card?.name}</h6>
                 </div>
             </div>
             <div className="collection_row align-items-center">

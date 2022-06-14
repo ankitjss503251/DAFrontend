@@ -13,14 +13,9 @@ import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import UpArrow from "../SVG/dropdown";
+import bgImg from "./../../assets/marketplace-bg.jpg"
 
-var register_bg = {
-  backgroundImage: "url(./img/Marketplace/marketplace-bg.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-};
+
 var bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
   backgroundRepeat: "no-repeat",
@@ -47,6 +42,14 @@ function Marketplace() {
     setgrid("col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4");
     document.getElementById("gridthree").classList.add("active");
     document.getElementById("gridtwo").classList.remove("active");
+  };
+
+  var register_bg = {
+    backgroundImage:`url(${bgImg})` ,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
   };
 
   const [grid, setgrid] = useState("col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4");

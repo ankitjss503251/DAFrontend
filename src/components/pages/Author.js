@@ -62,7 +62,6 @@ function Author() {
   };
   
   useEffect(() => {
-    console.log("id", id);
     const fetch = async () => {
       let _profile = await GetIndividualAuthorDetail({ userID: id });
       setProfile(_profile);
@@ -75,7 +74,7 @@ function Author() {
       let _owned = await GetOwnedNftList(reqBody);
       setTotalOwned(_owned.count);
       if (_owned && _owned.results.length > 0) setOwnedNFTs(_owned.results[0]);
-      console.log("owned nfts", _owned);
+      console.log("owned nfts", _owned.results[0]);
       console.log("in user profile api", _profile);
     };
     fetch();
@@ -183,7 +182,7 @@ function Author() {
               {profile?.walletAddress
                 ? profile?.walletAddress?.slice(0, 4) +
                   "..." +
-                  profile?.walletAddress?.slice(38, 41)
+                  profile?.walletAddress?.slice(38, 42)
                 : "-"}
             </span>
           </div>
@@ -508,6 +507,7 @@ function Author() {
                   <div className={grid} key={key}>
                     <AuthorListing
                       image={card.image}
+                      card={card}
                       link={`/nftDetails/${card._id}`}
                     />
                   </div>
