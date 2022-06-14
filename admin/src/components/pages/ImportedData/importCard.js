@@ -78,7 +78,7 @@ const ImportCard = () => {
         let calls = [];
         let data = [];
         let ids = [];
-        for (let i = dbSupply - 1; i < parseInt(originalSupply); i++) {
+        for (let i = dbSupply; i < parseInt(originalSupply); i++) {
           let tokenId = await token.tokenByIndex(i);
           console.log("tokenId", tokenId);
           calls.push({
@@ -86,17 +86,17 @@ const ImportCard = () => {
             name: "tokenURI",
             params: [tokenId],
           });
-          ids.push(tokenId);
+          ids.push(parseInt(tokenId));
         }
 
         let res = await multicall(abi, calls);
         let j = 0;
         console.log("here1", res[0], dbSupply, parseInt(originalSupply));
-        for (let i = dbSupply - 1; i < parseInt(originalSupply); i++) {
+        for (let i = dbSupply; i < parseInt(originalSupply); i++) {
           console.log("here12", res[j][0]);
           let resp = await fetch(res[j][0]);
           resp = await resp.json();
-          resp.tokenID = ids[j];
+          resp.tokenID = parseInt(ids[j]);
           resp.collectionAddress = address;
           data.push(resp);
           console.log("here2", data.length);
