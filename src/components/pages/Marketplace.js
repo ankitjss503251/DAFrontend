@@ -14,6 +14,7 @@ import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import UpArrow from "../SVG/dropdown";
 import bgImg from "./../../assets/marketplace-bg.jpg";
+import { NotificationManager } from "react-notifications";
 
 var bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -58,6 +59,8 @@ function Marketplace() {
   const { searchedText } = useParams();
   const [loadMore, setLoadMore] = useState(false);
   const [togglemode, setTogglemode] = useState("filterhide");
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState(false);
+  const [sText, setSText] = useState("");
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -77,11 +80,12 @@ function Marketplace() {
     try {
       const reqData = {
         page: currPage,
-        limit: 1,
+        limit: 5,
         searchText: searchedText ? searchedText : "",
       };
       const res = await getNFTs(reqData);
       if (res?.length > 0) {
+        setLoadMoreDisabled(false);
         for (let i = 0; i < res.length; i++) {
           const ownedBy = await getUserById({ userID: res[i].createdBy });
           const orderDet = await getOrderByNftID({ nftId: res[i].id });
@@ -110,6 +114,8 @@ function Marketplace() {
         console.log("temp--->", temp);
         setAllNFTs(temp);
         setCurrPage(currPage + 1);
+      } if(res.length < 0){
+        setLoadMoreDisabled(true);
       }
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
@@ -117,8 +123,16 @@ function Marketplace() {
     console.log("allNFTs--->", allNFTs);
   }, [loadMore]);
 
+
+  const handleSearch = () => {
+
+  }
+
   return (
     <div>
+      {loadMoreDisabled
+        ? NotificationManager.info("No more items to load")
+        : ""}
       <section className='register_hd pdd_12' style={register_bg}>
         <div className='container'>
           <div className='row'>
@@ -139,8 +153,10 @@ function Marketplace() {
                     type='search'
                     placeholder='Search item here...'
                     aria-label='Search'
+                    value={sText}
+                    onChange={e => setSText(e.target.value)}
                   />
-                  <button class='market_btn' type='submit'>
+                  <button class='market_btn' type='submit' onClick={handleSearch}>
                     <img src='../img/search.svg' alt='' />
                   </button>
                 </form>
@@ -350,9 +366,9 @@ function Marketplace() {
             </div> */}
 
           <div className='row'>
-            {allNFTs.length > 0
+            {allNFTs?.length > 0
               ? allNFTs.map((oIndex) => {
-                return  oIndex.map((card, key) => {
+                  return oIndex.map((card, key) => {
                     return (
                       <div className={grid}>
                         <div className='items_slide' key={key}>
@@ -429,13 +445,19 @@ function Marketplace() {
                 })
               : ""}
           </div>
-          <div className='row'>
+          {
+            allNFTs?.length > 0 ?  <div className='row'>
             <div class='col-md-12 text-center mt-5'>
-              <a class='view_all_bdr' onClick={() => setLoadMore(!loadMore)}>
+              <button
+                class='view_all_bdr'
+                disabled={loadMoreDisabled}
+                onClick={() => setLoadMore(!loadMore)}>
                 Load More
-              </a>
+              </button>
             </div>
-          </div>
+          </div> : ""
+          }
+         
         </div>
       </section>
       <Footer />

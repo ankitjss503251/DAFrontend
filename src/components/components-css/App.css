@@ -1314,6 +1314,7 @@ button.slick-arrow.slick-next {
   display: inline-block;
   transition: 0.5s ease;
   cursor: pointer;
+  background: none;
 }
 .view_all_bdr:hover {
   background: linear-gradient(180deg, #ef981d 56.77%, #f9bf50 100%);

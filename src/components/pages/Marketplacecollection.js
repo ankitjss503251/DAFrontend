@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { getCollections } from "../../helpers/getterFunctions";
 import { marketPlaceCollection } from "../../Data/dummyJSON";
 import { useParams } from "react-router-dom";
+import { NotificationManager } from "react-notifications";
 
 var register_bg = {
   backgroundImage: "url(../img/marketplace/marketplace-bg.jpg)",
@@ -25,11 +26,13 @@ function Marketplacecollection() {
   const [allCollections, setAllCollections] = useState([]);
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState(false);
+
   const { searchedText } = useParams();
+
 
   useEffect(async () => {
     let temp = allCollections;
-
     try {
       const reqData = {
         page: currPage,
@@ -39,10 +42,13 @@ function Marketplacecollection() {
       const res = await getCollections(reqData);
       console.log("length", res, res.length);
       if (res.length > 0) {
+        setLoadMoreDisabled(false);
         temp = [...temp, res];
         console.log("temp", temp);
         setAllCollections(temp);
         setCurrPage(currPage + 1);
+      } if(res.length < 0){
+        setLoadMoreDisabled(true);
       }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
@@ -50,8 +56,14 @@ function Marketplacecollection() {
     console.log("allCollections", allCollections);
   }, [loadMore]);
 
+  
+
+
   return (
     <div>
+      {loadMoreDisabled
+        ? NotificationManager.info("No more items to load")
+        : ""}
       <section className='register_hd pdd_12' style={register_bg}>
         <div className='container'>
           <div className='row'>
@@ -171,46 +183,47 @@ function Marketplacecollection() {
               aria-labelledby='pills-home-tab'>
               <div className='row'>
                 {allCollections.length > 0
-                  ?  allCollections.map(oIndex => {
-                    return oIndex.map((card) => (
-                      <div className='col-lg-4 col-md-6 mb-5'>
-                        <Link to={`/collection/${card._id}`}>
-                          <div className='collection_slide'>
-                            <img
-                              className='img-fluid'
-                              src={card.coverImg}
-                              alt=''
-                            />
-                            <div className='collection_text'>
-                              <div className='coll_profileimg'>
-                                <img
-                                  alt=''
-                                  className='profile_img'
-                                  src={card.logoImg}
-                                />
-                                <img
-                                  alt=''
-                                  className='check_img'
-                                  src={"../img/collections/check.png"}
-                                />
+                  ? allCollections.map((oIndex) => {
+                      return oIndex.map((card) => (
+                        <div className='col-lg-4 col-md-6 mb-5'>
+                          <Link to={`/collection/${card._id}`}>
+                            <div className='collection_slide'>
+                              <img
+                                className='img-fluid'
+                                src={card.coverImg}
+                                alt=''
+                              />
+                              <div className='collection_text'>
+                                <div className='coll_profileimg'>
+                                  <img
+                                    alt=''
+                                    className='profile_img'
+                                    src={card.logoImg}
+                                  />
+                                  <img
+                                    alt=''
+                                    className='check_img'
+                                    src={"../img/collections/check.png"}
+                                  />
+                                </div>
+                                <h4 className='collname'>{card.name}</h4>
+                                <p>{card.desc}</p>
                               </div>
-                              <h4 className='collname'>{card.name}</h4>
-                              <p>{card.desc}</p>
                             </div>
-                          </div>
-                        </Link>
-                      </div>
-                    ))
-                  })
+                          </Link>
+                        </div>
+                      ));
+                    })
                   : ""}
-                ;
+                  {allCollections?.length > 0 ? 
                 <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
-                  <a
+                  <button
                     class='view_all_bdr'
+                    disabled={loadMoreDisabled}
                     onClick={() => setLoadMore(!loadMore)}>
                     Load More
-                  </a>
-                </div>
+                  </button>
+                </div> : ""}
               </div>
             </div>
             <div
