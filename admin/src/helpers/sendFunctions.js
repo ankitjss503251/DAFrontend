@@ -60,7 +60,7 @@ export const putOnMarketplace = async (account, orderData) => {
     sellerOrder = [
       account,
       orderData.collection,
-      Number(orderData.tokenId),
+      Number(orderData.tokenID),
       1,
       0,
       contracts.USDT,
@@ -130,21 +130,21 @@ export const putOnMarketplace = async (account, orderData) => {
 
     let reqParams = {
       seller: account,
+      collectionAddress: orderData.collection,
       tokenAddress: contracts.USDT,
-      collection: orderData.collection,
       price: 100000000,
       quantity: 1,
       deadline: GENERAL_TIMESTAMP,
       saleType: 0,
       validUpto: GENERAL_TIMESTAMP,
       signature: signature,
-      tokenID: Number(orderData.tokenId),
+      tokenID: Number(orderData.tokenID),
       salt: 123,
-      nftID: "62a199e310d89f17b061b600",
+      nftID: orderData.nftID,
       creatorAddress: "0x52cE5F25394Fd1A5d4042c1E8aB963E5f947893b",
     };
 
-    let data = await createOrder(reqParams);
+    let data = await createOrder(reqParams, true);
     console.log("put on sale", data);
 
     console.log("seller sign", reqParams);
