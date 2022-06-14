@@ -8,6 +8,7 @@ import {
   GetBrand,
   // getImportedNFTs,
   GetMyCollectionsList,
+  UpdateCollection,
 } from "../../apiServices";
 import contracts from "../../config/contracts";
 import degnrABI from "./../../config/abis/dgnr8.json";
@@ -31,7 +32,7 @@ function CreateCollection() {
   const [price, setPrice] = useState();
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
-  const [cookies, setCookie, removeCookie] = useCookies([]);
+  const [cookies] = useCookies([]);
   const [preSaleStartTime, setPreSaleStartTime] = useState("");
   const [datetime2, setDatetime2] = useState("");
   const [currentUser, setCurrentUser] = useState("");
@@ -42,6 +43,8 @@ function CreateCollection() {
   const [isModal, setModal] = useState(false);
   const [importModal, setImportModal] = useState(false);
   const [importedAddress, setImportedAddress] = useState("");
+  const [isOffChain, setIsOffChain] = useState("No");
+  const [isOnMarketplace, setIsOnMarketplace] = useState("Yes");
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -258,6 +261,11 @@ function CreateCollection() {
     isImport = false,
     importedAddress = "0x"
   ) => {
+    console.log(
+      "isOffChain",
+      isOffChain == "No",
+      !isImport && isOffChain == "No"
+    );
     let res1;
     let creator;
     if (handleValidationCheck()) {
@@ -277,7 +285,7 @@ function CreateCollection() {
 
       try {
         setLoading(true);
-        if (!isImport) {
+        if (!isImport && isOffChain == "No") {
           nftType == "1"
             ? (res1 = await creator.deployExtendedERC721(
                 title,
@@ -296,19 +304,20 @@ function CreateCollection() {
         console.log(e);
         NotificationManager.error(e.message, "", 1500);
         setLoading(false);
-        setTimeout(() => {
-          window.location.href = "/createcollection";
-        }, 1000);
+        // setTimeout(() => {
+        //   window.location.href = "/createcollection";
+        // }, 1000);
       }
       let contractAddress = importedAddress;
 
-      if (!isImport) {
+      if (!isImport && isOffChain == "No") {
         let hash = res1;
         res1 = await res1.wait();
         contractAddress = await readReceipt(hash);
 
         console.log("res1 is--->", res1);
       } else {
+        res1 = {};
         res1.status = 1;
       }
       console.log("contract address is--->", contractAddress);
@@ -328,14 +337,17 @@ function CreateCollection() {
         fd.append("coverImage", coverImg);
         fd.append("categoryID", category);
         fd.append("brandID", brand);
+        fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
+        fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
         //fd.append("chainID", chain);
         fd.append("contractAddress", contractAddress);
         fd.append("preSaleStartTime", preSaleStartTime);
         fd.append("preSaleEndTime", datetime2);
+        fd.append("preSaleTokenAddress", contracts.USDT);
         fd.append("totalSupply", maxSupply);
         fd.append("type", type);
         fd.append("price", ethers.utils.parseEther(price.toString()));
-        fd.append("royalty", royalty);
+        fd.append("royalty", royalty * 1000);
 
         console.log("form data is---->", fd.value);
 
@@ -357,24 +369,93 @@ function CreateCollection() {
             NotificationManager.error(collection, "", 1800);
             console.log("category message", collection);
             setLoading(false);
-            setTimeout(() => {
-              window.location.href = "/createcollection";
-            }, 1000);
+            // setTimeout(() => {
+            //   window.location.href = "/createcollection";
+            // }, 1000);
           }
         } catch (e) {
           NotificationManager.error(e.message, "", 1800);
           setLoading(false);
-          setTimeout(() => {
-            window.location.href = "/createcollection";
-          }, 1000);
+          // setTimeout(() => {
+          //   window.location.href = "/createcollection";
+          // }, 1000);
         }
       } else {
         NotificationManager.error("Something went wrong", "", 1800);
         setLoading(false);
-        setTimeout(() => {
-          window.location.href = "/createcollection";
-        }, 1000);
+        // setTimeout(() => {
+        //   window.location.href = "/createcollection";
+        // }, 1000);
       }
+    }
+  };
+
+  const deployCollection = async (coll) => {
+    let res1;
+    let creator;
+    setLoading(true);
+    try {
+      creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
+      console.log("creator is---->", creator);
+      console.log("create collection is called");
+      console.log("contracts usdt address", contracts.USDT);
+    } catch (e) {
+      console.log("err", e);
+      setLoading(false);
+      return;
+    }
+    try {
+      coll.type == "1"
+        ? (res1 = await creator.deployExtendedERC721(
+            coll.name,
+            coll.symbol,
+            "www.uri.com",
+            coll.royalityPercentage,
+            coll.preSaleTokenAddress
+          ))
+        : (res1 = await creator.deployExtendedERC1155(
+            "www.uri.com",
+            coll.royalityPercentage,
+            coll.preSaleTokenAddress
+          ));
+      let hash = res1;
+      res1 = await res1.wait();
+      let contractAddress = await readReceipt(hash);
+
+      console.log("res1 is--->", res1);
+
+      console.log("contract address is--->", contractAddress);
+      await UpdateCollection({
+        id: coll._id,
+        contractAddress: contractAddress,
+        isDeployed: 1,
+      });
+    } catch (e) {
+      console.log(e);
+      NotificationManager.error(e.message, "", 1500);
+      setLoading(false);
+      // setTimeout(() => {
+      //   window.location.href = "/createcollection";
+      // }, 1000);
+    }
+  };
+
+  const setShowOnMarketplace = async (id, show) => {
+    try {
+      await UpdateCollection({
+        id: id,
+        isOnMarketplace: show,
+      });
+      setTimeout(() => {
+        window.location.href = "/createcollection";
+      }, 1000);
+    } catch (e) {
+      console.log(e);
+      NotificationManager.error(e.message, "", 1500);
+      setLoading(false);
+      // setTimeout(() => {
+      //   window.location.href = "/createcollection";
+      // }, 1000);
     }
   };
 
@@ -445,6 +526,35 @@ function CreateCollection() {
                           className="profile_i"
                           alt=""
                         />
+                        {item.isDeployed == 0 ? (
+                          <div className="add_btn mb-4 d-flex justify-content-end">
+                            <button
+                              className="btn btn-admin text-light"
+                              type="button"
+                              onClick={async () => {
+                                await deployCollection(item);
+                              }}
+                            >
+                              Deploy
+                            </button>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+
+                        <button
+                          className="btn btn-admin text-light"
+                          type="button"
+                          onClick={async () => {
+                            {
+                              item.isOnMarketplace == 0
+                                ? await setShowOnMarketplace(item._id, 1)
+                                : await setShowOnMarketplace(item._id, 0);
+                            }
+                          }}
+                        >
+                          {item.isOnMarketplace == 0 ? "Show" : "Hide"}
+                        </button>
                       </td>
                       <td>{item.name}</td>
                       <td>{item.symbol}</td>
@@ -466,6 +576,7 @@ function CreateCollection() {
           </table>
         </div>
       </div>
+      /* CREATE COLLECTION STARTS */
       <div
         className={`modal fade createNft ${isModal}`}
         id="exampleModal"
@@ -760,13 +871,42 @@ function CreateCollection() {
                     <option value="2">Multiple</option>;
                   </select>
                 </div>
+
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    OffChain
+                  </label>
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    value={isOffChain}
+                    onChange={(e) => setIsOffChain(e.target.value)}
+                  >
+                    <option selected>No</option>
+                    <option>Yes</option>
+                  </select>
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Show on Marketplace
+                  </label>
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    value={isOnMarketplace}
+                    onChange={(e) => setIsOnMarketplace(e.target.value)}
+                  >
+                    <option selected>Yes</option>
+                    <option>No</option>
+                  </select>
+                </div>
               </form>
             </div>
             <div className="modal-footer justify-content-center">
               <button
                 type="button"
                 className="btn btn-admin text-light"
-                onClick={handleCollectionCreation}
+                onClick={() => handleCollectionCreation(false)}
               >
                 Create Collection
               </button>
@@ -774,7 +914,7 @@ function CreateCollection() {
           </div>
         </div>
       </div>
-
+      /* CREATE COLLECTION ENDS */ /* IMPORT STARTS */
       <div
         className={`modal fade importCol ${importModal}`}
         id="exampleModal1"
@@ -800,113 +940,6 @@ function CreateCollection() {
             </div>
             <div className="modal-body">
               <form className="row">
-                <div className="mb-1 col-md-4">
-                  <label for="recipient-name" className="col-form-label">
-                    Upload Image *
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      ref={imageUploader}
-                      style={{
-                        display: "none",
-                      }}
-                    />
-                    <div
-                      className="update_btn"
-                      style={{
-                        height: "100%",
-                        width: "100%",
-                        position: "relative",
-                      }}
-                      onClick={() => imageUploader.current.click()}
-                    >
-                      <p className="text-center">Click or Drop here</p>
-                      <img
-                        alt=""
-                        ref={uploadedImage}
-                        src={"../images/upload.png"}
-                        style={{
-                          width: "110px",
-                          height: "110px",
-                          margin: "auto",
-                        }}
-                        className="img-fluid profile_circle_img"
-                      />
-                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
-                    </div>
-                  </div>
-                </div>
-                <div className="mb-1 col-md-8">
-                  <label for="recipient-name" className="col-form-label">
-                    Upload Collection Cover Image *
-                  </label>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload2}
-                      ref={imageUploader2}
-                      style={{
-                        display: "none",
-                      }}
-                    />
-                    <div
-                      className="update_btn"
-                      style={{
-                        height: "100%",
-                        width: "100%",
-                        position: "relative",
-                      }}
-                      onClick={() => imageUploader2.current.click()}
-                    >
-                      <h4 className="text-center">Click or Drop here</h4>
-                      <img
-                        alt=""
-                        ref={uploadedImage2}
-                        src={"../images/upload.png"}
-                        style={{
-                          width: "110px",
-                          height: "110px",
-                          margin: "auto",
-                        }}
-                        className="img-fluid profile_circle_img"
-                      />
-                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    Title *
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="recipient-name"
-                    name="title"
-                    value={title}
-                    onChange={(e) => {
-                      setTitle(e.target.value);
-                    }}
-                  />
-                </div>
                 <div className="col-md-6 mb-1">
                   <label for="recipient-name" className="col-form-label">
                     Collection Address *
@@ -922,142 +955,6 @@ function CreateCollection() {
                     }}
                   />
                 </div>
-                <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    Start Date *
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={(preSaleStartTime || "").toString().substring(0, 16)}
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                </div>
-                <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    End Date *
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={(datetime2 || "").toString().substring(0, 16)}
-                    onChange={handleChange2}
-                    className="form-control"
-                  />
-                </div>
-                <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    Max Supply *
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="recipient-name"
-                    value={maxSupply}
-                    onChange={(e) => {
-                      let maxSupply = parseInt(e.target.value, 10);
-                      console.log(
-                        "max supply is-->",
-                        e.target.value,
-                        typeof maxSupply
-                      );
-                      setMaxSupply(e.target.value);
-                    }}
-                    onKeyPress={(e) => {
-                      if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
-                    }}
-                  />
-                </div>
-                <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    Price *
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="recipient-name"
-                    value={price}
-                    onChange={(e) => numberInputCheck(e)}
-                    onKeyPress={(e) => {
-                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
-                    }}
-                  />
-                </div>
-                <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    Category *
-                  </label>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  >
-                    <option selected>Open this select menu</option>
-                    {categories && categories.length > 0
-                      ? categories.map((c, i) => {
-                          return <option value={c._id}>{c.name}</option>;
-                        })
-                      : ""}
-                  </select>
-                </div>
-                <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    Brand *
-                  </label>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                  >
-                    <option selected>Open this select menu</option>
-                    {console.log("brands--", brands)}
-                    {brands && brands.length > 0
-                      ? brands.map((b, i) => {
-                          return <option value={b._id}>{b.name}</option>;
-                        })
-                      : ""}
-                  </select>
-                </div>
-                <div className="col-md-12 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    Symbol *
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="recipient-name"
-                    value={symbol}
-                    onChange={(e) => setSymbol(e.target.value)}
-                  />
-                </div>
-                <div className="col-md-12 mb-1">
-                  <label for="message-text" className="col-form-label">
-                    Description *
-                  </label>
-                  <textarea
-                    className="form-control"
-                    id="message-text"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  ></textarea>
-                </div>
-
-                <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    NFT Type *
-                  </label>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    value={nftType}
-                    onChange={(e) => setNftType(e.target.value)}
-                  >
-                    <option selected>Open this select menu</option>
-                    <option value="1">Single</option>;
-                    <option value="2">Multiple</option>;
-                  </select>
-                </div>
               </form>
             </div>
             <div className="modal-footer justify-content-center">
@@ -1065,15 +962,16 @@ function CreateCollection() {
                 type="button"
                 className="btn btn-admin text-light"
                 onClick={() => {
-                  handleCollectionCreation(true);
+                  window.location.href = `/importedNfts/${importedAddress}`;
                 }}
               >
-                Create Collection
+                Import Collection
               </button>
             </div>
           </div>
         </div>
       </div>
+      /* IMPORT ENDS */
     </div>
   );
 }

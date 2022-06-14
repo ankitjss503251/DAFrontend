@@ -245,7 +245,7 @@ function CreateNFTs() {
           saleType: 0,
           deadline: GENERAL_TIMESTAMP,
           signature: signature,
-          tokenId: collectionDetail.nextID,
+          tokenID: collectionDetail.nextID,
           deadlineDate: GENERAL_DATE,
           // auctionEndDate: _auctionEndDate,
           salt: salt,
