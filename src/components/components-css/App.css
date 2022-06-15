@@ -1215,7 +1215,6 @@ header#myHeader {
   transform: translateY(-50%);
 } */
 
-
 .mint_text h4 {
   margin-top: 0px;
 }
@@ -1314,6 +1313,8 @@ button.slick-arrow.slick-next {
   text-shadow: 0px 0px 4px rgb(0 0 0 / 40%);
   display: inline-block;
   transition: 0.5s ease;
+  cursor: pointer;
+  background: none;
 }
 .view_all_bdr:hover {
   background: linear-gradient(180deg, #ef981d 56.77%, #f9bf50 100%);
@@ -2266,7 +2267,7 @@ button.filter_btn.active {
   color: #ffffff;
 }
 
- .coppycode .ctc{
+.coppycode .ctc {
   display: flex !important;
   width: max-content !important;
   justify-content: center;
@@ -2274,17 +2275,15 @@ button.filter_btn.active {
   margin: 0 auto;
 }
 
-
-.coppycode .ctc textarea{
+.coppycode .ctc textarea {
   text-align: center;
 }
 
-.coppycode .ctc button{
+.coppycode .ctc button {
   background: none;
   border: none;
-
 }
-.coppycode .ctc button svg{
+.coppycode .ctc button svg {
   margin-left: 0;
 }
 
@@ -2664,10 +2663,9 @@ span.special_text {
   padding: 0px;
   display: flex;
   flex-wrap: wrap;
-  
 }
 
-.profile_images .profile_div{
+.profile_images .profile_div {
   width: 180px;
   height: 180px;
 }
@@ -2678,7 +2676,7 @@ span.special_text {
   margin-bottom: 30px;
 }
 
-.profile_me{
+.profile_me {
   height: 100%;
   width: 100%;
 }
@@ -4256,8 +4254,14 @@ a:hover {
   background: #fff;
 }
 
+.coverImg_cont{
+  height: 320px;
+  margin-bottom: 10px !important;
+}
+
 .coverImg_cont img {
   width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -4338,7 +4342,7 @@ a:hover {
   color: #fff !important;
 }
 
-.filter{
+.filter {
   display: none;
 }
 
@@ -4545,22 +4549,22 @@ a:hover {
   padding-left: 0px;
 }
 
-
-.copied{
+.copied {
   font-size: 18px;
   margin-left: 6px;
   color: #439757;
   font-weight: 600;
 }
 
-.notifi_text{
+.notifi_text {
   background: none;
   border: none;
   outline: none;
   color: #fff;
 }
 
-.accept_btn:hover{
+.accept_btn:hover {
   color: yellow;
   background: #fff;
 }
+

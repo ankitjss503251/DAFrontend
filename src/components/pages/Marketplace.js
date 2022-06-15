@@ -13,7 +13,8 @@ import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import UpArrow from "../SVG/dropdown";
-import bgImg from "./../../assets/marketplace-bg.jpg"
+import bgImg from "./../../assets/marketplace-bg.jpg";
+import { NotificationManager } from "react-notifications";
 
 
 var bgImgStyle = {
@@ -59,6 +60,8 @@ function Marketplace() {
   const { searchedText } = useParams();
   const [loadMore, setLoadMore] = useState(false);
   const [togglemode, setTogglemode] = useState("filterhide");
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState(false);
+  const [sText, setSText] = useState("");
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -78,49 +81,59 @@ function Marketplace() {
     try {
       const reqData = {
         page: currPage,
-        limit: 12,
+        limit: 5,
         searchText: searchedText ? searchedText : "",
       };
       const res = await getNFTs(reqData);
-
       if (res?.length > 0) {
+        setLoadMoreDisabled(false);
         for (let i = 0; i < res.length; i++) {
           const ownedBy = await getUserById({ userID: res[i].createdBy });
-          const orderDet = await getOrderByNftID({nftId: res[i].id});
+          const orderDet = await getOrderByNftID({ nftId: res[i].id });
+          res[i] = {
+            ...res[i],
+            salesType: orderDet?.results[0]?.salesType,
+            price: Number(
+              convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
+            ).toFixed(4),
+            creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
+          };
           if (orderDet?.results?.length > 0) {
             res[i] = {
               ...res[i],
               isNftOnSale: true,
-              salesType: orderDet?.results[0]?.salesType,
-              price: Number(
-                convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
-              ).toFixed(4),
-              creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
             };
           } else {
             res[i] = {
               ...res[i],
               isNftOnSale: false,
-              salesType: orderDet?.results[0]?.salesType,
-              price: Number(
-                convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
-              ).toFixed(4),
-              creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
             };
           }
         }
 
         temp = [...temp, res];
+        console.log("temp--->", temp);
         setAllNFTs(temp);
         setCurrPage(currPage + 1);
+      } if(res.length < 0){
+        setLoadMoreDisabled(true);
       }
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
     }
+    console.log("allNFTs--->", allNFTs);
   }, [loadMore]);
+
+
+  const handleSearch = () => {
+
+  }
 
   return (
     <div>
+      {loadMoreDisabled
+        ? NotificationManager.info("No more items to load")
+        : ""}
       <section className='register_hd pdd_12' style={register_bg}>
         <div className='container'>
           <div className='row'>
@@ -141,8 +154,10 @@ function Marketplace() {
                     type='search'
                     placeholder='Search item here...'
                     aria-label='Search'
+                    value={sText}
+                    onChange={e => setSText(e.target.value)}
                   />
-                  <button class='market_btn' type='submit'>
+                  <button class='market_btn' type='submit' onClick={handleSearch}>
                     <img src='../img/search.svg' alt='' />
                   </button>
                 </form>
@@ -352,41 +367,41 @@ function Marketplace() {
             </div> */}
 
           <div className='row'>
-            {allNFTs[0]
-              ? allNFTs[0].map((card, key) => {
-                  return (
-                    <div className={grid}>
-                      <div className='items_slide' key={key}>
-                       
+            {allNFTs?.length > 0
+              ? allNFTs.map((oIndex) => {
+                  return oIndex.map((card, key) => {
+                    return (
+                      <div className={grid}>
+                        <div className='items_slide' key={key}>
                           <div className='items_profileimg' key={key}>
                             <a href={`/author/${card.createdBy}`}>
-                            <div className='profile_left'>
-                              <img
-                                alt=''
-                                className='profile_img'
-                                src={
-                                  card.creatorImg
-                                    ? card.creatorImg
-                                    : "../img/collections/profile1.png"
-                                }
-                              />
-                              <img
-                                alt=''
-                                className='icheck_img'
-                                src={"../img/collections/check.png"}
-                              />
-                            </div>
+                              <div className='profile_left'>
+                                <img
+                                  alt=''
+                                  className='profile_img'
+                                  src={
+                                    card.creatorImg
+                                      ? card.creatorImg
+                                      : "../img/collections/profile1.png"
+                                  }
+                                />
+                                <img
+                                  alt=''
+                                  className='icheck_img'
+                                  src={"../img/collections/check.png"}
+                                />
+                              </div>
                             </a>
                             {/* <div className='profile_right'>
                               <span>sfs</span>
                             </div> */}
                           </div>
                           <a href={`/NFTdetails/${card.id}`}>
-                          <img
-                            alt=''
-                            src={card.image}
-                            class='img-fluid items_img width-100 my-3'
-                          />
+                            <img
+                              alt=''
+                              src={card.image}
+                              class='img-fluid items_img width-100 my-3'
+                            />
                           </a>
                           <div className='items_text'>
                             <div className='items_info '>
@@ -424,20 +439,26 @@ function Marketplace() {
                                 : "View"}
                             </Link>
                           </div>
-                       
+                        </div>
                       </div>
-                    </div>
-                  );
+                    );
+                  });
                 })
               : ""}
           </div>
-          <div className='row'>
+          {
+            allNFTs?.length > 0 ?  <div className='row'>
             <div class='col-md-12 text-center mt-5'>
-              <a class='view_all_bdr' onClick={() => setLoadMore(!loadMore)}>
+              <button
+                class='view_all_bdr'
+                disabled={loadMoreDisabled}
+                onClick={() => setLoadMore(!loadMore)}>
                 Load More
-              </a>
+              </button>
             </div>
-          </div>
+          </div> : ""
+          }
+         
         </div>
       </section>
       <Footer />

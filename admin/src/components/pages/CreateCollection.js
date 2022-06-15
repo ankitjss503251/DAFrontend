@@ -524,13 +524,13 @@ function CreateCollection() {
                       <td>
                         <img
                           src={item.logoImage}
-                          className="profile_i"
+                          className="profile_i m-2"
                           alt=""
                         />
                         {item.isDeployed == 0 ? (
-                          <div className="add_btn mb-4 d-flex justify-content-end">
+                          <div className="add_btn mb-2 d-flex justify-content-start">
                             <button
-                              className="btn btn-admin text-light"
+                              className="btn btn-admin m-1 p-1 text-light "
                               type="button"
                               onClick={async () => {
                                 await deployCollection(item);
@@ -538,13 +538,8 @@ function CreateCollection() {
                             >
                               Deploy
                             </button>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-
-                        <button
-                          className="btn btn-admin text-light"
+                            <button
+                          className="btn btn-admin m-1 p-1 text-light "
                           type="button"
                           onClick={async () => {
                             {
@@ -556,12 +551,19 @@ function CreateCollection() {
                         >
                           {item.isOnMarketplace == 0 ? "Show" : "Hide"}
                         </button>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+
+                       
                       </td>
                       <td>{item.name}</td>
                       <td>{item.symbol}</td>
                       <td>{item.description}</td>
                       <td>{item.royalityPercentage}</td>
-                      <td>{item.preSaleStartTime}</td>
+                      <td>{moment(item.preSaleStartTime).format("MMMM Do YYYY")}</td>
+                      <td>{moment(item.preSaleEndTime).format("MMMM Do YYYY")}</td>
                       <td>{item.totalSupply}</td>
                       <td>
                         {Number(
@@ -577,6 +579,7 @@ function CreateCollection() {
           </table>
         </div>
       </div>
+
       <div
         className={`modal fade createNft ${isModal}`}
         id="exampleModal"
@@ -914,6 +917,7 @@ function CreateCollection() {
           </div>
         </div>
       </div>
+
       <div
         className={`modal fade importCol ${importModal}`}
         id="exampleModal1"
@@ -990,6 +994,7 @@ function CreateCollection() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

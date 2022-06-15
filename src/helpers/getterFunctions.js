@@ -556,6 +556,7 @@ export const getCollections = async (req) => {
         };
       })
     : (formattedData[0] = {});
+  console.log("formattedData--->", formattedData);
   return formattedData;
 };
 
@@ -578,32 +579,32 @@ export const getNFTs = async (req) => {
     };
 
     data = await getNFTList(reqBody);
-    let arr = [];
-    if (data && data.length > 0) arr = data;
-    else return [];
-
-    arr
-      ? arr.map((nft, key) => {
-          formattedData[key] = {
-            id: nft._id,
-            image: nft.image,
-            name: nft.name,
-            desc: nft.description,
-            like:
-              nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
-            Qty: nft.totalQuantity,
-            collection: nft.collectionID,
-            assetsInfo: nft?.assetsInfo[0],
-            catergoryInfo: nft?.categoryID,
-            tokenId: nft.tokenID,
-            createdBy: nft.createdBy,
-          };
-        })
-      : (formattedData[0] = {});
   } catch (e) {
     console.log("Error in getNFts API--->", e);
   }
+ 
+  let arr = [];
+  if (data && data.length > 0) arr = data;
+  else return [];
 
+  arr
+    ? arr.map((nft, key) => {
+        formattedData[key] = {
+          id: nft._id,
+          image: nft.image,
+          name: nft.name,
+          desc: nft.description,
+          like:
+            nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
+          Qty: nft.totalQuantity,
+          collection: nft.collectionID,
+          assetsInfo: nft?.assetsInfo[0],
+          catergoryInfo: nft?.categoryID,
+          tokenId: nft.tokenID,
+          createdBy: nft.createdBy,
+        };
+      })
+    : (formattedData[0] = {});
   return formattedData;
 };
 
@@ -639,7 +640,6 @@ export const getOrderByNftID = async (reqBody) => {
   let data = [];
   let formattedData = [];
   try {
-    
     data = await GetOrdersByNftId(reqBody);
     console.log("data in getOrderByNftID", data);
   } catch (e) {
