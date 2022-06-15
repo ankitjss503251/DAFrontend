@@ -26,7 +26,7 @@ function Marketplacecollection() {
   const [allCollections, setAllCollections] = useState([]);
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
-  const [loadMoreDisabled, setLoadMoreDisabled] = useState(false);
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
 
   const { searchedText } = useParams();
 
@@ -42,13 +42,14 @@ function Marketplacecollection() {
       const res = await getCollections(reqData);
       console.log("length", res, res.length);
       if (res.length > 0) {
-        setLoadMoreDisabled(false);
+        setLoadMoreDisabled("");
         temp = [...temp, res];
         console.log("temp", temp);
         setAllCollections(temp);
         setCurrPage(currPage + 1);
-      } if(res.length < 0){
-        setLoadMoreDisabled(true);
+      } 
+      if(res.length <= 0){
+        setLoadMoreDisabled("disabled");
       }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
@@ -218,8 +219,8 @@ function Marketplacecollection() {
                   {allCollections?.length > 0 ? 
                 <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                   <button
-                    class='view_all_bdr'
-                    disabled={loadMoreDisabled}
+                     type="button"
+                     className={`btn view_all_bdr ${loadMoreDisabled}`}
                     onClick={() => setLoadMore(!loadMore)}>
                     Load More
                   </button>

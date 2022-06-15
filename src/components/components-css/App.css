@@ -4568,3 +4568,20 @@ a:hover {
   background: #fff;
 }
 
+.category_img{
+  height: 225px;
+  width: 225px;
+  margin: 0 auto;
+  border-radius: 100%;
+}
+
+.category_img .catg_img{
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.btn:focus{
+  box-shadow: none !important;
+}

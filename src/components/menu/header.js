@@ -27,7 +27,7 @@ import { slowRefresh } from "./../../helpers/NotifyStatus";
 import PopupModal from "./../components/AccountModal/popupModal";
 import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
-import { Dimmer, Loader, Image, Segment } from "semantic-ui-react";
+import { getAllCategory } from "./../../helpers/getterFunctions";
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
@@ -125,8 +125,12 @@ const Header = function () {
   const [sNfts, setSNfts] = useState([]);
   const [showSearchDiv, setShowSearchDiv] = useState("");
   const [searchedText, setShowSearchedText] = useState("");
+  const [catg, setCatg] = useState([]);
 
-  
+  useEffect(async () => {
+    const cat = await getAllCategory();
+    setCatg(cat);
+  }, []);
 
   useEffect(() => {
     if (cookies["selected_account"]) {
@@ -284,7 +288,7 @@ const Header = function () {
   const disconnectWallet = async () => {
     // const [primaryWallet] = await onboard.state.get().wallets;
     // if (!primaryWallet) return;
-    
+
     await onboard.disconnectWallet({ label: "Metamask" });
     await Logout(cookies["selected_account"]);
     refreshState();
@@ -476,22 +480,41 @@ const Header = function () {
                 {scolns.length > 0 && <p>Collections</p>}
                 <ul>
                   {scolns
-                    ? scolns.slice(0,3).map((item) => {
+                    ? scolns.slice(0, 3).map((item) => {
                         return (
-                        <a href={`/collection/${item._id}`}><li> {item.name}</li></a>)
+                          <a href={`/collection/${item._id}`}>
+                            <li> {item.name}</li>
+                          </a>
+                        );
                       })
                     : ""}
                 </ul>
-                {scolns.length > 3 && <a className="view_all_bdr search_view_all mb-3" href={`/marketplaceCollection/${searchedText}`}>View All</a>}
+                {scolns.length > 3 && (
+                  <a
+                    className='view_all_bdr search_view_all mb-3'
+                    href={`/marketplaceCollection/${searchedText}`}>
+                    View All
+                  </a>
+                )}
                 {sNfts.length > 0 && <p>NFTs</p>}
                 <ul>
                   {sNfts
-                    ? sNfts.slice(0,3).map((item) => {
-                        return <a href={`/NFTdetails/${item.id}`}><li>{item.name}</li></a>;
+                    ? sNfts.slice(0, 3).map((item) => {
+                        return (
+                          <a href={`/NFTdetails/${item.id}`}>
+                            <li>{item.name}</li>
+                          </a>
+                        );
                       })
                     : ""}
                 </ul>
-                {sNfts.length > 3 && <a className="view_all_bdr search_view_all" href={`/marketplace/${searchedText}`}>View All</a>}
+                {sNfts.length > 3 && (
+                  <a
+                    className='view_all_bdr search_view_all'
+                    href={`/marketplace/${searchedText}`}>
+                    View All
+                  </a>
+                )}
               </div>
             ) : (
               ""
@@ -512,26 +535,18 @@ const Header = function () {
                       All NFTs
                     </NavLink>
                   </li>
-                  <li>
+                  {catg ? catg.map((c, key) => {
+                    return  <li key={key}>
                     <NavLink
-                      to={"/marketplaceCollection"}
+                      to={`/marketplaceCollection/${c.name}`}
                       className='sub-items'>
                       <Firearmsvg />
-                      Firearms
+                     {c.name}
                     </NavLink>
                   </li>
-                  <li>
-                    <NavLink to={"/Soldiers"} className='sub-items'>
-                      <Soldierssvg />
-                      Soldiers
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink to={"/Accesories"} className='sub-items'>
-                      <Soldierssvg />
-                      Accesories
-                    </NavLink>
-                  </li>
+                  }) : ""}
+                 
+                 
                 </ul>
               </li>
               <li className='nav-item'>
