@@ -45,6 +45,7 @@ function CreateCollection() {
   const [importedAddress, setImportedAddress] = useState("");
   const [isOffChain, setIsOffChain] = useState("No");
   const [isOnMarketplace, setIsOnMarketplace] = useState("Yes");
+  const [importedCollectionLink, setImportedCollectionLink] = useState("");
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -578,7 +579,7 @@ function CreateCollection() {
           </table>
         </div>
       </div>
- 
+
       <div
         className={`modal fade createNft ${isModal}`}
         id="exampleModal"
@@ -916,7 +917,7 @@ function CreateCollection() {
           </div>
         </div>
       </div>
-   
+
       <div
         className={`modal fade importCol ${importModal}`}
         id="exampleModal1"
@@ -957,13 +958,33 @@ function CreateCollection() {
                     }}
                   />
                 </div>
+
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Collection Link *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={importedCollectionLink}
+                    name="address"
+                    onChange={(e) => {
+                      setImportedCollectionLink(e.target.value);
+                    }}
+                  />
+                </div>
               </form>
             </div>
             <div className="modal-footer justify-content-center">
               <button
                 type="button"
                 className="btn btn-admin text-light"
-                onClick={() => {
+                onClick={async () => {
+                  await window.sessionStorage.setItem(
+                    "importLink",
+                    importedCollectionLink
+                  );
                   window.location.href = `/importedNfts/${importedAddress}`;
                 }}
               >
@@ -973,7 +994,7 @@ function CreateCollection() {
           </div>
         </div>
       </div>
-     
+
     </div>
   );
 }

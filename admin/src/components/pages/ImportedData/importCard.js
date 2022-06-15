@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import {
   exportInstance,
   getImportedCollections,
+  GetCombinedNfts,
   getImportedNFTs,
   importCollection,
   importNft,
@@ -10,11 +11,24 @@ import {
 import abi from "../../../config/abis/generalERC721Abi.json";
 import multicall from "../../../helpers/Multicall";
 import { isEmptyObject } from "jquery";
+import { GetOwnerOfToken } from "./../../../helpers/getterFunctions";
+import { useCookies } from "react-cookie";
+import NotificationManager from "react-notifications/lib/NotificationManager";
 
 const ImportCard = () => {
   let { address } = useParams();
   const [authors, setAuthors] = useState([]);
   const [totalSupply, setTotalSupply] = useState(0);
+  const [currentUser, setCurrentUser] = useState("");
+  const [cookies] = useCookies([]);
+
+  useEffect(() => {
+    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    else NotificationManager.error("Connect Yout Metamask", "", 800);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    console.log("current user is---->", currentUser, cookies.selected_account);
+  }, [cookies.selected_account]);
 
   const fetchTokens = async () => {
     try {
@@ -26,42 +40,38 @@ const ImportCard = () => {
         limit: 12,
         searchText: address,
       });
-      let _nfts = await getImportedNFTs({
+      let _nfts = await GetCombinedNfts({
         page: 1,
         limit: 12,
         collectionAddress: address,
         searchText: "",
       });
-      console.log("res", result);
+      console.log("res", _nfts);
 
-      console.log(
-        "hh",
-        originalSupply,
-        result.results[0][0].totalSupply,
-        _nfts,
-        _nfts.results,
-        _nfts.results.length,
-        isEmptyObject(_nfts.results[0])
-      );
       if (
         result &&
         result.results &&
         result.results.length > 0 &&
+        result.results[0][0] &&
         originalSupply == result.results[0][0].totalSupply &&
         _nfts &&
-        _nfts.results &&
-        _nfts.results.length > 0 &&
-        !isEmptyObject(_nfts.results[0])
+        _nfts.length > 0 &&
+        !isEmptyObject(_nfts[0])
       ) {
         result = result.results[0][0];
         setTotalSupply(parseInt(result.totalSupply));
         console.log("in if");
-        _nfts = _nfts.results[0];
+        _nfts = _nfts[0];
         setAuthors(_nfts);
         console.log("nfts", _nfts);
         // setAuthors(nfts);
       } else {
-        if (result && result.results && result.results.length > 0) {
+        if (
+          result &&
+          result.results &&
+          result.results.length > 0 &&
+          result.results[0][0]
+        ) {
           dbSupply = parseInt(result.results[0][0].totalSupply);
         }
         console.log("in else", parseInt(originalSupply));
@@ -69,7 +79,9 @@ const ImportCard = () => {
           await importCollection({
             address: address,
             totalSupply: parseInt(originalSupply),
+            link: window.sessionStorage.getItem("importLink"),
           });
+          window.sessionStorage.removeItem("importLink");
         } catch (e) {
           console.log("e", e);
           return;
@@ -96,6 +108,13 @@ const ImportCard = () => {
           console.log("here12", res[j][0]);
           let resp = await fetch(res[j][0]);
           resp = await resp.json();
+          let owner = await GetOwnerOfToken(
+            address,
+            parseInt(ids[j]),
+            true,
+            currentUser
+          );
+          resp.owner = owner;
           resp.tokenID = parseInt(ids[j]);
           resp.collectionAddress = address;
           data.push(resp);
@@ -110,7 +129,14 @@ const ImportCard = () => {
             address: address,
             totalSupply: parseInt(originalSupply),
           });
-          await fetchTokens();
+          let res = await GetCombinedNfts({
+            page: 1,
+            limit: 12,
+            collectionAddress: address,
+            searchText: "",
+          });
+          if (res && res.length > 0) setAuthors(res[0]);
+          // await fetchTokens();
         } catch (e) {
           console.log("e", e);
           return;

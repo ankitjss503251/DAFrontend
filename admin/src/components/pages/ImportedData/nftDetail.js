@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   exportInstanceThroughWeb3,
+  GetCombinedNfts,
+  getImportedNFTs,
   getOrderDetails,
   GetOrdersByNftId,
+  importNft,
   UpdateNft,
 } from "../../../apiServices";
 import { useCookies } from "react-cookie";
@@ -32,22 +35,53 @@ const NftDetail = () => {
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [cookies.selected_account]);
 
-  const fetchMetaData = async () => {
+  useEffect(() => {
+    refreshMetaData();
+  }, [currentUser]);
+
+  const refreshMetaData = async () => {
     if (address && id) {
       let contract = await exportInstanceThroughWeb3(address, abi);
       let uri = await contract.methods.tokenURI(id).call();
       let owner;
-      if (currentUser)
-        owner = await GetOwnerOfToken(address, id, true, currentUser);
-      console.log("owner", owner);
+
       let data = await fetch(uri);
       data = await data.json();
-      console.log("dataa", data);
+      console.log("dataa", address);
+      if (currentUser) {
+        owner = await GetOwnerOfToken(address, id, true, currentUser);
+        console.log("owner", owner);
+      } else {
+        owner = "";
+      }
       data.owner = owner;
-      setNftDetails(data);
+      await UpdateNft({
+        collectionAddress: address,
+        description: data.description,
+        tokenID: id,
+        name: data.name,
+        image: data.image,
+        attributes: data.attributes,
+        owner: data.owner,
+      });
+    }
+  };
+
+  const getNFTDetails = async () => {
+    if (address && id) {
+      let res = await GetCombinedNfts({
+        collectionAddress: address,
+        tokenID: id,
+      });
+      console.log("nft details", res);
+      if (res && res.length > 0) {
+        res = res[0][0];
+      }
+      console.log("nft details", res);
+      setNftDetails(res);
 
       let orders = await GetOrdersByNftId({
-        tokenId: id,
+        tokenID: id,
         collectionAddress: address,
       });
       if (orders && orders.results && orders.results.length > 0) {
@@ -60,26 +94,26 @@ const NftDetail = () => {
   };
 
   useEffect(() => {
-    fetchMetaData();
+    getNFTDetails();
   }, [address, id, currentUser]);
 
   return (
     <div className="wrapper">
       <div className="row text-center container p-3">
         <div className="col-lg-6">
-          <img src={nftDetails.image} className="nftImg"></img>
+          <img src={nftDetails?.image} className="nftImg"></img>
         </div>
 
         <div className="col-lg-6">
           <h4>Name</h4>
-          <div>{nftDetails.name}</div>
+          <div>{nftDetails?.name}</div>
           <h4>Description</h4>
-          <div>{nftDetails.description}</div>
+          <div>{nftDetails?.description}</div>
           <h4>Collection</h4>
           <div>{address}</div>
           <h4>Properties</h4>
           <div className="d-flex align-items-center justify-content-center flex-wrap">
-            {nftDetails?.attributes && nftDetails.attributes.length > 0
+            {nftDetails?.attributes && nftDetails.attributes?.length > 0
               ? nftDetails.attributes.map((attr, i) => {
                   return (
                     <div className="attr_list">
@@ -94,8 +128,9 @@ const NftDetail = () => {
             <button
               className="putonmarketplace"
               onClick={async () => {
-                await fetchMetaData();
-                await UpdateNft({ collectionAddress: address, tokenID: id });
+                await refreshMetaData();
+
+                await getNFTDetails();
               }}
             >
               Refresh
@@ -103,32 +138,25 @@ const NftDetail = () => {
           </div>
           <br></br>
           <div className="col">
-            {/* <button
-              className="putonmarketplace"
-              onClick={async () => {
-                await putOnMarketplace(currentUser, {
-                  collection: address,
-                  tokenId: id,
-                });
-              }}
-            >
-              {nftDetails?.owner?.toLowerCase() ===
-                currentUser?.toLowerCase() && orders.length == 0
-                ? "Put On Marketplace"
-                : nftDetails?.owner?.toLowerCase() ===
-                  currentUser?.toLowerCase()
-                ? "Remove from sale"
-                : "Not On Sale"}
-            </button> */}
-            {nftDetails?.owner?.toLowerCase() === currentUser?.toLowerCase() &&
-            orders.length == 0 ? (
+            {/* {console.log(
+              "dattaaa",
+              nftDetails && ownedBy.length>0?.ownedBy?.toLowerCase() ===
+                currentUser?.toLowerCase() && orders.length == 0,
+              nftDetails?.ownedBy?.toLowerCase(),
+              currentUser?.toLowerCase(),
+              orders.length
+            )} */}
+            {nftDetails?.ownedBy?.toLowerCase() ===
+              currentUser?.toLowerCase() && orders.length == 0 ? (
               <button
                 className="putonmarketplace"
                 onClick={async () => {
                   {
+                    console.log("nftDetails", nftDetails);
                     await putOnMarketplace(currentUser, {
                       collection: address,
-                      tokenId: id,
+                      tokenID: id,
+                      nftID: nftDetails?._id,
                     });
                   }
                 }}
@@ -142,13 +170,15 @@ const NftDetail = () => {
                     className="putonmarketplace"
                     onClick={async () => {
                       {
-                        nftDetails?.owner?.toLowerCase() ===
+                        console.log("nftDetails", nftDetails);
+                        nftDetails?.ownedBy?.toLowerCase() ===
                           currentUser?.toLowerCase() && orders.length == 0
                           ? await putOnMarketplace(currentUser, {
                               collection: address,
-                              tokenId: id,
+                              tokenID: id,
+                              nftID: nftDetails?._id,
                             })
-                          : nftDetails?.owner?.toLowerCase() ===
+                          : nftDetails?.ownedBy?.toLowerCase() ===
                             currentUser?.toLowerCase()
                           ? await handleRemoveFromSale(o._id, currentUser)
                           : await handleBuyNft(
@@ -160,10 +190,10 @@ const NftDetail = () => {
                       }
                     }}
                   >
-                    {nftDetails?.owner?.toLowerCase() ===
+                    {nftDetails?.ownedBy?.toLowerCase() ===
                       currentUser?.toLowerCase() && orders.length == 0
                       ? "Put On Marketplace"
-                      : nftDetails?.owner?.toLowerCase() ===
+                      : nftDetails?.ownedBy?.toLowerCase() ===
                         currentUser?.toLowerCase()
                       ? "Remove from sale"
                       : "Buy"}
