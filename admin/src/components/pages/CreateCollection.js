@@ -46,6 +46,7 @@ function CreateCollection() {
   const [isOffChain, setIsOffChain] = useState("No");
   const [isOnMarketplace, setIsOnMarketplace] = useState("Yes");
   const [importedCollectionLink, setImportedCollectionLink] = useState("");
+  const [selectedCollectionId, setSelectedCollectionId] = useState("");
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -531,12 +532,21 @@ function CreateCollection() {
                           <div className="add_btn mb-4 d-flex justify-content-end">
                             <button
                               className="btn btn-admin text-light"
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModal1"
                               type="button"
                               onClick={async () => {
-                                await deployCollection(item);
+                                // await deployCollection(item);
+                                setSelectedCollectionId(item._id);
+                                // await UpdateCollection({
+                                //   contractAddress: importedAddress,
+                                //   link: importedCollectionLink,
+                                //   isDeployed: 1,
+                                //   collectionID: item._id,
+                                // });
                               }}
                             >
-                              Deploy
+                              Import
                             </button>
                           </div>
                         ) : (
@@ -977,11 +987,20 @@ function CreateCollection() {
                 type="button"
                 className="btn btn-admin text-light"
                 onClick={async () => {
-                  await window.sessionStorage.setItem(
+                  window.sessionStorage.setItem(
                     "importLink",
                     importedCollectionLink
                   );
-                  window.location.href = `/importedNfts/${importedAddress}`;
+
+                  await UpdateCollection({
+                    contractAddress: importedAddress,
+                    link: importedCollectionLink,
+                    isDeployed: 1,
+                    id: selectedCollectionId,
+                    isOnMarketplace: 1,
+                    isImported: 1,
+                  });
+                  // window.location.href = `/importedNfts/${importedAddress}`;
                 }}
               >
                 Import Collection

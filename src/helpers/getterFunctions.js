@@ -528,6 +528,7 @@ export const getCollections = async (req) => {
       isMinted: req.isMinted,
       isHotCollection: req.isHotCollection,
       isExclusive: req.isExclusive,
+      isOnMarketplace: req.isOnMarketplace,
     };
 
     data = await getAllCollections(reqBody);
@@ -639,7 +640,6 @@ export const getOrderByNftID = async (reqBody) => {
   let data = [];
   let formattedData = [];
   try {
-    
     data = await GetOrdersByNftId(reqBody);
     console.log("data in getOrderByNftID", data);
   } catch (e) {

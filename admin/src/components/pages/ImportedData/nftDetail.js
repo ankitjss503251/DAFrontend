@@ -146,8 +146,9 @@ const NftDetail = () => {
               currentUser?.toLowerCase(),
               orders.length
             )} */}
-            {nftDetails?.ownedBy?.toLowerCase() ===
-              currentUser?.toLowerCase() && orders.length == 0 ? (
+            {nftDetails && nftDetails.ownedBy?.length > 0 ? (
+              nftDetails.ownedBy[0].address.toLowerCase() === currentUser.toLowerCase()
+            ) : false && orders.length == 0 ? (
               <button
                 className="putonmarketplace"
                 onClick={async () => {
