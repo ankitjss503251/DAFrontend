@@ -16,6 +16,7 @@ import UpArrow from "../SVG/dropdown";
 import bgImg from "./../../assets/marketplace-bg.jpg";
 import { NotificationManager } from "react-notifications";
 
+
 var bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
   backgroundRepeat: "no-repeat",
@@ -45,7 +46,7 @@ function Marketplace() {
   };
 
   var register_bg = {
-    backgroundImage: `url(${bgImg})`,
+    backgroundImage:`url(${bgImg})` ,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     backgroundPositionX: "center",
