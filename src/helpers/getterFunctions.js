@@ -14,6 +14,7 @@ import {
   getNFTList,
   getBrandById,
   GetIndividualAuthorDetail,
+  getCategories,
 } from "../apiServices";
 // import { ethers } from "ethers";
 import contracts from "../config/contracts";
@@ -582,7 +583,7 @@ export const getNFTs = async (req) => {
   } catch (e) {
     console.log("Error in getNFts API--->", e);
   }
- 
+
   let arr = [];
   if (data && data.length > 0) arr = data;
   else return [];
@@ -675,4 +676,38 @@ export const getUserById = async (reqBody) => {
     console.log("Error in getUserByID API", e);
   }
   return user;
+};
+
+export const getAllCategory = async () => {
+  let category = [];
+  try {
+    category = await getCategories();
+  } catch (e) {
+    console.log("Error in getAllCategory API", e);
+  }
+
+  return category;
+};
+
+export const getPrice = async (reqbody) => {
+  let data = [];
+  let order = {};
+  let min = '000000000000000';
+  try {
+    data = await GetOrdersByNftId(reqbody);
+    data = data.results;
+    if (data) {
+      data.map((i) => {
+        console.log("comp--->", min < i.price.$numberDecimal);
+        if (min < i.price.$numberDecimal) {
+          min = i.price.$numberDecimal;
+          order = i;
+        }
+      });
+   
+    }
+    return order;
+  } catch (e) {
+    console.log("Error in getting nft order details", e);
+  }
 };

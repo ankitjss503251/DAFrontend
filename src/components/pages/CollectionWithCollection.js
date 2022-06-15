@@ -12,6 +12,8 @@ import {
   getBrandDetailsById,
   getCollections,
   getNFTs,
+  getOrderByNftID,
+  getPrice,
   getUserById,
 } from "../../helpers/getterFunctions";
 import AllNFTs from "../SVG/AllNFTs";
@@ -19,7 +21,6 @@ import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-
 
 const bgImgStyle = {
   backgroundImage: "url(./../../assets/images/background.jpg)",
@@ -29,7 +30,6 @@ const bgImgStyle = {
   backgroundPositionY: "center",
   backgroundColor: "#000",
 };
-
 
 function CollectionWithCollection() {
   const { brandID } = useParams();
@@ -102,11 +102,21 @@ function CollectionWithCollection() {
           temp[cnt] = {
             ...n,
             collectionName: cols[i].name,
-            price: cols[i].price,
           };
           cnt++;
         });
       }
+
+      for (let i = 0; i < temp.length; i++) {
+        const order = await getPrice({
+          nftID: temp[i].id,
+        });
+        temp[i] = {
+          ...temp[i],
+          price: order.price.$numberDecimal,
+        };
+      }
+      console.log("harvey", temp);
       setNfts(temp);
     } catch (e) {
       console.log("error in get brandbyID", e);
@@ -192,7 +202,7 @@ function CollectionWithCollection() {
               {isCopied ? <p className='copied'>Copied!</p> : ""}
             </span>
           </div>
-        
+
           <ul className='collection_status mt-5 mb-5'>
             <li>
               <h4>{brandDetails?.nftCount}</h4>
@@ -263,19 +273,19 @@ function CollectionWithCollection() {
                   class='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option selected>Single Items</option>
-                  <option value='1'>Single Items 1</option>
-                  <option value='2'>Single Items 2</option>
-                  <option value='3'>Single Items 3</option>
+                  <option value='1' selected>
+                    Single Items
+                  </option>
+                  <option value='2'>Multiple Items</option>
                 </select>
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option selected>Price: Low to High</option>
-                  <option value='1'>$2000</option>
-                  <option value='2'>$4000</option>
-                  <option value='3'>$6000</option>
+                  <option value='1' selected>
+                    Price: Low to High
+                  </option>
+                  <option value='2'>Price: High to Low</option>
                 </select>
                 {/* <div className="market_div"> */}
                 <div id='gridtwo' className='market_grid' onClick={gridtwo}>
@@ -285,7 +295,10 @@ function CollectionWithCollection() {
                   <Threegrid />
                 </div>
                 {/* </div> */}
-                <button type='button' className='filter_btn' onClick={filterToggle}>
+                <button
+                  type='button'
+                  className='filter_btn'
+                  onClick={filterToggle}>
                   Adv.Filter
                 </button>
               </div>

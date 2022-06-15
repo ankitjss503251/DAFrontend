@@ -60,7 +60,7 @@ function Marketplace() {
   const { searchedText } = useParams();
   const [loadMore, setLoadMore] = useState(false);
   const [togglemode, setTogglemode] = useState("filterhide");
-  const [loadMoreDisabled, setLoadMoreDisabled] = useState(false);
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
   const [sText, setSText] = useState("");
 
   const filterToggle = () => {
@@ -81,12 +81,12 @@ function Marketplace() {
     try {
       const reqData = {
         page: currPage,
-        limit: 5,
+        limit: 1,
         searchText: searchedText ? searchedText : "",
       };
       const res = await getNFTs(reqData);
       if (res?.length > 0) {
-        setLoadMoreDisabled(false);
+        setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
           const ownedBy = await getUserById({ userID: res[i].createdBy });
           const orderDet = await getOrderByNftID({ nftId: res[i].id });
@@ -115,8 +115,8 @@ function Marketplace() {
         console.log("temp--->", temp);
         setAllNFTs(temp);
         setCurrPage(currPage + 1);
-      } if(res.length < 0){
-        setLoadMoreDisabled(true);
+      } if(res.length <= 0){
+        setLoadMoreDisabled("disabled");
       }
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
@@ -131,7 +131,7 @@ function Marketplace() {
 
   return (
     <div>
-      {loadMoreDisabled
+       {loadMoreDisabled
         ? NotificationManager.info("No more items to load")
         : ""}
       <section className='register_hd pdd_12' style={register_bg}>
@@ -450,8 +450,8 @@ function Marketplace() {
             allNFTs?.length > 0 ?  <div className='row'>
             <div class='col-md-12 text-center mt-5'>
               <button
-                class='view_all_bdr'
-                disabled={loadMoreDisabled}
+              type="button"
+                className={`btn view_all_bdr ${loadMoreDisabled}`}
                 onClick={() => setLoadMore(!loadMore)}>
                 Load More
               </button>
