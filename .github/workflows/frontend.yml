@@ -1,9 +1,12 @@
-name: remote ssh command
-on: [push]
-jobs:
+name: deploy on ec2
+on:
+  push:
+    branches: 
+       - main
 
+       
+jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using password
@@ -14,7 +17,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          cd /var/www/html/project/DAFrontend
+          cd /var/www/html/DAFrontend
           pwd
           ls -la
           sudo git pull
