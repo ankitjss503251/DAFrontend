@@ -19,7 +19,8 @@ jobs:
         script: |
           cd /var/www/html/DAFrontend
           git config --global --add safe.directory /var/www/html/DAFrontend
-          ls -la
+          sudo git add .
+          sudo git commit -m "serversidechanges"
           sudo git pull
           sudo yarn
           sudo yarn run build
