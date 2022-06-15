@@ -116,7 +116,6 @@ function CollectionWithCollection() {
           price: order.price.$numberDecimal,
         };
       }
-      console.log("harvey", temp);
       setNfts(temp);
     } catch (e) {
       console.log("error in get brandbyID", e);

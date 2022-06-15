@@ -603,6 +603,7 @@ export const getNFTs = async (req) => {
           catergoryInfo: nft?.categoryID,
           tokenId: nft.tokenID,
           createdBy: nft.createdBy,
+          type: nft.type
         };
       })
     : (formattedData[0] = {});

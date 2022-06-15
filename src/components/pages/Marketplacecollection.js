@@ -27,8 +27,8 @@ function Marketplacecollection() {
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
   const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
-
   const { searchedText } = useParams();
+  const [colByCat, setColByCat] = useState([{}]);
 
 
   useEffect(async () => {
