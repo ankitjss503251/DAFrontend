@@ -464,7 +464,7 @@ export const ImportNFTs = async (address, abi, currentUser) => {
       result.results &&
       result.results.length > 0 &&
       result.results[0][0] &&
-      parseInt(originalSupply) == parseInt(result.results[0][0].totalSupply) 
+      parseInt(originalSupply) == parseInt(result.results[0][0].totalSupply)
       // &&
       // _nfts &&
       // _nfts.length > 0 &&
@@ -537,6 +537,8 @@ export const ImportNFTs = async (address, abi, currentUser) => {
       try {
         if (data && data.results && data.results.length > 0)
           importednftsData = data;
+
+        console.log("data", data);
         await importNft({ nftData: data });
         await importCollection({
           address: address,

@@ -172,7 +172,7 @@ export const buildSellOrder = async (id) => {
   }
 };
 
-export const fetchTokens = async (address, abi, currentUser) => {
+export const fetchTokens = async (address, abi, currentUser, collId) => {
   let importednftsData = [];
   let totalSupply = 0;
   try {
@@ -230,7 +230,7 @@ export const fetchTokens = async (address, abi, currentUser) => {
         console.log("e", e);
         return;
       }
-      console.log("token", dbSupply);
+      console.log("token", dbSupply, parseInt(originalSupply));
       let calls = [];
       let data = [];
       let ids = [];
@@ -261,6 +261,9 @@ export const fetchTokens = async (address, abi, currentUser) => {
         resp.owner = owner;
         resp.tokenID = parseInt(ids[j]);
         resp.collectionAddress = address;
+        resp.isOnMarketplace = 1;
+        resp.isImported = 1;
+        resp.collectionID = collId;
         data.push(resp);
         console.log("here2", data.length);
         j++;

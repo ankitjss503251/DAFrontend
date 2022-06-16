@@ -211,7 +211,7 @@ export const createCollection = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    return datas.message;
+    return datas.data;
   } catch (err) {
     return err;
   }
@@ -221,10 +221,10 @@ export const UpdateCollection = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      // "Content-Type": "application/json",
       Authorization: localStorage.getItem("Authorization"),
     },
-    body: JSON.stringify(data),
+    body: data,
   };
 
   try {
@@ -238,7 +238,7 @@ export const UpdateCollection = async (data) => {
       ?.includes("application/json");
     const datas = isJson && (await response.json());
 
-    return datas;
+    return datas.data;
   } catch (err) {
     return err;
   }
@@ -553,7 +553,7 @@ export const importNft = async (data) => {
 
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/import/createNft",
+      process.env.REACT_APP_API_BASE_URL + "/nft/createNft",
       requestOptions
     );
 
