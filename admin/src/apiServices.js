@@ -519,6 +519,7 @@ export const importCollection = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
     },
     body: JSON.stringify(data),
   };
@@ -545,6 +546,7 @@ export const importNft = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
     },
     body: JSON.stringify(data),
   };
@@ -603,7 +605,7 @@ export const getImportedCollections = async (data) => {
 
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/import/getCollection",
+      process.env.REACT_APP_API_BASE_URL + "/import/getImportedCollection",
       requestOptions
     );
 
@@ -618,11 +620,12 @@ export const getImportedCollections = async (data) => {
   }
 };
 
-export const UpdateNft = async (data) => {
+export const UpdateImportedNft = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
     },
     body: JSON.stringify(data),
   };

@@ -9,16 +9,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using ssh key
+    - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
+        password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          cd /var/www/html/project/DAFrontend
-          pwd
+          cd /var/www/html/DAFrontend
+          git config --global --add safe.directory /var/www/html/DAFrontend
           ls -la
           sudo git pull
           sudo yarn

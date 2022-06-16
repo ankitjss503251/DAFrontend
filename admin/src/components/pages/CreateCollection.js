@@ -8,6 +8,7 @@ import {
   GetBrand,
   // getImportedNFTs,
   GetMyCollectionsList,
+  importCollection,
   UpdateCollection,
 } from "../../apiServices";
 import contracts from "../../config/contracts";
@@ -18,6 +19,8 @@ import { NotificationManager } from "react-notifications";
 import Loader from "../components/loader";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
+import abi from "./../../config/abis/generalERC721Abi.json";
+import { ImportNFTs } from "../../helpers/sendFunctions";
 
 function CreateCollection() {
   const [files, setFiles] = useState([]);
@@ -47,6 +50,7 @@ function CreateCollection() {
   const [isOnMarketplace, setIsOnMarketplace] = useState("Yes");
   const [importedCollectionLink, setImportedCollectionLink] = useState("");
   const [selectedCollectionId, setSelectedCollectionId] = useState("");
+  const [newImportModal, setNewImportModal] = useState(false);
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -349,7 +353,7 @@ function CreateCollection() {
         fd.append("totalSupply", maxSupply);
         fd.append("type", type);
         fd.append("price", ethers.utils.parseEther(price.toString()));
-        fd.append("royalty", royalty * 1000);
+        fd.append("royality", royalty * 1000);
 
         console.log("form data is---->", fd.value);
 
@@ -442,6 +446,45 @@ function CreateCollection() {
     }
   };
 
+  const handleImportNFT = async (isNew) => {
+    window.sessionStorage.setItem("importLink", importedCollectionLink);
+    try {
+      if (isNew) {
+        await importCollection({
+          address: importedAddress,
+          link: importedCollectionLink,
+          totalSupply: 10,
+        });
+        var fd = new FormData();
+
+        fd.append("isDeployed", 1);
+        fd.append("isOnMarketplace", 0);
+        fd.append("name", title);
+        fd.append("contractAddress", importedAddress);
+
+        await createCollection(fd);
+      } else {
+        await UpdateCollection({
+          contractAddress: importedAddress,
+          link: importedCollectionLink,
+          isDeployed: 1,
+          id: selectedCollectionId,
+          isOnMarketplace: 1,
+          isImported: 1,
+        });
+      }
+    } catch (e) {
+      console.log("e");
+      return;
+    }
+    try {
+      await ImportNFTs(importedAddress, abi, currentUser);
+    } catch (e) {
+      console.log("e");
+      return;
+    }
+  };
+
   const setShowOnMarketplace = async (id, show) => {
     try {
       await UpdateCollection({
@@ -484,8 +527,8 @@ function CreateCollection() {
             className="btn btn-admin text-light"
             type="button"
             data-bs-toggle="modal"
-            data-bs-target="#exampleModal1"
-            onClick={() => setImportModal("active")}
+            data-bs-target="#exampleModal2"
+            onClick={() => setNewImportModal("active")}
           >
             + Import Collection
           </button>
@@ -508,6 +551,7 @@ function CreateCollection() {
                 <th>Description</th>
                 <th>Royalty</th>
                 <th>Start Date</th>
+                <th>End Date</th>
                 <th>Max Supply</th>
                 <th>Price</th>
                 <th>Category</th>
@@ -525,25 +569,18 @@ function CreateCollection() {
                       <td>
                         <img
                           src={item.logoImage}
-                          className="profile_i"
+                          className="profile_i m-2"
                           alt=""
                         />
                         {item.isDeployed == 0 ? (
-                          <div className="add_btn mb-4 d-flex justify-content-end">
+                          <div className="add_btn mb-2 d-flex justify-content-start">
                             <button
-                              className="btn btn-admin text-light"
+                              className="btn btn-admin m-1 p-1 text-light"
                               data-bs-toggle="modal"
                               data-bs-target="#exampleModal1"
                               type="button"
                               onClick={async () => {
-                                // await deployCollection(item);
                                 setSelectedCollectionId(item._id);
-                                // await UpdateCollection({
-                                //   contractAddress: importedAddress,
-                                //   link: importedCollectionLink,
-                                //   isDeployed: 1,
-                                //   collectionID: item._id,
-                                // });
                               }}
                             >
                               Import
@@ -552,9 +589,8 @@ function CreateCollection() {
                         ) : (
                           ""
                         )}
-
                         <button
-                          className="btn btn-admin text-light"
+                          className="btn btn-admin m-1 p-1 text-light "
                           type="button"
                           onClick={async () => {
                             {
@@ -566,12 +602,26 @@ function CreateCollection() {
                         >
                           {item.isOnMarketplace == 0 ? "Show" : "Hide"}
                         </button>
+                        <button
+                          className="btn btn-admin m-1 p-1 text-light"
+                          type="button"
+                          onClick={async () => {
+                            window.location.href = `/importedNfts/${item.contractAddress}`;
+                          }}
+                        >
+                          View NFTs
+                        </button>
                       </td>
                       <td>{item.name}</td>
                       <td>{item.symbol}</td>
                       <td>{item.description}</td>
                       <td>{item.royalityPercentage}</td>
-                      <td>{item.preSaleStartTime}</td>
+                      <td>
+                        {moment(item.preSaleStartTime).format("MMMM Do YYYY")}
+                      </td>
+                      <td>
+                        {moment(item.preSaleEndTime).format("MMMM Do YYYY")}
+                      </td>
                       <td>{item.totalSupply}</td>
                       <td>
                         {Number(
@@ -587,6 +637,7 @@ function CreateCollection() {
           </table>
         </div>
       </div>
+
       <div
         className={`modal fade createNft ${isModal}`}
         id="exampleModal"
@@ -924,6 +975,7 @@ function CreateCollection() {
           </div>
         </div>
       </div>
+
       <div
         className={`modal fade importCol ${importModal}`}
         id="exampleModal1"
@@ -987,20 +1039,95 @@ function CreateCollection() {
                 type="button"
                 className="btn btn-admin text-light"
                 onClick={async () => {
-                  window.sessionStorage.setItem(
-                    "importLink",
-                    importedCollectionLink
-                  );
+                  await handleImportNFT(false);
+                }}
+              >
+                Import Collection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                  await UpdateCollection({
-                    contractAddress: importedAddress,
-                    link: importedCollectionLink,
-                    isDeployed: 1,
-                    id: selectedCollectionId,
-                    isOnMarketplace: 1,
-                    isImported: 1,
-                  });
-                  // window.location.href = `/importedNfts/${importedAddress}`;
+      <div
+        className={`modal fade importCol ${newImportModal}`}
+        id="exampleModal2"
+        tabindex="-1"
+        aria-labelledby="exampleModal1Label"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5
+                className="modal-title text-yellow font-24 font-600"
+                id="exampleModal1Label"
+              >
+                Import New Collection
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form className="row">
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Collection Address *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={importedAddress}
+                    name="address"
+                    onChange={(e) => {
+                      setImportedAddress(e.target.value);
+                    }}
+                  />
+                </div>
+
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Collection Link *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={importedCollectionLink}
+                    name="address"
+                    onChange={(e) => {
+                      setImportedCollectionLink(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Collection Name *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={title}
+                    name="title"
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                    }}
+                  />
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer justify-content-center">
+              <button
+                type="button"
+                className="btn btn-admin text-light"
+                onClick={async () => {
+                  await handleImportNFT(true);
                 }}
               >
                 Import Collection

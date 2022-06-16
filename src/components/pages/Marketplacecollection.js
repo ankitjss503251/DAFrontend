@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { getCollections } from "../../helpers/getterFunctions";
 import { marketPlaceCollection } from "../../Data/dummyJSON";
 import { useParams } from "react-router-dom";
+import { NotificationManager } from "react-notifications";
 
 var register_bg = {
   backgroundImage: "url(../img/marketplace/marketplace-bg.jpg)",
@@ -25,34 +26,49 @@ function Marketplacecollection() {
   const [allCollections, setAllCollections] = useState([]);
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
+
   const { searchedText } = useParams();
+
 
   useEffect(async () => {
     let temp = allCollections;
     try {
       const reqData = {
         page: currPage,
-        limit: 12,
+        limit: 1,
         searchText: searchedText ? searchedText : "",
         isOnMarketplace: 1,
       };
       const res = await getCollections(reqData);
+      console.log("length", res, res.length);
       if (res.length > 0) {
+        setLoadMoreDisabled("");
         temp = [...temp, res];
+        console.log("temp", temp);
         setAllCollections(temp);
         setCurrPage(currPage + 1);
+      } 
+      if(res.length <= 0){
+        setLoadMoreDisabled("disabled");
       }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
   }, [loadMore]);
 
+  
+
+
   return (
     <div>
-      <section className="register_hd pdd_12" style={register_bg}>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
+      {loadMoreDisabled
+        ? NotificationManager.info("No more items to load")
+        : ""}
+      <section className='register_hd pdd_12' style={register_bg}>
+        <div className='container'>
+          <div className='row'>
+            <div className='col-md-12'>
               <h1>Marketplace</h1>
             </div>
           </div>
@@ -170,52 +186,53 @@ function Marketplacecollection() {
           </div>
           <div class="tab-content" id="pills-tabContent">
             <div
-              class="tab-pane fade show active"
-              id="pills-home"
-              role="tabpanel"
-              aria-labelledby="pills-home-tab"
-            >
-              <div className="row">
-                {allCollections[0]
-                  ? allCollections[0].map((card) => (
-                      <div className="col-lg-4 col-md-6 mb-5">
-                        <Link to={`/collection/${card._id}`}>
-                          <div className="collection_slide">
-                            <img
-                              className="img-fluid"
-                              src={card.coverImg}
-                              alt=""
-                            />
-                            <div className="collection_text">
-                              <div className="coll_profileimg">
-                                <img
-                                  alt=""
-                                  className="profile_img"
-                                  src={card.logoImg}
-                                />
-                                <img
-                                  alt=""
-                                  className="check_img"
-                                  src={"../img/collections/check.png"}
-                                />
+              class='tab-pane fade show active'
+              id='pills-home'
+              role='tabpanel'
+              aria-labelledby='pills-home-tab'>
+              <div className='row'>
+                {allCollections.length > 0
+                  ? allCollections.map((oIndex) => {
+                      return oIndex.map((card) => (
+                        <div className='col-lg-4 col-md-6 mb-5'>
+                          <Link to={`/collection/${card._id}`}>
+                            <div className='collection_slide'>
+                              <img
+                                className='img-fluid'
+                                src={card.coverImg}
+                                alt=''
+                              />
+                              <div className='collection_text'>
+                                <div className='coll_profileimg'>
+                                  <img
+                                    alt=''
+                                    className='profile_img'
+                                    src={card.logoImg}
+                                  />
+                                  <img
+                                    alt=''
+                                    className='check_img'
+                                    src={"../img/collections/check.png"}
+                                  />
+                                </div>
+                                <h4 className='collname'>{card.name}</h4>
+                                <p>{card.desc}</p>
                               </div>
-                              <h4 className="collname">{card.name}</h4>
-                              <p>{card.desc}</p>
                             </div>
-                          </div>
-                        </Link>
-                      </div>
-                    ))
+                          </Link>
+                        </div>
+                      ));
+                    })
                   : ""}
-                ;
-                <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
-                  <a
-                    class="view_all_bdr"
-                    onClick={() => setLoadMore(!loadMore)}
-                  >
+                  {allCollections?.length > 0 ? 
+                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <button
+                     type="button"
+                     className={`btn view_all_bdr ${loadMoreDisabled}`}
+                    onClick={() => setLoadMore(!loadMore)}>
                     Load More
-                  </a>
-                </div>
+                  </button>
+                </div> : ""}
               </div>
             </div>
             <div

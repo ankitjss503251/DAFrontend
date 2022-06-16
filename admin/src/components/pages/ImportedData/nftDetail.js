@@ -7,7 +7,7 @@ import {
   getOrderDetails,
   GetOrdersByNftId,
   importNft,
-  UpdateNft,
+  UpdateImportedNft,
 } from "../../../apiServices";
 import { useCookies } from "react-cookie";
 import NotificationManager from "react-notifications/lib/NotificationManager";
@@ -55,7 +55,7 @@ const NftDetail = () => {
         owner = "";
       }
       data.owner = owner;
-      await UpdateNft({
+      await UpdateImportedNft({
         collectionAddress: address,
         description: data.description,
         tokenID: id,

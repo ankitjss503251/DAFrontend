@@ -59,7 +59,7 @@ function CollectionList(props) {
           </div>
           <div className='collection_row align-items-center'>
             <div className='collection_col'>
-              <Link className='buy_btn' to=''>
+              <Link className='buy_btn' to={`/NFTdetails/${props.nft.id}`}>
                 Buy Now
               </Link>
             </div>

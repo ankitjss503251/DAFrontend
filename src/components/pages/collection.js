@@ -73,6 +73,8 @@ function Collection() {
   const [togglemode, setTogglemode] = useState("filterhide");
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
+  const { searchedText } = useParams();
+
   const filterToggle = () => {
     console.log("filter", togglemode);
     if (togglemode === "filterhide") {
@@ -91,11 +93,12 @@ function Collection() {
     try {
       const reqData = {
         page: 1,
-        limit: 12,
+        limit: 1,
         collectionID: id,
+        searchText: searchedText ? searchedText : ""
       };
       const res = await getCollections(reqData);
-
+      console.log("collll", res[0]);
       setCollectionDetails(res[0]);
       const data = {
         page: currPage,
@@ -108,7 +111,7 @@ function Collection() {
         setNftList(temp);
         setCurrPage(currPage + 1);
       }
-      console.log("collll", res[0]);
+     
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
@@ -167,9 +170,9 @@ function Collection() {
             <span className='ctc'>
               <img alt='' src={"../img/favicon.png"} class='img-fluid' />
               <div className=''>
-                {collectionDetails?.contractAddress?.slice(0, 8) +
-                  "...." +
-                  collectionDetails?.contractAddress?.slice(32, 42)}
+                {collectionDetails?.contractAddress?.slice(0, 4) +
+                  "..." +
+                  collectionDetails?.contractAddress?.slice(38, 42)}
               </div>
 
               <CopyToClipboard

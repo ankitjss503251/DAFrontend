@@ -14,6 +14,7 @@ import {
   getNFTList,
   getBrandById,
   GetIndividualAuthorDetail,
+  getCategories,
 } from "../apiServices";
 // import { ethers } from "ethers";
 import contracts from "../config/contracts";
@@ -554,9 +555,11 @@ export const getCollections = async (req) => {
           contractAddress: coll.contractAddress,
           brand: coll.brandID,
           createdBy: coll.createdBy,
+          link: coll.link,
         };
       })
     : (formattedData[0] = {});
+  console.log("formattedData--->", formattedData);
   return formattedData;
 };
 
@@ -576,35 +579,36 @@ export const getNFTs = async (req) => {
       ERCType: req.ERCType,
       searchText: req.searchText,
       isMinted: req.isMinted,
+      isOnMarketplace: req.isOnMarketplace
     };
 
     data = await getNFTList(reqBody);
-    let arr = [];
-    if (data && data.length > 0) arr = data;
-    else return [];
-
-    arr
-      ? arr.map((nft, key) => {
-          formattedData[key] = {
-            id: nft._id,
-            image: nft.image,
-            name: nft.name,
-            desc: nft.description,
-            like:
-              nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
-            Qty: nft.totalQuantity,
-            collection: nft.collectionID,
-            assetsInfo: nft?.assetsInfo[0],
-            catergoryInfo: nft?.categoryID,
-            tokenId: nft.tokenID,
-            createdBy: nft.createdBy,
-          };
-        })
-      : (formattedData[0] = {});
   } catch (e) {
     console.log("Error in getNFts API--->", e);
   }
 
+  let arr = [];
+  if (data && data.length > 0) arr = data;
+  else return [];
+
+  arr
+    ? arr.map((nft, key) => {
+        formattedData[key] = {
+          id: nft._id,
+          image: nft.image,
+          name: nft.name,
+          desc: nft.description,
+          like:
+            nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
+          Qty: nft.totalQuantity,
+          collection: nft.collectionID,
+          assetsInfo: nft?.assetsInfo[0],
+          catergoryInfo: nft?.categoryID,
+          tokenId: nft.tokenID,
+          createdBy: nft.createdBy,
+        };
+      })
+    : (formattedData[0] = {});
   return formattedData;
 };
 
@@ -675,4 +679,37 @@ export const getUserById = async (reqBody) => {
     console.log("Error in getUserByID API", e);
   }
   return user;
+};
+
+export const getAllCategory = async () => {
+  let category = [];
+  try {
+    category = await getCategories();
+  } catch (e) {
+    console.log("Error in getAllCategory API", e);
+  }
+
+  return category;
+};
+
+export const getPrice = async (reqbody) => {
+  let data = [];
+  let order = {};
+  let min = "000000000000000";
+  try {
+    data = await GetOrdersByNftId(reqbody);
+    data = data.results;
+    if (data) {
+      data.map((i) => {
+        console.log("comp--->", min < i.price.$numberDecimal);
+        if (min < i.price.$numberDecimal) {
+          min = i.price.$numberDecimal;
+          order = i;
+        }
+      });
+    }
+    return order;
+  } catch (e) {
+    console.log("Error in getting nft order details", e);
+  }
 };
