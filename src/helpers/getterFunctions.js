@@ -579,7 +579,7 @@ export const getNFTs = async (req) => {
       ERCType: req.ERCType,
       searchText: req.searchText,
       isMinted: req.isMinted,
-      isOnMarketplace: req.isOnMarketplace
+      isOnMarketplace: req.isOnMarketplace,
     };
 
     data = await getNFTList(reqBody);
@@ -606,7 +606,7 @@ export const getNFTs = async (req) => {
           catergoryInfo: nft?.categoryID,
           tokenId: nft.tokenID,
           createdBy: nft.createdBy,
-          type: nft.type
+          type: nft.type,
         };
       })
     : (formattedData[0] = {});

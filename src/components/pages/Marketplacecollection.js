@@ -41,7 +41,6 @@ function Marketplacecollection() {
         isOnMarketplace: 1,
       };
       const res = await getCollections(reqData);
-      console.log("length", res, res.length);
       if (res.length > 0) {
         setLoadMoreDisabled("");
         temp = [...temp, res];
@@ -49,16 +48,13 @@ function Marketplacecollection() {
         setAllCollections(temp);
         setCurrPage(currPage + 1);
       } 
-      if(res.length <= 0){
+      if(!allCollections && res.length <= 0){
         setLoadMoreDisabled("disabled");
       }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
   }, [loadMore]);
-
-  
-
 
   return (
     <div>
@@ -195,19 +191,22 @@ function Marketplacecollection() {
                   ? allCollections.map((oIndex) => {
                       return oIndex.map((card) => (
                         <div className='col-lg-4 col-md-6 mb-5'>
-                          <Link to={`/collection/${card._id}`}>
+                        
                             <div className='collection_slide'>
+                            <a href={`/collection/${card._id}`}>
                               <img
-                                className='img-fluid'
-                                src={card.coverImg}
+                                className='img-fluid w-100'
+                                src={card.logoImg}
                                 alt=''
                               />
+                               </a>
                               <div className='collection_text'>
+                                <a  href={`/collectionwithcollection/${card.brand._id}`}>
                                 <div className='coll_profileimg'>
                                   <img
                                     alt=''
                                     className='profile_img'
-                                    src={card.logoImg}
+                                    src={card.brand.logoImage}
                                   />
                                   <img
                                     alt=''
@@ -215,11 +214,13 @@ function Marketplacecollection() {
                                     src={"../img/collections/check.png"}
                                   />
                                 </div>
+                                </a>
+                                <a href={`/collection/${card._id}`}>
                                 <h4 className='collname'>{card.name}</h4>
                                 <p>{card.desc}</p>
+                                </a>
                               </div>
                             </div>
-                          </Link>
                         </div>
                       ));
                     })

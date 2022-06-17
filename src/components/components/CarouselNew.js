@@ -42,7 +42,6 @@ function ItemsList() {
             price: orderDet?.results[0]?.price?.$numberDecimal,
           };
         }
-        console.log("order details--->", res[i]);
       }
 
       setPutOnSaleItems(res);
