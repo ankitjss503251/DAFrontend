@@ -4586,8 +4586,12 @@ a:hover {
   box-shadow: none !important;
 }
 .modal-content {
-background: #0d171e;
-border: 1px solid #ef981d;
+/* background: #0d171e; */
+  border: 1px solid #ef981d;
+  background-image: url('./../../assets/images/background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 .btn-close.text-light {
   filter: invert(1) !important;
@@ -4601,8 +4605,9 @@ border: 1px solid #ef981d;
   color: #fff;
 }
 .markitplace .modal-header {
-  background: #000;
+  background: linear-gradient(180deg, #ef981d 54.17%, #f9bf50 100%);
   border: 0;
+  border-bottom: 1px solid #ef981d;
 }
 
 .input_design {
@@ -4624,3 +4629,30 @@ border: 1px solid #ef981d;
   background-size: 17px;
   background-position: 98%;
 }
+.markitplace .nav-pills .nav-link {
+  color: rgba(0,0,0,.6);
+  background: none;
+  border: 2px solid #ef981d;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+  border-radius: 12px;
+  padding: 20px;
+  width: 200px;
+    height: 200px;
+}
+.markitplace .nav-pills .nav-link.active {
+  color: #fff;
+  background: linear-gradient(180deg, #ef981d 54.17%, #f9bf50 100%);
+}
+.markitplace .nav-pills .nav-link i.fa {
+  font-size: 30px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+.modal.markitplace {
+  background: rgba(0,0,0,.6);
+}
+.input_design option {color: #000;}

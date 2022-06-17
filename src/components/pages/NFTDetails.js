@@ -461,78 +461,96 @@ function NFTDetails() {
 
               {/* <!-- Modal body --> */}
               <div class="modal-body">
-                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <h3 className="text-light text_16">Select method</h3>
+                
+                <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
                   <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Home</button>
+                    <button class="nav-link active" id="pills-fixed-price-tab" data-bs-toggle="pill" data-bs-target="#pills-fixed" type="button" role="tab" aria-controls="pills-home" aria-selected="true">
+                      <i class="fa fa-tag"></i>
+                      <span className="title_20 d-block">Fixed price</span>
+                    </button>
                   </li>
                   <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Profile</button>
+                    <button class="nav-link" id="pills-timed-auction-tab" data-bs-toggle="pill" data-bs-target="#pills-timed" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">
+                      <i class="fa fa-hourglass-1"></i>
+                      <span className="title_20 d-block">Timed auction</span>
+                    </button>
                   </li>
                   <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
+                    <button class="nav-link" id="pills-bids-tab" data-bs-toggle="pill" data-bs-target="#pills-bids" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">
+                      <i class="fa fa-users"></i>
+                      <span className="title_20 d-block">Open for bids</span>
+                    </button>
                   </li>
                 </ul>
+
                 <div class="tab-content" id="pills-tabContent">
-                  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                  <div class="tab-pane fade show active" id="pills-fixed" role="tabpanel" aria-labelledby="pills-fixed-price-tab">
                     <form>
                       <div class="mb-3">
-                        <label for="name" class="form-label">Enter Name</label>
-                        <input type="text" class="form-control input_design" id="name" />
+                        <label for="name" class="form-label">Price</label>
+                        <input type="text" name="item_price" id="item_price" min="0" max="18" class="form-control input_design" placeholder="Please Enter Price (MATIC)" value="" />
                       </div>
                       <div class="mb-3">
-                        <label for="name" class="form-label">Enter Name</label>
-                        <input type="text" class="form-control input_design" id="name" />
+                        <label for="qt" class="form-label">Quantity</label>
+                        <input type="text" name="item_price" id="item_price" min="1" disabled="" class="form-control input_design" placeholder="Please Enter Quantity" value="1" />
                       </div>
-                      <div class="mb-3">
-                        <label for="exampleInputEmail1" class="form-label">Email address</label>
-                        <select class="form-select input_design select_bg" aria-label=".form-select-lg example">
-                          <option selected>Open this select menu</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
-                        </select>
+                      <div class="mt-5 mb-3 text-center">
+                        <button type="button" class="square_yello" href="/mintcollectionlive">Put On Marketplace</button>
                       </div>
                     </form>
                   </div>
-                  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+
+                  <div class="tab-pane fade" id="pills-timed" role="tabpanel" aria-labelledby="Timed auction">
                     <form>
                       <div class="mb-3">
-                        <label for="name" class="form-label">Enter Name</label>
-                        <input type="text" class="form-control input_design" id="name" />
+                        <label for="qt" class="form-label">Quantity</label>
+                        <input type="text" name="item_price" id="item_price" min="1" disabled="" class="form-control input_design" placeholder="Please Enter Quantity" value="1" />
                       </div>
                       <div class="mb-3">
-                        <label for="name" class="form-label">Enter Name</label>
-                        <input type="text" class="form-control input_design" id="name" />
+                        <label for="name" class="form-label">Minimum bid</label>
+                        <input type="text" name="item_price" id="item_price" min="0" max="18" class="form-control input_design" placeholder="Enter Minimum Bid" value="" />
                       </div>
                       <div class="mb-3">
-                        <label for="exampleInputEmail1" class="form-label">Email address</label>
+                        <label for="Payment" class="form-label">Payment Token</label>
                         <select class="form-select input_design select_bg" aria-label=".form-select-lg example">
-                          <option selected>Open this select menu</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
+                          <option selected>USDT</option>
+                          <option value="1">USDT 1</option>
+                          <option value="2">USDT 2</option>
                         </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Expiration date</label>
+                        <input type="text" name="item_price" id="item_price" min="0" max="18" class="form-control input_design" placeholder="Enter Minimum Bid" value="" />
+                      </div>
+                      
+                      <div class="mt-5 mb-3 text-center">
+                        <button type="button" class="square_yello" href="/mintcollectionlive">Put On Marketplace</button>
                       </div>
                     </form>
                   </div>
-                  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+
+                  <div class="tab-pane fade" id="pills-bids" role="tabpanel" aria-labelledby="pills-bids-tab">
                     <form>
                       <div class="mb-3">
-                        <label for="name" class="form-label">Enter Name</label>
-                        <input type="text" class="form-control input_design" id="name" />
+                        <label for="qt" class="form-label">Quantity</label>
+                        <input type="text" name="item_price" id="item_price" min="1" disabled="" class="form-control input_design" placeholder="Please Enter Quantity" value="1" />
                       </div>
                       <div class="mb-3">
-                        <label for="name" class="form-label">Enter Name</label>
-                        <input type="text" class="form-control input_design" id="name" />
+                        <label for="name" class="form-label">Minimum bid</label>
+                        <input type="text" name="item_price" id="item_price" min="0" max="18" class="form-control input_design" placeholder="Enter Minimum Bid" value="" />
                       </div>
                       <div class="mb-3">
-                        <label for="exampleInputEmail1" class="form-label">Email address</label>
+                        <label for="Payment" class="form-label">Payment Token</label>
                         <select class="form-select input_design select_bg" aria-label=".form-select-lg example">
-                          <option selected>Open this select menu</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
+                          <option selected>USDT</option>
+                          <option value="1">USDT 1</option>
+                          <option value="2">USDT 2</option>
                         </select>
+                      </div>
+                      
+                      <div class="mt-5 mb-3 text-center">
+                        <button type="button" class="square_yello" href="/mintcollectionlive">Put On Marketplace</button>
                       </div>
                     </form>
                   </div>
