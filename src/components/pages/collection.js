@@ -14,7 +14,7 @@ import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCollections, getNFTs } from "../../helpers/getterFunctions";
+import { getCollections, getNFTs, getAllCategory } from "../../helpers/getterFunctions";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 
@@ -62,7 +62,17 @@ function Collection() {
   const [collectionDetails, setCollectionDetails] = useState([]);
   const [isCopied, setIsCopied] = useState(false);
   const [nftList, setNftList] = useState("");
+  const [category, setCategory] = useState([]);
   const { id } = useParams();
+
+  
+  useEffect(async() => {
+    try {const c = await getAllCategory();
+     setCategory(c);}
+     catch(e){
+       console.log("Error",e);
+     }
+   },[]);
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -87,6 +97,15 @@ function Collection() {
         .classList.remove("active");
     }
   };
+
+  
+  useEffect(async() => {
+    try {const c = await getAllCategory();
+     setCategory(c);}
+     catch(e){
+       console.log("Error",e);
+     }
+   },[]);
 
   useEffect(async () => {
     let temp = nftList;
@@ -259,19 +278,19 @@ function Collection() {
                   class='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option selected>Single Items</option>
-                  <option value='1'>Single Items 1</option>
-                  <option value='2'>Single Items 2</option>
-                  <option value='3'>Single Items 3</option>
+                  <option value='1' selected>
+                    Single Items
+                  </option>
+                  <option value='2'>Multiple Items</option>
                 </select>
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option selected>Price: Low to High</option>
-                  <option value='1'>$2000</option>
-                  <option value='2'>$4000</option>
-                  <option value='3'>$6000</option>
+                   <option value='1' selected>
+                    Price: Low to High
+                  </option>
+                  <option value='2'>Price: High to Low</option>
                 </select>
                 {/* <div className="market_div"> */}
 
@@ -393,31 +412,23 @@ function Collection() {
                   Categories <UpArrow />
                 </button>
                 <div id='demo4' class='collapse show'>
-                  <ul>
-                    <li>
-                      <Link to={"/marketplace"} className='sub-items'>
-                        <AllNFTs />
-                        All NFTs
-                      </Link>
+                <ul>
+                    <li className="sub-items">
+                    <form action="#" className="checked_form">
+                        <div class="form-check form-check-inline">
+                          <input type="radio" id="allnfts" name="radio-group" />
+                          <label for="allnfts">All NFTs</label>
+                        </div>
+                        {category ? category.map((c) => {
+                          return  <div class="form-check form-check-inline">
+                          <input type="radio" id={c.name} name="radio-group" />
+                          <label for={c.name}>{c.name}</label>
+                        </div>
+                        }):""}
+                       
+                      </form>
                     </li>
-                    <li>
-                      <Link to={"/marketplaceCollection"} className='sub-items'>
-                        <Firearmsvg />
-                        Firearms
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Soldiers"} className='sub-items'>
-                        <Soldierssvg />
-                        Soldiers
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Accesories"} className='sub-items'>
-                        <Soldierssvg />
-                        Accesories
-                      </Link>
-                    </li>
+                 
                   </ul>
                 </div>
               </div>

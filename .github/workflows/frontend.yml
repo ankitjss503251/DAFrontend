@@ -19,9 +19,9 @@ jobs:
         script: |
           cd /var/www/html/DAFrontend
           git config --global --add safe.directory /var/www/html/DAFrontend
-          ls -la
-          sudo git pull
-          sudo yarn
+          sudo git add .
+          sudo git commit -m "serversidechanges"
+          sudo git pull origin main
           sudo yarn run build
           sudo pm2 ls
           sudo pm2 restart all

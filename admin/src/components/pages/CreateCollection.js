@@ -8,6 +8,7 @@ import {
   GetBrand,
   // getImportedNFTs,
   GetMyCollectionsList,
+  importCollection,
   UpdateCollection,
 } from "../../apiServices";
 import contracts from "../../config/contracts";
@@ -18,6 +19,9 @@ import { NotificationManager } from "react-notifications";
 import Loader from "../components/loader";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
+import abi from "./../../config/abis/generalERC721Abi.json";
+import { ImportNFTs } from "../../helpers/sendFunctions";
+import { fetchTokens } from "../../helpers/getterFunctions";
 
 function CreateCollection() {
   const [files, setFiles] = useState([]);
@@ -29,7 +33,7 @@ function CreateCollection() {
   const [royalty, setRoyalty] = useState(10);
   const [loading, setLoading] = useState(false);
   const [maxSupply, setMaxSupply] = useState(1);
-  const [price, setPrice] = useState();
+  const [price, setPrice] = useState(0);
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
   const [cookies] = useCookies([]);
@@ -46,6 +50,9 @@ function CreateCollection() {
   const [isOffChain, setIsOffChain] = useState("No");
   const [isOnMarketplace, setIsOnMarketplace] = useState("Yes");
   const [importedCollectionLink, setImportedCollectionLink] = useState("");
+  const [selectedCollectionId, setSelectedCollectionId] = useState("");
+  const [newImportModal, setNewImportModal] = useState("");
+  const [isEditModal, setIsEditModal] = useState("");
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -216,23 +223,24 @@ function CreateCollection() {
       return false;
     }
 
-    if (preSaleStartTime === "" || preSaleStartTime === undefined) {
-      NotificationManager.error("Please Choose a Valid Start Date.");
-      return false;
-    }
-    if (datetime2 === "" || datetime2 === undefined) {
-      NotificationManager.error("Please Choose Valid End Date", "", 800);
-      return false;
-    }
-    if (maxSupply === "" || maxSupply === undefined) {
-      NotificationManager.error("Please Enter Max Supply", "", 800);
-      return false;
-    }
+    // if (preSaleStartTime === "" || preSaleStartTime === undefined) {
+    //   NotificationManager.error("Please Choose a Valid Start Date.");
+    //   return false;
+    // }
+    // if (datetime2 === "" || datetime2 === undefined) {
+    //   NotificationManager.error("Please Choose Valid End Date", "", 800);
+    //   return false;
+    // }
+    // if (maxSupply === "" || maxSupply === undefined) {
+    //   NotificationManager.error("Please Enter Max Supply", "", 800);
+    //   return false;
+    // }
 
-    if (price === "" || price === undefined) {
-      NotificationManager.error("Please Enter a Price", "", 800);
-      return false;
-    }
+    // if (price === "" || price === undefined) {
+    //   NotificationManager.error("Please Enter a Price", "", 800);
+    //   return false;
+    // }
+
     if (category === "" || category === undefined) {
       NotificationManager.error("Please Choose a Category", "", 800);
       return false;
@@ -258,79 +266,18 @@ function CreateCollection() {
 
   //handle collection creator
 
-  const handleCollectionCreation = async (
-    isImport = false,
-    importedAddress = "0x"
-  ) => {
-    console.log(
-      "isOffChain",
-      isOffChain == "No",
-      !isImport && isOffChain == "No"
-    );
+  const handleCollectionCreationAndUpdation = async (isUpdate = false) => {
     let res1;
     let creator;
     if (handleValidationCheck()) {
       setLoading(true);
       setModal("");
+      setIsEditModal("");
+      let contractAddress = "0x";
       console.log("category", category);
-      try {
-        creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
-        console.log("creator is---->", creator);
-        console.log("create collection is called");
-        console.log("contracts usdt address", contracts.USDT);
-      } catch (e) {
-        console.log("err", e);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        if (!isImport && isOffChain == "No") {
-          nftType == "1"
-            ? (res1 = await creator.deployExtendedERC721(
-                title,
-                symbol,
-                "www.uri.com",
-                royalty * 100,
-                contracts.USDT
-              ))
-            : (res1 = await creator.deployExtendedERC1155(
-                "www.uri.com",
-                royalty * 100,
-                contracts.USDT
-              ));
-        }
-      } catch (e) {
-        console.log(e);
-        NotificationManager.error(e.message, "", 1500);
-        setLoading(false);
-        // setTimeout(() => {
-        //   window.location.href = "/createcollection";
-        // }, 1000);
-      }
-      let contractAddress = importedAddress;
-
-      if (!isImport && isOffChain == "No") {
-        let hash = res1;
-        res1 = await res1.wait();
-        contractAddress = await readReceipt(hash);
-
-        console.log("res1 is--->", res1);
-      } else {
-        res1 = {};
-        res1.status = 1;
-      }
-      console.log("contract address is--->", contractAddress);
-      if (res1.status === 1) {
-        let type;
-        if (nftType == "1") {
-          type = 1;
-        } else {
-          type = 2;
-        }
-
+      if (isUpdate) {
         var fd = new FormData();
+        fd.append("id", selectedCollectionId);
         fd.append("name", title);
         fd.append("symbol", symbol);
         fd.append("description", description);
@@ -338,55 +285,125 @@ function CreateCollection() {
         fd.append("coverImage", coverImg);
         fd.append("categoryID", category);
         fd.append("brandID", brand);
-        fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
         fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
-        //fd.append("chainID", chain);
-        fd.append("contractAddress", contractAddress);
         fd.append("preSaleStartTime", preSaleStartTime);
         fd.append("preSaleEndTime", datetime2);
         fd.append("preSaleTokenAddress", contracts.USDT);
         fd.append("totalSupply", maxSupply);
-        fd.append("type", type);
+        fd.append("type", Number(nftType));
         fd.append("price", ethers.utils.parseEther(price.toString()));
         fd.append("royalty", royalty * 1000);
-
-        console.log("form data is---->", fd.value);
-
         try {
-          let collection = await createCollection(fd);
-          console.log("create Collection response is--->", collection);
+          await UpdateCollection(fd);
           setLoading(false);
-          if (collection == "Collection created") {
-            NotificationManager.success(
-              "collection created successfully",
-              "",
-              1800
-            );
-            setLoading(false);
-            setTimeout(() => {
-              window.location.href = "/createcollection";
-            }, 1000);
-          } else {
-            NotificationManager.error(collection, "", 1800);
-            console.log("category message", collection);
-            setLoading(false);
-            // setTimeout(() => {
-            //   window.location.href = "/createcollection";
-            // }, 1000);
-          }
+          setTimeout(() => {
+            window.location.href = "/createcollection";
+          }, 1000);
         } catch (e) {
-          NotificationManager.error(e.message, "", 1800);
-          setLoading(false);
-          // setTimeout(() => {
-          //   window.location.href = "/createcollection";
-          // }, 1000);
+          console.log("e");
+          return;
         }
       } else {
-        NotificationManager.error("Something went wrong", "", 1800);
-        setLoading(false);
-        // setTimeout(() => {
-        //   window.location.href = "/createcollection";
-        // }, 1000);
+        try {
+          creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
+          console.log("creator is---->", creator);
+          console.log("create collection is called");
+          console.log("contracts usdt address", contracts.USDT);
+        } catch (e) {
+          console.log("err", e);
+          setLoading(false);
+          return;
+        }
+
+        try {
+          setLoading(true);
+
+          if (isOffChain == "No") {
+            nftType == "1"
+              ? (res1 = await creator.deployExtendedERC721(
+                  title,
+                  symbol,
+                  "www.uri.com",
+                  royalty * 100,
+                  contracts.USDT
+                ))
+              : (res1 = await creator.deployExtendedERC1155(
+                  "www.uri.com",
+                  royalty * 100,
+                  contracts.USDT
+                ));
+
+            let hash = res1;
+            res1 = await res1.wait();
+            contractAddress = await readReceipt(hash);
+          } else {
+            res1 = {};
+            res1.status = 1;
+          }
+        } catch (e) {
+          console.log(e);
+          NotificationManager.error(e.message, "", 1500);
+          setLoading(false);
+        }
+
+        console.log("contract address is--->", contractAddress);
+        if (res1.status === 1) {
+          let type;
+          if (nftType == "1") {
+            type = 1;
+          } else {
+            type = 2;
+          }
+
+          var fd = new FormData();
+          fd.append("name", title);
+          fd.append("symbol", symbol);
+          fd.append("description", description);
+          fd.append("logoImage", logoImg);
+          fd.append("coverImage", coverImg);
+          fd.append("categoryID", category);
+          fd.append("brandID", brand);
+          fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
+          fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
+          //fd.append("chainID", chain);
+          fd.append("contractAddress", contractAddress);
+          fd.append("preSaleStartTime", preSaleStartTime);
+          fd.append("preSaleEndTime", datetime2);
+          fd.append("preSaleTokenAddress", contracts.USDT);
+          fd.append("totalSupply", maxSupply);
+          fd.append("type", type);
+          fd.append("price", ethers.utils.parseEther(price.toString()));
+          fd.append("royality", royalty * 1000);
+
+          console.log("form data is---->", fd.value);
+
+          try {
+            let collection = await createCollection(fd);
+            console.log("create Collection response is--->", collection);
+            setLoading(false);
+            if (collection == "Collection created") {
+              NotificationManager.success(
+                "collection created successfully",
+                "",
+                1800
+              );
+              setLoading(false);
+              setTimeout(() => {
+                window.location.href = "/createcollection";
+              }, 1000);
+            } else {
+              NotificationManager.error(collection, "", 1800);
+              console.log("category message", collection);
+              setLoading(false);
+            }
+          } catch (e) {
+            NotificationManager.error(e.message, "", 1800);
+            setLoading(false);
+          }
+        } else {
+          NotificationManager.error("Something went wrong", "", 1800);
+          setLoading(false);
+        }
       }
     }
   };
@@ -441,6 +458,54 @@ function CreateCollection() {
     }
   };
 
+  const handleImportNFT = async (isNew) => {
+    window.sessionStorage.setItem("importLink", importedCollectionLink);
+    try {
+      const token = await exportInstance(importedAddress, abi);
+      let originalSupply = await token.totalSupply();
+      let res
+      if (isNew) {
+        // await importCollection({
+        //   address: importedAddress,
+        //   link: importedCollectionLink,
+        //   totalSupply: parseInt(originalSupply),
+        // });
+        var fd = new FormData();
+
+        fd.append("isDeployed", 1);
+        fd.append("isImported", 1);
+        fd.append("isOnMarketplace", 0);
+        fd.append("name", title);
+        fd.append("contractAddress", importedAddress);
+        fd.append("totalSupply", parseInt(originalSupply));
+
+         res = await createCollection(fd);
+        console.log("coll create", res._id);
+      } else {
+         res = await UpdateCollection({
+          contractAddress: importedAddress,
+          link: importedCollectionLink,
+          isDeployed: 1,
+          id: selectedCollectionId,
+          isOnMarketplace: 1,
+          isImported: 1,
+          totalSupply: parseInt(originalSupply),
+        });
+        console.log("coll update", res._id);
+      }
+      await fetchTokens(importedAddress, abi, currentUser, res._id);
+    } catch (e) {
+      console.log("e");
+      return;
+    }
+    try {
+      await ImportNFTs(importedAddress, abi, currentUser);
+    } catch (e) {
+      console.log("e");
+      return;
+    }
+  };
+
   const setShowOnMarketplace = async (id, show) => {
     try {
       await UpdateCollection({
@@ -483,8 +548,8 @@ function CreateCollection() {
             className="btn btn-admin text-light"
             type="button"
             data-bs-toggle="modal"
-            data-bs-target="#exampleModal1"
-            onClick={() => setImportModal("active")}
+            data-bs-target="#exampleModal2"
+            onClick={() => setNewImportModal("active")}
           >
             + Import Collection
           </button>
@@ -507,6 +572,7 @@ function CreateCollection() {
                 <th>Description</th>
                 <th>Royalty</th>
                 <th>Start Date</th>
+                <th>End Date</th>
                 <th>Max Supply</th>
                 <th>Price</th>
                 <th>Category</th>
@@ -530,15 +596,22 @@ function CreateCollection() {
                         {item.isDeployed == 0 ? (
                           <div className="add_btn mb-2 d-flex justify-content-start">
                             <button
-                              className="btn btn-admin m-1 p-1 text-light "
+                              className="btn btn-admin m-1 p-1 text-light"
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModal1"
                               type="button"
                               onClick={async () => {
-                                await deployCollection(item);
+                                setSelectedCollectionId(item._id);
+                                setImportModal(true);
                               }}
                             >
-                              Deploy
+                              Import
                             </button>
-                            <button
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                        <button
                           className="btn btn-admin m-1 p-1 text-light "
                           type="button"
                           onClick={async () => {
@@ -551,19 +624,38 @@ function CreateCollection() {
                         >
                           {item.isOnMarketplace == 0 ? "Show" : "Hide"}
                         </button>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-
-                       
+                        <button
+                          className="btn btn-admin m-1 p-1 text-light"
+                          type="button"
+                          onClick={async () => {
+                            window.location.href = `/importedNfts/${item.contractAddress}`;
+                          }}
+                        >
+                          View NFTs
+                        </button>
+                        <button
+                          className="btn btn-admin m-1 p-1 text-light"
+                          type="button"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editModal"
+                          onClick={async () => {
+                            setSelectedCollectionId(item._id);
+                            setIsEditModal("active");
+                          }}
+                        >
+                          Edit
+                        </button>
                       </td>
                       <td>{item.name}</td>
                       <td>{item.symbol}</td>
                       <td>{item.description}</td>
                       <td>{item.royalityPercentage}</td>
-                      <td>{moment(item.preSaleStartTime).format("MMMM Do YYYY")}</td>
-                      <td>{moment(item.preSaleEndTime).format("MMMM Do YYYY")}</td>
+                      <td>
+                        {moment(item.preSaleStartTime).format("MMMM Do YYYY")}
+                      </td>
+                      <td>
+                        {moment(item.preSaleEndTime).format("MMMM Do YYYY")}
+                      </td>
                       <td>{item.totalSupply}</td>
                       <td>
                         {Number(
@@ -909,7 +1001,7 @@ function CreateCollection() {
               <button
                 type="button"
                 className="btn btn-admin text-light"
-                onClick={() => handleCollectionCreation(false)}
+                onClick={() => handleCollectionCreationAndUpdation(false)}
               >
                 Create Collection
               </button>
@@ -981,11 +1073,7 @@ function CreateCollection() {
                 type="button"
                 className="btn btn-admin text-light"
                 onClick={async () => {
-                  await window.sessionStorage.setItem(
-                    "importLink",
-                    importedCollectionLink
-                  );
-                  window.location.href = `/importedNfts/${importedAddress}`;
+                  await handleImportNFT(false);
                 }}
               >
                 Import Collection
@@ -995,6 +1083,404 @@ function CreateCollection() {
         </div>
       </div>
 
+      <div
+        className={`modal fade importCol ${newImportModal}`}
+        id="exampleModal2"
+        tabindex="-1"
+        aria-labelledby="exampleModal2Label"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5
+                className="modal-title text-yellow font-24 font-600"
+                id="exampleModal1Label"
+              >
+                Import New Collection
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form className="row">
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Collection Address *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={importedAddress}
+                    name="address"
+                    onChange={(e) => {
+                      setImportedAddress(e.target.value);
+                    }}
+                  />
+                </div>
+
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Collection Link *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={importedCollectionLink}
+                    name="address"
+                    onChange={(e) => {
+                      setImportedCollectionLink(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Collection Name *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={title}
+                    name="title"
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                    }}
+                  />
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer justify-content-center">
+              <button
+                type="button"
+                className="btn btn-admin text-light"
+                onClick={async () => {
+                  await handleImportNFT(true);
+                }}
+              >
+                Import Collection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={`modal fade createNft ${isEditModal}`}
+        id="editModal"
+        tabindex="-1"
+        aria-labelledby="editModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5
+                className="modal-title text-yellow font-24 font-600"
+                id="exampleModalLabel"
+              >
+                Update Collection
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form className="row">
+                <div className="mb-1 col-md-4">
+                  <label for="recipient-name" className="col-form-label">
+                    Upload Image *
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      ref={imageUploader}
+                      style={{
+                        display: "none",
+                      }}
+                    />
+                    <div
+                      className="update_btn"
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        position: "relative",
+                      }}
+                      onClick={() => imageUploader.current.click()}
+                    >
+                      <p className="text-center">Click or Drop here</p>
+                      <img
+                        alt=""
+                        ref={uploadedImage}
+                        src={"../images/upload.png"}
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          margin: "auto",
+                        }}
+                        className="img-fluid profile_circle_img"
+                      />
+                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="mb-1 col-md-8">
+                  <label for="recipient-name" className="col-form-label">
+                    Upload Collection Cover Image *
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload2}
+                      ref={imageUploader2}
+                      style={{
+                        display: "none",
+                      }}
+                    />
+                    <div
+                      className="update_btn"
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        position: "relative",
+                      }}
+                      onClick={() => imageUploader2.current.click()}
+                    >
+                      <h4 className="text-center">Click or Drop here</h4>
+                      <img
+                        alt=""
+                        ref={uploadedImage2}
+                        src={"../images/upload.png"}
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          margin: "auto",
+                        }}
+                        className="img-fluid profile_circle_img"
+                      />
+                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Title *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    name="title"
+                    value={title}
+                    onChange={(e) => {
+                      setTitle(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Royalty *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={royalty}
+                    name="royalty"
+                    onKeyPress={(e) => {
+                      if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => {
+                      if (e.target.value > 100) {
+                        NotificationManager.error(
+                          "Royalty can't be greater than 100",
+                          "",
+                          800
+                        );
+                        return;
+                      }
+                      setRoyalty(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Start Date *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={(preSaleStartTime || "").toString().substring(0, 16)}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    End Date *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={(datetime2 || "").toString().substring(0, 16)}
+                    onChange={handleChange2}
+                    className="form-control"
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Max Supply *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={maxSupply}
+                    onChange={(e) => {
+                      let maxSupply = parseInt(e.target.value, 10);
+                      console.log(
+                        "max supply is-->",
+                        e.target.value,
+                        typeof maxSupply
+                      );
+                      setMaxSupply(e.target.value);
+                    }}
+                    onKeyPress={(e) => {
+                      if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Price *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={price}
+                    onChange={(e) => numberInputCheck(e)}
+                    onKeyPress={(e) => {
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                  />
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Category *
+                  </label>
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    <option selected>Open this select menu</option>
+                    {categories && categories.length > 0
+                      ? categories.map((c, i) => {
+                          return <option value={c._id}>{c.name}</option>;
+                        })
+                      : ""}
+                  </select>
+                </div>
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Brand *
+                  </label>
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                  >
+                    <option selected>Open this select menu</option>
+                    {console.log("brands--", brands)}
+                    {brands && brands.length > 0
+                      ? brands.map((b, i) => {
+                          return <option value={b._id}>{b.name}</option>;
+                        })
+                      : ""}
+                  </select>
+                </div>
+                <div className="col-md-12 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Symbol *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={symbol}
+                    onChange={(e) => setSymbol(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-12 mb-1">
+                  <label for="message-text" className="col-form-label">
+                    Description *
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="message-text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  ></textarea>
+                </div>
+
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    NFT Type *
+                  </label>
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    value={nftType}
+                    onChange={(e) => setNftType(e.target.value)}
+                  >
+                    <option selected>Open this select menu</option>
+                    <option value="1">Single</option>;
+                    <option value="2">Multiple</option>;
+                  </select>
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer justify-content-center">
+              <button
+                type="button"
+                className="btn btn-admin text-light"
+                onClick={() => {
+                  handleCollectionCreationAndUpdation(true);
+                }}
+              >
+                Update Collection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
