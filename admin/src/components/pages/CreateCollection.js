@@ -5,6 +5,7 @@ import {
   createCollection,
   exportInstance,
   getAllCategory,
+  getAllCollections,
   GetBrand,
   // getImportedNFTs,
   GetMyCollectionsList,
@@ -463,26 +464,30 @@ function CreateCollection() {
     try {
       const token = await exportInstance(importedAddress, abi);
       let originalSupply = await token.totalSupply();
-      let res
+      let res;
       if (isNew) {
-        // await importCollection({
-        //   address: importedAddress,
-        //   link: importedCollectionLink,
-        //   totalSupply: parseInt(originalSupply),
-        // });
-        var fd = new FormData();
+        let collection = await getAllCollections({
+          contractAddress: importedAddress,
+        });
+        console.log("collections", collection);
+        if (collection.count < 1) {
+          var fd = new FormData();
 
-        fd.append("isDeployed", 1);
-        fd.append("isImported", 1);
-        fd.append("isOnMarketplace", 0);
-        fd.append("name", title);
-        fd.append("contractAddress", importedAddress);
-        fd.append("totalSupply", parseInt(originalSupply));
+          fd.append("isDeployed", 1);
+          fd.append("isImported", 1);
+          fd.append("isOnMarketplace", 1);
+          fd.append("name", title);
+          fd.append("contractAddress", importedAddress);
+          fd.append("totalSupply", parseInt(originalSupply));
 
-         res = await createCollection(fd);
-        console.log("coll create", res._id);
+          res = await createCollection(fd);
+          console.log("coll create", res._id);
+        } else {
+          NotificationManager.error("Collection already imported", "", 800);
+          return;
+        }
       } else {
-         res = await UpdateCollection({
+        res = await UpdateCollection({
           contractAddress: importedAddress,
           link: importedCollectionLink,
           isDeployed: 1,
