@@ -7,7 +7,7 @@ import {
   getOrderDetails,
   GetOrdersByNftId,
   importNft,
-  UpdateNft,
+  UpdateImportedNft,
 } from "../../../apiServices";
 import { useCookies } from "react-cookie";
 import NotificationManager from "react-notifications/lib/NotificationManager";
@@ -55,7 +55,7 @@ const NftDetail = () => {
         owner = "";
       }
       data.owner = owner;
-      await UpdateNft({
+      await UpdateImportedNft({
         collectionAddress: address,
         description: data.description,
         tokenID: id,
@@ -146,8 +146,9 @@ const NftDetail = () => {
               currentUser?.toLowerCase(),
               orders.length
             )} */}
-            {nftDetails?.ownedBy?.toLowerCase() ===
-              currentUser?.toLowerCase() && orders.length == 0 ? (
+            {nftDetails && nftDetails.ownedBy?.length > 0 ? (
+              nftDetails.ownedBy[0].address.toLowerCase() === currentUser.toLowerCase()
+            ) : false && orders.length == 0 ? (
               <button
                 className="putonmarketplace"
                 onClick={async () => {

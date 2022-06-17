@@ -529,6 +529,7 @@ export const getCollections = async (req) => {
       isMinted: req.isMinted,
       isHotCollection: req.isHotCollection,
       isExclusive: req.isExclusive,
+      isOnMarketplace: req.isOnMarketplace,
     };
 
     data = await getAllCollections(reqBody);
@@ -554,6 +555,7 @@ export const getCollections = async (req) => {
           contractAddress: coll.contractAddress,
           brand: coll.brandID,
           createdBy: coll.createdBy,
+          link: coll.link,
         };
       })
     : (formattedData[0] = {});
@@ -577,6 +579,7 @@ export const getNFTs = async (req) => {
       ERCType: req.ERCType,
       searchText: req.searchText,
       isMinted: req.isMinted,
+      isOnMarketplace: req.isOnMarketplace
     };
 
     data = await getNFTList(reqBody);
@@ -692,7 +695,7 @@ export const getAllCategory = async () => {
 export const getPrice = async (reqbody) => {
   let data = [];
   let order = {};
-  let min = '000000000000000';
+  let min = "000000000000000";
   try {
     data = await GetOrdersByNftId(reqbody);
     data = data.results;
@@ -704,7 +707,6 @@ export const getPrice = async (reqbody) => {
           order = i;
         }
       });
-   
     }
     return order;
   } catch (e) {
