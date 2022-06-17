@@ -30,6 +30,14 @@ function Marketplacecollection() {
 
   const { searchedText } = useParams();
 
+useEffect(()=>{
+  // console.log("searchedText",searchedText);
+  // let pageUrl = window.location.href;
+    let url = searchedText;
+    if(url) {
+        document.getElementById(url).classList.add("active");
+    }
+},[])
 
   useEffect(async () => {
     let temp = allCollections;
@@ -57,8 +65,8 @@ function Marketplacecollection() {
     console.log("allCollections", allCollections);
   }, [loadMore]);
 
-  
 
+  
 
   return (
     <div>
@@ -84,7 +92,7 @@ function Marketplacecollection() {
                 role='tablist'>
                 <li class='nav-item' role='presentation'>
                   <button
-                    class='nav-link active'
+                    class='nav-link'
                     id='pills-home-tab'
                     data-bs-toggle='pill'
                     data-bs-target='#pills-home'
@@ -104,7 +112,8 @@ function Marketplacecollection() {
                     type='button'
                     role='tab'
                     aria-controls='pills-profile'
-                    aria-selected='true'>
+                    aria-selected='true'
+                    >
                     Top
                   </button>
                 </li>
@@ -178,7 +187,7 @@ function Marketplacecollection() {
           </div>
           <div class='tab-content' id='pills-tabContent'>
             <div
-              class='tab-pane fade show active'
+              class='tab-pane fade'
               id='pills-home'
               role='tabpanel'
               aria-labelledby='pills-home-tab'>
