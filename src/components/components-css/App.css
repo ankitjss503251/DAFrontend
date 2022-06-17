@@ -4585,3 +4585,42 @@ a:hover {
 .btn:focus{
   box-shadow: none !important;
 }
+.modal-content {
+background: #0d171e;
+border: 1px solid #ef981d;
+}
+.btn-close.text-light {
+  filter: invert(1) !important;
+}
+.title_20 {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: inherit;
+  color: #fff;
+}
+.markitplace .modal-header {
+  background: #000;
+  border: 0;
+}
+
+.input_design {
+    border: 1px solid #e0e0e0 !important;
+    background: transparent;
+    width: 100%;
+    height: 45px;
+    border-radius: 5px;
+    padding: 0px 15px;
+    font-size: 15px;
+    color: #fff;
+}
+.tab-content {
+  padding: 0px 20px;
+}
+.select_bg {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAC/SURBVHgB7ZHBDQIhEEWHzXLfEihhW9g6uEglloIX6qCEtQRK8AwkiAaMIbAOnkzkXyAw8x5kAEZGfj4kb6SUbJ7nk/f+IoQw8EVqjClfUko1IeQc110ptUJnInyN8D0xdD6fKrVLCEH3SBL88cClvHsJnHNbXEyvpAI3ifUMKYpZ+h5LR7fYuHHOrz3w9xmSShNKgoFXBRgJFt4UHEmstYCFHwpakjh8wMI/ChoSwMJRgoYEBUcLCglg4SN/kjub65Rl4R0gGAAAAABJRU5ErkJggg==);
+  background-repeat: no-repeat;
+  background-size: 17px;
+  background-position: 98%;
+}

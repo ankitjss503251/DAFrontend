@@ -92,7 +92,7 @@ useEffect(()=>{
                 role='tablist'>
                 <li class='nav-item' role='presentation'>
                   <button
-                    class='nav-link'
+                    class='nav-link active'
                     id='pills-home-tab'
                     data-bs-toggle='pill'
                     data-bs-target='#pills-home'
@@ -187,7 +187,7 @@ useEffect(()=>{
           </div>
           <div class='tab-content' id='pills-tabContent'>
             <div
-              class='tab-pane fade'
+              class='tab-pane fade show active'
               id='pills-home'
               role='tabpanel'
               aria-labelledby='pills-home-tab'>

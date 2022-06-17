@@ -289,7 +289,7 @@ function NFTDetails() {
                   ).toFixed(4)}{" "}
                   HNTR
                 </div>
-                <button type='button' className='yellow_btn mr-3 mb-3'>
+                <button type='button' className='yellow_btn mr-3 mb-3' data-bs-toggle="modal" data-bs-target="#detailPop">
                   Buy Now
                 </button>
                 <button type='button' className='border_btn title_color'>
@@ -447,6 +447,101 @@ function NFTDetails() {
           </div>
         </div>
       </section>
+
+      {/* <!-- The Modal --> */}
+        <div class="modal markitplace" id="detailPop">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+              {/* <!-- Modal Header --> */}
+              <div class="modal-header p-4">
+                <h4 class="text-light title_20 mb-0">Put on Marketplace</h4>
+                <button type="button" class="btn-close text-light" data-bs-dismiss="modal"></button>
+              </div>
+
+              {/* <!-- Modal body --> */}
+              <div class="modal-body">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Home</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Profile</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
+                  </li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                    <form>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Enter Name</label>
+                        <input type="text" class="form-control input_design" id="name" />
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Enter Name</label>
+                        <input type="text" class="form-control input_design" id="name" />
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Email address</label>
+                        <select class="form-select input_design select_bg" aria-label=".form-select-lg example">
+                          <option selected>Open this select menu</option>
+                          <option value="1">One</option>
+                          <option value="2">Two</option>
+                          <option value="3">Three</option>
+                        </select>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <form>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Enter Name</label>
+                        <input type="text" class="form-control input_design" id="name" />
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Enter Name</label>
+                        <input type="text" class="form-control input_design" id="name" />
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Email address</label>
+                        <select class="form-select input_design select_bg" aria-label=".form-select-lg example">
+                          <option selected>Open this select menu</option>
+                          <option value="1">One</option>
+                          <option value="2">Two</option>
+                          <option value="3">Three</option>
+                        </select>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                    <form>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Enter Name</label>
+                        <input type="text" class="form-control input_design" id="name" />
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Enter Name</label>
+                        <input type="text" class="form-control input_design" id="name" />
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Email address</label>
+                        <select class="form-select input_design select_bg" aria-label=".form-select-lg example">
+                          <option selected>Open this select menu</option>
+                          <option value="1">One</option>
+                          <option value="2">Two</option>
+                          <option value="3">Three</option>
+                        </select>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
       <Footer />
     </div>
   );
