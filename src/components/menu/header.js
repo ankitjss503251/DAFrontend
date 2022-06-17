@@ -643,6 +643,12 @@ const Header = function () {
                       </svg>
                       <span className='cartqt'>9</span>
                     </div>
+                   
+                  </li>
+                  <li className='nav-item'>
+                    <NavLink to='' tabindex='-1'>
+                      <img src='../img/header_icon.png' alt='header_icon' />
+                    </NavLink>
                     <ul className='sub_menu'>
                       <li className='sub_pdd'>
                         <span className='Connected'>Connected </span>
@@ -733,11 +739,6 @@ const Header = function () {
                         </NavLink>
                       </li>
                     </ul>
-                  </li>
-                  <li className='nav-item'>
-                    <NavLink to='' tabindex='-1'>
-                      <img src='../img/header_icon.png' alt='header_icon' />
-                    </NavLink>
                   </li>
                   <li className='nav-item'>
                     <NavLink

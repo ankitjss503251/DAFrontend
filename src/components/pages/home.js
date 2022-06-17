@@ -183,7 +183,7 @@ const Home = () => {
               </h2>
             </div>
             {upcomingMints
-              ? upcomingMints.slice(0, 3).map((card, key) => {
+              ? upcomingMints?.slice(0, 3)?.map((card, key) => {
                   const st = card.saleStartTime;
                   const et = card.saleEndTime;
                   const ct = moment()
@@ -199,20 +199,20 @@ const Home = () => {
                       key={key}>
                         <div className='mint_box' style={mint_bg}>
                         <a href={
-                          card.items === card.totalSupply
-                            ? `/collection/${card._id}`
-                            : `/multimintingpage/${card._id}`
+                          card?.items === card?.totalSupply
+                            ? `/collection/${card?._id}`
+                            : `/multimintingpage/${card?._id}`
                         }>
                           <div className='mint_img'>
-                        <img alt='' src={card.coverImg} class='img-fluid' />
+                        <img alt='' src={card?.coverImg} class='img-fluid' />
                             {ct >= st && ct < et ? (
                               ""
                             ) : (
                               <div className='mint_date'>
                                 <span>
-                                  {moment(card.saleStartTime).format("DD")}
+                                  {moment(card?.saleStartTime).format("DD")}
                                 </span>{" "}
-                                {moment(card.saleStartTime).format("MMM")}
+                                {moment(card?.saleStartTime).format("MMM")}
                               </div>
                             )}
                           </div>
@@ -220,26 +220,26 @@ const Home = () => {
                           <div className='mint_text p-4'>
                             <div className='logoImg_con'>
                               <a
-                                href={`/collectionwithcollection/${card.brand._id}`}
+                                href={`/collectionwithcollection/${card?.brand?._id}`}
                                 className='rounded-circle '>
                                 <img
                                   alt=''
-                                  src={card.brand.logoImage}
+                                  src={card?.brand?.logoImage}
                                   className='mc_img'
                                 />
                               </a>
                             </div>
-                            <h4>{card.name}</h4>
+                            <h4>{card?.name}</h4>
                             <ul className='m-0 p-0'>
                               <li>
                                 <img alt='' src={"../img/mint/hntr.svg"} />{" "}
-                                {`${Number(convertToEth(card.price)).toFixed(
+                                {`${Number(convertToEth(card?.price)).toFixed(
                                   4
                                 )} HNTR`}{" "}
                               </li>
                               <li>
                                 <img alt='' src={"../img/mint/items.svg"} />{" "}
-                                {`${card.items} items`}
+                                {`${card?.items} items`}
                               </li>
                             </ul>
                             {ct < st ? (
@@ -503,7 +503,7 @@ const Home = () => {
                   );
                 })
               : ""}
-            {upcomingMints.length > 0 ? (
+            {upcomingMints?.length > 0 ? (
               <div class='col-md-12 text-center mt-5'>
                 <Link to={"/mintcollectionlive"} className='view_all_bdr'>
                   View All
