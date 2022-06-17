@@ -454,14 +454,15 @@ export const getBrandById = async (data) => {
 
 export const getCategories = async (data) => {
   const requestOptions = {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    body:JSON.stringify(data)
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/utils/getAllCategory",
+      process.env.REACT_APP_API_BASE_URL + "/utils/getCategory",
        requestOptions);
        const isJson = response.headers
        .get("content-type")

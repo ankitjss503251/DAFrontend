@@ -5,7 +5,11 @@ import Footer from "../components/footer";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
 // import { Marketplacecartj } from "../../Data/dummyJSON";
-import { getAllCategory, getNFTs } from "../../helpers/getterFunctions";
+import {
+  getCategory,
+  getCollections,
+  getNFTs,
+} from "../../helpers/getterFunctions";
 import { Link, useParams } from "react-router-dom";
 import { getOrderByNftID, getUserById } from "./../../helpers/getterFunctions";
 import { convertToEth } from "../../helpers/numberFormatter";
@@ -61,6 +65,8 @@ function Marketplace() {
   const [category, setCategory] = useState([]);
   const [sText, setSText] = useState("");
   const [brands, setBrands] = useState([]);
+  const [cols, setCols] = useState([]);
+  const [colsAdv, setColsAdv] = useState("");
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -77,7 +83,7 @@ function Marketplace() {
 
   useEffect(async () => {
     try {
-      const c = await getAllCategory();
+      const c = await getCategory();
       setCategory(c);
     } catch (e) {
       console.log("Error", e);
@@ -94,13 +100,60 @@ function Marketplace() {
   }, []);
 
   useEffect(async () => {
-    console.log("search text--->", sText);
     let temp = allNFTs;
     try {
       const reqData = {
         page: currPage,
         limit: 5,
-        searchText: searchedText ? searchedText : sText ? sText : "",
+        searchText: searchedText ? searchedText : "",
+        isOnMarketplace: 1,
+      };
+      const res = await getNFTs(reqData);
+      if (res?.length > 0) {
+        setLoadMoreDisabled("");
+        for (let i = 0; i < res.length; i++) {
+          const ownedBy = await getUserById({ userID: res[i].createdBy });
+          const orderDet = await getOrderByNftID({ nftId: res[i].id });
+          res[i] = {
+            ...res[i],
+            salesType: orderDet?.results[0]?.salesType,
+            price: Number(
+              convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
+            ).toFixed(4),
+            creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
+          };
+          if (orderDet?.results?.length > 0) {
+            res[i] = {
+              ...res[i],
+              isNftOnSale: true,
+            };
+          } else {
+            res[i] = {
+              ...res[i],
+              isNftOnSale: false,
+            };
+          }
+        }
+
+        temp = [...temp, res];
+        setAllNFTs(temp);
+        setCurrPage(currPage + 1);
+      }
+      if (!allNFTs && res.length <= 0) {
+        setLoadMoreDisabled("disabled");
+      }
+    } catch (e) {
+      console.log("Error in fetching all NFTs list", e);
+    }
+  }, [loadMore]);
+
+  useEffect(async () => {
+    let temp = allNFTs;
+    try {
+      const reqData = {
+        page: currPage,
+        limit: 5,
+        searchText: sText ? sText : "",
         isOnMarketplace: 1,
       };
       const res = await getNFTs(reqData);
@@ -141,10 +194,7 @@ function Marketplace() {
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
     }
-    console.log("allNFTs--->", allNFTs);
-  }, [loadMore, sText]);
-
-  const handleSearch = () => {};
+  }, [sText]);
 
   return (
     <div>
@@ -173,14 +223,12 @@ function Marketplace() {
                     aria-label='Search'
                     value={sText}
                     onChange={(e) => {
+                      setAllNFTs([]);
                       setCurrPage(1);
                       setSText(e.target.value);
                     }}
                   />
-                  <button
-                    class='market_btn'
-                    type='submit'
-                    onClick={handleSearch}>
+                  <button class='market_btn' type='submit'>
                     <img src='../img/search.svg' alt='' />
                   </button>
                 </form>
@@ -229,23 +277,11 @@ function Marketplace() {
                     Status <UpArrow />
                   </button>
                   <div id='demo' class='collapse show'>
-                    <ul className='status_ul'>
-                      <li>
-                        <Link to={"/"} className='filter_border'>
-                          All
-                        </Link>
-                        <Link to={"/"} className='filter_border'>
-                          Not For Sale
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to={"/"} className='filter_border'>
-                          Buy Now
-                        </Link>
-                        <Link to={"/"} className='filter_border'>
-                          On Auction
-                        </Link>
-                      </li>
+                    <ul className='status_ul d-flex flex-wrap'>
+                      <li className='filter_border mr-2'>All NFTs</li>
+                      <li className='filter_border'>Not For Sale</li>
+                      <li className='filter_border'>Buy Now</li>
+                      <li className='filter_border'>On Auction</li>
                     </ul>
                   </div>
 
@@ -303,12 +339,41 @@ function Marketplace() {
                     data-bs-target='#demo3'>
                     Collections <UpArrow />
                   </button>
-                  <div id='demo3' class='collapse show'>
+                  <div id='demo3' class='collapse show '>
                     <input
                       type='text'
                       placeholder='Filter'
-                      className='filter_apply filter-text-left filter_padd'
+                      className='filter_apply filter-text-left filter_padd mb-3'
+                      value={colsAdv}
+                      onChange={async (e) => {
+                        setColsAdv(e.target.value);
+                        const reqData = {
+                          page: 1,
+                          limit: 12,
+                          searchText: e.target.value,
+                        };
+                        try {
+                          const col = await getCollections(reqData);
+                          setCols(col);
+                        } catch (e) {
+                          console.log("Error", e);
+                        }
+                      }}
                     />
+                    {cols && cols.length > 0 && colsAdv !== ""
+                      ? cols.map((i) => {
+                          return (
+                            <div class='form-check form-check-inline'>
+                              <input
+                                type='radio'
+                                id={i.name}
+                                name='radio-group'
+                              />
+                              <label for={i.name}>{i.name}</label>
+                            </div>
+                          );
+                        })
+                      : ""}
                   </div>
                 </form>
               </div>
@@ -415,9 +480,6 @@ function Marketplace() {
                                 />
                               </div>
                             </a>
-                            {/* <div className='profile_right'>
-                              <span>sfs</span>
-                            </div> */}
                           </div>
                           <a href={`/NFTdetails/${card.id}`}>
                             <img

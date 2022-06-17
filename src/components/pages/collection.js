@@ -14,7 +14,7 @@ import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCollections, getNFTs, getAllCategory } from "../../helpers/getterFunctions";
+import { getCollections, getNFTs, getCategory } from "../../helpers/getterFunctions";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 
@@ -67,7 +67,7 @@ function Collection() {
 
   
   useEffect(async() => {
-    try {const c = await getAllCategory();
+    try {const c = await getCategory();
      setCategory(c);}
      catch(e){
        console.log("Error",e);
@@ -100,7 +100,7 @@ function Collection() {
 
   
   useEffect(async() => {
-    try {const c = await getAllCategory();
+    try {const c = await getCategory();
      setCategory(c);}
      catch(e){
        console.log("Error",e);

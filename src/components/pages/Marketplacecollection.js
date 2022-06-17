@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../components/footer";
 import { Link } from "react-router-dom";
-import { getCollections } from "../../helpers/getterFunctions";
+import { getCategory, getCollections } from "../../helpers/getterFunctions";
 import { marketPlaceCollection } from "../../Data/dummyJSON";
 import { useParams } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
@@ -27,17 +27,30 @@ function Marketplacecollection() {
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
   const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [showTab, setShowTab] = useState("")
+  const [activeCat, setActiveCat] = useState([]);
   const { searchedText } = useParams();
-  const [colByCat, setColByCat] = useState([{}]);
+  const { category } = useParams();
 
-useEffect(()=>{
-  // console.log("searchedText",searchedText);
-  // let pageUrl = window.location.href;
-    let url = searchedText;
-    if(url) {
-        document.getElementById(url).classList.add("active");
-    }
-},[])
+  useEffect(()=>{
+
+      if(category) {
+          // document.getElementById(category).classList.add("active");
+         
+          setShowTab("show active");
+      }
+  },[window.location])
+
+  useEffect(async () => {
+    await getCategory()
+      .then((res) => {
+        setCategories(res);
+      })
+      .catch((e) => {
+        console.log("Error", e);
+      });
+  }, []);
 
   useEffect(async () => {
     let temp = allCollections;
@@ -54,8 +67,8 @@ useEffect(()=>{
         console.log("temp", temp);
         setAllCollections(temp);
         setCurrPage(currPage + 1);
-      } 
-      if(!allCollections && res.length <= 0){
+      }
+      if (!allCollections && res.length <= 0) {
         setLoadMoreDisabled("disabled");
       }
     } catch (e) {
@@ -63,9 +76,6 @@ useEffect(()=>{
     }
     console.log("allCollections", allCollections);
   }, [loadMore]);
-
-
-  
 
   return (
     <div>
@@ -91,18 +101,46 @@ useEffect(()=>{
                 role='tablist'>
                 <li class='nav-item' role='presentation'>
                   <button
-                    class='nav-link active'
-                    id='pills-home-tab'
+                    class={!showTab ? 'nav-link active' : 'nav-link'}
+                    id='all'
                     data-bs-toggle='pill'
-                    data-bs-target='#pills-home'
+                    data-bs-target='#all'
                     type='button'
                     role='tab'
-                    aria-controls='pills-home'
-                    aria-selected='true'>
-                    Trending
+                    aria-controls='all'
+                    aria-selected='true'
+                    onClick={() => {
+                      setShowTab("");
+                       }}
+                    >
+                   All
                   </button>
                 </li>
-                <li class='nav-item' role='presentation'>
+                {
+                  categories?.length > 0 ? categories.map((cat, key) => {
+                    return(
+                      <li class='nav-item' role='presentation' key={key}>
+                      <button
+                        class='nav-link'
+                        id={cat.name}
+                        data-bs-toggle='pill'
+                        data-bs-target={`#${cat.name}`}
+                        type='button'
+                        role='tab'
+                        aria-controls={`#${cat.name}`}
+                        aria-selected='true'
+                        onClick={() => {
+                          setActiveCat(cat);
+                       setShowTab("show active");
+                        }}
+                        >
+                       {cat.name}
+                      </button>
+                    </li>
+                    )
+                  }) : ""
+                }
+                {/* <li class='nav-item' role='presentation'>
                   <button
                     class='nav-link'
                     id='pills-profile-tab'
@@ -111,8 +149,7 @@ useEffect(()=>{
                     type='button'
                     role='tab'
                     aria-controls='pills-profile'
-                    aria-selected='true'
-                    >
+                    aria-selected='true'>
                     Top
                   </button>
                 </li>
@@ -180,32 +217,32 @@ useEffect(()=>{
                     aria-selected='true'>
                     Live Auctions
                   </button>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
           <div class='tab-content' id='pills-tabContent'>
             <div
-              class='tab-pane fade show active'
-              id='pills-home'
+              class={!showTab ? "tab-pane fade show active" : "tab-pane fade"}
+              id='all'
               role='tabpanel'
-              aria-labelledby='pills-home-tab'>
+              aria-labelledby='all'>
               <div className='row'>
                 {allCollections.length > 0
                   ? allCollections.map((oIndex) => {
                       return oIndex.map((card) => (
                         <div className='col-lg-4 col-md-6 mb-5'>
-                        
-                            <div className='collection_slide'>
+                          <div className='collection_slide'>
                             <a href={`/collection/${card._id}`}>
                               <img
                                 className='img-fluid w-100'
                                 src={card.logoImg}
                                 alt=''
                               />
-                               </a>
-                              <div className='collection_text'>
-                                <a  href={`/collectionwithcollection/${card.brand._id}`}>
+                            </a>
+                            <div className='collection_text'>
+                              <a
+                                href={`/collectionwithcollection/${card.brand._id}`}>
                                 <div className='coll_profileimg'>
                                   <img
                                     alt=''
@@ -218,67 +255,95 @@ useEffect(()=>{
                                     src={"../img/collections/check.png"}
                                   />
                                 </div>
-                                </a>
-                                <a href={`/collection/${card._id}`}>
+                              </a>
+                              <a href={`/collection/${card._id}`}>
                                 <h4 className='collname'>{card.name}</h4>
                                 <p>{card.desc}</p>
-                                </a>
-                              </div>
+                              </a>
                             </div>
+                          </div>
                         </div>
                       ));
                     })
                   : ""}
-                  {allCollections?.length > 0 ? 
-                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
-                  <button
-                     type="button"
-                     className={`btn view_all_bdr ${loadMoreDisabled}`}
-                    onClick={() => setLoadMore(!loadMore)}>
-                    Load More
-                  </button>
-                </div> : ""}
-              </div>
-            </div>
-            <div
-              class='tab-pane fade'
-              id='pills-profile'
-              role='tabpanel'
-              aria-labelledby='pills-profile-tab'>
-              <div className='row'>
-                {marketPlaceCollection.map((card) => (
-                  <div className='col-lg-4 col-md-6 mb-5'>
-                    <Link to={"/collection"}>
-                      <div className='collection_slide'>
-                        <img className='img-fluid' src={card.img} alt='' />
-                        <div className='collection_text'>
-                          <div className='coll_profileimg'>
-                            <img
-                              alt=''
-                              className='profile_img'
-                              src={"../img/collections/profile1.png"}
-                            />
-                            <img
-                              alt=''
-                              className='check_img'
-                              src={"../img/collections/check.png"}
-                            />
-                          </div>
-                          <h4 className='collname'>{card.heading}</h4>
-                          <p>ERC-73</p>
-                        </div>
-                      </div>
-                    </Link>
+                {allCollections?.length > 0 ? (
+                  <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                    <button
+                      type='button'
+                      className={`btn view_all_bdr ${loadMoreDisabled}`}
+                      onClick={() => setLoadMore(!loadMore)}>
+                      Load More
+                    </button>
                   </div>
-                ))}
-                <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
-                  <a class='view_all_bdr' href='/'>
-                    Load More
-                  </a>
-                </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
-            <div
+
+            {
+               activeCat ? 
+                  <div class={`tab-pane fade ${showTab}`}
+              id={`#${activeCat.name}`}
+              role='tabpanel'
+              aria-labelledby={activeCat.name}>
+              <div className='row'>
+              {allCollections.length > 0
+                  ? allCollections.map((oIndex) => {
+                      return oIndex.map((card) => (
+                        <div className='col-lg-4 col-md-6 mb-5'>
+                          <div className='collection_slide'>
+                            <a href={`/collection/${card._id}`}>
+                              <img
+                                className='img-fluid w-100'
+                                src={card.logoImg}
+                                alt=''
+                              />
+                            </a>
+                            <div className='collection_text'>
+                              <a
+                                href={`/collectionwithcollection/${card.brand._id}`}>
+                                <div className='coll_profileimg'>
+                                  <img
+                                    alt=''
+                                    className='profile_img'
+                                    src={card.brand.logoImage}
+                                  />
+                                  <img
+                                    alt=''
+                                    className='check_img'
+                                    src={"../img/collections/check.png"}
+                                  />
+                                </div>
+                              </a>
+                              <a href={`/collection/${card._id}`}>
+                                <h4 className='collname'>THOR</h4>
+                                <p>{card.desc}</p>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      ));
+                    })
+                  : ""}
+                {allCollections?.length > 0 ? (
+                  <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                    <button
+                      type='button'
+                      className={`btn view_all_bdr ${loadMoreDisabled}`}
+                      onClick={() => setLoadMore(!loadMore)}>
+                      Load More
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+            </div>
+                  : ""
+            }
+            
+            {/* <div
               class='tab-pane fade'
               id='pills-Firearms'
               role='tabpanel'
@@ -467,7 +532,7 @@ useEffect(()=>{
                   </a>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>

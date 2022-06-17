@@ -27,7 +27,7 @@ import { slowRefresh } from "./../../helpers/NotifyStatus";
 import PopupModal from "./../components/AccountModal/popupModal";
 import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
-import { getAllCategory } from "./../../helpers/getterFunctions";
+import { getCategory } from "./../../helpers/getterFunctions";
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
@@ -128,7 +128,7 @@ const Header = function () {
   const [catg, setCatg] = useState([]);
 
   useEffect(async () => {
-    const cat = await getAllCategory();
+    const cat = await getCategory();
     setCatg(cat);
   }, []);
 

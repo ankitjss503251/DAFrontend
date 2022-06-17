@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "@reach/router";
-import { getAllCategory } from "../../helpers/getterFunctions";
+import { getCategory } from "../../helpers/getterFunctions";
 
 const Category = () => {
   const [catg, setCatg] = useState([]);
   useEffect(async () => {
-    const cat = await getAllCategory();
+    const cat = await getCategory();
     console.log("sefsd", cat);
     setCatg(cat);
   }, []);

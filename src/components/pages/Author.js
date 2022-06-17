@@ -18,7 +18,7 @@ import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import UpArrow from "../SVG/dropdown";
-import { getAllCategory } from "../../helpers/getterFunctions";
+import { getCategory } from "../../helpers/getterFunctions";
 
 const bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -64,7 +64,7 @@ function Author() {
   };
   
   useEffect(async() => {
-    try {const c = await getAllCategory();
+    try {const c = await getCategory();
      setCategory(c);}
      catch(e){
        console.log("Error",e);

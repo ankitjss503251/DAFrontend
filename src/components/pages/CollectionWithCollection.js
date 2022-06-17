@@ -12,7 +12,7 @@ import {
   getBrandDetailsById,
   getCollections,
   getNFTs,
-  getAllCategory,
+  getCategory,
   getPrice,
   getUserById,
 } from "../../helpers/getterFunctions";
@@ -56,7 +56,7 @@ function CollectionWithCollection() {
 
   
   useEffect(async() => {
-    try {const c = await getAllCategory();
+    try {const c = await getCategory();
      setCategory(c);}
      catch(e){
        console.log("Error",e);

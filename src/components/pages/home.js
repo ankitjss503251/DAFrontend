@@ -224,7 +224,7 @@ const Home = () => {
                               className='rounded-circle '>
                               <img
                                 alt=''
-                                src={card.logoImage}
+                                src={card.brand.logoImage}
                                 className='mc_img'
                               />
                             </a>
