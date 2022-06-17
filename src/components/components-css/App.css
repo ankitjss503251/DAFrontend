@@ -4585,3 +4585,74 @@ a:hover {
 .btn:focus{
   box-shadow: none !important;
 }
+.modal-content {
+/* background: #0d171e; */
+  border: 1px solid #ef981d;
+  background-image: url('./../../assets/images/background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.btn-close.text-light {
+  filter: invert(1) !important;
+}
+.title_20 {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: inherit;
+  color: #fff;
+}
+.markitplace .modal-header {
+  background: linear-gradient(180deg, #ef981d 54.17%, #f9bf50 100%);
+  border: 0;
+  border-bottom: 1px solid #ef981d;
+}
+
+.input_design {
+    border: 1px solid #e0e0e0 !important;
+    background: transparent;
+    width: 100%;
+    height: 45px;
+    border-radius: 5px;
+    padding: 0px 15px;
+    font-size: 15px;
+    color: #fff;
+}
+.tab-content {
+  padding: 0px 20px;
+}
+.select_bg {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAC/SURBVHgB7ZHBDQIhEEWHzXLfEihhW9g6uEglloIX6qCEtQRK8AwkiAaMIbAOnkzkXyAw8x5kAEZGfj4kb6SUbJ7nk/f+IoQw8EVqjClfUko1IeQc110ptUJnInyN8D0xdD6fKrVLCEH3SBL88cClvHsJnHNbXEyvpAI3ifUMKYpZ+h5LR7fYuHHOrz3w9xmSShNKgoFXBRgJFt4UHEmstYCFHwpakjh8wMI/ChoSwMJRgoYEBUcLCglg4SN/kjub65Rl4R0gGAAAAABJRU5ErkJggg==);
+  background-repeat: no-repeat;
+  background-size: 17px;
+  background-position: 98%;
+}
+.markitplace .nav-pills .nav-link {
+  color: rgba(0,0,0,.6);
+  background: none;
+  border: 2px solid #ef981d;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+  border-radius: 12px;
+  padding: 20px;
+  width: 200px;
+    height: 200px;
+}
+.markitplace .nav-pills .nav-link.active {
+  color: #fff;
+  background: linear-gradient(180deg, #ef981d 54.17%, #f9bf50 100%);
+}
+.markitplace .nav-pills .nav-link i.fa {
+  font-size: 30px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+.modal.markitplace {
+  background: rgba(0,0,0,.6);
+}
+.input_design option {color: #000;}
