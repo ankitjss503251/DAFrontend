@@ -5,6 +5,7 @@ import { useCookies } from "react-cookie";
 import NotificationManager from "react-notifications/lib/NotificationManager";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
+import { handleBuyNft } from "../../helpers/sendFunctions";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -80,19 +81,30 @@ function NFTlisting(props) {
                           <div className="text-center">
                             {o.sellerID?.walletAddress.toLowerCase() ===
                             currentUser.toLowerCase() ? (
-                              <Link
+                              <button
                                 to={"/"}
                                 className="small_yellow_btn small_btn mr-3"
                               >
                                 Remove From Sale
-                              </Link>
+                              </button>
                             ) : (
-                              <Link
+                              <button
                                 to={"/"}
                                 className="small_border_btn small_btn"
+                                onClick={() => {
+                                  handleBuyNft(
+                                    o._id,
+                                    props.NftDetails.type == 1,
+                                    currentUser,
+                                    "1000000000000",
+                                    1,
+                                    false,
+                                    props.NftDetails.collectionAddress
+                                  );
+                                }}
                               >
                                 {o.salesType === 0 ? "Buy Now" : "Place A Bid"}
-                              </Link>
+                              </button>
                             )}
                           </div>
                         </td>

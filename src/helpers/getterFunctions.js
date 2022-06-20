@@ -43,7 +43,7 @@ export const buildSellOrder = async (id) => {
     console.log("details 123", details);
     const order = [
       details.sellerID?.walletAddress.toLowerCase(),
-      details.tokenAddress,
+      details.collectionAddress,
       details.tokenID,
       details.total_quantity,
       details.salesType,
