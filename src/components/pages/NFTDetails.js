@@ -583,19 +583,19 @@ function handleChange(ev) {
                    
                       <div className="mb-3" id="tab_opt_1">
                         <label htmlfor="item_price" className="form-label">Price</label>
-                        <input type="text" name="item_price" id="item_price" min="0" max="18" className="form-control input_design" placeholder="Please Enter Price (MATIC)" value={itemprice} onChange={event => setItemprice(event.itemprice.value)} />
+                        <input type="text" name="item_price" id="item_price" min="0" max="18" className="form-control input_design" placeholder="Please Enter Price (MATIC)" value={itemprice} onChange={event => setItemprice(event.target.value)} />
                       </div>
                       <div className="mb-3" id="tab_opt_2">
                         <label htmlfor="item_qt" className="form-label">Quantity</label>
-                        <input type="text" name="item_qt" id="item_qt" min="1" disabled="" className="form-control input_design" placeholder="Please Enter Quantity" value={item_qt} onChange={event => setItem_qt(event.item_qt.value)} />
+                        <input type="text" name="item_qt" id="item_qt" min="1" disabled="" className="form-control input_design" placeholder="Please Enter Quantity" value={item_qt} onChange={event => setItem_qt(event.target.value)} />
                       </div>
                       <div id="tab_opt_3" className="mb-3 put_hide">
                         <label htmlfor="item_bid" className="form-label">Minimum bid</label>
-                        <input type="text" name="item_bid" id="item_bid" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value={item_bid} onChange={event => setItem_bid(event.item_bid.value)} />
+                        <input type="text" name="item_bid" id="item_bid" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value={item_bid} onChange={event => setItem_bid(event.target.value)} />
                       </div>
                       <div id="tab_opt_4" className="mb-3 put_hide">
                         <label htmlfor="Payment" className="form-label">Payment Token</label>
-                        <select className="form-select input_design select_bg" name="USDT" value={item_USDT} onChange={event => setItem_USDT(event.item_USDT.value)} >
+                        <select className="form-select input_design select_bg" name="USDT" value={item_USDT} onChange={event => setItem_USDT(event.target.value)} >
                           <option selected>USDT</option>
                           <option value="1">USDT 1</option>
                           <option value="2">USDT 2</option>
