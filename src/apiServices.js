@@ -146,7 +146,7 @@ export const checkuseraddress = async (account) => {
 };
 
 export const updateProfile = async (data) => {
-  console.log("data in api iis------>", data);
+  // console.log("data in api iis------>", data);
   let formData = new FormData();
 
   formData.append("userName", data.uname ? data.uname : "");
@@ -158,7 +158,7 @@ export const updateProfile = async (data) => {
   //formData.append("sWalletAddress", account);
   formData.append("userProfile", data.profilePic ? data.profilePic : "");
 
-  console.log("form data is---->", formData);
+  // console.log("form data is---->", formData);
   const requestOptions = {
     method: "PUT",
     headers: {
