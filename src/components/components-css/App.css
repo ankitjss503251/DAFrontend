@@ -4629,7 +4629,7 @@ a:hover {
   background-size: 17px;
   background-position: 98%;
 }
-.markitplace .nav-pills .nav-link {
+.markitplace .navbtn {
   color: rgba(0,0,0,.6);
   background: none;
   border: 2px solid #ef981d;
@@ -4643,11 +4643,11 @@ a:hover {
   width: 200px;
     height: 200px;
 }
-.markitplace .nav-pills .nav-link.active {
+.markitplace .navbtn.active {
   color: #fff;
   background: linear-gradient(180deg, #ef981d 54.17%, #f9bf50 100%);
 }
-.markitplace .nav-pills .nav-link i.fa {
+.markitplace .navbtn i.fa {
   font-size: 30px;
   margin-bottom: 15px;
   color: #fff;
@@ -4656,3 +4656,6 @@ a:hover {
   background: rgba(0,0,0,.6);
 }
 .input_design option {color: #000;}
+.put_hide {
+  display: none;
+}
