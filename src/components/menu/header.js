@@ -27,7 +27,7 @@ import { slowRefresh } from "./../../helpers/NotifyStatus";
 import PopupModal from "./../components/AccountModal/popupModal";
 import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
-import { getAllCategory } from "./../../helpers/getterFunctions";
+import { getCategory } from "./../../helpers/getterFunctions";
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
@@ -128,7 +128,7 @@ const Header = function () {
   const [catg, setCatg] = useState([]);
 
   useEffect(async () => {
-    const cat = await getAllCategory();
+    const cat = await getCategory();
     setCatg(cat);
   }, []);
 
@@ -643,6 +643,12 @@ const Header = function () {
                       </svg>
                       <span className='cartqt'>9</span>
                     </div>
+                   
+                  </li>
+                  <li className='nav-item'>
+                    <NavLink to='' tabindex='-1'>
+                      <img src='../img/header_icon.png' alt='header_icon' />
+                    </NavLink>
                     <ul className='sub_menu'>
                       <li className='sub_pdd'>
                         <span className='Connected'>Connected </span>
@@ -733,11 +739,6 @@ const Header = function () {
                         </NavLink>
                       </li>
                     </ul>
-                  </li>
-                  <li className='nav-item'>
-                    <NavLink to='' tabindex='-1'>
-                      <img src='../img/header_icon.png' alt='header_icon' />
-                    </NavLink>
                   </li>
                   <li className='nav-item'>
                     <NavLink

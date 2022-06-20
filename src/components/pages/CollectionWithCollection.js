@@ -12,7 +12,7 @@ import {
   getBrandDetailsById,
   getCollections,
   getNFTs,
-  getOrderByNftID,
+  getCategory,
   getPrice,
   getUserById,
 } from "../../helpers/getterFunctions";
@@ -39,6 +39,7 @@ function CollectionWithCollection() {
   const [togglemode, setTogglemode] = useState("filterhide");
   const [nfts, setNfts] = useState([]);
   const [isCopied, setIsCopied] = useState(false);
+  const [category, setCategory] = useState([]);
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -52,6 +53,15 @@ function CollectionWithCollection() {
         .classList.remove("active");
     }
   };
+
+  
+  useEffect(async() => {
+    try {const c = await getCategory();
+     setCategory(c);}
+     catch(e){
+       console.log("Error",e);
+     }
+   },[]);
 
   var bgImgarrow = {
     backgroundImage: `url(${arrow})`,
@@ -116,7 +126,6 @@ function CollectionWithCollection() {
           price: order.price.$numberDecimal,
         };
       }
-      console.log("harvey", temp);
       setNfts(temp);
     } catch (e) {
       console.log("error in get brandbyID", e);
@@ -407,31 +416,23 @@ function CollectionWithCollection() {
                   Categories <UpArrow />
                 </button>
                 <div id='demo4' class='collapse show'>
-                  <ul>
-                    <li>
-                      <Link to={"/marketplace"} className='sub-items'>
-                        <AllNFTs />
-                        All NFTs
-                      </Link>
+                <ul>
+                    <li className="sub-items">
+                    <form action="#" className="checked_form">
+                        <div class="form-check form-check-inline">
+                          <input type="radio" id="allnfts" name="radio-group" />
+                          <label for="allnfts">All NFTs</label>
+                        </div>
+                        {category ? category.map((c) => {
+                          return  <div class="form-check form-check-inline">
+                          <input type="radio" id={c.name} name="radio-group" />
+                          <label for={c.name}>{c.name}</label>
+                        </div>
+                        }):""}
+                       
+                      </form>
                     </li>
-                    <li>
-                      <Link to={"/marketplaceCollection"} className='sub-items'>
-                        <Firearmsvg />
-                        Firearms
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Soldiers"} className='sub-items'>
-                        <Soldierssvg />
-                        Soldiers
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Accesories"} className='sub-items'>
-                        <Soldierssvg />
-                        Accesories
-                      </Link>
-                    </li>
+                 
                   </ul>
                 </div>
               </div>

@@ -3,7 +3,7 @@ import { NotificationManager } from "react-notifications";
 import Sidebar from "../components/Sidebar";
 import { Link } from "react-router-dom";
 import Deletesvg from "../SVG/deletesvg";
-import { addCategory, getAllCategory } from "../../apiServices";
+import { addCategory, getCategory } from "../../apiServices";
 import Loader from "../components/loader";
 import { useCookies } from "react-cookie";
 
@@ -26,7 +26,7 @@ function CreateCategories() {
   useEffect(() => {
     if (currentUser) {
       const fetch = async () => {
-        let _myBrand = await getAllCategory();
+        let _myBrand = await getCategory();
         setMyCategory(_myBrand);
         console.log("my collection-fgasdf->", myCategory);
       };

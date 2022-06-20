@@ -29,20 +29,19 @@ function ItemsList() {
           res[i] = {
             ...res[i],
             isNftOnSale: true,
-            creatorImg: ownedBy?.profileIcon ? ownedBy?.profileIcon : "",
-            creatorID: ownedBy?._id,
+            creatorImg: ownedBy ? ownedBy?.profileIcon : "",
+            creatorID: ownedBy ? ownedBy._id : "",
             price: orderDet?.results[0]?.price?.$numberDecimal,
           };
         } else {
           res[i] = {
             ...res[i],
             isNftOnSale: false,
-            creatorImg: ownedBy?.profileIcon ? ownedBy?.profileIcon : "",
-            creatorID: ownedBy?._id,
+            creatorImg: ownedBy ? ownedBy.profileIcon : "",
+            creatorID: ownedBy ? ownedBy._id : "",
             price: orderDet?.results[0]?.price?.$numberDecimal,
           };
         }
-        console.log("order details--->", res[i]);
       }
 
       setPutOnSaleItems(res);
@@ -144,7 +143,12 @@ function ItemsList() {
                     <div className='items_info'>
                       <div className='items_left'>
                         <h3 className=''>{card.name}</h3>
-                        <p>{card.price ? Number(convertToEth(card.price)).toFixed(4) : "0.0000"} HNTR</p>
+                        <p>
+                          {card.price
+                            ? Number(convertToEth(card.price)).toFixed(4)
+                            : "0.0000"}{" "}
+                          HNTR
+                        </p>
                       </div>
                       <div className='items_right justify-content-end d-flex'>
                         <span>
