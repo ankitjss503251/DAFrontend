@@ -301,7 +301,7 @@ function CreateCollection() {
             window.location.href = "/createcollection";
           }, 1000);
         } catch (e) {
-          console.log("e");
+          console.log("e", e);
           return;
         }
       } else {
