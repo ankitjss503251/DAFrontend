@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
-// import { ethers } from "ethers";
+import { ethers } from "ethers";
 import { NotificationManager } from "react-notifications";
 import {
-  // GENERAL_DATE,
-  // GENERAL_TIMESTAMP,
+  GENERAL_DATE,
+  GENERAL_TIMESTAMP,
   MAX_ALLOWANCE_AMOUNT,
   CURRENCY,
 } from "./constants";
@@ -30,6 +30,7 @@ import {
   getOrderDetails,
   UpdateOrder,
   DeleteOrder,
+  createOrder,
   // InsertHistory,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
@@ -37,7 +38,7 @@ import contracts from "./../config/contracts";
 import {
   buildSellOrder,
   // getNextId,
-  // getSignature
+  getSignature,
 } from "./getterFunctions";
 // import simplerERC721ABI from "./../config/abis/simpleERC721.json";
 // import simplerERC1155ABI from "./../config/abis/simpleERC1155.json";
@@ -211,23 +212,6 @@ export const handleBuyNft = async (
       marketPlaceABI.abi
     );
 
-    // let gasLimit = await marketplace.estimateGas.completeOrder(
-    //   sellerOrder,
-    //   signature,
-    //   buyerOrder,
-    //   signature,
-    //   {
-    //     from: account,
-    //     value: new BigNumber(order[6].toString())
-    //       .multipliedBy(new BigNumber(qty.toString()))
-    //       .toString(),
-    //   }
-    // );
-    // console.log("gas estimate", gasLimit);
-    // let transactionFee = gasPrice * gasLimit;
-    // console.log("gas estimate", transactionFee);
-    // console.log("Sit tight->", signature);
-
     options = {
       from: account,
       gasLimit: 9000000,
@@ -243,7 +227,6 @@ export const handleBuyNft = async (
     );
     let res = await completeOrder.wait();
     if (res.status === 0) {
-      // NotificationManager.error("Transaction failed");
       return false;
     }
   } catch (e) {
@@ -345,6 +328,139 @@ export const handleApproveToken = async (userAddress, tokenAddress) => {
   }
 };
 
+export const putOnMarketplace = async (account, orderData) => {
+  console.log("Starting NFT create", account, orderData);
+  if (!account) {
+    console.log("empty account");
+    return;
+  }
+  let nextId = await orderData.tokenId;
+  console.log("nextId", nextId, orderData.collection);
+  let _deadline;
+  let _price;
+  let sellerOrder;
+  try {
+    if (orderData.chosenType === 0) {
+      _deadline = GENERAL_TIMESTAMP;
+      _price = ethers.utils.parseEther(orderData.price).toString();
+    } else if (orderData.chosenType === 1) {
+      let endTime = new Date(orderData.endTime).valueOf() / 1000;
+      _deadline = endTime;
+      _price = ethers.utils.parseEther(orderData.minimumBid).toString();
+    } else if (orderData.chosenType === 2) {
+      _deadline = new Date().valueOf() / 1000 + 31536000 * 10;
+      _price = ethers.utils.parseEther(orderData.minimumBid).toString();
+    }
+    sellerOrder = [
+      account,
+      orderData.collection,
+      orderData.tokenId,
+      orderData.quantity,
+      orderData.saleType,
+      orderData.tokenAddress
+        ? orderData.tokenAddress
+        : "0x0000000000000000000000000000000000000000",
+      _price,
+      _deadline,
+      [],
+      [],
+      orderData.salt,
+    ];
+
+    let usrHaveQuantity = await GetOwnerOfToken(
+      sellerOrder[1],
+      sellerOrder[2],
+      orderData.erc721,
+      sellerOrder[0]
+    );
+
+    console.log("usrHaveQuantity", usrHaveQuantity);
+    console.log("sellerOrder is---->", sellerOrder);
+    let NFTcontract = await exportInstance(orderData.collection, erc721Abi.abi);
+    console.log("NFTcontract", NFTcontract);
+
+    let approval = await NFTcontract.isApprovedForAll(
+      account,
+      contracts.MARKETPLACE
+    );
+    let approvalres;
+    const options = {
+      from: account,
+      gasPrice: 10000000000,
+      gasLimit: 9000000,
+      value: 0,
+    };
+
+    console.log("approval", approval);
+    if (!approval) {
+      approvalres = await NFTcontract.setApprovalForAll(
+        contracts.MARKETPLACE,
+        true,
+        options
+      );
+      approvalres = await approvalres.wait();
+      if (approvalres.status === 0) {
+        NotificationManager.error("Transaction failed");
+        return false;
+      }
+    }
+  } catch (e) {
+    if (e.code === 4001) {
+      NotificationManager.error("User denied ");
+      return false;
+    }
+    console.log("error in contract", e);
+    NotificationManager.error("Transaction failed");
+    return false;
+  }
+  try {
+    let signature = [];
+
+    signature = await getSignature(account, ...sellerOrder);
+    if (signature === false) {
+      return;
+    }
+
+    console.log("signature is---->", signature);
+
+    let reqParams = {
+      nftId: orderData.nftId,
+      seller: account,
+      tokenAddress: orderData.tokenAddress
+        ? orderData.tokenAddress
+        : "0x0000000000000000000000000000000000000000",
+      collection: orderData.collection,
+      price: _price,
+      quantity: orderData.quantity,
+      saleType: orderData.saleType,
+      validUpto: _deadline,
+      signature: signature,
+      tokenId: orderData.tokenId,
+      // auctionEndDate: _auctionEndDate,
+      salt: orderData.salt,
+    };
+
+    // let historyMetaData = {
+    //   nftId: "62428d42f2a67d12e95d3c3c",
+    //   userId: "62318683b799e41d5608fb67",
+    //   action: "Bids",
+    //   actionMeta: "Default",
+    //   message: "UserName Created NFT",
+    // };
+    let data = await createOrder(reqParams);
+    console.log("put on sale", data);
+
+    console.log("seller sign", reqParams);
+
+    NotificationManager.success("Order created successfully");
+    slowRefresh();
+    // window.location.href = "/profile";
+  } catch (err) {
+    console.log("error in Api", err);
+    return;
+  }
+};
+
 // export const handleRemoveFromSale = async (orderId, account) => {
 //   let marketplace;
 //   let order;
@@ -398,143 +514,6 @@ export const handleApproveToken = async (userAddress, tokenAddress) => {
 //     // console.log("res", res);
 //   } catch (e) {
 //     console.log("error while updating database", e);
-//   }
-// };
-
-// export const putOnMarketplace = async (account, orderData) => {
-//   console.log("Starting NFT create", account, orderData);
-//   if (!account) {
-//     console.log("empty account");
-//     return;
-//   }
-//   let nextId = await getNextId(orderData.collection);
-//   console.log("nextId", nextId, orderData.collection);
-//   let _deadline;
-//   let _price;
-//   let _auctionEndDate;
-//   let sellerOrder;
-//   try {
-//     if (orderData.chosenType === 0) {
-//       _deadline = GENERAL_TIMESTAMP;
-//       _auctionEndDate = new Date(GENERAL_DATE);
-//       _price = ethers.utils.parseEther(orderData.price).toString();
-//     } else if (orderData.chosenType === 1) {
-//       let endTime = new Date(orderData.endTime).valueOf() / 1000;
-//       _deadline = endTime;
-//       _auctionEndDate = orderData.auctionEndDate;
-//       _price = ethers.utils.parseEther(orderData.minimumBid).toString();
-//     } else if (orderData.chosenType === 2) {
-//       _deadline = new Date().valueOf() / 1000 + 31536000 * 10;
-//       _auctionEndDate = new Date(GENERAL_DATE);
-//       _price = ethers.utils.parseEther(orderData.minimumBid).toString();
-//     }
-//     sellerOrder = [
-//       account,
-//       orderData.collection,
-//       orderData.tokenId,
-//       orderData.quantity,
-//       orderData.saleType,
-//       orderData.tokenAddress
-//         ? orderData.tokenAddress
-//         : "0x0000000000000000000000000000000000000000",
-//       _price,
-//       _deadline,
-//       [],
-//       [],
-//       orderData.salt,
-//     ];
-
-//     let usrHaveQuantity = await GetOwnerOfToken(
-//       sellerOrder[1],
-//       sellerOrder[2],
-//       orderData.erc721,
-//       sellerOrder[0]
-//     );
-
-//     console.log("usrHaveQuantity", usrHaveQuantity);
-//     console.log("sellerOrder is---->", sellerOrder);
-//     let NFTcontract = await exportInstance(orderData.collection, erc721Abi.abi);
-//     console.log("NFTcontract", NFTcontract);
-
-//     let approval = await NFTcontract.isApprovedForAll(
-//       account,
-//       contracts.MARKETPLACE
-//     );
-//     let approvalres;
-//     const options = {
-//       from: account,
-//       gasPrice: 10000000000,
-//       gasLimit: 9000000,
-//       value: 0,
-//     };
-
-//     console.log("approval", approval);
-//     if (!approval) {
-//       approvalres = await NFTcontract.setApprovalForAll(
-//         contracts.MARKETPLACE,
-//         true,
-//         options
-//       );
-//       approvalres = await approvalres.wait();
-//       if (approvalres.status === 0) {
-//         NotificationManager.error("Transaction failed");
-//         return false;
-//       }
-//     }
-//   } catch (e) {
-//     if (e.code === 4001) {
-//       NotificationManager.error("User denied ");
-//       return false;
-//     }
-//     console.log("error in contract", e);
-//     NotificationManager.error("Transaction failed");
-//     return false;
-//   }
-//   try {
-//     let signature = [];
-
-//     signature = await getSignature(account, ...sellerOrder);
-//     if (signature === false) {
-//       return;
-//     }
-
-//     console.log("signature is---->", signature);
-
-//     let reqParams = {
-//       nftId: orderData.nftId,
-//       seller: account,
-//       tokenAddress: orderData.tokenAddress
-//         ? orderData.tokenAddress
-//         : "0x0000000000000000000000000000000000000000",
-//       collection: orderData.collection,
-//       price: _price,
-//       quantity: orderData.quantity,
-//       saleType: orderData.saleType,
-//       validUpto: _deadline,
-//       signature: signature,
-//       tokenId: orderData.tokenId,
-//       auctionEndDate: _auctionEndDate,
-//       salt: orderData.salt,
-//     };
-
-//     let historyMetaData = {
-//       nftId: "62428d42f2a67d12e95d3c3c",
-//       userId: "62318683b799e41d5608fb67",
-//       action: "Bids",
-//       actionMeta: "Default",
-//       message: "UserName Created NFT",
-//     };
-//     let data = await createOrder(reqParams, historyMetaData);
-//     console.log("put on sale", data);
-
-//     console.log("seller sign", reqParams);
-
-//     NotificationManager.success("Order created successfully");
-//     slowRefresh();
-//     // window.location.href = "/profile";
-//   } catch (err) {
-//     console.log("error in Api", err);
-//     return;
 //   }
 // };
 
