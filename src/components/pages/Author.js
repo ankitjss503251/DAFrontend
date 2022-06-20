@@ -18,6 +18,7 @@ import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import UpArrow from "../SVG/dropdown";
+import { getCategory } from "../../helpers/getterFunctions";
 
 const bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -35,6 +36,7 @@ function Author() {
   const [profile, setProfile] = useState();
   const [ownedNFTs, setOwnedNFTs] = useState([]);
   const [totalOwned, setTotalOwned] = useState(0);
+  const [category, setCategory] = useState([]);
   const [togglemode, setTogglemode] = useState("filterhide");
 
   const bgImage = {
@@ -60,6 +62,14 @@ function Author() {
         .classList.remove("active");
     }
   };
+  
+  useEffect(async() => {
+    try {const c = await getCategory();
+     setCategory(c);}
+     catch(e){
+       console.log("Error",e);
+     }
+   },[]);
   
   useEffect(() => {
     const fetch = async () => {
@@ -300,19 +310,21 @@ function Author() {
                   className='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option defaultValue={"Single Items"}>Single Items</option>
-                  <option value='1'>Single Items 1</option>
-                  <option value='2'>Single Items 2</option>
-                  <option value='3'>Single Items 3</option>
+                  <option value='1' selected>
+                    Single Items
+                  </option>
+                  <option value='2'>Multiple Items</option>
+                 
                 </select>
                 <select
                   className='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option selected>Price: Low to High</option>
-                  <option value='1'>$2000</option>
-                  <option value='2'>$4000</option>
-                  <option value='3'>$6000</option>
+                    <option value='1' selected>
+                    Price: Low to High
+                  </option>
+                  <option value='2'>Price: High to Low</option>
+                  
                 </select>
                 {/* <div className="market_div"> */}
                 <div id='gridtwo' className='market_grid' onClick={gridtwo}>
@@ -430,31 +442,23 @@ function Author() {
                   Categories <UpArrow />
                 </button>
                 <div id='demo4' class='collapse show'>
-                  <ul>
-                    <li>
-                      <Link to={"/marketplace"} className='sub-items'>
-                        <AllNFTs />
-                        All NFTs
-                      </Link>
+                <ul>
+                    <li className="sub-items">
+                    <form action="#" className="checked_form">
+                        <div class="form-check form-check-inline">
+                          <input type="radio" id="allnfts" name="radio-group" />
+                          <label for="allnfts">All NFTs</label>
+                        </div>
+                        {category ? category.map((c) => {
+                          return  <div class="form-check form-check-inline">
+                          <input type="radio" id={c.name} name="radio-group" />
+                          <label for={c.name}>{c.name}</label>
+                        </div>
+                        }):""}
+                       
+                      </form>
                     </li>
-                    <li>
-                      <Link to={"/marketplaceCollection"} className='sub-items'>
-                        <Firearmsvg />
-                        Firearms
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Soldiers"} className='sub-items'>
-                        <Soldierssvg />
-                        Soldiers
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Accesories"} className='sub-items'>
-                        <Soldierssvg />
-                        Accesories
-                      </Link>
-                    </li>
+                 
                   </ul>
                 </div>
               </div>

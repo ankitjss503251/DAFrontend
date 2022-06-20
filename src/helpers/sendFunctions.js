@@ -5,6 +5,7 @@ import {
   // GENERAL_DATE,
   // GENERAL_TIMESTAMP,
   MAX_ALLOWANCE_AMOUNT,
+  CURRENCY,
 } from "./constants";
 // import degnrABI from "./../config/abis/dgnr8.json";
 import erc20Abi from "./../config/abis/erc20.json";
@@ -42,7 +43,7 @@ import {
 // import simplerERC1155ABI from "./../config/abis/simpleERC1155.json";
 // import { convertToEth } from "./numberFormatter";
 import erc721Abi from "./../config/abis/simpleERC721.json";
-// import { slowRefresh } from "./NotifyStatus";
+import { slowRefresh } from "./NotifyStatus";
 
 export const handleBuyNft = async (
   id,

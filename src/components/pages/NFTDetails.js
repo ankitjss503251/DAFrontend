@@ -384,7 +384,7 @@ function handleChange(ev) {
                   ).toFixed(4)}{" "}
                   HNTR
                 </div>
-                <button type='button' className='yellow_btn mr-3 mb-3' data-bs-toggle="modal" data-bs-target="#detailPop">
+                <button type='button' className='yellow_btn mr-3 mb-3'>
                   Buy Now
                 </button>
                 <button type='button' className='border_btn title_color'>
@@ -617,6 +617,7 @@ function handleChange(ev) {
             </div>
           </div>
         </div>
+
       <Footer />
     </div>
   );
