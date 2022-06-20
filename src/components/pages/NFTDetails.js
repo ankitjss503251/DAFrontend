@@ -388,7 +388,7 @@ function handleChange(ev) {
                   Buy Now
                 </button>
                 <button type='button' className='border_btn title_color'>
-                  Bid / Offer
+                  Bids / Offers
                 </button>
               </div>
             </div>
