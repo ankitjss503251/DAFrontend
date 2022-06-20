@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import {
   createCollection,
   exportInstance,
-  getAllCategory,
+  getCategory,
   getAllCollections,
   GetBrand,
   // getImportedNFTs,
@@ -92,7 +92,7 @@ function CreateCollection() {
       console.log("_brands", _brands);
       setBrands(_brands);
 
-      let _cat = await getAllCategory();
+      let _cat = await getCategory();
       setCategories(_cat);
       console.log("_cat", _cat);
     };

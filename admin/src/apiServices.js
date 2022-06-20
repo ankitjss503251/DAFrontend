@@ -454,16 +454,17 @@ export const addCategory = async (data) => {
   }
 };
 
-export const getAllCategory = async (id) => {
+export const getCategory = async (data) => {
   const requestOptions = {
-    method: "GET",
+    method: "POST",
     headers: {
       Authorization: localStorage.getItem("Authorization"),
     },
+    body: JSON.stringify(data)
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/utils/getAllCategory",
+      process.env.REACT_APP_API_BASE_URL + "/utils/getCategory",
       requestOptions
     );
     const isJson = response.headers

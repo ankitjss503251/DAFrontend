@@ -4388,11 +4388,24 @@ a:hover {
   margin-bottom: 20px;
   list-style: none;
 }
+
+.status_ul{
+  text-align: center;
+}
+
 .status_ul li {
+  cursor: pointer;
+  margin-right: 5px;
   grid-gap: 4%;
   gap: 4%;
   display: flex;
   margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.status_ul li:hover{
+  color: #000;
+  background-color: #ef981d;
 }
 
 .filter_border {
