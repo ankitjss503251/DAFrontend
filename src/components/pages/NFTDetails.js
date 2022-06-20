@@ -289,7 +289,7 @@ function NFTDetails() {
                   ).toFixed(4)}{" "}
                   HNTR
                 </div>
-                <button type='button' className='yellow_btn mr-3 mb-3' data-bs-toggle="modal" data-bs-target="#detailPop">
+                <button type='button' className='yellow_btn mr-3 mb-3'>
                   Buy Now
                 </button>
                 <button type='button' className='border_btn title_color'>
@@ -447,119 +447,6 @@ function NFTDetails() {
           </div>
         </div>
       </section>
-
-      {/* <!-- The Modal --> */}
-        <div class="modal markitplace" id="detailPop">
-          <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-
-              {/* <!-- Modal Header --> */}
-              <div class="modal-header p-4">
-                <h4 class="text-light title_20 mb-0">Put on Marketplace</h4>
-                <button type="button" class="btn-close text-light" data-bs-dismiss="modal"></button>
-              </div>
-
-              {/* <!-- Modal body --> */}
-              <div class="modal-body">
-                <h3 className="text-light text_16">Select method</h3>
-                
-                <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-fixed-price-tab" data-bs-toggle="pill" data-bs-target="#pills-fixed" type="button" role="tab" aria-controls="pills-home" aria-selected="true">
-                      <i class="fa fa-tag"></i>
-                      <span className="title_20 d-block">Fixed price</span>
-                    </button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-timed-auction-tab" data-bs-toggle="pill" data-bs-target="#pills-timed" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">
-                      <i class="fa fa-hourglass-1"></i>
-                      <span className="title_20 d-block">Timed auction</span>
-                    </button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-bids-tab" data-bs-toggle="pill" data-bs-target="#pills-bids" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">
-                      <i class="fa fa-users"></i>
-                      <span className="title_20 d-block">Open for bids</span>
-                    </button>
-                  </li>
-                </ul>
-
-                <div class="tab-content" id="pills-tabContent">
-                  <div class="tab-pane fade show active" id="pills-fixed" role="tabpanel" aria-labelledby="pills-fixed-price-tab">
-                    <form>
-                      <div class="mb-3">
-                        <label for="name" class="form-label">Price</label>
-                        <input type="text" name="item_price" id="item_price" min="0" max="18" class="form-control input_design" placeholder="Please Enter Price (MATIC)" value="" />
-                      </div>
-                      <div class="mb-3">
-                        <label for="qt" class="form-label">Quantity</label>
-                        <input type="text" name="item_price" id="item_price" min="1" disabled="" class="form-control input_design" placeholder="Please Enter Quantity" value="1" />
-                      </div>
-                      <div class="mt-5 mb-3 text-center">
-                        <button type="button" class="square_yello" href="/mintcollectionlive">Put On Marketplace</button>
-                      </div>
-                    </form>
-                  </div>
-
-                  <div class="tab-pane fade" id="pills-timed" role="tabpanel" aria-labelledby="Timed auction">
-                    <form>
-                      <div class="mb-3">
-                        <label for="qt" class="form-label">Quantity</label>
-                        <input type="text" name="item_price" id="item_price" min="1" disabled="" class="form-control input_design" placeholder="Please Enter Quantity" value="1" />
-                      </div>
-                      <div class="mb-3">
-                        <label for="name" class="form-label">Minimum bid</label>
-                        <input type="text" name="item_price" id="item_price" min="0" max="18" class="form-control input_design" placeholder="Enter Minimum Bid" value="" />
-                      </div>
-                      <div class="mb-3">
-                        <label for="Payment" class="form-label">Payment Token</label>
-                        <select class="form-select input_design select_bg" aria-label=".form-select-lg example">
-                          <option selected>USDT</option>
-                          <option value="1">USDT 1</option>
-                          <option value="2">USDT 2</option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label for="name" class="form-label">Expiration date</label>
-                        <input type="text" name="item_price" id="item_price" min="0" max="18" class="form-control input_design" placeholder="Enter Minimum Bid" value="" />
-                      </div>
-                      
-                      <div class="mt-5 mb-3 text-center">
-                        <button type="button" class="square_yello" href="/mintcollectionlive">Put On Marketplace</button>
-                      </div>
-                    </form>
-                  </div>
-
-                  <div class="tab-pane fade" id="pills-bids" role="tabpanel" aria-labelledby="pills-bids-tab">
-                    <form>
-                      <div class="mb-3">
-                        <label for="qt" class="form-label">Quantity</label>
-                        <input type="text" name="item_price" id="item_price" min="1" disabled="" class="form-control input_design" placeholder="Please Enter Quantity" value="1" />
-                      </div>
-                      <div class="mb-3">
-                        <label for="name" class="form-label">Minimum bid</label>
-                        <input type="text" name="item_price" id="item_price" min="0" max="18" class="form-control input_design" placeholder="Enter Minimum Bid" value="" />
-                      </div>
-                      <div class="mb-3">
-                        <label for="Payment" class="form-label">Payment Token</label>
-                        <select class="form-select input_design select_bg" aria-label=".form-select-lg example">
-                          <option selected>USDT</option>
-                          <option value="1">USDT 1</option>
-                          <option value="2">USDT 2</option>
-                        </select>
-                      </div>
-                      
-                      <div class="mt-5 mb-3 text-center">
-                        <button type="button" class="square_yello" href="/mintcollectionlive">Put On Marketplace</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
       <Footer />
     </div>
   );
