@@ -7,6 +7,11 @@ import NFThistory from "../components/NFThistory";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { useParams } from "react-router-dom";
 import { convertToEth } from "../../helpers/numberFormatter";
+import { putOnMarketplace } from "../../helpers/sendFunctions";
+import { useCookies } from "react-cookie";
+import contracts from "../../config/contracts";
+import { GENERAL_TIMESTAMP, ZERO_ADDRESS } from "../../helpers/constants";
+import { NotificationManager } from "react-notifications";
 
 var bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -34,27 +39,74 @@ function NFTDetails() {
   // const [openbids, setOpenbids] = useParams([2]);
   const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
 
-  const [itemprice, setItemprice] = useState("");
-  const [item_qt, setItem_qt] = useState("1");
-  const [item_bid, setItem_bid] = useState("");
-  const [item_USDT, setItem_USDT] = useState("");
+  const [itemprice, setItemprice] = useState(0);
+  const [item_qt, setItem_qt] = useState(1);
+  const [item_bid, setItem_bid] = useState(0);
+  const [selectedToken, setSelectedToken] = useState("USDT");
   const [datetime, setDatetime] = useState("");
+  const [currentUser, setCurrentUser] = useState();
+  const [cookies] = useCookies([]);
 
-  const PutMarketplace = (e) => {
+  useEffect(() => {
+    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    else NotificationManager.error("Connect Yout Wallet", "", 800);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cookies.selected_account]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const reqData = {
+          page: 1,
+          limit: 12,
+          nftID: id,
+        };
+        const res = await getNFTs(reqData);
+
+        setNFTDetails(res[0]);
+        const c = await getCollections({ collectionID: res[0].collection });
+        console.log("in here", c[0]);
+        setCollection(c[0]);
+        const reqData1 = {
+          page: 1,
+          limit: 12,
+          collectionID: res[0].collection,
+        };
+        const nfts = await getNFTs(reqData1);
+        setAllNFTs(nfts);
+      } catch (e) {
+        console.log("Error in fetching nft Details", e);
+      }
+    };
+    fetch();
+  }, [id]);
+
+  const PutMarketplace = async () => {
     console.log("sale type", marketplaceSaleType);
 
-    if (marketplaceSaleType == 0) {
-      // document.getElementsByClassName("put_active").classList.add("put_hide");
-      console.log("0");
-    }
-    if (marketplaceSaleType == 1) {
-      // document.getElementsByClassName("put_active").classList.add("put_hide");
-      console.log("1");
-    }
-    if (marketplaceSaleType == 2) {
-      // document.getElementsByClassName("put_active").classList.add("put_hide");
-      console.log("2");
-    }
+    console.log("contracts[selectedToken]", contracts[selectedToken]);
+    let orderData = {
+      nftId: NFTDetails.id,
+      collection: NFTDetails.collectionAddress,
+      price: itemprice ? itemprice : "0",
+      quantity: item_qt,
+      saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
+      salt: Math.round(Math.random() * 10000000),
+      endTime: datetime ? datetime : GENERAL_TIMESTAMP,
+      chosenType: marketplaceSaleType,
+      minimumBid: item_bid !== "" ? item_bid : 0,
+      // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
+      tokenAddress:
+        marketplaceSaleType === 0 ? ZERO_ADDRESS : contracts[selectedToken],
+      tokenId: NFTDetails.tokenId,
+      erc721: NFTDetails.type === 1,
+    };
+    await putOnMarketplace(currentUser, orderData);
   };
 
   // Popup
@@ -112,38 +164,9 @@ function NFTDetails() {
 
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
-    const dt = ev.target["value"] + ":00Z";
-    setDatetime(dt);
+    // const dt = ev.target["value"] + ":00Z";
+    setDatetime(new Date(ev.target.value));
   }
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  useEffect(async () => {
-    try {
-      const reqData = {
-        page: 1,
-        limit: 12,
-        nftID: id,
-      };
-      const res = await getNFTs(reqData);
-
-      setNFTDetails(res[0]);
-      const c = await getCollections({ collectionID: res[0].collection });
-      console.log("in here", c[0]);
-      setCollection(c[0]);
-      const reqData1 = {
-        page: 1,
-        limit: 12,
-        collectionID: res[0].collection,
-      };
-      const nfts = await getNFTs(reqData1);
-      setAllNFTs(nfts);
-    } catch (e) {
-      console.log("Error in fetching nft Details", e);
-    }
-  }, []);
 
   return (
     <div>
@@ -669,8 +692,8 @@ function NFTDetails() {
                   <select
                     className="form-select input_design select_bg"
                     name="USDT"
-                    value={item_USDT}
-                    onChange={(event) => setItem_USDT(event.target.value)}
+                    value={selectedToken}
+                    onChange={(event) => setSelectedToken(event.target.value)}
                   >
                     <option selected>USDT</option>
                     <option value="1">USDT 1</option>
