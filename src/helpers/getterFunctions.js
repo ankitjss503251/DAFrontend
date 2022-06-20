@@ -682,10 +682,10 @@ export const getUserById = async (reqBody) => {
   return user;
 };
 
-export const getCategory = async () => {
+export const getCategory = async (data) => {
   let category = [];
   try {
-    category = await getCategories();
+    category = await getCategories(data);
   } catch (e) {
     console.log("Error in getCategory API", e);
   }

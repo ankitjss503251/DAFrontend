@@ -63,7 +63,7 @@ const App = (props) => {
         <Route path="/register" element={<Register />} />
         <Route path="/marketplaceCollection" element={<Marketplacecollection />} />
         <Route path="/marketplaceCollection/:searchedText" element={<Marketplacecollection />} />
-        <Route path="/marketplaceCollection/:category" element={<Marketplacecollection />} />
+        {/* <Route path="/marketplaceCollection/:category" element={<Marketplacecollection />} /> */}
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/marketplace/:searchedText" element={<Marketplace />} />
         <Route path="/NFTdetails/:id" element={<NFTDetails />} />
