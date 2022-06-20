@@ -4,7 +4,11 @@ import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
 import NFToffer from "../components/NFToffer";
 import NFThistory from "../components/NFThistory";
-import { getCollections, getNFTs } from "../../helpers/getterFunctions";
+import {
+  getCollections,
+  getNFTs,
+  getOrderByNftID,
+} from "../../helpers/getterFunctions";
 import { useParams } from "react-router-dom";
 import { convertToEth } from "../../helpers/numberFormatter";
 import { putOnMarketplace } from "../../helpers/sendFunctions";
@@ -31,14 +35,7 @@ function NFTDetails() {
   const [NFTDetails, setNFTDetails] = useState([]);
   const [allNFTs, setAllNFTs] = useState([]);
   const [collection, setCollection] = useState([]);
-  // const [startDate, setStartDate] = useState(
-  //   setHours(setMinutes(new Date(), 30), 16)
-  // );
-  // const [fixedprice, setFixedprice] = useState([0]);
-  // const [timedauction, setTimedauction] = useParams([1]);
-  // const [openbids, setOpenbids] = useParams([2]);
   const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
-
   const [itemprice, setItemprice] = useState(0);
   const [item_qt, setItem_qt] = useState(1);
   const [item_bid, setItem_bid] = useState(0);
@@ -46,6 +43,7 @@ function NFTDetails() {
   const [datetime, setDatetime] = useState("");
   const [currentUser, setCurrentUser] = useState();
   const [cookies] = useCookies([]);
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -78,7 +76,11 @@ function NFTDetails() {
           collectionID: res[0].collection,
         };
         const nfts = await getNFTs(reqData1);
+
         setAllNFTs(nfts);
+        const _orders = await getOrderByNftID({ nftID: nfts.id });
+        console.log("orders", _orders);
+        setOrders(_orders?.results);
       } catch (e) {
         console.log("Error in fetching nft Details", e);
       }
@@ -422,7 +424,18 @@ function NFTDetails() {
                   data-bs-toggle="modal"
                   data-bs-target="#detailPop"
                 >
-                  Buy Now
+                  {orders.length > 0
+                    ? orders?.sellerID?.walletAddress?.toLowerCase() ===
+                      currentUser?.toLowerCase()
+                      ? "Remove From Sale"
+                      : "Buy Now"
+                    : NFTDetails &&
+                      NFTDetails.ownedBy &&
+                      NFTDetails.ownedBy.length > 0
+                    ? NFTDetails.ownedBy[0]?.address
+                    : ""?.toLowerCase() === currentUser.toLowerCase()
+                    ? "Put On Marketplace"
+                    : ""}
                 </button>
                 <button type="button" className="border_btn title_color">
                   Bids / Offers
@@ -531,7 +544,7 @@ function NFTDetails() {
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">Listings</h3>
               <div className="table-responsive">
-                <NFTlisting />
+                <NFTlisting id={NFTDetails.id} />
               </div>
             </div>
             <div className="col-md-12 mb-5">
