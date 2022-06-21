@@ -559,7 +559,6 @@ export const getCollections = async (req) => {
         };
       })
     : (formattedData[0] = {});
-  console.log("formattedData--->", formattedData);
   return formattedData;
 };
 
@@ -609,6 +608,7 @@ export const getNFTs = async (req) => {
           tokenId: nft.tokenID,
           createdBy: nft.createdBy,
           type: nft.type,
+          attributes: nft.attributes
         };
       })
     : (formattedData[0] = {});
@@ -676,10 +676,10 @@ export const getUserById = async (reqBody) => {
   return user;
 };
 
-export const getCategory = async () => {
+export const getCategory = async (data) => {
   let category = [];
   try {
-    category = await getCategories();
+    category = await getCategories(data);
   } catch (e) {
     console.log("Error in getCategory API", e);
   }
