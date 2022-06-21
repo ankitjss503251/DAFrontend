@@ -334,6 +334,33 @@ export const createOrder = async (data) => {
   }
 };
 
+export const createOrderBuffer = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      Authorization: localStorage.getItem("Authorization"),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    console.log("create Order Buffer");
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/order/createOrderBuffer",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas;
+  } catch (err) {
+    return err;
+  }
+};
+
 export const getOrderDetails = async (data) => {
   const requestOptions = {
     method: "POST",

@@ -31,6 +31,7 @@ import {
   UpdateOrder,
   DeleteOrder,
   createOrder,
+  createOrderBuffer
   // InsertHistory,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
@@ -239,6 +240,23 @@ export const handleBuyNft = async (
   }
 
   try {
+    let buffer=await createOrderBuffer({
+      orderId: id,
+      nftId: details.nftID._id, //to make sure we update the quantity left : NFTid
+      seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
+      qtyBought: Number(qty),
+      qty_sold: Number(details.quantity_sold) + Number(qty),
+      buyer: account.toLowerCase(),
+      LazyMintingStatus:
+        details.nftID.quantity_minted + qty == details.nftID.totalQuantity
+          ? 0
+          : 1,
+      quantity_minted:
+        details.nftID.quantity_minted == details.nftID.totalQuantity
+          ? details.nftID.quantity_minted
+          : details.nftID.quantity_minted + qty,
+    }) 
+    console.log("buffer is--->",buffer)
     if (isERC721) {
       await UpdateOrder({
         orderId: id,

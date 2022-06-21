@@ -279,7 +279,7 @@ function NFTDetails() {
                       NFTDetails.ownedBy &&
                       NFTDetails.ownedBy.length > 0
                     ? NFTDetails.ownedBy[0]?.address
-                    : ""?.toLowerCase() === currentUser.toLowerCase()
+                    : ""?.toLowerCase() === currentUser?.toLowerCase()
                     ? "Put On Marketplace"
                     : ""}
                 </button>
