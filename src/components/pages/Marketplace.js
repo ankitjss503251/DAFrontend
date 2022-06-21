@@ -139,7 +139,7 @@ function Marketplace() {
         setAllNFTs(temp);
         setCurrPage(currPage + 1);
       }
-      if (!allNFTs && res.length <= 0) {
+      if (allNFTs && res.length <= 0) {
         setLoadMoreDisabled("disabled");
       }
     } catch (e) {

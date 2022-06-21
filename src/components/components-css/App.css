@@ -4674,3 +4674,8 @@ a:hover {
   display: none;
 
 }
+
+.img-fluid.w-100{
+  height: 200px;
+  object-fit: cover;
+}

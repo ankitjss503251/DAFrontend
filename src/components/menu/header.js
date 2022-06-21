@@ -538,7 +538,7 @@ const Header = function () {
                   {catg ? catg.map((c, key) => {
                     return  <li key={key}>
                     <NavLink
-                      to={`/marketplaceCollection/${c.name}`}
+                      to={`/marketplacecollection/${c.name}`}
                       className='sub-items'>
                       <Firearmsvg />
                      {c.name}

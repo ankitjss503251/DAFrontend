@@ -143,7 +143,6 @@ const Navbar = (props) => {
 
   const getUserProfile = async () => {
     const profile = await getProfile();
-    console.log("profile", profile.data);
     setUserDetails(profile.data);
   };
 
