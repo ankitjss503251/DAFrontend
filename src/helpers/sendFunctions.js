@@ -6,6 +6,7 @@ import {
   GENERAL_TIMESTAMP,
   MAX_ALLOWANCE_AMOUNT,
   CURRENCY,
+  ZERO_ADDRESS,
 } from "./constants";
 // import degnrABI from "./../config/abis/dgnr8.json";
 import erc20Abi from "./../config/abis/erc20.json";
@@ -95,7 +96,7 @@ export const handleBuyNft = async (
       case 0:
         if (isERC721) {
           sellerOrder.push(order[key].toLowerCase());
-          buyerOrder.push(account.toLowerCase());
+          buyerOrder.push(account?.toLowerCase());
           break;
         } else {
           sellerOrder.push(order[key]);
@@ -143,15 +144,19 @@ export const handleBuyNft = async (
         buyerOrder.push(parseInt(order[key]));
     }
   }
-  let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
-  console.log("allowance", allowance.allowance);
-  if (
-    new BigNumber(allowance.allowance).isLessThan(new BigNumber(buyerOrder[6]))
-  ) {
-    let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
+  if (buyerOrder[5] != ZERO_ADDRESS) {
+    let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
+    console.log("allowance", allowance.allowance);
+    if (
+      new BigNumber(allowance.allowance).isLessThan(
+        new BigNumber(buyerOrder[6])
+      )
+    ) {
+      let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
 
-    if (approveRes == false) {
-      return false;
+      if (approveRes == false) {
+        return false;
+      }
     }
   }
 
@@ -187,21 +192,6 @@ export const handleBuyNft = async (
     NotificationManager.error("Seller didn't approved marketplace");
     return false;
   }
-  // if (!balance) {
-  //   // balance = window.sessionStorage.getItem("balance");
-  //   balance = cookies.balance
-  // }
-  // if (balance)
-  //   if (
-  //     new BigNumber(balance.toString()).isLessThan(
-  //       new BigNumber(order[6].toString()).multipliedBy(
-  //         new BigNumber(qty.toString())
-  //       )
-  //     )
-  //   ) {
-  //     NotificationManager.error(`Buyer don't have enough ${CURRENCY}`);
-  //     return false;
-  //   }
 
   let signature = details.signature;
   let options;
@@ -215,7 +205,7 @@ export const handleBuyNft = async (
     options = {
       from: account,
       gasLimit: 9000000,
-      value: 0,
+      value: amount,
     };
 
     let completeOrder = await marketplace.completeOrder(
@@ -242,8 +232,8 @@ export const handleBuyNft = async (
     if (isERC721) {
       await UpdateOrder({
         orderId: id,
-        nftId: details.nftID._id, //to make sure we update the quantity left : NFTid
-        seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
+        nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
+        seller: details.sellerID.walletAddress.toLowerCase(), //to make sure we update the quantity left : walletAddress
         qtyBought: Number(qty),
         qty_sold: Number(details.quantity_sold) + Number(qty),
         buyer: account.toLowerCase(),
@@ -257,7 +247,7 @@ export const handleBuyNft = async (
             : details.nftID.quantity_minted + qty,
       });
 
-      DeleteOrder({ orderId: id });
+      DeleteOrder({ orderID: id });
     } else {
       await UpdateOrder({
         orderId: id,
@@ -281,7 +271,7 @@ export const handleBuyNft = async (
         details.total_quantity
       ) {
         try {
-          await DeleteOrder({ orderId: id });
+          await DeleteOrder({ orderID: id });
         } catch (e) {
           console.log("error in updating order data", e);
           return false;
@@ -294,9 +284,9 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
-  setTimeout(() => {
-    window.location.href = `/multimintingpage/${collectionId}`;
-  }, 1000);
+  // setTimeout(() => {
+  //   window.location.href = `/NFTDetails/${details?.nftID?._id}`;
+  // }, 1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -336,7 +326,7 @@ export const putOnMarketplace = async (account, orderData) => {
   }
   let nextId = await orderData.tokenId;
   console.log("nextId", nextId, orderData.collection);
-  let _deadline;
+  let _deadline = GENERAL_TIMESTAMP;
   let _price;
   let sellerOrder;
   try {
@@ -427,13 +417,13 @@ export const putOnMarketplace = async (account, orderData) => {
       nftID: orderData.nftId,
       seller: account,
       tokenAddress: orderData.tokenAddress
-        ? orderData.tokenAddress
+        ? orderData.tokenAddress.toLowerCase()
         : "0x0000000000000000000000000000000000000000",
-      collectionAddress: orderData.collection,
+      collectionAddress: orderData.collection.toLowerCase(),
       price: _price,
       quantity: orderData.quantity,
       saleType: orderData.saleType,
-      validUpto: _deadline,
+      deadline: _deadline,
       signature: signature,
       tokenID: orderData.tokenId,
       // auctionEndDate: _auctionEndDate,
@@ -492,15 +482,12 @@ export const handleRemoveFromSale = async (orderId, account) => {
       NotificationManager.error("User denied ");
       return false;
     }
+    return false;
   }
   try {
-    
-    await DeleteOrder(
-      {
-        orderId: orderId,
-        oNftId: details.oNftId,
-      },
-    );
+    await DeleteOrder({
+      orderID: orderId,
+    });
     NotificationManager.success("Removed from sale successfully");
     // window.location.href = "/profile";
     // window.location.reload();

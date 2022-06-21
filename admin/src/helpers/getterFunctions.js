@@ -224,6 +224,9 @@ export const fetchTokens = async (address, abi, currentUser, collId) => {
           address: address,
           totalSupply: parseInt(originalSupply),
           link: window.sessionStorage.getItem("importLink"),
+          isImported: 1,
+          isOnMarketplace: 1,
+          isDeployed: 1,
         });
         window.sessionStorage.removeItem("importLink");
       } catch (e) {

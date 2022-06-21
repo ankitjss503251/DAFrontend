@@ -543,6 +543,10 @@ export const ImportNFTs = async (address, abi, currentUser) => {
         await importCollection({
           address: address,
           totalSupply: parseInt(originalSupply),
+          link: window.sessionStorage.getItem("importLink"),
+          isImported: 1,
+          isOnMarketplace: 1,
+          isDeployed: 1,
         });
         // let res = await GetCombinedNfts({
         //   page: 1,

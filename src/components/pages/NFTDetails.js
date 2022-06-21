@@ -14,7 +14,7 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import { putOnMarketplace } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
 import contracts from "../../config/contracts";
-import { GENERAL_TIMESTAMP, ZERO_ADDRESS } from "../../helpers/constants";
+import { GENERAL_DATE, GENERAL_TIMESTAMP, ZERO_ADDRESS } from "../../helpers/constants";
 import { NotificationManager } from "react-notifications";
 
 var bgImgStyle = {
@@ -121,7 +121,7 @@ function NFTDetails() {
       quantity: item_qt,
       saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
       salt: Math.round(Math.random() * 10000000),
-      endTime: datetime ? datetime : GENERAL_TIMESTAMP,
+      endTime: datetime ? datetime : GENERAL_DATE,
       chosenType: marketplaceSaleType,
       minimumBid: item_bid !== "" ? item_bid : 0,
       // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
