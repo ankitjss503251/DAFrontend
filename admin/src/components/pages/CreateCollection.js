@@ -450,7 +450,7 @@ function CreateCollection() {
 
       if (isNew) {
         let collection = await getAllCollections({
-          contractAddress: importedAddress,
+          contractAddress: importedAddress.toLowerCase(),
         });
         console.log("collections", collection);
         if (collection.count < 1) {
@@ -460,7 +460,7 @@ function CreateCollection() {
           fd.append("isImported", 1);
           fd.append("isOnMarketplace", 1);
           fd.append("name", title);
-          fd.append("contractAddress", importedAddress);
+          fd.append("contractAddress", importedAddress.toLowerCase());
           fd.append("totalSupply", parseInt(originalSupply));
 
           res = await createCollection(fd);
@@ -471,7 +471,7 @@ function CreateCollection() {
         }
       } else {
         res = await UpdateCollection({
-          contractAddress: importedAddress,
+          contractAddress: importedAddress.toLowerCase(),
           link: importedCollectionLink,
           isDeployed: 1,
           id: selectedCollectionId,
@@ -482,7 +482,7 @@ function CreateCollection() {
         console.log("coll update", res._id);
       }
       let importRes = await fetchTokens(
-        importedAddress,
+        importedAddress.toLowerCase(),
         abi,
         currentUser,
         res._id
@@ -493,7 +493,7 @@ function CreateCollection() {
     }
     try {
       let importRes = await ImportNFTs(
-        importedAddress,
+        importedAddress.toLowerCase(),
         abi,
         currentUser,
         res._id
