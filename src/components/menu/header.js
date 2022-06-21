@@ -132,9 +132,14 @@ const Header = function () {
     setCatg(cat);
   }, []);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (cookies["selected_account"]) {
       setAccount(cookies["selected_account"]);
+      const s = await onboard.connectWallet({ autoSelect: { label: cookies["label"] , disableModals: true }});
+     await onboard.setChain({
+        chainId: process.env.REACT_APP_CHAIN_ID,
+      });
+      setProvider(s[0].provider);
     }
   }, []);
 
@@ -150,7 +155,7 @@ const Header = function () {
   };
 
   useEffect(async () => {
-    console.log("provider in useEffect", provider);
+    // console.log("provider in useEffect", provider);
     if (provider) {
       provider.on("accountsChanged", (accounts) => {
         console.log("account switched!!", accounts[0], "account", account);
@@ -187,18 +192,15 @@ const Header = function () {
   const connectWallet = async () => {
     setIsAccountSwitched(false);
     const wallets = await onboard.connectWallet();
-    console.log("wallet address--->", wallets[0]);
     console.log("process.env", process.env.REACT_APP_CHAIN_ID);
     const success = await onboard.setChain({
       chainId: process.env.REACT_APP_CHAIN_ID,
     });
     console.log("setChain method", success);
     const primaryWallet = wallets[0];
-
     setChainId(primaryWallet.chains[0].id);
     console.log("provider", primaryWallet.provider);
     setProvider(primaryWallet.provider);
-
     try {
       const address = wallets[0].accounts[0].address;
 
@@ -220,6 +222,7 @@ const Header = function () {
             } else {
               NotificationManager.success(res.message);
               setAccount(primaryWallet.accounts[0].address);
+              setCookie("label", primaryWallet.label, { path: "/" });
               setCookie("selected_account", address, { path: "/" });
               setCookie(
                 "chain_id",
@@ -256,7 +259,7 @@ const Header = function () {
               return;
             } else {
               NotificationManager.success(res.message, "", 800);
-
+              setCookie("label", primaryWallet.label, { path: "/" });
               setAccount(primaryWallet.accounts[0].address);
               setCookie("selected_account", address, { path: "/" });
               setCookie(
@@ -333,6 +336,7 @@ const Header = function () {
               return;
             } else {
               NotificationManager.success(res.message);
+              setCookie("label", primaryWallet.label, { path: "/" });
               setAccount(primaryWallet.accounts[0].address);
               setCookie("selected_account", address, { path: "/" });
               setCookie(
@@ -535,18 +539,20 @@ const Header = function () {
                       All NFTs
                     </NavLink>
                   </li>
-                  {catg ? catg.map((c, key) => {
-                    return  <li key={key}>
-                    <NavLink
-                      to={`/marketplacecollection/${c.name}`}
-                      className='sub-items'>
-                      <Firearmsvg />
-                     {c.name}
-                    </NavLink>
-                  </li>
-                  }) : ""}
-                 
-                 
+                  {catg
+                    ? catg.map((c, key) => {
+                        return (
+                          <li key={key}>
+                            <NavLink
+                              to={`/marketplacecollection/${c.name}`}
+                              className='sub-items'>
+                              <Firearmsvg />
+                              {c.name}
+                            </NavLink>
+                          </li>
+                        );
+                      })
+                    : ""}
                 </ul>
               </li>
               <li className='nav-item'>
@@ -607,7 +613,7 @@ const Header = function () {
                 <>
                   <li className='nav-item'>
                     {!account ? (
-                      <button className='border_btn' onClick={onLogin} >
+                      <button className='border_btn' onClick={onLogin}>
                         log in
                       </button>
                     ) : (
@@ -642,7 +648,6 @@ const Header = function () {
                       </svg>
                       <span className='cartqt'>9</span>
                     </div>
-                   
                   </li>
                   <li className='nav-item'>
                     <NavLink to='' tabindex='-1'>
