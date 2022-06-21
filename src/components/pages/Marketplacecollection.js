@@ -56,7 +56,6 @@ function Marketplacecollection() {
         if (res.length > 0) {
           setLoadMoreDisabled("");
           temp = [...temp, res];
-          console.log("temp", temp);
           setAllCollections(temp);
           setCurrPage(currPage + 1);
         }
@@ -100,10 +99,10 @@ function Marketplacecollection() {
       {loadMoreDisabled && !showTab
         ? NotificationManager.info("No more items to load")
         : ""}
-      <section className='register_hd pdd_12' style={register_bg}>
-        <div className='container'>
-          <div className='row'>
-            <div className='col-md-12'>
+      <section className="register_hd pdd_12" style={register_bg}>
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
               <h1>Marketplace</h1>
             </div>
           </div>
@@ -125,7 +124,7 @@ function Marketplacecollection() {
                     data-bs-target='#all'
                     type='button'
                     role='tab'
-                    aria-controls='all'
+                    aria-controls='#all'
                     aria-selected='true'
                     onClick={() => {
                       setShowTab("");
@@ -167,37 +166,37 @@ function Marketplacecollection() {
               role='tabpanel'
               aria-labelledby='all'>
               <div className='row'>
-                {allCollections.length > 0
+                {allCollections && allCollections.length > 0
                   ? allCollections.map((oIndex) => {
                       return oIndex.map((card) => (
-                        <div className='col-lg-4 col-md-6 mb-5'>
-                          <div className='collection_slide'>
-                            <a href={`/collection/${card._id}`}>
+                        <div className="col-lg-4 col-md-6 mb-5">
+                          <div className="collection_slide">
+                            <a href={`/collection/${card?._id}`}>
                               <img
                                 className='img-fluid w-100'
-                                src={card.logoImg}
+                                src={card?.logoImg}
                                 alt=''
                               />
                             </a>
-                            <div className='collection_text'>
+                            <div className="collection_text">
                               <a
-                                href={`/collectionwithcollection/${card.brand._id}`}>
+                                href={`/collectionwithcollection/${card?.brand?._id}`}>
                                 <div className='coll_profileimg'>
                                   <img
                                     alt=''
                                     className='profile_img'
-                                    src={card.brand.logoImage}
+                                    src={card.brand?.logoImage}
                                   />
                                   <img
-                                    alt=''
-                                    className='check_img'
+                                    alt=""
+                                    className="check_img"
                                     src={"../img/collections/check.png"}
                                   />
                                 </div>
                               </a>
-                              <a href={`/collection/${card._id}`}>
-                                <h4 className='collname'>{card.name}</h4>
-                                <p>{card.desc}</p>
+                              <a href={`/collection/${card?._id}`}>
+                                <h4 className="collname">{card?.name}</h4>
+                                <p>{card?.desc}</p>
                               </a>
                             </div>
                           </div>
@@ -206,11 +205,12 @@ function Marketplacecollection() {
                     })
                   : ""}
                 {allCollections?.length > 0 ? (
-                  <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <div class="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
                     <button
-                      type='button'
+                      type="button"
                       className={`btn view_all_bdr ${loadMoreDisabled}`}
-                      onClick={() => setLoadMore(!loadMore)}>
+                      onClick={() => setLoadMore(!loadMore)}
+                    >
                       Load More
                     </button>
                   </div>
@@ -258,6 +258,28 @@ function Marketplacecollection() {
                                 <h4 className='collname'>{card.name}</h4>
                                 <p>{card.desc}</p>
                               </a>
+                              <div className="collection_text">
+                                <a
+                                  href={`/collectionwithcollection/${card?.brand?._id}`}
+                                >
+                                  <div className="coll_profileimg">
+                                    <img
+                                      alt=""
+                                      className="profile_img"
+                                      src={card?.brand?.logoImage}
+                                    />
+                                    <img
+                                      alt=""
+                                      className="check_img"
+                                      src={"../img/collections/check.png"}
+                                    />
+                                  </div>
+                                </a>
+                                <a href={`/collection/${card?._id}`}>
+                                  <h4 className="collname">THOR</h4>
+                                  <p>{card?.desc}</p>
+                                </a>
+                              </div>
                             </div>
                           </div>
                         </div>

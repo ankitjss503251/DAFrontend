@@ -14,7 +14,7 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import { putOnMarketplace } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
 import contracts from "../../config/contracts";
-import { GENERAL_TIMESTAMP, ZERO_ADDRESS } from "../../helpers/constants";
+import { GENERAL_DATE, GENERAL_TIMESTAMP, ZERO_ADDRESS } from "../../helpers/constants";
 import { NotificationManager } from "react-notifications";
 
 var bgImgStyle = {
@@ -43,6 +43,7 @@ function NFTDetails() {
   const [datetime, setDatetime] = useState("");
   const [currentUser, setCurrentUser] = useState();
   const [cookies] = useCookies([]);
+  const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -65,7 +66,11 @@ function NFTDetails() {
           nftID: id,
         };
         const res = await getNFTs(reqData);
-        console.log("hsdgshfghsd",res)
+        console.log("hsdgshfghsd", res);
+       if(res.length === 0){
+        window.location.href = '/marketplace'
+        return;
+       }
         setNFTDetails(res[0]);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
@@ -76,15 +81,35 @@ function NFTDetails() {
         };
         const nfts = await getNFTs(reqData1);
         setAllNFTs(nfts);
-        const _orders = await getOrderByNftID({ nftID: nfts.id });
-        console.log("orders", _orders);
-        setOrders(_orders?.results);
+        console.log("here I am", currentUser, res[0]?.ownedBy);
+        if (
+          currentUser &&
+          res[0].ownedBy &&
+          res[0]?.ownedBy[0]?.address?.toLowerCase()
+        ) {
+         
+          for (let i = 0; i < res[0]?.ownedBy?.length; i++) {
+            if (
+              res[0]?.ownedBy[i]?.address?.toLowerCase() ===
+              currentUser?.toLowerCase()
+            ) {
+              setOwned(true);
+              break;
+            }
+          }
+        }
+
+        if (id) {
+          const _orders = await getOrderByNftID({ nftID: id });
+          console.log("orders123", _orders?.results?.length);
+          setOrders(_orders?.results);
+        }
       } catch (e) {
         console.log("Error in fetching nft Details", e);
       }
     };
     fetch();
-  }, [id]);
+  }, [id, currentUser]);
 
   const PutMarketplace = async () => {
     console.log("sale type", marketplaceSaleType);
@@ -97,7 +122,7 @@ function NFTDetails() {
       quantity: item_qt,
       saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
       salt: Math.round(Math.random() * 10000000),
-      endTime: datetime ? datetime : GENERAL_TIMESTAMP,
+      endTime: datetime ? datetime : GENERAL_DATE,
       chosenType: marketplaceSaleType,
       minimumBid: item_bid !== "" ? item_bid : 0,
       // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
@@ -228,29 +253,29 @@ function NFTDetails() {
                   role='tabpanel'
                   aria-labelledby='pills-home-tab'>
                   <div className='row'>
-                    {
-                      NFTDetails ? NFTDetails?.attributes?.map((attr, key) =>{
-                       return  <div className='col-md-6 mb-4'>
-                        <div className='tab_label'>
-                          <p>
-                            Background <span className='big_text'>{attr.value}</span>
-                          </p>
-                          <p>
+                    {NFTDetails
+                      ? NFTDetails?.attributes?.map((attr, key) => {
+                          return (
+                            <div className='col-md-6 mb-4'>
+                              <div className='tab_label'>
+                                <p>{attr.trait_type}</p>
+                                <span className='big_text'>{attr.value}</span>
+                                {/* <p>
                             75% <span>have this traits</span>
-                          </p>
-                        </div>
-                        <div className='progress'>
+                          </p> */}
+                              </div>
+                              {/* <div className='progress'>
                           <div
                             className='progress-bar w-75'
                             role='progressbar'
                             aria-valuenow='75'
                             aria-valuemin='0'
                             aria-valuemax='100'></div>
-                        </div>
-                      </div>
-                      }) : ""
-                    }
-                 
+                        </div> */}
+                            </div>
+                          );
+                        })
+                      : ""}
                   </div>
                 </div>
               </div>
@@ -264,26 +289,33 @@ function NFTDetails() {
                   />
                   {Number(convertToEth(collection?.price)).toFixed(4)} HNTR
                 </div>
-                <button
-                  type="button"
-                  className="yellow_btn mr-3 mb-3"
-                  data-bs-toggle="modal"
-                  data-bs-target="#detailPop"
-                >
-                  {orders.length > 0
-                    ? orders?.sellerID?.walletAddress?.toLowerCase() ===
-                      currentUser?.toLowerCase()
-                      ? "Remove From Sale"
-                      : "Buy Now"
-                    : NFTDetails &&
-                      NFTDetails.ownedBy &&
-                      NFTDetails.ownedBy.length > 0
-                    ? NFTDetails.ownedBy[0]?.address
-                    : ""?.toLowerCase() === currentUser?.toLowerCase()
-                    ? "Put On Marketplace"
-                    : ""}
-                </button>
-                <button type='button' className='border_btn title_color'>
+                {console.log("is owned", owned, orders?.length)}
+                {orders.length <= 0 ? (
+                  owned ? (
+                    <button
+                      type="button"
+                      className="yellow_btn mr-3 mb-3"
+                      data-bs-toggle="modal"
+                      data-bs-target="#detailPop"
+                    >
+                      {console.log(
+                        "dataaa",
+                        orders.length,
+                        orders?.sellerID?.walletAddress?.toLowerCase() ===
+                          currentUser?.toLowerCase(),
+                        orders?.sellerID?.walletAddress?.toLowerCase(),
+                        currentUser?.toLowerCase()
+                      )}
+                      Put On Marketplace
+                    </button>
+                  ) : (
+                    ""
+                  )
+                ) : (
+                  "Buy Now"
+                )}
+
+                <button type="button" className="border_btn title_color">
                   Bids / Offers
                 </button>
               </div>
@@ -390,7 +422,7 @@ function NFTDetails() {
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">Listings</h3>
               <div className="table-responsive">
-                <NFTlisting id={NFTDetails.id} />
+                <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
             <div className='col-md-12 mb-5'>

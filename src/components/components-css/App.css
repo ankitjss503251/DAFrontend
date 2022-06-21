@@ -1910,10 +1910,13 @@ button.filter_btn.active {
 }
 .tab_label {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: center;
 }
 .big_text {
-  font-size: 16px;
+  font-size: 20px;
+  color: #fff;
+  margin-left: 30px;
 }
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {

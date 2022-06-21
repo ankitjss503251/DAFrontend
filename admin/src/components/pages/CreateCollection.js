@@ -224,24 +224,6 @@ function CreateCollection() {
       return false;
     }
 
-    // if (preSaleStartTime === "" || preSaleStartTime === undefined) {
-    //   NotificationManager.error("Please Choose a Valid Start Date.");
-    //   return false;
-    // }
-    // if (datetime2 === "" || datetime2 === undefined) {
-    //   NotificationManager.error("Please Choose Valid End Date", "", 800);
-    //   return false;
-    // }
-    // if (maxSupply === "" || maxSupply === undefined) {
-    //   NotificationManager.error("Please Enter Max Supply", "", 800);
-    //   return false;
-    // }
-
-    // if (price === "" || price === undefined) {
-    //   NotificationManager.error("Please Enter a Price", "", 800);
-    //   return false;
-    // }
-
     if (category === "" || category === undefined) {
       NotificationManager.error("Please Choose a Category", "", 800);
       return false;
@@ -461,13 +443,14 @@ function CreateCollection() {
 
   const handleImportNFT = async (isNew) => {
     window.sessionStorage.setItem("importLink", importedCollectionLink);
+    let res;
     try {
       const token = await exportInstance(importedAddress, abi);
       let originalSupply = await token.totalSupply();
-      let res;
+
       if (isNew) {
         let collection = await getAllCollections({
-          contractAddress: importedAddress,
+          contractAddress: importedAddress.toLowerCase(),
         });
         console.log("collections", collection);
         if (collection.count < 1) {
@@ -477,7 +460,7 @@ function CreateCollection() {
           fd.append("isImported", 1);
           fd.append("isOnMarketplace", 1);
           fd.append("name", title);
-          fd.append("contractAddress", importedAddress);
+          fd.append("contractAddress", importedAddress.toLowerCase());
           fd.append("totalSupply", parseInt(originalSupply));
 
           res = await createCollection(fd);
@@ -488,7 +471,7 @@ function CreateCollection() {
         }
       } else {
         res = await UpdateCollection({
-          contractAddress: importedAddress,
+          contractAddress: importedAddress.toLowerCase(),
           link: importedCollectionLink,
           isDeployed: 1,
           id: selectedCollectionId,
@@ -498,13 +481,23 @@ function CreateCollection() {
         });
         console.log("coll update", res._id);
       }
-      await fetchTokens(importedAddress, abi, currentUser, res._id);
+      let importRes = await fetchTokens(
+        importedAddress.toLowerCase(),
+        abi,
+        currentUser,
+        res._id
+      );
     } catch (e) {
       console.log("e");
       return;
     }
     try {
-      await ImportNFTs(importedAddress, abi, currentUser);
+      let importRes = await ImportNFTs(
+        importedAddress.toLowerCase(),
+        abi,
+        currentUser,
+        res._id
+      );
     } catch (e) {
       console.log("e");
       return;

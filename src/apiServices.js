@@ -200,7 +200,7 @@ export const getNFTList = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    
+
     return datas.data;
   } catch (err) {
     return err;
@@ -440,7 +440,7 @@ export const DeleteOrder = async (data) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: window.sessionStorage.getItem("Authorization"),
+      Authorization: localStorage.getItem("Authorization"),
     },
     body: JSON.stringify(data),
   };
