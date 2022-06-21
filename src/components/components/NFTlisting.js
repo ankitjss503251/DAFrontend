@@ -5,6 +5,10 @@ import { useCookies } from "react-cookie";
 import NotificationManager from "react-notifications/lib/NotificationManager";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
+import {
+  handleBuyNft,
+  handleRemoveFromSale,
+} from "../../helpers/sendFunctions";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -23,7 +27,7 @@ function NFTlisting(props) {
     const fetch = async () => {
       if (props.id) {
         const _orders = await getOrderByNftID({ nftID: props.id });
-        console.log("orders", _orders);
+        console.log("orders", _orders?.results?.length);
         setOrders(_orders?.results);
       }
     };
@@ -80,19 +84,33 @@ function NFTlisting(props) {
                           <div className="text-center">
                             {o.sellerID?.walletAddress.toLowerCase() ===
                             currentUser.toLowerCase() ? (
-                              <Link
+                              <button
                                 to={"/"}
                                 className="small_yellow_btn small_btn mr-3"
+                                onClick={() => {
+                                  handleRemoveFromSale(o._id, currentUser);
+                                }}
                               >
                                 Remove From Sale
-                              </Link>
+                              </button>
                             ) : (
-                              <Link
+                              <button
                                 to={"/"}
                                 className="small_border_btn small_btn"
+                                onClick={() => {
+                                  handleBuyNft(
+                                    o._id,
+                                    props.NftDetails.type == 1,
+                                    currentUser,
+                                    "1000000000000",
+                                    1,
+                                    false,
+                                    props.NftDetails.collectionAddress
+                                  );
+                                }}
                               >
                                 {o.salesType === 0 ? "Buy Now" : "Place A Bid"}
-                              </Link>
+                              </button>
                             )}
                           </div>
                         </td>
@@ -101,93 +119,7 @@ function NFTlisting(props) {
                   })
                 : ""}
 
-              {/* <tr>
-                <td>
-                  <span className="yellow_dot circle_dot"></span>0xc8b...6d74
-                </td>
-                <td>
-                  <img
-                    alt=""
-                    src={"../img/favicon.png"}
-                    className="img-fluid hunter_fav"
-                  />{" "}
-                  5.02
-                </td>
-                <td>
-                  15/03/2022 <span className="nft_time">23:13</span>
-                </td>
-                <td className="green_text">Filled</td>
-                <td>
-                  <div className="text-center"></div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="lightblue_dot circle_dot"></span>0xc8b...6d74
-                </td>
-                <td>
-                  <img
-                    alt=""
-                    src={"../img/favicon.png"}
-                    className="img-fluid hunter_fav"
-                  />{" "}
-                  5.02
-                </td>
-                <td>
-                  15/03/2022 <span className="nft_time">23:13</span>
-                </td>
-                <td className="red_text">Cancelled</td>
-                <td>
-                  <div className="text-center"></div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="blue_dot circle_dot"></span>0xc8b...6d74
-                </td>
-                <td>
-                  <img
-                    alt=""
-                    src={"../img/favicon.png"}
-                    className="img-fluid hunter_fav"
-                  />{" "}
-                  5.02
-                </td>
-                <td>
-                  15/03/2022 <span className="nft_time">23:13</span>
-                </td>
-                <td className="red_text">Cancelled</td>
-                <td>
-                  <div className="text-center"></div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="yellow_dot circle_dot"></span>0xc8b...6d74
-                </td>
-                <td>
-                  <img
-                    alt=""
-                    src={"../img/favicon.png"}
-                    className="img-fluid hunter_fav"
-                  />{" "}
-                  5.02
-                </td>
-                <td>
-                  15/03/2022 <span className="nft_time">23:13</span>
-                </td>
-                <td className="blue_text">Active</td>
-                <td>
-                  <div className="text-center">
-                    <Link to={"/"} className="small_yellow_btn small_btn mr-3">
-                      Accept
-                    </Link>
-                    <Link to={"/"} className="small_border_btn small_btn">
-                      Reject
-                    </Link>
-                  </div>
-                </td>
-              </tr> */}
+              
             </tbody>
           </table>
         </div>

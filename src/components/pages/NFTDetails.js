@@ -43,6 +43,7 @@ function NFTDetails() {
   const [datetime, setDatetime] = useState("");
   const [currentUser, setCurrentUser] = useState();
   const [cookies] = useCookies([]);
+  const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -80,15 +81,35 @@ function NFTDetails() {
         };
         const nfts = await getNFTs(reqData1);
         setAllNFTs(nfts);
-        const _orders = await getOrderByNftID({ nftID: nfts.id });
-        console.log("orders", _orders);
-        setOrders(_orders?.results);
+        console.log("here I am", currentUser, res[0]?.ownedBy);
+        if (
+          currentUser &&
+          res[0].ownedBy &&
+          res[0]?.ownedBy[0]?.address?.toLowerCase()
+        ) {
+         
+          for (let i = 0; i < res[0]?.ownedBy?.length; i++) {
+            if (
+              res[0]?.ownedBy[i]?.address?.toLowerCase() ===
+              currentUser?.toLowerCase()
+            ) {
+              setOwned(true);
+              break;
+            }
+          }
+        }
+
+        if (id) {
+          const _orders = await getOrderByNftID({ nftID: id });
+          console.log("orders123", _orders?.results?.length);
+          setOrders(_orders?.results);
+        }
       } catch (e) {
         console.log("Error in fetching nft Details", e);
       }
     };
     fetch();
-  }, [id]);
+  }, [id, currentUser]);
 
   const PutMarketplace = async () => {
     console.log("sale type", marketplaceSaleType);
@@ -268,25 +289,33 @@ function NFTDetails() {
                   />
                   {Number(convertToEth(collection?.price)).toFixed(4)} HNTR
                 </div>
-                <button
-                  type='button'
-                  className='yellow_btn mr-3 mb-3'
-                  data-bs-toggle='modal'
-                  data-bs-target='#detailPop'>
-                  {orders.length > 0
-                    ? orders?.sellerID?.walletAddress?.toLowerCase() ===
-                      currentUser?.toLowerCase()
-                      ? "Remove From Sale"
-                      : "Buy Now"
-                    : NFTDetails &&
-                      NFTDetails.ownedBy &&
-                      NFTDetails.ownedBy.length > 0
-                    ? NFTDetails.ownedBy[0]?.address
-                    : ""?.toLowerCase() === currentUser?.toLowerCase()
-                    ? "Put On Marketplace"
-                    : ""}
-                </button>
-                <button type='button' className='border_btn title_color'>
+                {console.log("is owned", owned, orders?.length)}
+                {orders.length <= 0 ? (
+                  owned ? (
+                    <button
+                      type="button"
+                      className="yellow_btn mr-3 mb-3"
+                      data-bs-toggle="modal"
+                      data-bs-target="#detailPop"
+                    >
+                      {console.log(
+                        "dataaa",
+                        orders.length,
+                        orders?.sellerID?.walletAddress?.toLowerCase() ===
+                          currentUser?.toLowerCase(),
+                        orders?.sellerID?.walletAddress?.toLowerCase(),
+                        currentUser?.toLowerCase()
+                      )}
+                      Put On Marketplace
+                    </button>
+                  ) : (
+                    ""
+                  )
+                ) : (
+                  "Buy Now"
+                )}
+
+                <button type="button" className="border_btn title_color">
                   Bids / Offers
                 </button>
               </div>
@@ -390,10 +419,10 @@ function NFTDetails() {
                 className='img-fluid box_shadow'
               />
             </div>
-            <div className='col-md-12 mb-5'>
-              <h3 className='title_36 mb-4'>Listings</h3>
-              <div className='table-responsive'>
-                <NFTlisting id={NFTDetails.id} />
+            <div className="col-md-12 mb-5">
+              <h3 className="title_36 mb-4">Listings</h3>
+              <div className="table-responsive">
+                <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
             <div className='col-md-12 mb-5'>

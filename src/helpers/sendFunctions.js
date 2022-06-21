@@ -424,18 +424,18 @@ export const putOnMarketplace = async (account, orderData) => {
     console.log("signature is---->", signature);
 
     let reqParams = {
-      nftId: orderData.nftId,
+      nftID: orderData.nftId,
       seller: account,
       tokenAddress: orderData.tokenAddress
         ? orderData.tokenAddress
         : "0x0000000000000000000000000000000000000000",
-      collection: orderData.collection,
+      collectionAddress: orderData.collection,
       price: _price,
       quantity: orderData.quantity,
       saleType: orderData.saleType,
       validUpto: _deadline,
       signature: signature,
-      tokenId: orderData.tokenId,
+      tokenID: orderData.tokenId,
       // auctionEndDate: _auctionEndDate,
       salt: orderData.salt,
     };
@@ -454,68 +454,61 @@ export const putOnMarketplace = async (account, orderData) => {
 
     NotificationManager.success("Order created successfully");
     slowRefresh();
-    // window.location.href = "/profile";
+    window.location.href = "/profile";
   } catch (err) {
     console.log("error in Api", err);
     return;
   }
 };
 
-// export const handleRemoveFromSale = async (orderId, account) => {
-//   let marketplace;
-//   let order;
-//   let details;
-//   try {
-//     marketplace = await exportInstance(
-//       contracts.MARKETPLACE,
-//       marketPlaceABI.abi
-//     );
-//     const options = {
-//       from: account,
-//       gasLimit: 9000000,
-//       value: "0",
-//     };
-//     order = await buildSellOrder(orderId);
-//     details = await getOrderDetails({ orderId: orderId });
-//     console.log("order and details are", order, details);
+export const handleRemoveFromSale = async (orderId, account) => {
+  let marketplace;
+  let order;
+  let details;
+  try {
+    marketplace = await exportInstance(
+      contracts.MARKETPLACE,
+      marketPlaceABI.abi
+    );
+    const options = {
+      from: account,
+      gasLimit: 9000000,
+      value: "0",
+    };
+    order = await buildSellOrder(orderId);
+    details = await getOrderDetails({ orderId: orderId });
+    console.log("order and details are", order, details);
 
-//     console.log("details.signature", details.oSignature);
-//     let res = await marketplace.cancelOrder(order, details.oSignature, options);
-//     res = await res.wait();
-//     if (res.status === 0) {
-//       NotificationManager.error("Transaction failed");
-//       return;
-//     }
-//   } catch (e) {
-//     console.log("error in contract function call", e);
-//     if (e.code === 4001) {
-//       NotificationManager.error("User denied ");
-//       return false;
-//     }
-//   }
-//   try {
-//     let historyMetaData = {
-//       nftId: "62428d42f2a67d12e95d3c3c",
-//       userId: "62318683b799e41d5608fb67",
-//       action: "Bids",
-//       actionMeta: "Default",
-//       message: "UserName Created NFT",
-//     };
-//     await DeleteOrder(
-//       {
-//         orderId: orderId,
-//         oNftId: details.oNftId,
-//       },
-//       historyMetaData
-//     );
-//     NotificationManager.success("Removed from sale successfully");
-//     // window.location.href = "/profile";
-//     // window.location.reload();
-//     // console.log("res", res);
-//   } catch (e) {
-//     console.log("error while updating database", e);
-//   }
-// };
+    console.log("details.signature", details.signature);
+    let res = await marketplace.cancelOrder(order, details.signature, options);
+    res = await res.wait();
+    if (res.status === 0) {
+      NotificationManager.error("Transaction failed");
+      return;
+    }
+  } catch (e) {
+    console.log("error in contract function call", e);
+    if (e.code === 4001) {
+      NotificationManager.error("User denied ");
+      return false;
+    }
+  }
+  try {
+    
+    await DeleteOrder(
+      {
+        orderId: orderId,
+        oNftId: details.oNftId,
+      },
+    );
+    NotificationManager.success("Removed from sale successfully");
+    // window.location.href = "/profile";
+    // window.location.reload();
+    // console.log("res", res);
+  } catch (e) {
+    console.log("error while updating database", e);
+  }
+};
 
 // export const handleCollectionCreation = async (
 //   isSingle,
