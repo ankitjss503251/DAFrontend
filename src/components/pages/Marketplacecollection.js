@@ -56,7 +56,6 @@ function Marketplacecollection() {
         if (res.length > 0) {
           setLoadMoreDisabled("");
           temp = [...temp, res];
-          console.log("temp", temp);
           setAllCollections(temp);
           setCurrPage(currPage + 1);
         }
@@ -125,7 +124,7 @@ function Marketplacecollection() {
                     data-bs-target='#all'
                     type='button'
                     role='tab'
-                    aria-controls='all'
+                    aria-controls='#all'
                     aria-selected='true'
                     onClick={() => {
                       setShowTab("");
@@ -167,7 +166,7 @@ function Marketplacecollection() {
               role='tabpanel'
               aria-labelledby='all'>
               <div className='row'>
-                {allCollections.length > 0
+                {allCollections && allCollections.length > 0
                   ? allCollections.map((oIndex) => {
                       return oIndex.map((card) => (
                         <div className='col-lg-4 col-md-6 mb-5'>
@@ -175,18 +174,18 @@ function Marketplacecollection() {
                             <a href={`/collection/${card._id}`}>
                               <img
                                 className='img-fluid w-100'
-                                src={card.logoImg}
+                                src={card?.logoImg}
                                 alt=''
                               />
                             </a>
                             <div className='collection_text'>
                               <a
-                                href={`/collectionwithcollection/${card.brand._id}`}>
+                                href={`/collectionwithcollection/${card?.brand?._id}`}>
                                 <div className='coll_profileimg'>
                                   <img
                                     alt=''
                                     className='profile_img'
-                                    src={card.brand.logoImage}
+                                    src={card.brand?.logoImage}
                                   />
                                   <img
                                     alt=''

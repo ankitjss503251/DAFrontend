@@ -607,23 +607,22 @@ const Header = function () {
                 <>
                   <li className='nav-item'>
                     {!account ? (
-                      <NavLink className='border_btn' onClick={onLogin} to=''>
+                      <button className='border_btn' onClick={onLogin} >
                         log in
-                      </NavLink>
+                      </button>
                     ) : (
                       ""
                     )}
                   </li>
                   <li className='nav-item'>
-                    <NavLink
+                    <button
                       onClick={!account ? connectWallet : disconnectWallet}
                       className='main_btn'
-                      to=''
                       tabindex='-1'>
                       {!account
                         ? "Connect Wallet"
                         : account.slice(0, 4) + "..." + account.slice(38, 42)}
-                    </NavLink>
+                    </button>
                   </li>
                 </>
               ) : (
