@@ -43,6 +43,7 @@ function NFTDetails() {
   const [datetime, setDatetime] = useState("");
   const [currentUser, setCurrentUser] = useState();
   const [cookies] = useCookies([]);
+  const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -78,9 +79,27 @@ function NFTDetails() {
         const nfts = await getNFTs(reqData1);
 
         setAllNFTs(nfts);
+        console.log("here I am", currentUser, res[0]?.ownedBy);
+        if (
+          currentUser &&
+          res[0].ownedBy &&
+          res[0]?.ownedBy[0]?.address?.toLowerCase()
+        ) {
+         
+          for (let i = 0; i < res[0]?.ownedBy?.length; i++) {
+            if (
+              res[0]?.ownedBy[i]?.address?.toLowerCase() ===
+              currentUser?.toLowerCase()
+            ) {
+              setOwned(true);
+              break;
+            }
+          }
+        }
+
         if (id) {
           const _orders = await getOrderByNftID({ nftID: id });
-          console.log("orders", _orders);
+          console.log("orders123", _orders?.results?.length);
           setOrders(_orders?.results);
         }
       } catch (e) {
@@ -88,7 +107,7 @@ function NFTDetails() {
       }
     };
     fetch();
-  }, [id]);
+  }, [id, currentUser]);
 
   const PutMarketplace = async () => {
     console.log("sale type", marketplaceSaleType);
@@ -420,23 +439,28 @@ function NFTDetails() {
                   />
                   {Number(convertToEth(collection?.price)).toFixed(4)} HNTR
                 </div>
+                {console.log("is owned", owned, orders?.length)}
                 {orders.length <= 0 ? (
-                  <button
-                    type="button"
-                    className="yellow_btn mr-3 mb-3"
-                    data-bs-toggle="modal"
-                    data-bs-target="#detailPop"
-                  >
-                    {console.log(
-                      "dataaa",
-                      orders.length,
-                      orders?.sellerID?.walletAddress?.toLowerCase() ===
-                        currentUser?.toLowerCase(),
-                      orders?.sellerID?.walletAddress?.toLowerCase(),
-                      currentUser?.toLowerCase()
-                    )}
-                    Put On Marketplace
-                  </button>
+                  owned ? (
+                    <button
+                      type="button"
+                      className="yellow_btn mr-3 mb-3"
+                      data-bs-toggle="modal"
+                      data-bs-target="#detailPop"
+                    >
+                      {console.log(
+                        "dataaa",
+                        orders.length,
+                        orders?.sellerID?.walletAddress?.toLowerCase() ===
+                          currentUser?.toLowerCase(),
+                        orders?.sellerID?.walletAddress?.toLowerCase(),
+                        currentUser?.toLowerCase()
+                      )}
+                      Put On Marketplace
+                    </button>
+                  ) : (
+                    ""
+                  )
                 ) : (
                   "Buy Now"
                 )}

@@ -479,8 +479,8 @@ export const handleRemoveFromSale = async (orderId, account) => {
     details = await getOrderDetails({ orderId: orderId });
     console.log("order and details are", order, details);
 
-    console.log("details.signature", details.oSignature);
-    let res = await marketplace.cancelOrder(order, details.oSignature, options);
+    console.log("details.signature", details.signature);
+    let res = await marketplace.cancelOrder(order, details.signature, options);
     res = await res.wait();
     if (res.status === 0) {
       NotificationManager.error("Transaction failed");
@@ -494,19 +494,12 @@ export const handleRemoveFromSale = async (orderId, account) => {
     }
   }
   try {
-    let historyMetaData = {
-      nftId: "62428d42f2a67d12e95d3c3c",
-      userId: "62318683b799e41d5608fb67",
-      action: "Bids",
-      actionMeta: "Default",
-      message: "UserName Created NFT",
-    };
+    
     await DeleteOrder(
       {
         orderId: orderId,
         oNftId: details.oNftId,
       },
-      historyMetaData
     );
     NotificationManager.success("Removed from sale successfully");
     // window.location.href = "/profile";

@@ -599,6 +599,7 @@ export const getNFTs = async (req) => {
           name: nft.name,
           desc: nft.description,
           collectionAddress: nft.collectionAddress,
+          ownedBy: nft.ownedBy,
           like:
             nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
           Qty: nft.totalQuantity,

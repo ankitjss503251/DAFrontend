@@ -224,24 +224,6 @@ function CreateCollection() {
       return false;
     }
 
-    // if (preSaleStartTime === "" || preSaleStartTime === undefined) {
-    //   NotificationManager.error("Please Choose a Valid Start Date.");
-    //   return false;
-    // }
-    // if (datetime2 === "" || datetime2 === undefined) {
-    //   NotificationManager.error("Please Choose Valid End Date", "", 800);
-    //   return false;
-    // }
-    // if (maxSupply === "" || maxSupply === undefined) {
-    //   NotificationManager.error("Please Enter Max Supply", "", 800);
-    //   return false;
-    // }
-
-    // if (price === "" || price === undefined) {
-    //   NotificationManager.error("Please Enter a Price", "", 800);
-    //   return false;
-    // }
-
     if (category === "" || category === undefined) {
       NotificationManager.error("Please Choose a Category", "", 800);
       return false;
@@ -461,10 +443,11 @@ function CreateCollection() {
 
   const handleImportNFT = async (isNew) => {
     window.sessionStorage.setItem("importLink", importedCollectionLink);
+    let res;
     try {
       const token = await exportInstance(importedAddress, abi);
       let originalSupply = await token.totalSupply();
-      let res;
+
       if (isNew) {
         let collection = await getAllCollections({
           contractAddress: importedAddress,
@@ -498,13 +481,23 @@ function CreateCollection() {
         });
         console.log("coll update", res._id);
       }
-      await fetchTokens(importedAddress, abi, currentUser, res._id);
+      let importRes = await fetchTokens(
+        importedAddress,
+        abi,
+        currentUser,
+        res._id
+      );
     } catch (e) {
       console.log("e");
       return;
     }
     try {
-      await ImportNFTs(importedAddress, abi, currentUser);
+      let importRes = await ImportNFTs(
+        importedAddress,
+        abi,
+        currentUser,
+        res._id
+      );
     } catch (e) {
       console.log("e");
       return;
