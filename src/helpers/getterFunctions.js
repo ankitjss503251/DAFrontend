@@ -559,7 +559,6 @@ export const getCollections = async (req) => {
         };
       })
     : (formattedData[0] = {});
-  console.log("formattedData--->", formattedData);
   return formattedData;
 };
 
@@ -608,6 +607,7 @@ export const getNFTs = async (req) => {
           tokenId: nft.tokenID,
           createdBy: nft.createdBy,
           type: nft.type,
+          attributes: nft.attributes
         };
       })
     : (formattedData[0] = {});

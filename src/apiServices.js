@@ -200,7 +200,7 @@ export const getNFTList = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("thorrrrrr", datas);
+    
     return datas.data;
   } catch (err) {
     return err;
