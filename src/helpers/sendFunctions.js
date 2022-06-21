@@ -96,7 +96,7 @@ export const handleBuyNft = async (
       case 0:
         if (isERC721) {
           sellerOrder.push(order[key].toLowerCase());
-          buyerOrder.push(account.toLowerCase());
+          buyerOrder.push(account?.toLowerCase());
           break;
         } else {
           sellerOrder.push(order[key]);
@@ -144,89 +144,89 @@ export const handleBuyNft = async (
         buyerOrder.push(parseInt(order[key]));
     }
   }
-  // if (buyerOrder[5] != ZERO_ADDRESS) {
-  //   let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
-  //   console.log("allowance", allowance.allowance);
-  //   if (
-  //     new BigNumber(allowance.allowance).isLessThan(
-  //       new BigNumber(buyerOrder[6])
-  //     )
-  //   ) {
-  //     let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
+  if (buyerOrder[5] != ZERO_ADDRESS) {
+    let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
+    console.log("allowance", allowance.allowance);
+    if (
+      new BigNumber(allowance.allowance).isLessThan(
+        new BigNumber(buyerOrder[6])
+      )
+    ) {
+      let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
 
-  //     if (approveRes == false) {
-  //       return false;
-  //     }
-  //   }
-  // }
+      if (approveRes == false) {
+        return false;
+      }
+    }
+  }
 
-  // console.log("seller and buyer order is", sellerOrder, buyerOrder);
-  // if (LazyMintingStatus !== 1) {
-  //   try {
-  //     let usrHaveQuantity = await GetOwnerOfToken(
-  //       sellerOrder[1],
-  //       sellerOrder[2],
-  //       isERC721,
-  //       sellerOrder[0]
-  //     );
-  //     if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-  //       NotificationManager.error("Seller don't own that much quantity");
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     console.log("error", e);
-  //     return;
-  //   }
-  // }
+  console.log("seller and buyer order is", sellerOrder, buyerOrder);
+  if (LazyMintingStatus !== 1) {
+    try {
+      let usrHaveQuantity = await GetOwnerOfToken(
+        sellerOrder[1],
+        sellerOrder[2],
+        isERC721,
+        sellerOrder[0]
+      );
+      if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
+        NotificationManager.error("Seller don't own that much quantity");
+        return false;
+      }
+    } catch (e) {
+      console.log("error", e);
+      return;
+    }
+  }
 
-  // // check if seller still owns that much quantity of current token id
-  // // check if seller still have approval for marketplace
-  // // check if buyer have sufficient matic or not (fixed sale)
+  // check if seller still owns that much quantity of current token id
+  // check if seller still have approval for marketplace
+  // check if buyer have sufficient matic or not (fixed sale)
 
-  // let approval = await NFTcontract.isApprovedForAll(
-  //   sellerOrder[0],
-  //   contracts.MARKETPLACE
-  // );
+  let approval = await NFTcontract.isApprovedForAll(
+    sellerOrder[0],
+    contracts.MARKETPLACE
+  );
 
-  // if (!approval) {
-  //   NotificationManager.error("Seller didn't approved marketplace");
-  //   return false;
-  // }
+  if (!approval) {
+    NotificationManager.error("Seller didn't approved marketplace");
+    return false;
+  }
 
-  // let signature = details.signature;
-  // let options;
+  let signature = details.signature;
+  let options;
 
-  // try {
-  //   marketplace = await exportInstance(
-  //     contracts.MARKETPLACE,
-  //     marketPlaceABI.abi
-  //   );
+  try {
+    marketplace = await exportInstance(
+      contracts.MARKETPLACE,
+      marketPlaceABI.abi
+    );
 
-  //   options = {
-  //     from: account,
-  //     gasLimit: 9000000,
-  //     value: amount,
-  //   };
+    options = {
+      from: account,
+      gasLimit: 9000000,
+      value: amount,
+    };
 
-  //   let completeOrder = await marketplace.completeOrder(
-  //     sellerOrder,
-  //     signature,
-  //     buyerOrder,
-  //     signature,
-  //     options
-  //   );
-  //   let res = await completeOrder.wait();
-  //   if (res.status === 0) {
-  //     return false;
-  //   }
-  // } catch (e) {
-  //   console.log("error in contract function calling", e);
-  //   if (e.code === 4001) {
-  //     NotificationManager.error("User denied ");
-  //     return false;
-  //   }
-  //   return false;
-  // }
+    let completeOrder = await marketplace.completeOrder(
+      sellerOrder,
+      signature,
+      buyerOrder,
+      signature,
+      options
+    );
+    let res = await completeOrder.wait();
+    if (res.status === 0) {
+      return false;
+    }
+  } catch (e) {
+    console.log("error in contract function calling", e);
+    if (e.code === 4001) {
+      NotificationManager.error("User denied ");
+      return false;
+    }
+    return false;
+  }
 
   try {
     if (isERC721) {
@@ -271,7 +271,7 @@ export const handleBuyNft = async (
         details.total_quantity
       ) {
         try {
-          await DeleteOrder({ orderId: id });
+          await DeleteOrder({ orderID: id });
         } catch (e) {
           console.log("error in updating order data", e);
           return false;
