@@ -252,6 +252,7 @@ function CreateCollection() {
   const handleCollectionCreationAndUpdation = async (isUpdate = false) => {
     let res1;
     let creator;
+
     if (handleValidationCheck()) {
       setLoading(true);
       setModal("");

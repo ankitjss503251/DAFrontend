@@ -740,14 +740,13 @@ const Header = function () {
                     </ul>
                   </li>
                   <li className='nav-item'>
-                    <NavLink
+                    <button
                       className='square_yello'
-                      to=''
                       tabindex='-1'
                       onClick={disconnectWallet}>
                       <img src='../img/edit.png' alt='edit' />{" "}
                       {account?.slice(0, 4) + "..." + account?.slice(38, 42)}
-                    </NavLink>
+                    </button>
                   </li>
                 </>
               )}

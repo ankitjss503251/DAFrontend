@@ -327,8 +327,7 @@ const Navbar = (props) => {
           </div>
         </li>
         <li>
-          <Link
-            to={"/"}
+          <button
             className="round-btn montserrat text-light text-decoration-none"
             onClick={!account ? connectWallet : disconnectWallet}
           >
@@ -340,7 +339,7 @@ const Navbar = (props) => {
                 {account.slice(0, 4) + "..." + account.slice(38, 42)}
               </>
             )}
-          </Link>
+          </button>
         </li>
       </ul>
     </div>

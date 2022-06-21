@@ -13,10 +13,11 @@ import {
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
 
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);
 
   useEffect(() => {
+    console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     else NotificationManager.error("Connect Yout Wallet", "", 800);
 
@@ -82,8 +83,8 @@ function NFTlisting(props) {
                         <td className="blue_text">Active</td>
                         <td>
                           <div className="text-center">
-                            {o.sellerID?.walletAddress.toLowerCase() ===
-                            currentUser.toLowerCase() ? (
+                            {o.sellerID?.walletAddress?.toLowerCase() ===
+                            currentUser?.toLowerCase() ? (
                               <button
                                 to={"/"}
                                 className="small_yellow_btn small_btn mr-3"
@@ -97,16 +98,20 @@ function NFTlisting(props) {
                               <button
                                 to={"/"}
                                 className="small_border_btn small_btn"
-                                onClick={() => {
-                                  handleBuyNft(
-                                    o._id,
-                                    props.NftDetails.type == 1,
-                                    currentUser,
-                                    "1000000000000",
-                                    1,
-                                    false,
-                                    props.NftDetails.collectionAddress
-                                  );
+                                onClick={async () => {
+                                  if (currentUser) {
+                                    await handleBuyNft(
+                                      o._id,
+                                      props?.NftDetails?.type == 1,
+                                      currentUser,
+                                      "1000000000000",
+                                      1,
+                                      false,
+                                      props?.NftDetails?.collectionAddress?.toLowerCase()
+                                    );
+                                  } else {
+                                    console.log("wallet not found");
+                                  }
                                 }}
                               >
                                 {o.salesType === 0 ? "Buy Now" : "Place A Bid"}
@@ -118,8 +123,6 @@ function NFTlisting(props) {
                     );
                   })
                 : ""}
-
-              
             </tbody>
           </table>
         </div>
