@@ -183,6 +183,14 @@ export const getSignature = async (signer, ...args) => {
   }
 };
 
+export const getUsersTokenBalance = async (account, tokenAddress) => {
+  let token;
+  token = await exportInstance(tokenAddress, erc20Abi);
+  let userBalance = await token.balanceOf(account);
+  console.log("token", token, "userBalance", userBalance.toString(), account);
+  return userBalance.toString();
+};
+
 // export const getUsersNFTs = async (
 //   paramType,
 //   walletAddress,
@@ -370,14 +378,6 @@ export const getSignature = async (signer, ...args) => {
 //   } catch (e) {
 //     console.log("error in api", e);
 //   }
-// };
-
-// export const getUsersTokenBalance = async (account, tokenAddress) => {
-//   let token;
-//   token = await exportInstance(tokenAddress, erc20Abi);
-//   let userBalance = await token.balanceOf(account);
-//   console.log("token", token, "userBalance", userBalance.toString(), account);
-//   return userBalance.toString();
 // };
 
 // export const getTokenNameAndSymbolByAddress = async (address) => {
@@ -608,7 +608,7 @@ export const getNFTs = async (req) => {
           tokenId: nft.tokenID,
           createdBy: nft.createdBy,
           type: nft.type,
-          attributes: nft.attributes
+          attributes: nft.attributes,
         };
       })
     : (formattedData[0] = {});

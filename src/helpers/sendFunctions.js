@@ -22,7 +22,7 @@ import erc1155Abi from "./../config/abis/simpleERC1155.json";
 import {
   GetOwnerOfToken,
   getPaymentTokenInfo,
-  // getUsersTokenBalance,
+  getUsersTokenBalance,
   // // isEmpty,
   // readReceipt,
 } from "./getterFunctions";
@@ -32,7 +32,7 @@ import {
   UpdateOrder,
   DeleteOrder,
   createOrder,
-  createBidNft
+  createBidNft,
   // InsertHistory,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
@@ -44,7 +44,7 @@ import {
 } from "./getterFunctions";
 // import simplerERC721ABI from "./../config/abis/simpleERC721.json";
 // import simplerERC1155ABI from "./../config/abis/simpleERC1155.json";
-// import { convertToEth } from "./numberFormatter";
+import { convertToEth } from "./numberFormatter";
 import erc721Abi from "./../config/abis/simpleERC721.json";
 import { slowRefresh } from "./NotifyStatus";
 
@@ -536,9 +536,7 @@ export const createBid = async (
         case 6:
           sellerOrder.push(SellerOrder[index]);
           buyerOrder.push(
-            new BigNumber(
-              ethers.utils.parseEther(bidPrice.toString()).toString()
-            )
+            new BigNumber(bidPrice.toString())
               .multipliedBy(new BigNumber(qty.toString()))
               .toString()
           );
@@ -572,7 +570,7 @@ export const createBid = async (
       console.log(
         "allowance",
         new BigNumber(allowance).isLessThan(
-          new BigNumber(ethers.utils.parseEther(bidPrice.toString()).toString())
+          new BigNumber(bidPrice.toString())
             .multipliedBy(new BigNumber(qty.toString()))
             .toString()
         )
@@ -609,7 +607,7 @@ export const createBid = async (
 
       if (
         new BigNumber(allowance).isLessThan(
-          new BigNumber(ethers.utils.parseEther(bidPrice.toString()).toString())
+          new BigNumber(bidPrice.toString().toString())
             .multipliedBy(new BigNumber(qty.toString()))
             .toString()
         )
@@ -626,18 +624,18 @@ export const createBid = async (
       if (signature === false) return;
       if (signature) {
         let reqParams = {
-          oOwner: ownerAccount,
-          oBidStatus: "Bid",
-          oBidPrice: ethers.utils.parseEther(bidPrice.toString()).toString(),
-          oNFTId: nftID,
-          oOrderId: orderID,
-          oBidQuantity: Number(qty),
-          oBuyerSignature: signature,
+          owner: ownerAccount,
+          bidStatus: "Bid",
+          bidPrice: bidPrice.toString(),
+          nftID: nftID,
+          orderID: orderID,
+          bidQuantity: Number(qty),
+          buyerSignature: signature,
         };
         console.log("buyer signature", signature);
         await createBidNft(reqParams);
         NotificationManager.success("Bid Placed Successfully");
-        slowRefresh();
+        // slowRefresh();
       }
 
       // window.location.reload();
@@ -725,8 +723,6 @@ export const createBid = async (
 //     }
 //   }
 // };
-
-
 
 // export const handleRemoveFromAuction = async (orderId, account) => {
 //   let marketplace;
