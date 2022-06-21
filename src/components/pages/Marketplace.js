@@ -17,21 +17,24 @@ import UpArrow from "../SVG/dropdown";
 import bgImg from "./../../assets/marketplace-bg.jpg";
 import { NotificationManager } from "react-notifications";
 import { getAllBrands } from "../../apiServices";
+import BGImg from "./../../assets/images/background.jpg";
 
-var bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
+
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
   backgroundRepeat: "no-repeat",
 };
 
 function Marketplace() {
+  var bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

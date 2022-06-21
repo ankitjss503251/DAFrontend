@@ -65,7 +65,11 @@ function NFTDetails() {
           nftID: id,
         };
         const res = await getNFTs(reqData);
-        console.log("hsdgshfghsd",res)
+        console.log("hsdgshfghsd", res);
+       if(res.length === 0){
+        window.location.href = '/marketplace'
+        return;
+       }
         setNFTDetails(res[0]);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
@@ -228,29 +232,29 @@ function NFTDetails() {
                   role='tabpanel'
                   aria-labelledby='pills-home-tab'>
                   <div className='row'>
-                    {
-                      NFTDetails ? NFTDetails?.attributes?.map((attr, key) =>{
-                       return  <div className='col-md-6 mb-4'>
-                        <div className='tab_label'>
-                          <p>
-                            Background <span className='big_text'>{attr.value}</span>
-                          </p>
-                          <p>
+                    {NFTDetails
+                      ? NFTDetails?.attributes?.map((attr, key) => {
+                          return (
+                            <div className='col-md-6 mb-4'>
+                              <div className='tab_label'>
+                                <p>{attr.trait_type}</p>
+                                <span className='big_text'>{attr.value}</span>
+                                {/* <p>
                             75% <span>have this traits</span>
-                          </p>
-                        </div>
-                        <div className='progress'>
+                          </p> */}
+                              </div>
+                              {/* <div className='progress'>
                           <div
                             className='progress-bar w-75'
                             role='progressbar'
                             aria-valuenow='75'
                             aria-valuemin='0'
                             aria-valuemax='100'></div>
-                        </div>
-                      </div>
-                      }) : ""
-                    }
-                 
+                        </div> */}
+                            </div>
+                          );
+                        })
+                      : ""}
                   </div>
                 </div>
               </div>
@@ -265,11 +269,10 @@ function NFTDetails() {
                   {Number(convertToEth(collection?.price)).toFixed(4)} HNTR
                 </div>
                 <button
-                  type="button"
-                  className="yellow_btn mr-3 mb-3"
-                  data-bs-toggle="modal"
-                  data-bs-target="#detailPop"
-                >
+                  type='button'
+                  className='yellow_btn mr-3 mb-3'
+                  data-bs-toggle='modal'
+                  data-bs-target='#detailPop'>
                   {orders.length > 0
                     ? orders?.sellerID?.walletAddress?.toLowerCase() ===
                       currentUser?.toLowerCase()
@@ -279,7 +282,7 @@ function NFTDetails() {
                       NFTDetails.ownedBy &&
                       NFTDetails.ownedBy.length > 0
                     ? NFTDetails.ownedBy[0]?.address
-                    : ""?.toLowerCase() === currentUser.toLowerCase()
+                    : ""?.toLowerCase() === currentUser?.toLowerCase()
                     ? "Put On Marketplace"
                     : ""}
                 </button>
@@ -387,9 +390,9 @@ function NFTDetails() {
                 className='img-fluid box_shadow'
               />
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Listings</h3>
-              <div className="table-responsive">
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Listings</h3>
+              <div className='table-responsive'>
                 <NFTlisting id={NFTDetails.id} />
               </div>
             </div>

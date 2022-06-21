@@ -436,7 +436,7 @@ function CollectionWithCollection() {
                   </ul>
                 </div>
               </div>
-              <div className='filtercol'>
+              {/* <div className='filtercol'>
                 <button
                   type='button'
                   class='drop_down_tlt mb-4'
@@ -467,7 +467,7 @@ function CollectionWithCollection() {
                     </li>
                   </ul>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
