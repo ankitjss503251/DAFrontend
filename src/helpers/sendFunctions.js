@@ -738,24 +738,24 @@ export const handleAcceptBids = async (
     contracts.MARKETPLACE
   );
 
-  // if (!LazyMintingStatus) {
-  //   let usrHaveQuantity = await GetOwnerOfToken(
-  //     sellerOrder[1],
-  //     sellerOrder[2],
-  //     isERC721,
-  //     sellerOrder[0]
-  //   );
-  //   console.log("usr have qty", usrHaveQuantity);
-  //   if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-  //     NotificationManager.error("Seller don't own that much quantity");
-  //     return;
-  //   }
-  // }
+  if (!LazyMintingStatus) {
+    let usrHaveQuantity = await GetOwnerOfToken(
+      sellerOrder[1],
+      sellerOrder[2],
+      isERC721,
+      sellerOrder[0]
+    );
+    console.log("usr have qty", usrHaveQuantity);
+    if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
+      NotificationManager.error("Seller don't own that much quantity");
+      return;
+    }
+  }
 
-  // if (!approval) {
-  //   NotificationManager.error("Seller didn't approved marketplace");
-  //   return;
-  // }
+  if (!approval) {
+    NotificationManager.error("Seller didn't approved marketplace");
+    return;
+  }
 
   let paymentTokenData = await getPaymentTokenInfo(
     buyerOrder[0],
@@ -774,38 +774,37 @@ export const handleAcceptBids = async (
   }
 
   try {
-    // let marketplace = await exportInstance(
-    //   contracts.MARKETPLACE,
-    //   marketPlaceABI.abi
-    // );
-    // let completeOrder;
-    // try {
-
-    //   options = {
-    //     from: sellerOrder[0],
-    //     gasPrice: 10000000000,
-    //     gasLimit: 9000000,
-    //     value: 0,
-    //   };
-    //   console.log("here bid", options);
-    //   completeOrder = await marketplace.completeOrder(
-    //     sellerOrder,
-    //     sellerSignature,
-    //     buyerOrder,
-    //     buyerSignature,
-    //     options
-    //   );
-    //   completeOrder = await completeOrder.wait();
-    //   if (completeOrder.status === 0) {
-    //     // NotificationManager.error("Transaction Failed");
-    //     return false;
-    //   } else {
-    //     // NotificationManager.success("Transaction successful");
-    //   }
-    // } catch (e) {
-    //   console.log("error in contract", e);
-    //   return;
-    // }
+    let marketplace = await exportInstance(
+      contracts.MARKETPLACE,
+      marketPlaceABI.abi
+    );
+    let completeOrder;
+    try {
+      options = {
+        from: sellerOrder[0],
+        gasPrice: 10000000000,
+        gasLimit: 9000000,
+        value: 0,
+      };
+      console.log("here bid", options);
+      completeOrder = await marketplace.completeOrder(
+        sellerOrder,
+        sellerSignature,
+        buyerOrder,
+        buyerSignature,
+        options
+      );
+      completeOrder = await completeOrder.wait();
+      if (completeOrder.status === 0) {
+        // NotificationManager.error("Transaction Failed");
+        return false;
+      } else {
+        // NotificationManager.success("Transaction successful");
+      }
+    } catch (e) {
+      console.log("error in contract", e);
+      return;
+    }
     try {
       let reqParams = {
         bidID: bidData._id,

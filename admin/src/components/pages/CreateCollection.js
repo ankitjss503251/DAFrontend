@@ -8,9 +8,11 @@ import {
   getAllCollections,
   GetBrand,
   // getImportedNFTs,
+  getNFTList,
   GetMyCollectionsList,
   importCollection,
   UpdateCollection,
+  createNft,
 } from "../../apiServices";
 import contracts from "../../config/contracts";
 import degnrABI from "./../../config/abis/dgnr8.json";
@@ -22,7 +24,9 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { ImportNFTs } from "../../helpers/sendFunctions";
-import { fetchTokens } from "../../helpers/getterFunctions";
+import { fetchTokens, GetOwnerOfToken } from "../../helpers/getterFunctions";
+import { getEvents } from "../../helpers/utils";
+import { Form } from "react-bootstrap";
 
 function CreateCollection() {
   const [files, setFiles] = useState([]);
@@ -69,6 +73,11 @@ function CreateCollection() {
   //   };
   //   fetch();
   // }, []);
+
+  useEffect(async () => {
+    let res = await getEvents("0xbcb4da834f01c0e8d231d0ad36a29559d69d9f2c");
+    console.log("res", res);
+  }, []);
 
   useEffect(() => {
     if (currentUser) {
@@ -284,7 +293,7 @@ function CreateCollection() {
             window.location.href = "/createcollection";
           }, 1000);
         } catch (e) {
-          console.log("e", e);
+          console.log("error", e);
           return;
         }
       } else {
@@ -448,8 +457,8 @@ function CreateCollection() {
     try {
       const token = await exportInstance(importedAddress, abi);
       let originalSupply = await token.totalSupply();
-
-      if (isNew) { 
+      let dbSupply;
+      if (isNew) {
         let collection = await getAllCollections({
           contractAddress: importedAddress.toLowerCase(),
         });
@@ -466,7 +475,53 @@ function CreateCollection() {
 
           res = await createCollection(fd);
           console.log("coll create", res._id);
+
+          try {
+            let _nfts = await getNFTList({
+              page: 1,
+              limit: 12,
+              collectionID: res._id,
+              searchText: "",
+            });
+            console.log("res", _nfts);
+
+            let nftCount = _nfts.length;
+            dbSupply = parseInt(nftCount);
+
+            await importCollection({
+              address: importedAddress,
+              totalSupply: parseInt(originalSupply),
+            });
+          } catch (e) {
+            console.log("error", e);
+            return;
+          }
         } else {
+          res = await UpdateCollection({
+            contractAddress: importedAddress.toLowerCase(),
+            link: importedCollectionLink,
+            isDeployed: 1,
+            id: selectedCollectionId,
+            isOnMarketplace: 1,
+            isImported: 1,
+            totalSupply: parseInt(originalSupply),
+          });
+          let _nfts = await getNFTList({
+            page: 1,
+            limit: 12,
+            collectionID: res._id,
+            searchText: "",
+          });
+          console.log("res", _nfts);
+
+          let nftCount = _nfts.length;
+          dbSupply = parseInt(nftCount);
+
+          await importCollection({
+            address: importedAddress,
+            totalSupply: parseInt(originalSupply),
+          });
+          console.log("coll update", res._id);
           NotificationManager.error("Collection already imported", "", 800);
           return;
         }
@@ -480,27 +535,48 @@ function CreateCollection() {
           isImported: 1,
           totalSupply: parseInt(originalSupply),
         });
+        let _nfts = await getNFTList({
+          page: 1,
+          limit: 12,
+          collectionID: res._id,
+          searchText: "",
+        });
+        console.log("res", _nfts);
+
+        let nftCount = _nfts.length;
+        dbSupply = parseInt(nftCount);
         console.log("coll update", res._id);
       }
-      let importRes = await fetchTokens(
-        importedAddress.toLowerCase(),
-        abi,
-        currentUser,
-        res._id
-      );
+
+      for (let i = dbSupply; i < parseInt(originalSupply); i++) {
+        let tokenId = await token.tokenByIndex(i);
+        console.log("tokenId", tokenId);
+        try {
+          let uri = await token.tokenURI(tokenId);
+          console.log("uri", uri);
+          let resp = await fetch(uri);
+          resp = await resp.json();
+          let owner = await GetOwnerOfToken(
+            importedAddress,
+            parseInt(tokenId),
+            true,
+            currentUser
+          );
+          resp.owner = owner;
+          resp.tokenID = parseInt(tokenId);
+          resp.collectionAddress = importedAddress;
+          resp.isOnMarketplace = 1;
+          resp.isImported = 1;
+          resp.collectionID = res._id;
+          console.log("resp", resp);
+          await createNft({ nftData: resp });
+        } catch (e) {
+          console.log("error", e);
+          continue;
+        }
+      }
     } catch (e) {
-      console.log("e");
-      return;
-    }
-    try {
-      let importRes = await ImportNFTs(
-        importedAddress.toLowerCase(),
-        abi,
-        currentUser,
-        res._id
-      );
-    } catch (e) {
-      console.log("e");
+      console.log("error", e);
       return;
     }
   };
