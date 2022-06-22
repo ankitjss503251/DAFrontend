@@ -300,6 +300,7 @@ const Header = function () {
 
   const onLogin = async () => {
     const wallets = await onboard.connectWallet();
+    if (wallets.length !== 0) {
     await onboard.setChain({
       chainId: process.env.REACT_APP_CHAIN_ID,
     });
@@ -356,6 +357,7 @@ const Header = function () {
     } catch (e) {
       NotificationManager.error(e);
     }
+  }
   };
 
   const handleSearch = async (e) => {
