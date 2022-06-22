@@ -112,7 +112,6 @@ const Header = function () {
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState();
   const [chainId, setChainId] = useState();
-  const [isAccountSwitched, setIsAccountSwitched] = useState(false);
   const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [scolns, setSColns] = useState([]);
@@ -191,7 +190,6 @@ const Header = function () {
   }, [account, userDetails?.username]);
 
   const connectWallet = async () => {
-    setIsAccountSwitched(false);
     const wallets = await onboard.connectWallet();
     await onboard.setChain({
       chainId: process.env.REACT_APP_CHAIN_ID,
@@ -237,6 +235,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -273,6 +272,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message, "", 800);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -288,8 +288,8 @@ const Header = function () {
   const disconnectWallet = async () => {
     await onboard.disconnectWallet({ label: label });
     await Logout(cookies["selected_account"]);
-    NotificationManager.success("User Logged out Successfully", "", 800);
     refreshState();
+    NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
 
@@ -322,7 +322,6 @@ const Header = function () {
             refreshState();
             return;
           } else {
-            NotificationManager.success(res.message);
             setAccount(primaryWallet.accounts[0].address);
             setLabel(primaryWallet.label);
             setCookie("selected_account", address, { path: "/" });
@@ -338,6 +337,8 @@ const Header = function () {
               path: "/",
             });
             getUserProfile();
+            NotificationManager.success(res.message);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -377,36 +378,6 @@ const Header = function () {
 
   return (
     <header id='myHeader'>
-      {isAccountSwitched ? (
-        <PopupModal
-          content={
-            <div className='switch_container'>
-              <h3>Account Switched</h3>
-              <p className='my-4 mr-2'>
-                Please logout from the current account if you would like to
-                switch the account?
-              </p>
-              <div className='d-flex justify-content-between align-items-center'>
-                <button
-                  className='btn confirm_btn'
-                  onClick={() => {
-                    disconnectWallet();
-                  }}>
-                  Logout
-                </button>
-                <button
-                  className='btn cancel_btn'
-                  onClick={() => setIsAccountSwitched(false)}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          }
-          handleClose={() => setIsAccountSwitched(false)}
-        />
-      ) : (
-        ""
-      )}
       {isChainSwitched ? (
         <PopupModal
           content={
