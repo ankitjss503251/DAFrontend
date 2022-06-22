@@ -22,7 +22,7 @@ import erc1155Abi from "./../config/abis/simpleERC1155.json";
 import {
   GetOwnerOfToken,
   getPaymentTokenInfo,
-  // getUsersTokenBalance,
+  getUsersTokenBalance,
   // // isEmpty,
   // readReceipt,
 } from "./getterFunctions";
@@ -32,6 +32,7 @@ import {
   UpdateOrder,
   DeleteOrder,
   createOrder,
+  createBidNft,
   // InsertHistory,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
@@ -43,7 +44,7 @@ import {
 } from "./getterFunctions";
 // import simplerERC721ABI from "./../config/abis/simpleERC721.json";
 // import simplerERC1155ABI from "./../config/abis/simpleERC1155.json";
-// import { convertToEth } from "./numberFormatter";
+import { convertToEth } from "./numberFormatter";
 import erc721Abi from "./../config/abis/simpleERC721.json";
 import { slowRefresh } from "./NotifyStatus";
 
@@ -338,7 +339,7 @@ export const putOnMarketplace = async (account, orderData) => {
       _deadline = endTime;
       _price = ethers.utils.parseEther(orderData.minimumBid).toString();
     } else if (orderData.chosenType === 2) {
-      _deadline = new Date().valueOf() / 1000 + 31536000 * 10;
+      _deadline = GENERAL_TIMESTAMP;
       _price = ethers.utils.parseEther(orderData.minimumBid).toString();
     }
     sellerOrder = [
@@ -426,17 +427,9 @@ export const putOnMarketplace = async (account, orderData) => {
       deadline: _deadline,
       signature: signature,
       tokenID: orderData.tokenId,
-      // auctionEndDate: _auctionEndDate,
       salt: orderData.salt,
     };
 
-    // let historyMetaData = {
-    //   nftId: "62428d42f2a67d12e95d3c3c",
-    //   userId: "62318683b799e41d5608fb67",
-    //   action: "Bids",
-    //   actionMeta: "Default",
-    //   message: "UserName Created NFT",
-    // };
     let data = await createOrder(reqParams);
     console.log("put on sale", data);
 
@@ -494,6 +487,165 @@ export const handleRemoveFromSale = async (orderId, account) => {
     // console.log("res", res);
   } catch (e) {
     console.log("error while updating database", e);
+  }
+};
+
+export const createBid = async (
+  nftID,
+  orderID,
+  ownerAccount,
+  buyerAccount,
+  erc721,
+  qty = 1,
+  bidPrice
+) => {
+  console.log(
+    "payload",
+    nftID,
+    orderID,
+    ownerAccount,
+    buyerAccount,
+    erc721,
+    qty,
+    bidPrice
+  );
+  let SellerOrder;
+  let sellerOrder = [];
+  let buyerOrder = [];
+  try {
+    SellerOrder = await buildSellOrder(orderID);
+    for (let index = 0; index < 11; index++) {
+      switch (index) {
+        case 0:
+          sellerOrder.push(SellerOrder[index]);
+          buyerOrder.push(buyerAccount);
+          break;
+        case 1:
+          sellerOrder.push(SellerOrder[index]);
+          buyerOrder.push(SellerOrder[index]);
+          break;
+        case 3:
+          sellerOrder.push(SellerOrder[index]);
+          console.log("bid nQuantity", Number(qty));
+          buyerOrder.push(Number(qty));
+          break;
+        case 5:
+          sellerOrder.push(SellerOrder[index]);
+          buyerOrder.push(SellerOrder[index]);
+          break;
+        case 6:
+          sellerOrder.push(SellerOrder[index]);
+          buyerOrder.push(
+            new BigNumber(bidPrice.toString())
+              .multipliedBy(new BigNumber(qty.toString()))
+              .toString()
+          );
+
+          break;
+        case 8:
+          sellerOrder.push([]);
+          buyerOrder.push([]);
+          break;
+        case 9:
+          sellerOrder.push([]);
+          buyerOrder.push([]);
+          break;
+        default:
+          sellerOrder.push(parseInt(SellerOrder[index]));
+          buyerOrder.push(parseInt(SellerOrder[index]));
+      }
+    }
+    console.log(
+      "seller order and buyer order",
+      sellerOrder,
+      "----",
+      buyerOrder,
+      buyerAccount
+    );
+
+    try {
+      let allowance = (
+        await getPaymentTokenInfo(buyerAccount, sellerOrder[5])
+      ).allowance.toString();
+      console.log(
+        "allowance",
+        new BigNumber(allowance).isLessThan(
+          new BigNumber(bidPrice.toString())
+            .multipliedBy(new BigNumber(qty.toString()))
+            .toString()
+        )
+      );
+      let userTokenBal = await getUsersTokenBalance(
+        buyerOrder[0],
+        buyerOrder[5]
+      );
+
+      let usrHaveQuantity = await GetOwnerOfToken(
+        sellerOrder[1],
+        sellerOrder[2],
+        erc721,
+        sellerOrder[0]
+      );
+
+      console.log("usrHaveQuantity", usrHaveQuantity);
+
+      console.log(
+        "token balance",
+        new BigNumber(bidPrice)
+          .multipliedBy(new BigNumber(qty.toString()))
+          .toString(),
+        new BigNumber(convertToEth(userTokenBal)).toString()
+      );
+      if (
+        new BigNumber(bidPrice)
+          .multipliedBy(new BigNumber(qty.toString()))
+          .isGreaterThan(new BigNumber(userTokenBal))
+      ) {
+        NotificationManager.error("User don't have sufficient token balance");
+        return;
+      }
+
+      if (
+        new BigNumber(allowance).isLessThan(
+          new BigNumber(bidPrice.toString().toString())
+            .multipliedBy(new BigNumber(qty.toString()))
+            .toString()
+        )
+      ) {
+        console.log("hereeee");
+        let approvalRes = await handleApproveToken(
+          buyerOrder[0],
+          buyerOrder[5]
+        );
+        if (approvalRes === false) return;
+      }
+
+      let signature = await getSignature(buyerAccount, ...buyerOrder);
+      if (signature === false) return;
+      if (signature) {
+        let reqParams = {
+          owner: ownerAccount,
+          bidStatus: "Bid",
+          bidPrice: bidPrice.toString(),
+          nftID: nftID,
+          orderID: orderID,
+          bidQuantity: Number(qty),
+          buyerSignature: signature,
+        };
+        console.log("buyer signature", signature);
+        await createBidNft(reqParams);
+        NotificationManager.success("Bid Placed Successfully");
+        // slowRefresh();
+      }
+
+      // window.location.reload();
+    } catch (e) {
+      console.log("error in api", e);
+      return;
+    }
+  } catch (e) {
+    console.log("error in api", e);
+    return;
   }
 };
 
@@ -569,167 +721,6 @@ export const handleRemoveFromSale = async (orderId, account) => {
 //       NotificationManager.error("User denied ");
 //       return false;
 //     }
-//   }
-// };
-
-// export const createBid = async (
-//   nftID,
-//   orderID,
-//   ownerAccount,
-//   buyerAccount,
-//   erc721,
-//   qty = 1,
-//   bidPrice
-// ) => {
-//   console.log(
-//     "payload",
-//     nftID,
-//     orderID,
-//     ownerAccount,
-//     buyerAccount,
-//     erc721,
-//     qty,
-//     bidPrice
-//   );
-//   let SellerOrder;
-//   let sellerOrder = [];
-//   let buyerOrder = [];
-//   try {
-//     SellerOrder = await buildSellOrder(orderID);
-//     for (let index = 0; index < 11; index++) {
-//       switch (index) {
-//         case 0:
-//           sellerOrder.push(SellerOrder[index]);
-//           buyerOrder.push(buyerAccount);
-//           break;
-//         case 1:
-//           sellerOrder.push(SellerOrder[index]);
-//           buyerOrder.push(SellerOrder[index]);
-//           break;
-//         case 3:
-//           sellerOrder.push(SellerOrder[index]);
-//           console.log("bid nQuantity", Number(qty));
-//           buyerOrder.push(Number(qty));
-//           break;
-//         case 5:
-//           sellerOrder.push(SellerOrder[index]);
-//           buyerOrder.push(SellerOrder[index]);
-//           break;
-//         case 6:
-//           sellerOrder.push(SellerOrder[index]);
-//           buyerOrder.push(
-//             new BigNumber(
-//               ethers.utils.parseEther(bidPrice.toString()).toString()
-//             )
-//               .multipliedBy(new BigNumber(qty.toString()))
-//               .toString()
-//           );
-
-//           break;
-//         case 8:
-//           sellerOrder.push([]);
-//           buyerOrder.push([]);
-//           break;
-//         case 9:
-//           sellerOrder.push([]);
-//           buyerOrder.push([]);
-//           break;
-//         default:
-//           sellerOrder.push(parseInt(SellerOrder[index]));
-//           buyerOrder.push(parseInt(SellerOrder[index]));
-//       }
-//     }
-//     console.log(
-//       "seller order and buyer order",
-//       sellerOrder,
-//       "----",
-//       buyerOrder,
-//       buyerAccount
-//     );
-
-//     try {
-//       let allowance = (
-//         await getPaymentTokenInfo(buyerAccount, sellerOrder[5])
-//       ).allowance.toString();
-//       console.log(
-//         "allowance",
-//         new BigNumber(allowance).isLessThan(
-//           new BigNumber(ethers.utils.parseEther(bidPrice.toString()).toString())
-//             .multipliedBy(new BigNumber(qty.toString()))
-//             .toString()
-//         )
-//       );
-//       let userTokenBal = await getUsersTokenBalance(
-//         buyerOrder[0],
-//         buyerOrder[5]
-//       );
-
-//       let usrHaveQuantity = await GetOwnerOfToken(
-//         sellerOrder[1],
-//         sellerOrder[2],
-//         erc721,
-//         sellerOrder[0]
-//       );
-
-//       console.log("usrHaveQuantity", usrHaveQuantity);
-
-//       console.log(
-//         "token balance",
-//         new BigNumber(bidPrice)
-//           .multipliedBy(new BigNumber(qty.toString()))
-//           .toString(),
-//         new BigNumber(convertToEth(userTokenBal)).toString()
-//       );
-//       if (
-//         new BigNumber(bidPrice)
-//           .multipliedBy(new BigNumber(qty.toString()))
-//           .isGreaterThan(new BigNumber(userTokenBal))
-//       ) {
-//         NotificationManager.error("User don't have sufficient token balance");
-//         return;
-//       }
-
-//       if (
-//         new BigNumber(allowance).isLessThan(
-//           new BigNumber(ethers.utils.parseEther(bidPrice.toString()).toString())
-//             .multipliedBy(new BigNumber(qty.toString()))
-//             .toString()
-//         )
-//       ) {
-//         console.log("hereeee");
-//         let approvalRes = await handleApproveToken(
-//           buyerOrder[0],
-//           buyerOrder[5]
-//         );
-//         if (approvalRes === false) return;
-//       }
-
-//       let signature = await getSignature(buyerAccount, ...buyerOrder);
-//       if (signature === false) return;
-//       if (signature) {
-//         let reqParams = {
-//           oOwner: ownerAccount,
-//           oBidStatus: "Bid",
-//           oBidPrice: ethers.utils.parseEther(bidPrice.toString()).toString(),
-//           oNFTId: nftID,
-//           oOrderId: orderID,
-//           oBidQuantity: Number(qty),
-//           oBuyerSignature: signature,
-//         };
-//         console.log("buyer signature", signature);
-//         await createBidNft(reqParams);
-//         NotificationManager.success("Bid Placed Successfully");
-//         slowRefresh();
-//       }
-
-//       // window.location.reload();
-//     } catch (e) {
-//       console.log("error in api", e);
-//       return;
-//     }
-//   } catch (e) {
-//     console.log("error in api", e);
-//     return;
 //   }
 // };
 
