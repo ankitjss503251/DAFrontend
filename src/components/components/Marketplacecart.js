@@ -21,7 +21,6 @@ function Marketplacecart() {
         isMinted: "",
       };
       const res = await getNFTs(reqData);
-      console.log("result of getAllNFTs helper fn--->", res);
       setAllNFTs(res);
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);

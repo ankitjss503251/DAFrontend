@@ -79,11 +79,11 @@ const onboard = Onboard({
     icon: Logo,
     logo: Logo,
     description: "DigitalArms using Onboard",
-    agreement: {
-      version: "1.0.0",
-      termsUrl: "https://www.blocknative.com/terms-conditions",
-      privacyUrl: "https://www.blocknative.com/privacy-policy",
-    },
+    // agreement: {
+    //   version: "1.0.0",
+    //   termsUrl: "https://www.blocknative.com/terms-conditions",
+    //   privacyUrl: "https://www.blocknative.com/privacy-policy",
+    // },
     recommendedInjectedWallets: [
       { name: "MetaMask", url: "https://metamask.io" },
       { name: "Coinbase", url: "https://wallet.coinbase.com/" },
@@ -120,6 +120,7 @@ const Header = function () {
   const [showSearchDiv, setShowSearchDiv] = useState("");
   const [searchedText, setShowSearchedText] = useState("");
   const [catg, setCatg] = useState([]);
+  const [label, setLabel] = useState("");
 
   useEffect(async () => {
     const cat = await getCategory();
@@ -136,6 +137,13 @@ const Header = function () {
         chainId: process.env.REACT_APP_CHAIN_ID,
       });
       setProvider(s[0].provider);
+      setLabel(s[0].label);
+      setCookie("label", s[0].label, { path: "/" });
+      setCookie("selected_account", s[0].accounts[0].address, { path: "/" });
+      setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
+        path: "/",
+      });
+      setCookie("balance", s[0].accounts[0].balance.MATIC, { path: "/" });
     }
   }, []);
 
@@ -155,7 +163,9 @@ const Header = function () {
     if (provider) {
       provider.on("accountsChanged", (accounts) => {
         if (account && accounts[0] !== undefined) {
-          setIsAccountSwitched(true);
+          const wallets = onboard.state.get().wallets;
+          setProvider(wallets[0].provider);
+          userAuth(wallets[0], wallets[0].accounts[0].address);
         }
         if (accounts[0] === undefined) {
           refreshState();
@@ -190,11 +200,17 @@ const Header = function () {
     setChainId(primaryWallet.chains[0].id);
     console.log("provider", primaryWallet.provider);
     setProvider(primaryWallet.provider);
-    const address = wallets[0].accounts[0].address;
+    const address = primaryWallet.accounts[0].address;
+    try {
+      userAuth(primaryWallet, address);
+    } catch (e) {
+      console.log("Error in user auth", e);
+    }
+  };
+
+  const userAuth = async (primaryWallet, address) => {
     try {
       const isUserExist = await checkuseraddress(address);
-      // console.log("selected_account", address);
-      // console.log("isUserExist", isUserExist);
       if (isUserExist === "User not found") {
         try {
           const res = await Register(address);
@@ -207,17 +223,20 @@ const Header = function () {
             refreshState();
             return;
           } else {
-            NotificationManager.success(res.message);
             setAccount(primaryWallet.accounts[0].address);
-            setCookie("label", primaryWallet.label, { path: "/" });
+            setLabel(primaryWallet.label);
             setCookie("selected_account", address, { path: "/" });
+            setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
-              parseInt(wallets[0].chains[0].id, 16).toString(),
+              parseInt(primaryWallet.chains[0].id, 16).toString(),
               { path: "/" }
             );
-            setCookie("balance", wallets[0].accounts[0].balance, { path: "/" });
+            setCookie("balance", primaryWallet.accounts[0].balance, {
+              path: "/",
+            });
             getUserProfile();
+            NotificationManager.success(res.message);
             return;
           }
         } catch (e) {
@@ -240,17 +259,20 @@ const Header = function () {
             refreshState();
             return;
           } else {
-            NotificationManager.success(res.message, "", 800);
-            setCookie("label", primaryWallet.label, { path: "/" });
             setAccount(primaryWallet.accounts[0].address);
+            setLabel(primaryWallet.label);
             setCookie("selected_account", address, { path: "/" });
+            setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
-              parseInt(wallets[0].chains[0].id, 16).toString(),
+              parseInt(primaryWallet.chains[0].id, 16).toString(),
               { path: "/" }
             );
-            setCookie("balance", wallets[0].accounts[0].balance, { path: "/" });
+            setCookie("balance", primaryWallet.accounts[0].balance, {
+              path: "/",
+            });
             getUserProfile();
+            NotificationManager.success(res.message, "", 800);
             return;
           }
         } catch (e) {
@@ -264,10 +286,10 @@ const Header = function () {
   };
 
   const disconnectWallet = async () => {
-    await onboard.disconnectWallet({ label: cookies["label"] });
+    await onboard.disconnectWallet({ label: label });
     await Logout(cookies["selected_account"]);
-    refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);
+    refreshState();
     slowRefresh(1000);
   };
 
@@ -277,12 +299,9 @@ const Header = function () {
       chainId: process.env.REACT_APP_CHAIN_ID,
     });
     const primaryWallet = wallets[0];
-
     setChainId(primaryWallet.chains[0].id);
-    // console.log("provider", primaryWallet.provider);
     setProvider(primaryWallet.provider);
     const address = wallets[0].accounts[0].address;
-
     try {
       const isUserExist = await checkuseraddress(address);
       console.log("selected_account", address);
@@ -304,9 +323,10 @@ const Header = function () {
             return;
           } else {
             NotificationManager.success(res.message);
-            setCookie("label", primaryWallet.label, { path: "/" });
             setAccount(primaryWallet.accounts[0].address);
+            setLabel(primaryWallet.label);
             setCookie("selected_account", address, { path: "/" });
+            setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
               parseInt(wallets[0].chains[0].id, 16).toString(),

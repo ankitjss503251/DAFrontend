@@ -74,11 +74,11 @@ const onboard = Onboard({
     icon: Logo,
     logo: Logo,
     description: "DigitalArms using Onboard",
-    agreement: {
-      version: "1.0.0",
-      termsUrl: "https://www.blocknative.com/terms-conditions",
-      privacyUrl: "https://www.blocknative.com/privacy-policy",
-    },
+    // agreement: {
+    //   version: "1.0.0",
+    //   termsUrl: "https://www.blocknative.com/terms-conditions",
+    //   privacyUrl: "https://www.blocknative.com/privacy-policy",
+    // },
     recommendedInjectedWallets: [
       { name: "MetaMask", url: "https://metamask.io" },
       { name: "Coinbase", url: "https://wallet.coinbase.com/" },
