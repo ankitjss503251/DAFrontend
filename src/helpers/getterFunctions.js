@@ -609,6 +609,7 @@ export const getNFTs = async (req) => {
           createdBy: nft.createdBy,
           type: nft.type,
           attributes: nft.attributes,
+          totalQuantity: nft.totalQuantity
         };
       })
     : (formattedData[0] = {});

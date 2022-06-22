@@ -107,7 +107,7 @@ function NFTDetails() {
 
         if (id) {
           const _orders = await getOrderByNftID({ nftID: id });
-          console.log("orders123", _orders?.results?.length);
+          console.log("orders123", _orders?.results);
           setOrders(_orders?.results);
         }
       } catch (e) {
@@ -319,11 +319,13 @@ function NFTDetails() {
                   {Number(convertToEth(collection?.price)).toFixed(4)} HNTR
                 </div>
                 {console.log("is owned", owned, orders?.length)}
+                
+
                 {orders.length <= 0 ? (
                   owned ? (
                     <button
                       type='button'
-                      className='yellow_btn mr-3 mb-3'
+                      className='title_color buy_now'
                       data-bs-toggle='modal'
                       data-bs-target='#detailPop'>
                       {console.log(
@@ -340,12 +342,13 @@ function NFTDetails() {
                     ""
                   )
                 ) : (
-                  "Buy Now"
+                  <button type='button' className='title_color buy_now'>Buy Now</button>
                 )}
 
                 <button type='button' className='border_btn title_color'>
                   Bids / Offers
                 </button>
+               
               </div>
             </div>
           </div>
@@ -575,11 +578,16 @@ function NFTDetails() {
                     name='item_qt'
                     id='item_qt'
                     min='1'
-                    disabled=''
+                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
                     className='form-control input_design'
                     placeholder='Please Enter Quantity'
                     value={item_qt}
-                    onChange={(event) => setItem_qt(event.target.value)}
+                    onChange={(event) => {
+                      if(NFTDetails.type !== 1 && event.target.value > NFTDetails?.totalQuantity){
+                        NotificationManager.error("Quantity must be less than or equal to total quantity.","",800);
+                        return;
+                      }
+                      setItem_qt(event.target.value)}}
                   />
                 </div>
                 <div id='tab_opt_3' className='mb-3 put_hide'>
