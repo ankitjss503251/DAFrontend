@@ -6,15 +6,18 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import {
+  createBid,
   handleBuyNft,
   handleRemoveFromSale,
 } from "../../helpers/sendFunctions";
+
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
 
   const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);
+  const [bids, setBids] = useState([]);
 
   useEffect(() => {
     console.log("cookies.selected_account", cookies.selected_account);
@@ -30,6 +33,7 @@ function NFTlisting(props) {
         const _orders = await getOrderByNftID({ nftID: props.id });
         console.log("orders", _orders?.results?.length);
         setOrders(_orders?.results);
+       
       }
     };
     fetch();
@@ -100,15 +104,25 @@ function NFTlisting(props) {
                                 className="small_border_btn small_btn"
                                 onClick={async () => {
                                   if (currentUser) {
-                                    await handleBuyNft(
-                                      o._id,
-                                      props?.NftDetails?.type == 1,
-                                      currentUser,
-                                      "1000000000000",
-                                      1,
-                                      false,
-                                      props?.NftDetails?.collectionAddress?.toLowerCase()
-                                    );
+                                    o.salesType === 0
+                                      ? await handleBuyNft(
+                                          o._id,
+                                          props?.NftDetails?.type == 1,
+                                          currentUser,
+                                          "1000000000000",
+                                          1,
+                                          false,
+                                          props?.NftDetails?.collectionAddress?.toLowerCase()
+                                        )
+                                      : await createBid(
+                                          o.nftID,
+                                          o._id,
+                                          o.sellerID?._id,
+                                          currentUser,
+                                          props?.NftDetails?.type,
+                                          1,
+                                          o.price.$numberDecimal
+                                        );
                                   } else {
                                     console.log("wallet not found");
                                   }

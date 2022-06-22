@@ -428,7 +428,7 @@ function NFTDetails() {
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>Offers</h3>
               <div className='table-responsive'>
-                <NFToffer />
+                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails}/>
               </div>
             </div>
             <div className='col-md-12 mb-5'>
