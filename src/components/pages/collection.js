@@ -14,19 +14,14 @@ import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCollections, getNFTs, getCategory } from "../../helpers/getterFunctions";
+import {
+  getCollections,
+  getNFTs,
+  getCategory,
+} from "../../helpers/getterFunctions";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
-
-const bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
-
+import BGImg from "../../assets/images/background.jpg"
 
 
 const options = [
@@ -39,6 +34,15 @@ function Collection() {
   var bgImgarrow = {
     backgroundImage: `url(${arrow})`,
     backgroundRepeat: "no-repeat",
+  };
+
+  const bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
   };
 
   const gridtwo = () => {
@@ -61,18 +65,18 @@ function Collection() {
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [collectionDetails, setCollectionDetails] = useState([]);
   const [isCopied, setIsCopied] = useState(false);
-  const [nftList, setNftList] = useState("");
+  const [nftList, setNftList] = useState([]);
   const [category, setCategory] = useState([]);
   const { id } = useParams();
 
-  
-  useEffect(async() => {
-    try {const c = await getCategory();
-     setCategory(c);}
-     catch(e){
-       console.log("Error",e);
-     }
-   },[]);
+  useEffect(async () => {
+    try {
+      const c = await getCategory();
+      setCategory(c);
+    } catch (e) {
+      console.log("Error", e);
+    }
+  }, []);
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -83,6 +87,7 @@ function Collection() {
   const [togglemode, setTogglemode] = useState("filterhide");
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
   const { searchedText } = useParams();
 
   const filterToggle = () => {
@@ -98,14 +103,14 @@ function Collection() {
     }
   };
 
-  
-  useEffect(async() => {
-    try {const c = await getCategory();
-     setCategory(c);}
-     catch(e){
-       console.log("Error",e);
-     }
-   },[]);
+  useEffect(async () => {
+    try {
+      const c = await getCategory();
+      setCategory(c);
+    } catch (e) {
+      console.log("Error", e);
+    }
+  }, []);
 
   useEffect(async () => {
     let temp = nftList;
@@ -114,30 +119,44 @@ function Collection() {
         page: 1,
         limit: 1,
         collectionID: id,
-        searchText: searchedText ? searchedText : ""
+        searchText: searchedText ? searchedText : "",
       };
       const res = await getCollections(reqData);
       console.log("collll", res[0]);
       setCollectionDetails(res[0]);
       const data = {
         page: currPage,
-        limit: 1,
-        collectionID: res[0]._id,
+        limit: 12,
+        collectionID: id,
       };
       const nfts = await getNFTs(data);
       if (nfts.length > 0) {
+        setLoadMoreDisabled("");
         temp = [...temp, nfts];
-        setNftList(temp);
         setCurrPage(currPage + 1);
+        setNftList(temp[0]);
+        for(let i = 0; i < temp[0].length; i++){
+          temp[0][i] = {
+            ...temp[0][i],
+            price: res[0]?.price
+          }
+        }
       }
-     
+      if (!nftList && nfts.length <= 0) {
+        setLoadMoreDisabled("disabled");
+      }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
   }, [loadMore]);
 
+
+
   return (
     <div style={bgImgStyle}>
+       {loadMoreDisabled
+        ? NotificationManager.info("No more items to load")
+        : ""}
       <section
         className='collection_banner pdd_8'
         style={{
@@ -289,7 +308,7 @@ function Collection() {
                   class='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                   <option value='1' selected>
+                  <option value='1' selected>
                     Price: Low to High
                   </option>
                   <option value='2'>Price: High to Low</option>
@@ -311,32 +330,34 @@ function Collection() {
                 </button> */}
               </div>
             </div>
-           
           </div>
         </div>
       </section>
       <section className='collection_list mb-5 pb-5'>
         <div className='container'>
           <div className='row'>
-            {nftList
-              ? nftList.map((card) => {
-                  card[0] = { ...card[0], price: collectionDetails?.price };
-                  return (
-                    <div className={grid} key={card.id}>
-                      <CollectionList
-                        nft={card[0]}
-                        collectionName={collectionDetails?.name}
-                      />
-                    </div>
-                  );
-                })
-              : ""}
-            {nftList.length > 4 ?  <div class='col-md-12 text-center mt-5'>
-              <a class='view_all_bdr' onClick={() => setLoadMore(!loadMore)}>
-                Load More
-              </a>
-            </div> : ""}
-           
+            {
+            nftList.length > 0 ? nftList?.map((n, k) =>{
+              return (
+                <div className={grid} key={k}>
+                  <CollectionList
+                    nft={n}
+                    collectionName={collectionDetails?.name}
+                  />
+                </div>
+              )
+            }) : ""
+            }
+
+            {nftList ? (
+              <div class='col-md-12 text-center mt-5'>
+                <button class={`btn view_all_bdr ${loadMoreDisabled}`} onClick={() => setLoadMore(!loadMore)}>
+                  Load More
+                </button>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </section>
