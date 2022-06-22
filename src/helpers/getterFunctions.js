@@ -648,7 +648,6 @@ export const getOrderByNftID = async (reqBody) => {
 
   try {
     data = await GetOrdersByNftId(reqBody);
-    console.log("data in getOrderByNftID", data);
   } catch (e) {
     console.log("Error in getOrderByNftID API", e);
   }
