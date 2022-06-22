@@ -191,9 +191,13 @@ const Header = function () {
 
   const connectWallet = async () => {
     const wallets = await onboard.connectWallet();
-    await onboard.setChain({
-      chainId: process.env.REACT_APP_CHAIN_ID,
-    });
+    console.log("wallets", wallets);
+    if (wallets.length !== 0) {
+      await onboard.setChain({
+        chainId: process.env.REACT_APP_CHAIN_ID,
+      });
+    
+
     const primaryWallet = wallets[0];
     setChainId(primaryWallet.chains[0].id);
     console.log("provider", primaryWallet.provider);
@@ -204,6 +208,7 @@ const Header = function () {
     } catch (e) {
       console.log("Error in user auth", e);
     }
+  }
   };
 
   const userAuth = async (primaryWallet, address) => {

@@ -164,6 +164,7 @@ const Navbar = (props) => {
 
   const connectWallet = async () => {
     const wallets = await onboard.connectWallet();
+    if (wallets.length !== 0) {
     await onboard.setChain({
       chainId: process.env.REACT_APP_CHAIN_ID,
     });
@@ -177,6 +178,7 @@ const Navbar = (props) => {
     } catch (e) {
       console.log("Error in user auth", e);
     }
+  }
   };
 
   const userAuth = async (primaryWallet, address) => {
