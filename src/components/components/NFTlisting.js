@@ -22,7 +22,7 @@ function NFTlisting(props) {
   useEffect(() => {
     console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    else NotificationManager.error("Connect Yout Wallet", "", 800);
+    // else NotificationManager.error("Connect Yout Wallet", "", 800);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);

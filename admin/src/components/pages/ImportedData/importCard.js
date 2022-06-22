@@ -25,7 +25,7 @@ const ImportCard = () => {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    else NotificationManager.error("Connect Yout Metamask", "", 800);
+    // else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
 
     console.log("current user is---->", currentUser, cookies.selected_account);

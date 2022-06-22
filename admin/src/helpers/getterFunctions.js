@@ -1,5 +1,6 @@
 import {
   exportInstance,
+  getNFTList,
   //   GetCollectionsByAddress,
   //   GetCollectionsNftList,
   //   GetMyCollectionsList,
@@ -184,10 +185,10 @@ export const fetchTokens = async (address, abi, currentUser, collId) => {
       limit: 12,
       searchText: address,
     });
-    let _nfts = await GetCombinedNfts({
+    let _nfts = await getNFTList({
       page: 1,
       limit: 12,
-      collectionAddress: address,
+      collectionID: collId,
       searchText: "",
     });
     console.log("res", _nfts);
@@ -199,13 +200,13 @@ export const fetchTokens = async (address, abi, currentUser, collId) => {
       result.results[0][0] &&
       parseInt(originalSupply) == parseInt(result.results[0][0].totalSupply) &&
       _nfts &&
-      _nfts.length > 0 &&
-      !isEmptyObject(_nfts[0])
+      _nfts.data > 0 &&
+      !isEmptyObject(_nfts.data)
     ) {
       result = result.results[0][0];
       totalSupply = parseInt(result.totalSupply);
       console.log("in if");
-      _nfts = _nfts[0];
+      _nfts = _nfts.data;
       importednftsData = _nfts;
       console.log("nfts", _nfts);
       // setAuthors(nfts);
