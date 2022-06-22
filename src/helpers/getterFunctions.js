@@ -75,11 +75,14 @@ export const GetOwnerOfToken = async (
   );
   console.log("collectionInsatnce", collectionInstance);
   let balance = 0;
+  console.log("isERC721", isERC721);
   if (isERC721) {
+    console.log("is 721");
     let owner = await collectionInstance.ownerOf(tokenId);
     if (owner.toLowerCase() === account.toLowerCase()) {
       balance = "1";
     }
+    console.log("balance", balance.toString());
   } else balance = await collectionInstance.balanceOf(account, tokenId);
   console.log("balance", balance.toString());
   return balance.toString();

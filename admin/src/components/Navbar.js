@@ -244,7 +244,7 @@ const Navbar = (props) => {
   };
 
   const disconnectWallet = async () => {
-    await onboard.disconnectWallet({ label: cookies["label"] });
+    await onboard.disconnectWallet({ label: "MetaMask" });
     await Logout(cookies["selected_account"]);
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);

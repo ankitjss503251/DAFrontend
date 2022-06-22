@@ -460,7 +460,7 @@ export const getCategory = async (data) => {
     headers: {
       Authorization: localStorage.getItem("Authorization"),
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   };
   try {
     let response = await fetch(
@@ -492,17 +492,11 @@ export const createOrder = async (data, isImported) => {
   try {
     console.log("put on marketplace");
     let response;
-    if (isImported) {
-      response = await fetch(
-        process.env.REACT_APP_API_BASE_URL + "/order/createOrderImport",
-        requestOptions
-      );
-    } else {
-      response = await fetch(
-        process.env.REACT_APP_API_BASE_URL + "/order/createOrder",
-        requestOptions
-      );
-    }
+
+    response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/order/createOrder",
+      requestOptions
+    );
 
     const isJson = response.headers
       .get("content-type")
