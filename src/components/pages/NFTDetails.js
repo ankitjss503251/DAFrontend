@@ -45,6 +45,16 @@ function NFTDetails() {
   const [cookies] = useCookies([]);
   const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [isModal, setModal] = useState("");
+  
+  const [logoImg, setLogoImg] = useState();
+  const [coverImg, setCoverImg] = useState();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  const [myBrand, setMyBrand] = useState("");
+  
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -315,7 +325,12 @@ function NFTDetails() {
                   "Buy Now"
                 )}
 
-                <button type="button" className="border_btn title_color">
+                <button type="button" 
+                className="border_btn title_color"
+                data-bs-toggle="modal"
+               data-bs-target="#brandModal"
+               onClick={() => setModal("active")}
+                >
                   Bids / Offers
                 </button>
               </div>
@@ -610,6 +625,163 @@ function NFTDetails() {
           </div>
         </div>
       </div>
+      
+      {/*Bid/Offer Modal*/}
+      <div
+        className={`modal fade createNft ${isModal}`}
+        id="brandModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5
+                className="modal-title text-yellow font-24 font-600"
+                id="exampleModalLabel"
+              >
+                Create New Brand
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form className="row">
+                <div className="mb-1 col-md-4">
+                  <label for="recipient-name" className="col-form-label">
+                    Upload Image *
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      //onChange={handleImageUpload}
+                      //ref={imageUploader}
+                      style={{
+                        display: "none",
+                      }}
+                    />
+                    <div
+                      className="update_btn"
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        position: "relative",
+                      }}
+                      //onClick={() => imageUploader.current.click()}
+                    >
+                      <p className="text-center">Click or Drop here</p>
+                      <img
+                        alt=""
+                        //ref={uploadedImage}
+                        src={"../images/upload.png"}
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          margin: "auto",
+                        }}
+                        className="img-fluid profile_circle_img"
+                      />
+                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="mb-1 col-md-8">
+                  <label for="recipient-name" className="col-form-label">
+                    Upload Collection Cover Image *
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      //onChange={handleImageUpload2}
+                      //ref={imageUploader2}
+                      style={{
+                        display: "none",
+                      }}
+                    />
+                    <div
+                      className="update_btn"
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        position: "relative",
+                      }}
+                      //onClick={() => imageUploader2.current.click()}
+                    >
+                      <h4 className="text-center">Click or Drop here</h4>
+                      <img
+                        alt=""
+                        //ref={uploadedImage2}
+                        src={"../images/upload.png"}
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          margin: "auto",
+                        }}
+                        className="img-fluid profile_circle_img"
+                      />
+                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-12 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Title *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    value={title}
+                    //onChange={(e) => setTitle(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-12 mb-1">
+                  <label for="message-text" className="col-form-label">
+                    Description *
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="message-text"
+                    value={description}
+                    //onChange={(e) => setDescription(e.target.value)}
+                  ></textarea>
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer justify-content-center">
+              <button
+                type="button"
+                className="btn btn-admin text-light"
+                //onClick={handleCreateBrand}
+              >
+                Create Brand
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/*Bid/Offer Modal Ends*/}
       <Footer />
     </div>
   );
