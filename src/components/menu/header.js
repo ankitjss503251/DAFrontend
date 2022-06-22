@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { setDefaultBreakpoints } from "react-socks";
-// import useOnclickOutside from "react-cool-onclickoutside";
-// import AccountModal from "./../components/AccountModal/Accountmodal";
 import { Link, NavLink } from "react-router-dom";
 import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
@@ -18,10 +16,6 @@ import { NotificationManager } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 import { useCookies } from "react-cookie";
 import AllNFTs from "../SVG/AllNFTs";
-import Soldierssvg from "../SVG/Soldierssvg";
-// import HotListsvg from "../SVG/HotListsvg";
-// import NFTrankingsvg from "../SVG/NFTrankingsvg";
-// import LiveAuctonsvg from "../SVG/LiveAuctonsvg";
 import Firearmsvg from "../SVG/Firearmsvg";
 import { slowRefresh } from "./../../helpers/NotifyStatus";
 import PopupModal from "./../components/AccountModal/popupModal";
@@ -135,8 +129,10 @@ const Header = function () {
   useEffect(async () => {
     if (cookies["selected_account"]) {
       setAccount(cookies["selected_account"]);
-      const s = await onboard.connectWallet({ autoSelect: { label: cookies["label"] , disableModals: true }});
-     await onboard.setChain({
+      const s = await onboard.connectWallet({
+        autoSelect: { label: cookies["label"], disableModals: true },
+      });
+      await onboard.setChain({
         chainId: process.env.REACT_APP_CHAIN_ID,
       });
       setProvider(s[0].provider);
@@ -147,7 +143,7 @@ const Header = function () {
     removeCookie("selected_account", { path: "/" });
     removeCookie("chain_id", { path: "/" });
     removeCookie("balance", { path: "/" });
-    // removeCookie("provider", { path : "/"});
+    removeCookie("label", { path: "/" });
     localStorage.clear();
     setAccount("");
     setChainId("");
@@ -155,15 +151,10 @@ const Header = function () {
   };
 
   useEffect(async () => {
-    // console.log("provider in useEffect", provider);
+    console.log("provider in useEffect", provider);
     if (provider) {
       provider.on("accountsChanged", (accounts) => {
-        console.log("account switched!!", accounts[0], "account", account);
-        if (
-          account &&
-          accounts[0] !== undefined &&
-          account !== cookies["selected_account"]
-        ) {
+        if (account && accounts[0] !== undefined) {
           setIsAccountSwitched(true);
         }
         if (accounts[0] === undefined) {
@@ -192,96 +183,80 @@ const Header = function () {
   const connectWallet = async () => {
     setIsAccountSwitched(false);
     const wallets = await onboard.connectWallet();
-    console.log("process.env", process.env.REACT_APP_CHAIN_ID);
-    const success = await onboard.setChain({
+    await onboard.setChain({
       chainId: process.env.REACT_APP_CHAIN_ID,
     });
-    console.log("setChain method", success);
     const primaryWallet = wallets[0];
     setChainId(primaryWallet.chains[0].id);
     console.log("provider", primaryWallet.provider);
     setProvider(primaryWallet.provider);
+    const address = wallets[0].accounts[0].address;
     try {
-      const address = wallets[0].accounts[0].address;
-
-      try {
-        const isUserExist = await checkuseraddress(address);
-        console.log("selected_account", address);
-        console.log("isUserExist", isUserExist);
-        if (isUserExist === "User not found") {
-          try {
-            const res = await Register(address);
-            if (res.message === "Wallet Address required") {
-              NotificationManager.info(res.message);
-              refreshState();
-              return;
-            } else if (res.message === "User already exists") {
-              NotificationManager.error(res.message);
-              refreshState();
-              return;
-            } else {
-              NotificationManager.success(res.message);
-              setAccount(primaryWallet.accounts[0].address);
-              setCookie("label", primaryWallet.label, { path: "/" });
-              setCookie("selected_account", address, { path: "/" });
-              setCookie(
-                "chain_id",
-                parseInt(wallets[0].chains[0].id, 16).toString(),
-                {
-                  path: "/",
-                }
-              );
-              setCookie("balance", wallets[0].accounts[0].balance, {
-                path: "/",
-              });
-
-              getUserProfile();
-              return;
-            }
-          } catch (e) {
-            NotificationManager.error(e);
+      const isUserExist = await checkuseraddress(address);
+      // console.log("selected_account", address);
+      // console.log("isUserExist", isUserExist);
+      if (isUserExist === "User not found") {
+        try {
+          const res = await Register(address);
+          if (res.message === "Wallet Address required") {
+            NotificationManager.info(res.message);
+            refreshState();
+            return;
+          } else if (res.message === "User already exists") {
+            NotificationManager.error(res.message);
+            refreshState();
+            return;
+          } else {
+            NotificationManager.success(res.message);
+            setAccount(primaryWallet.accounts[0].address);
+            setCookie("label", primaryWallet.label, { path: "/" });
+            setCookie("selected_account", address, { path: "/" });
+            setCookie(
+              "chain_id",
+              parseInt(wallets[0].chains[0].id, 16).toString(),
+              { path: "/" }
+            );
+            setCookie("balance", wallets[0].accounts[0].balance, { path: "/" });
+            getUserProfile();
             return;
           }
-        } else {
-          try {
-            const res = await Login(address);
-            console.log("Login API response", res);
-            if (res.message === "Wallet Address required") {
-              NotificationManager.info(res.message);
-              refreshState();
-              return;
-            } else if (
-              res.message === "User not found" ||
-              res.message === "Login Invalid"
-            ) {
-              NotificationManager.error(res.message);
-              refreshState();
-              return;
-            } else {
-              NotificationManager.success(res.message, "", 800);
-              setCookie("label", primaryWallet.label, { path: "/" });
-              setAccount(primaryWallet.accounts[0].address);
-              setCookie("selected_account", address, { path: "/" });
-              setCookie(
-                "chain_id",
-                parseInt(wallets[0].chains[0].id, 16).toString(),
-                {
-                  path: "/",
-                }
-              );
-              setCookie("balance", wallets[0].accounts[0].balance, {
-                path: "/",
-              });
-              getUserProfile();
-              return;
-            }
-          } catch (e) {
-            NotificationManager.error(e);
-            return;
-          }
+        } catch (e) {
+          NotificationManager.error(e);
+          return;
         }
-      } catch (e) {
-        console.log(e);
+      } else {
+        try {
+          const res = await Login(address);
+          console.log("Login API response", res);
+          if (res.message === "Wallet Address required") {
+            NotificationManager.info(res.message);
+            refreshState();
+            return;
+          } else if (
+            res.message === "User not found" ||
+            res.message === "Login Invalid"
+          ) {
+            NotificationManager.error(res.message);
+            refreshState();
+            return;
+          } else {
+            NotificationManager.success(res.message, "", 800);
+            setCookie("label", primaryWallet.label, { path: "/" });
+            setAccount(primaryWallet.accounts[0].address);
+            setCookie("selected_account", address, { path: "/" });
+            setCookie(
+              "chain_id",
+              parseInt(wallets[0].chains[0].id, 16).toString(),
+              { path: "/" }
+            );
+            setCookie("balance", wallets[0].accounts[0].balance, { path: "/" });
+            getUserProfile();
+            return;
+          }
+        } catch (e) {
+          NotificationManager.error(e);
+          return;
+        }
       }
     } catch (e) {
       console.log(e);
@@ -289,10 +264,7 @@ const Header = function () {
   };
 
   const disconnectWallet = async () => {
-    // const [primaryWallet] = await onboard.state.get().wallets;
-    // if (!primaryWallet) return;
-
-    await onboard.disconnectWallet({ label: "Metamask" });
+    await onboard.disconnectWallet({ label: cookies["label"] });
     await Logout(cookies["selected_account"]);
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);
@@ -301,66 +273,59 @@ const Header = function () {
 
   const onLogin = async () => {
     const wallets = await onboard.connectWallet();
-    console.log("wallet address--->", wallets[0]);
-    const success = await onboard.setChain({
+    await onboard.setChain({
       chainId: process.env.REACT_APP_CHAIN_ID,
     });
-    console.log("setChain method", success);
     const primaryWallet = wallets[0];
 
     setChainId(primaryWallet.chains[0].id);
-    console.log("provider", primaryWallet.provider);
+    // console.log("provider", primaryWallet.provider);
     setProvider(primaryWallet.provider);
+    const address = wallets[0].accounts[0].address;
 
     try {
-      const address = wallets[0].accounts[0].address;
-
-      try {
-        const isUserExist = await checkuseraddress(address);
-        console.log("selected_account", address);
-        console.log("isUserExist", isUserExist);
-        if (isUserExist === "User Found successfully") {
-          try {
-            const res = await Login(address);
-            console.log("Login API response", res);
-            if (res.message === "Wallet Address required") {
-              NotificationManager.info(res.message);
-              refreshState();
-              return;
-            } else if (
-              res.message === "User not found" ||
-              res.message === "Login invalid"
-            ) {
-              NotificationManager.error(res.message);
-              refreshState();
-              return;
-            } else {
-              NotificationManager.success(res.message);
-              setCookie("label", primaryWallet.label, { path: "/" });
-              setAccount(primaryWallet.accounts[0].address);
-              setCookie("selected_account", address, { path: "/" });
-              setCookie(
-                "chain_id",
-                parseInt(wallets[0].chains[0].id, 16).toString(),
-                {
-                  path: "/",
-                }
-              );
-              setCookie("balance", wallets[0].accounts[0].balance, {
+      const isUserExist = await checkuseraddress(address);
+      console.log("selected_account", address);
+      console.log("isUserExist", isUserExist);
+      if (isUserExist === "User Found successfully") {
+        try {
+          const res = await Login(address);
+          console.log("Login API response", res);
+          if (res.message === "Wallet Address required") {
+            NotificationManager.info(res.message);
+            refreshState();
+            return;
+          } else if (
+            res.message === "User not found" ||
+            res.message === "Login invalid"
+          ) {
+            NotificationManager.error(res.message);
+            refreshState();
+            return;
+          } else {
+            NotificationManager.success(res.message);
+            setCookie("label", primaryWallet.label, { path: "/" });
+            setAccount(primaryWallet.accounts[0].address);
+            setCookie("selected_account", address, { path: "/" });
+            setCookie(
+              "chain_id",
+              parseInt(wallets[0].chains[0].id, 16).toString(),
+              {
                 path: "/",
-              });
-              getUserProfile();
-              return;
-            }
-          } catch (e) {
-            NotificationManager.error(e);
+              }
+            );
+            setCookie("balance", wallets[0].accounts[0].balance, {
+              path: "/",
+            });
+            getUserProfile();
             return;
           }
-        } else {
-          NotificationManager.error(isUserExist);
+        } catch (e) {
+          NotificationManager.error(e);
+          return;
         }
-      } catch (e) {
-        NotificationManager.error(e);
+      } else {
+        NotificationManager.error(isUserExist);
       }
     } catch (e) {
       NotificationManager.error(e);
@@ -428,7 +393,7 @@ const Header = function () {
             <div className='switch_container'>
               <h3>Chain Switched</h3>
               <p className='my-4 mr-2'>
-                Please Switch to Rinkeby Testnet Network
+                Please Switch to Matic Testnet Network
               </p>
               <div className='d-flex justify-content-center align-items-center'>
                 <button

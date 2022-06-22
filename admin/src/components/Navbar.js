@@ -109,19 +109,28 @@ const Navbar = (props) => {
   const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
 
-  useEffect(() => {
-    if (cookies["selected_account"]) setAccount(cookies["selected_account"]);
-    else refreshState();
+  useEffect(async() => {
+    if (cookies["selected_account"]) {
+      setAccount(cookies["selected_account"]);
+      const s = await onboard.connectWallet({
+        autoSelect: { label: cookies["label"], disableModals: true },
+      });
+      await onboard.setChain({
+        chainId: process.env.REACT_APP_CHAIN_ID,
+      });
+      setProvider(s[0].provider);
+    }
   }, []);
 
   const refreshState = () => {
     removeCookie("selected_account", { path: "/" });
     removeCookie("chain_id", { path: "/" });
     removeCookie("balance", { path: "/" });
-
+    removeCookie("label", { path: "/" });
+    localStorage.clear();
     setAccount("");
     setChainId("");
-    setProvider();
+    setProvider(null);
   };
 
   useEffect(() => {
@@ -149,23 +158,18 @@ const Navbar = (props) => {
   const connectWallet = async () => {
     setIsAccountSwitched(false);
     const wallets = await onboard.connectWallet();
-    console.log("wallet address--->", wallets[0]);
-    const success = await onboard.setChain({
+    await onboard.setChain({
       chainId: process.env.REACT_APP_CHAIN_ID,
     });
-    console.log("setChain method", success);
     const primaryWallet = wallets[0];
     setChainId(primaryWallet.chains[0].id);
     console.log("provider", primaryWallet.provider);
     setProvider(primaryWallet.provider);
-    console.log("provider", provider);
+    const address = wallets[0].accounts[0].address;
 
-    try {
-      const address = wallets[0].accounts[0].address;
+  
       try {
         const isUserExist = await checkuseraddress(address);
-        console.log("selected_account", address);
-        console.log("isUserExist", isUserExist);
         if (isUserExist.message === "User not found") {
           try {
             const res = await adminRegister(address);
@@ -180,6 +184,7 @@ const Navbar = (props) => {
               NotificationManager.success(res.message);
               setAccount(primaryWallet.accounts[0].address);
               setCookie("selected_account", address, { path: "/" });
+              setCookie("label", primaryWallet.label, { path: "/" });
               setCookie(
                 "chain_id",
                 parseInt(wallets[0].chains[0].id, 16).toString(),
@@ -214,6 +219,7 @@ const Navbar = (props) => {
               NotificationManager.success(res.message);
               setAccount(primaryWallet.accounts[0].address);
               setCookie("selected_account", address, { path: "/" });
+              setCookie("label", primaryWallet.label, { path: "/" });
               setCookie(
                 "chain_id",
                 parseInt(wallets[0].chains[0].id, 16).toString(),
@@ -235,18 +241,13 @@ const Navbar = (props) => {
       } catch (e) {
         console.log(e);
       }
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   const disconnectWallet = async () => {
-    // const [primaryWallet] = await onboard.state.get().wallets;
-    // if (!primaryWallet) return;
-    await onboard.disconnectWallet({ label: "Metamask" });
+    await onboard.disconnectWallet({ label: cookies["label"] });
     await Logout(cookies["selected_account"]);
     refreshState();
-    NotificationManager.success("User Logged out Successfully.");
+    NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
 
@@ -261,14 +262,18 @@ const Navbar = (props) => {
                 Please logout from the current account if you would like to
                 switch the account?
               </p>
-              <div className="d-flex justify-content-center align-items-center">
+              <div className='d-flex justify-content-between align-items-center'>
                 <button
-                  className="btn confirm_btn"
+                  className='btn confirm_btn'
                   onClick={() => {
                     disconnectWallet();
-                  }}
-                >
+                  }}>
                   Logout
+                </button>
+                <button
+                  className='btn cancel_btn'
+                  onClick={() => setIsAccountSwitched(false)}>
+                  Cancel
                 </button>
               </div>
             </div>
@@ -284,7 +289,7 @@ const Navbar = (props) => {
             <div className="switch_container">
               <h3>Chain Switched</h3>
               <p className="my-4 mr-2">
-                Please Switch to Binance Testnet Network
+                Please Switch to Matic Testnet Network
               </p>
               <div className="d-flex justify-content-center align-items-center">
                 <button
