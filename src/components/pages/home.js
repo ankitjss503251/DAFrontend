@@ -220,11 +220,11 @@ const Home = () => {
                         <div className='mint_text p-4'>
                           <div className='logoImg_con'>
                             <a
-                              href={`/collectionwithcollection/${card.brand._id}`}
+                              href={`/collectionwithcollection/${card.brand?._id}`}
                               className='rounded-circle '>
                               <img
                                 alt=''
-                                src={card.brand.logoImage}
+                                src={card.brand?.logoImage}
                                 className='mc_img'
                               />
                             </a>

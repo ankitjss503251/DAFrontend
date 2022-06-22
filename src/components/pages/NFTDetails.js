@@ -14,22 +14,28 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import { putOnMarketplace } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
 import contracts from "../../config/contracts";
-import { GENERAL_DATE, GENERAL_TIMESTAMP, ZERO_ADDRESS } from "../../helpers/constants";
+import {
+  GENERAL_DATE,
+  GENERAL_TIMESTAMP,
+  ZERO_ADDRESS,
+} from "../../helpers/constants";
 import { NotificationManager } from "react-notifications";
+import BGImg from "../../assets/images/background.jpg";
 
-var bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
 var textColor = {
   textColor: "#EF981D",
 };
 
 function NFTDetails() {
+  var bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
+  };
+
   const { id } = useParams();
 
   const [NFTDetails, setNFTDetails] = useState([]);
@@ -72,6 +78,7 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+        console.log("nft attributes", res[0].attributes);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
         const reqData1 = {
@@ -230,10 +237,13 @@ function NFTDetails() {
                   {NFTDetails?.like} favourites
                 </span>
               </div>
-              <ul className='nav nav-pills mb-4' id='pills-tab' role='tablist'>
-                <li className='nav-item' role='presentation'>
+              <ul
+                className='nav nav-pills mb-4 w-100'
+                id='pills-tab'
+                role='tablist'>
+                <li className='nav-item w-100' role='presentation'>
                   <button
-                    className='nav-link active'
+                    className='nav-link active details-btn '
                     id='pills-home-tab'
                     data-bs-toggle='pill'
                     data-bs-target='#pills-home'
@@ -245,7 +255,7 @@ function NFTDetails() {
                   </button>
                 </li>
               </ul>
-              <div className='tab-content' id='pills-tabContent'>
+              <div className='tab-content p-0' id='pills-tabContent'>
                 <div
                   className='tab-pane fade show active'
                   id='pills-home'
@@ -254,15 +264,35 @@ function NFTDetails() {
                   <div className='row'>
                     {NFTDetails
                       ? NFTDetails?.attributes?.map((attr, key) => {
+                          const rarity = parseInt(attr?.rarity);
                           return (
-                            <div className='col-md-6 mb-4'>
+                            <div className='col-md-6 mb-4' key={key}>
                               <div className='tab_label'>
+                                <div className="d-flex align-items-start flex-column">
                                 <p>{attr.trait_type}</p>
-                                <span className='big_text'>{attr.value}</span>
-                                {/* <p>
-                            75% <span>have this traits</span>
-                          </p> */}
+                                  <span className='big_text'>{attr.value}</span>
+                                </div>
+                                {rarity ? (
+                                  <p>
+                                    {rarity}%{" "}
+                                    <span>have this traits</span>
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
                               </div>
+                              {rarity ? (
+                                <div className='progress mt-2'>
+                                  <div
+                                    className={`progress-bar w-${rarity}`}
+                                    role='progressbar'
+                                    aria-valuenow={rarity}
+                                    aria-valuemin='0'
+                                    aria-valuemax='100'></div>
+                                </div>
+                              ) : (
+                                ""
+                              )}
                               {/* <div className='progress'>
                           <div
                             className='progress-bar w-75'
@@ -426,7 +456,7 @@ function NFTDetails() {
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>Offers</h3>
               <div className='table-responsive'>
-                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails}/>
+                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
             <div className='col-md-12 mb-5'>
