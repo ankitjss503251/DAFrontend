@@ -54,9 +54,6 @@ function NFTDetails() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Wallet", "", 800);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
 
   useEffect(() => {
@@ -72,13 +69,11 @@ function NFTDetails() {
           nftID: id,
         };
         const res = await getNFTs(reqData);
-        console.log("hsdgshfghsd", res);
         if (res.length === 0) {
           window.location.href = "/marketplace";
           return;
         }
         setNFTDetails(res[0]);
-        console.log("nft attributes", res[0].attributes);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
         const reqData1 = {
@@ -88,7 +83,6 @@ function NFTDetails() {
         };
         const nfts = await getNFTs(reqData1);
         setAllNFTs(nfts);
-        console.log("here I am", currentUser, res[0]?.ownedBy);
         if (
           currentUser &&
           res[0].ownedBy &&
@@ -343,9 +337,9 @@ function NFTDetails() {
                   ) : (
                     ""
                   )
-                ) : (
+                ) : !owned ? (
                   <button type='button' className='title_color buy_now'>Buy Now</button>
-                )}
+                ) : ""}
 
                 <button type="button" className="border_btn title_color">
                   Bids / Offers

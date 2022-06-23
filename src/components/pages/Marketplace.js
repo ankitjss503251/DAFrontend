@@ -19,7 +19,6 @@ import { NotificationManager } from "react-notifications";
 import { getAllBrands } from "../../apiServices";
 import BGImg from "./../../assets/images/background.jpg";
 
-
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
   backgroundRepeat: "no-repeat",
@@ -70,7 +69,7 @@ function Marketplace() {
   const [brands, setBrands] = useState([]);
   const [cols, setCols] = useState([]);
   const [colsAdv, setColsAdv] = useState("");
-  const [salesType, setSalesType] = useState();
+  const [ERCType, setERCType] = useState(1);
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -105,15 +104,20 @@ function Marketplace() {
 
   useEffect(async () => {
     let temp = allNFTs;
+    if(searchedText){
+      setSText(searchedText);
+    }
     try {
       const reqData = {
         page: currPage,
         limit: 5,
-        searchText: searchedText ? searchedText : "",
+        searchText: sText,
         isOnMarketplace: 1,
-        salesType: salesType
+        ERCType: ERCType,
       };
+      console.log("result--->", reqData);
       const res = await getNFTs(reqData);
+
       if (res?.length > 0) {
         setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
@@ -142,7 +146,7 @@ function Marketplace() {
 
         temp = [...temp, res];
         setAllNFTs(temp);
-        setCurrPage(currPage + 1);
+       
       }
       if (allNFTs && res.length <= 0) {
         setLoadMoreDisabled("disabled");
@@ -150,56 +154,9 @@ function Marketplace() {
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
     }
-  }, [loadMore]);
+  }, [loadMore, ERCType]);
 
-  useEffect(async () => {
-    let temp = allNFTs;
-    try {
-      const reqData = {
-        page: currPage,
-        limit: 5,
-        searchText: sText ? sText : "",
-        isOnMarketplace: 1,
-      };
-      const res = await getNFTs(reqData);
-      console.log("resssssssss", res);
-      if (res?.length > 0) {
-        setLoadMoreDisabled("");
-        for (let i = 0; i < res.length; i++) {
-          const ownedBy = await getUserById({ userID: res[i].createdBy });
-          const orderDet = await getOrderByNftID({ nftId: res[i].id });
-          res[i] = {
-            ...res[i],
-            salesType: orderDet?.results[0]?.salesType,
-            price: Number(
-              convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
-            ).toFixed(4),
-            creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
-          };
-          if (orderDet?.results?.length > 0) {
-            res[i] = {
-              ...res[i],
-              isNftOnSale: true,
-            };
-          } else {
-            res[i] = {
-              ...res[i],
-              isNftOnSale: false,
-            };
-          }
-        }
-
-        temp = [...temp, res];
-        setAllNFTs(temp);
-        setCurrPage(currPage + 1);
-      }
-      if (!allNFTs && res.length <= 0) {
-        setLoadMoreDisabled("disabled");
-      }
-    } catch (e) {
-      console.log("Error in fetching all NFTs list", e);
-    }
-  }, [sText]);
+  
 
   return (
     <div>
@@ -240,7 +197,13 @@ function Marketplace() {
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
-                  style={bgImgarrow} value={salesType} onChange={(e) => setSalesType(e.target.value)}>
+                  style={bgImgarrow}
+                  value={ERCType}
+                  onChange={(e) => {
+                    setAllNFTs([])
+                    setCurrPage(1)
+                    setERCType(parseInt(e.target.value));
+                  }}>
                   <option value='1' selected>
                     Single Items
                   </option>
@@ -542,7 +505,9 @@ function Marketplace() {
                 <button
                   type='button'
                   className={`btn view_all_bdr ${loadMoreDisabled}`}
-                  onClick={() => setLoadMore(!loadMore)}>
+                  onClick={() => {
+                    setCurrPage(currPage + 1);
+                    setLoadMore(!loadMore)}}>
                   Load More
                 </button>
               </div>
