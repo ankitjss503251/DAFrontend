@@ -889,3 +889,14 @@ tbody td {
   align-items: center;
   width: max-content;
 }
+
+.logo{
+  color: #fff;
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.logo:hover{
+  color: #fff;
+}

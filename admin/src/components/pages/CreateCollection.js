@@ -66,13 +66,6 @@ function CreateCollection() {
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     let data = await getImportedNFTs();
-  //     console.log("dataaaa", data);
-  //   };
-  //   fetch();
-  // }, []);
 
   useEffect(async () => {
     let res = await getEvents("0xbcb4da834f01c0e8d231d0ad36a29559d69d9f2c");
@@ -625,6 +618,11 @@ function CreateCollection() {
     }
   };
 
+
+  const handleExclusive = () => {
+    
+  }
+
   return (
     <div className='wrapper'>
       {/* <!-- Sidebar  --> */}
@@ -766,6 +764,23 @@ function CreateCollection() {
     handleEditCollection();
   }}>
   Edit
+</button>
+<button
+  className='btn btn-admin m-1 p-1 text-light'
+  type='button'
+ 
+  onClick={async () => {
+  }}>
+  Exclusive Collection
+</button>
+<button
+  className='btn btn-admin m-1 p-1 text-light'
+  type='button'
+  
+  onClick={async () => {
+   
+  }}>
+  Hot Collection
 </button>
 </div>
                      
