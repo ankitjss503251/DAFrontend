@@ -439,7 +439,7 @@ export const putOnMarketplace = async (account, orderData) => {
     console.log("seller sign", reqParams);
 
     NotificationManager.success("Order created successfully");
-    // slowRefresh();
+    slowRefresh();
     // window.location.href = "/profile";
   } catch (err) {
     console.log("error in Api", err);
@@ -638,7 +638,7 @@ export const createBid = async (
         console.log("buyer signature", signature);
         await createBidNft(reqParams);
         NotificationManager.success("Bid Placed Successfully");
-        // slowRefresh();
+        slowRefresh();
       }
 
       // window.location.reload();

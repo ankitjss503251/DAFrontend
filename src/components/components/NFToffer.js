@@ -9,6 +9,8 @@ import { handleAcceptBids } from "../../helpers/sendFunctions";
 import NFTDetails from "../pages/NFTDetails";
 
 function NFToffer(props) {
+  console.log("Props in NFT offer", props);
+
   const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);
   const [bids, setBids] = useState([]);
@@ -41,37 +43,41 @@ function NFToffer(props) {
   }, [props.id]);
 
   return (
-    <div className="row">
-      <div className="col-md-12">
-        <div className="nft_list">
-          <table className="table text-light">
+    <div className='row'>
+      <div className='col-md-12'>
+        <div className='nft_list'>
+          <table className='table text-light'>
             <thead>
               <tr>
                 <th>FROM</th>
                 <th>PRICE</th>
                 <th>DATE</th>
                 <th>STATUS</th>
-                <th className="text-center">ACTION</th>
+                <th className='text-center'>ACTION</th>
               </tr>
             </thead>
             <tbody>
               {bids && bids.length > 0
                 ? bids.map((b, i) => {
+                    const bidOwner = b?.owner?.walletAddress.toLowerCase();
+                    const bidder = b?.bidderID?.walletAddress.toLowerCase();
                     return (
                       <tr>
-                        <td>
-                          <span className="blue_dot circle_dot"></span>
+                        <td className="d-flex justify-content-start align-items-center mb-0">
+                          <span className='blue_dot circle_dot'></span>
+                          <span>
                           {b?.bidderID?.walletAddress
                             ? b?.bidderID?.walletAddress.slice(0, 3) +
                               "..." +
                               b?.bidderID?.walletAddress.slice(39, 41)
                             : ""}
+                          </span>
                         </td>
                         <td>
                           <img
-                            alt=""
+                            alt=''
                             src={"../img/favicon.png"}
-                            className="img-fluid hunter_fav"
+                            className='img-fluid hunter_fav'
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
@@ -79,32 +85,47 @@ function NFToffer(props) {
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
-                          <span className="nft_time">
+                          <span className='nft_time'>
                             {moment(b.createdOn).format("HH:MM:SS")}
                           </span>
                         </td>
-                        <td className="red_text">Cancelled</td>
-                        <td>
-                          <div className="text-center">
+                        <td className='red_text'>Cancelled</td>
+                        <td className='text-center'>
+                          {bidOwner === currentUser.toLowerCase() ? (
+                            <div className='text-center'>
+                              <button
+                                to={"/"}
+                                className='small_yellow_btn small_btn mr-3'
+                                onClick={async () => {
+                                  await handleAcceptBids(
+                                    b,
+                                    props.NftDetails.type
+                                  );
+                                }}>
+                                Accept
+                              </button>
+                              <button
+                                to={"/"}
+                                className='small_border_btn small_btn'>
+                                Reject
+                              </button>
+                            </div>
+                          ) : bidOwner !== currentUser.toLowerCase() &&
+                            bidder === currentUser.toLowerCase() ? (
                             <button
                               to={"/"}
-                              className="small_yellow_btn small_btn mr-3"
-                              onClick={async () => {
-                                await handleAcceptBids(
-                                  b,
-                                  props.NftDetails.type
-                                );
-                              }}
-                            >
-                              Accept
+                              className='small_border_btn small_btn'>
+                              Update Bid
                             </button>
+                          ) : bidder === currentUser.toLowerCase() ? (
                             <button
                               to={"/"}
-                              className="small_border_btn small_btn"
-                            >
-                              Reject
+                              className='small_border_btn small_btn'>
+                              Place a Bid
                             </button>
-                          </div>
+                          ) : (
+                            ""
+                          )}
                         </td>
                       </tr>
                     );

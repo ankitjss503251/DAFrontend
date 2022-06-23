@@ -12,7 +12,6 @@ import {
 } from "../../helpers/sendFunctions";
 
 function NFTlisting(props) {
-  console.log("nft listing props", props);
   const [orders, setOrders] = useState([]);
 
   const [currentUser, setCurrentUser] = useState("");
@@ -58,13 +57,15 @@ function NFTlisting(props) {
                 ? orders.map((o, i) => {
                     return (
                       <tr>
-                        <td>
+                        <td className="d-flex justify-content-start align-items-center mb-0">
                           <span className='yellow_dot circle_dot'></span>
+                         <span>
                           {o.sellerID && o.sellerID.walletAddress
                             ? o.sellerID.walletAddress.slice(0, 3) +
                               "..." +
                               o.sellerID.walletAddress.slice(39, 41)
                             : ""}
+                          </span> 
                         </td>
                         <td>
                           <img
