@@ -4406,10 +4406,10 @@ a:hover {
   gap: 4%;
   display: flex;
   margin-bottom: 10px;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
 }
 
-.status_ul li:hover {
+.status_ul li:hover, .status_ul li.filter_border.active {
   color: #000;
   background-color: #ef981d;
 }
@@ -4429,6 +4429,8 @@ a:hover {
   text-align: center;
   padding: 10px 10px;
 }
+
+
 
 .filter-text-left {
   text-align: left;

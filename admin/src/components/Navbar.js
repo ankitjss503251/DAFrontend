@@ -303,7 +303,7 @@ const Navbar = (props) => {
           <img src={"../images/user.jpg"} alt='' className='img-fluid' />
         </div>
         {props.model}
-        <a href='./'>Decryptblock</a>
+        <a className="logo" href='/'>Digital Arms</a>
       </div>
       <ul className='p-0 m-0'>
         <li className='text-light'>
