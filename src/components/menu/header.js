@@ -170,10 +170,12 @@ const Header = function () {
           refreshState();
         }
       });
-      provider.on("chainChanged", (chains) => {
+      provider.on("chainChanged", async(chains) => {
         console.log("chain changed", chains);
         if (chains !== process.env.REACT_APP_CHAIN_ID) {
-          setIsChainSwitched(true);
+          await onboard.setChain({
+            chainId: process.env.REACT_APP_CHAIN_ID,
+          });
         }
       });
     }
@@ -196,8 +198,6 @@ const Header = function () {
       await onboard.setChain({
         chainId: process.env.REACT_APP_CHAIN_ID,
       });
-    
-
     const primaryWallet = wallets[0];
     setChainId(primaryWallet.chains[0].id);
     console.log("provider", primaryWallet.provider);
@@ -298,67 +298,67 @@ const Header = function () {
     slowRefresh(1000);
   };
 
-  const onLogin = async () => {
-    const wallets = await onboard.connectWallet();
-    if (wallets.length !== 0) {
-    await onboard.setChain({
-      chainId: process.env.REACT_APP_CHAIN_ID,
-    });
-    const primaryWallet = wallets[0];
-    setChainId(primaryWallet.chains[0].id);
-    setProvider(primaryWallet.provider);
-    const address = wallets[0].accounts[0].address;
-    try {
-      const isUserExist = await checkuseraddress(address);
-      console.log("selected_account", address);
-      console.log("isUserExist", isUserExist);
-      if (isUserExist === "User Found successfully") {
-        try {
-          const res = await Login(address);
-          console.log("Login API response", res);
-          if (res.message === "Wallet Address required") {
-            NotificationManager.info(res.message);
-            refreshState();
-            return;
-          } else if (
-            res.message === "User not found" ||
-            res.message === "Login invalid"
-          ) {
-            NotificationManager.error(res.message);
-            refreshState();
-            return;
-          } else {
-            setAccount(primaryWallet.accounts[0].address);
-            setLabel(primaryWallet.label);
-            setCookie("selected_account", address, { path: "/" });
-            setCookie("label", primaryWallet.label, { path: "/" });
-            setCookie(
-              "chain_id",
-              parseInt(wallets[0].chains[0].id, 16).toString(),
-              {
-                path: "/",
-              }
-            );
-            setCookie("balance", wallets[0].accounts[0].balance, {
-              path: "/",
-            });
-            getUserProfile();
-            NotificationManager.success(res.message);
-            slowRefresh(1000);
-            return;
-          }
-        } catch (e) {
-          NotificationManager.error(e);
-          return;
-        }
-      } else {
-        NotificationManager.error(isUserExist);
-      }
-    } catch (e) {
-      NotificationManager.error(e);
-    }
-  }
-  };
+  // const onLogin = async () => {
+  //   const wallets = await onboard.connectWallet();
+  //   if (wallets.length !== 0) {
+  //   await onboard.setChain({
+  //     chainId: process.env.REACT_APP_CHAIN_ID,
+  //   });
+  //   const primaryWallet = wallets[0];
+  //   setChainId(primaryWallet.chains[0].id);
+  //   setProvider(primaryWallet.provider);
+  //   const address = wallets[0].accounts[0].address;
+  //   try {
+  //     const isUserExist = await checkuseraddress(address);
+  //     console.log("selected_account", address);
+  //     console.log("isUserExist", isUserExist);
+  //     if (isUserExist === "User Found successfully") {
+  //       try {
+  //         const res = await Login(address);
+  //         console.log("Login API response", res);
+  //         if (res.message === "Wallet Address required") {
+  //           NotificationManager.info(res.message);
+  //           refreshState();
+  //           return;
+  //         } else if (
+  //           res.message === "User not found" ||
+  //           res.message === "Login invalid"
+  //         ) {
+  //           NotificationManager.error(res.message);
+  //           refreshState();
+  //           return;
+  //         } else {
+  //           setAccount(primaryWallet.accounts[0].address);
+  //           setLabel(primaryWallet.label);
+  //           setCookie("selected_account", address, { path: "/" });
+  //           setCookie("label", primaryWallet.label, { path: "/" });
+  //           setCookie(
+  //             "chain_id",
+  //             parseInt(wallets[0].chains[0].id, 16).toString(),
+  //             {
+  //               path: "/",
+  //             }
+  //           );
+  //           setCookie("balance", wallets[0].accounts[0].balance, {
+  //             path: "/",
+  //           });
+  //           getUserProfile();
+  //           NotificationManager.success(res.message);
+  //           slowRefresh(1000);
+  //           return;
+  //         }
+  //       } catch (e) {
+  //         NotificationManager.error(e);
+  //         return;
+  //       }
+  //     } else {
+  //       NotificationManager.error(isUserExist);
+  //     }
+  //   } catch (e) {
+  //     NotificationManager.error(e);
+  //   }
+  // }
+  // };
 
   const handleSearch = async (e) => {
     setShowSearchDiv("active");
@@ -385,38 +385,11 @@ const Header = function () {
 
   return (
     <header id='myHeader'>
-      {isChainSwitched ? (
-        <PopupModal
-          content={
-            <div className="switch_container">
-              <h3>Chain Switched</h3>
-              <p className="my-4 mr-2">
-                Please Switch to Matic Testnet Network
-              </p>
-              <div className="d-flex justify-content-center align-items-center">
-                <button
-                  className="btn network_btn"
-                  onClick={async () => {
-                    await onboard.setChain({
-                      chainId: process.env.REACT_APP_CHAIN_ID,
-                    });
-                    setIsChainSwitched(false);
-                  }}
-                >
-                  Switch Network
-                </button>
-              </div>
-            </div>
-          }
-          handleClose={() => setIsChainSwitched(false)}
-        />
-      ) : (
-        ""
-      )}
-      <nav className="navbar navbar-expand-lg">
-        <div className="nav-container container">
-          <Link className="navbar-brand" to="/">
-            <img src={"../img/logo.svg"} className="img-fluid d-block" alt="" />
+     
+      <nav className='navbar navbar-expand-lg'>
+        <div className='nav-container container'>
+          <Link className='navbar-brand' to='/'>
+            <img src={"../img/logo.svg"} className='img-fluid d-block' alt='' />
           </Link>
           <button
             className="navbar-toggler"
@@ -580,16 +553,8 @@ const Header = function () {
               </li>
               {!account ? (
                 <>
-                  <li className="nav-item">
-                    {!account ? (
-                      <button className="border_btn" onClick={onLogin}>
-                        log in
-                      </button>
-                    ) : (
-                      ""
-                    )}
-                  </li>
-                  <li className="nav-item">
+                 
+                  <li className='nav-item'>
                     <button
                       onClick={!account ? connectWallet : disconnectWallet}
                       className="main_btn"

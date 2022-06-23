@@ -20,20 +20,22 @@ import {
   ZERO_ADDRESS,
 } from "../../helpers/constants";
 import { NotificationManager } from "react-notifications";
+import BGImg from "../../assets/images/background.jpg";
 
-var bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
 var textColor = {
   textColor: "#EF981D",
 };
 
 function NFTDetails() {
+  var bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
+  };
+
   const { id } = useParams();
 
   const [NFTDetails, setNFTDetails] = useState([]);
@@ -76,6 +78,7 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+        console.log("nft attributes", res[0].attributes);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
         const reqData1 = {
@@ -104,7 +107,7 @@ function NFTDetails() {
 
         if (id) {
           const _orders = await getOrderByNftID({ nftID: id });
-          console.log("orders123", _orders?.results?.length);
+          console.log("orders123", _orders?.results);
           setOrders(_orders?.results);
         }
       } catch (e) {
@@ -235,18 +238,20 @@ function NFTDetails() {
                   {NFTDetails?.like} favourites
                 </span>
               </div>
-              <ul className="nav nav-pills mb-4" id="pills-tab" role="tablist">
-                <li className="nav-item" role="presentation">
+              <ul
+                className='nav nav-pills mb-4 w-100'
+                id='pills-tab'
+                role='tablist'>
+                <li className='nav-item w-100' role='presentation'>
                   <button
-                    className="nav-link active"
-                    id="pills-home-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-home"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-home"
-                    aria-selected="true"
-                  >
+                    className='nav-link active details-btn '
+                    id='pills-home-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-home'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-home'
+                    aria-selected='true'>
                     Details
                   </button>
                 </li>
@@ -261,15 +266,35 @@ function NFTDetails() {
                   <div className="row">
                     {NFTDetails
                       ? NFTDetails?.attributes?.map((attr, key) => {
+                          const rarity = parseInt(attr?.rarity);
                           return (
-                            <div className="col-md-6 mb-4">
-                              <div className="tab_label">
+                            <div className='col-md-6 mb-4' key={key}>
+                              <div className='tab_label'>
+                                <div className="d-flex align-items-start flex-column">
                                 <p>{attr.trait_type}</p>
-                                <span className="big_text">{attr.value}</span>
-                                {/* <p>
-                            75% <span>have this traits</span>
-                          </p> */}
+                                  <span className='big_text'>{attr.value}</span>
+                                </div>
+                                {rarity ? (
+                                  <p>
+                                    {rarity}%{" "}
+                                    <span>have this traits</span>
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
                               </div>
+                              {rarity ? (
+                                <div className='progress mt-2'>
+                                  <div
+                                    className={`progress-bar w-${rarity}`}
+                                    role='progressbar'
+                                    aria-valuenow={rarity}
+                                    aria-valuemin='0'
+                                    aria-valuemax='100'></div>
+                                </div>
+                              ) : (
+                                ""
+                              )}
                               {/* <div className='progress'>
                           <div
                             className='progress-bar w-75'
@@ -296,14 +321,15 @@ function NFTDetails() {
                   {Number(convertToEth(collection?.price)).toFixed(4)} HNTR
                 </div>
                 {console.log("is owned", owned, orders?.length)}
+                
+
                 {orders.length <= 0 ? (
                   owned ? (
                     <button
-                      type="button"
-                      className="yellow_btn mr-3 mb-3"
-                      data-bs-toggle="modal"
-                      data-bs-target="#detailPop"
-                    >
+                      type='button'
+                      className='title_color buy_now'
+                      data-bs-toggle='modal'
+                      data-bs-target='#detailPop'>
                       {console.log(
                         "dataaa",
                         orders.length,
@@ -318,12 +344,13 @@ function NFTDetails() {
                     ""
                   )
                 ) : (
-                  "Buy Now"
+                  <button type='button' className='title_color buy_now'>Buy Now</button>
                 )}
 
                 <button type="button" className="border_btn title_color">
                   Bids / Offers
                 </button>
+               
               </div>
             </div>
           </div>
@@ -561,15 +588,20 @@ function NFTDetails() {
                     Quantity
                   </label>
                   <input
-                    type="text"
-                    name="item_qt"
-                    id="item_qt"
-                    min="1"
-                    disabled=""
-                    className="form-control input_design"
-                    placeholder="Please Enter Quantity"
+                    type='text'
+                    name='item_qt'
+                    id='item_qt'
+                    min='1'
+                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
+                    className='form-control input_design'
+                    placeholder='Please Enter Quantity'
                     value={item_qt}
-                    onChange={(event) => setItem_qt(event.target.value)}
+                    onChange={(event) => {
+                      if(NFTDetails.type !== 1 && event.target.value > NFTDetails?.totalQuantity){
+                        NotificationManager.error("Quantity must be less than or equal to total quantity.","",800);
+                        return;
+                      }
+                      setItem_qt(event.target.value)}}
                   />
                 </div>
                 <div id="tab_opt_3" className="mb-3 put_hide">
