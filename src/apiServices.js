@@ -576,6 +576,56 @@ export const getAllBrands = async (data) => {
   }
 };
 
+export const createBidNft = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/bid/createBidNft",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const fetchBidNft = async (data) => {
+  console.log("Data", data);
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/bid/fetchBidNft",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+
 // export const getUsersCollections = async () => {
 //   const requestOptions = {
 //     method: "GET",
@@ -917,30 +967,6 @@ export const getAllBrands = async (data) => {
 //   }
 // };
 
-// export const fetchBidNft = async (data) => {
-//   console.log("Data", data);
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/bid/fetchBidNft",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
 
 // export const Follow = async (data) => {
 //   const requestOptions = {

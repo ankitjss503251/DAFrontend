@@ -77,10 +77,10 @@ function NFTDetails() {
         };
         const res = await getNFTs(reqData);
         console.log("hsdgshfghsd", res);
-       if(res.length === 0){
-        window.location.href = '/marketplace'
-        return;
-       }
+        if (res.length === 0) {
+          window.location.href = "/marketplace";
+          return;
+        }
         setNFTDetails(res[0]);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
@@ -97,7 +97,6 @@ function NFTDetails() {
           res[0].ownedBy &&
           res[0]?.ownedBy[0]?.address?.toLowerCase()
         ) {
-         
           for (let i = 0; i < res[0]?.ownedBy?.length; i++) {
             if (
               res[0]?.ownedBy[i]?.address?.toLowerCase() ===
@@ -303,11 +302,10 @@ function NFTDetails() {
                 {orders.length <= 0 ? (
                   owned ? (
                     <button
-                      type="button"
-                      className="yellow_btn mr-3 mb-3"
-                      data-bs-toggle="modal"
-                      data-bs-target="#detailPop"
-                    >
+                      type='button'
+                      className='yellow_btn mr-3 mb-3'
+                      data-bs-toggle='modal'
+                      data-bs-target='#detailPop'>
                       {console.log(
                         "dataaa",
                         orders.length,
@@ -434,16 +432,16 @@ function NFTDetails() {
                 className='img-fluid box_shadow'
               />
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Listings</h3>
-              <div className="table-responsive">
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Listings</h3>
+              <div className='table-responsive'>
                 <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>Offers</h3>
               <div className='table-responsive'>
-                <NFToffer />
+                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails}/>
               </div>
             </div>
             <div className='col-md-12 mb-5'>
@@ -468,7 +466,7 @@ function NFTDetails() {
                   <div className='col-md-12 text-center mt-5'>
                     <a
                       className='view_all_bdr'
-                      href={`/marketplacecollection/${collection?.name}`}>
+                      href={`/collection/${collection?._id}`}>
                       View All
                     </a>
                   </div>
