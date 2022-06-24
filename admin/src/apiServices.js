@@ -232,7 +232,6 @@ export const UpdateCollection = async (data) => {
       process.env.REACT_APP_API_BASE_URL + "/nft/updateCollection",
       requestOptions
     );
-
     const isJson = response.headers
       .get("content-type")
       ?.includes("application/json");

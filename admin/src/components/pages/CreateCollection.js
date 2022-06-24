@@ -549,6 +549,7 @@ function CreateCollection() {
   };
 
   const setShowOnMarketplace = async (id, show) => {
+    setLoading(true);
     try {
       let fd = new FormData();
 
@@ -579,7 +580,6 @@ function CreateCollection() {
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
-      console.log("687684176", res2);
       setTitle(res2.name);
       setRoyalty(res2.royalityPercentage);
       setPreSaleStartTime(res2.preSaleStartTime);
@@ -595,7 +595,17 @@ function CreateCollection() {
     }
   };
 
-  const handleExclusive = () => {};
+  const handleCollection = async (collectionID, field) => {
+   try{ let fd = new FormData();
+    fd.append("id", collectionID);
+    fd.append(field, 1);
+    await UpdateCollection(fd);
+    NotificationManager.success("Collection updated", "", 1000);
+  }
+    catch(e){
+      console.log("Error", e);
+    }
+  };
 
   return (
     <div className="wrapper">
@@ -657,7 +667,6 @@ function CreateCollection() {
             myCollections != "" &&
             myCollections.length > 0
               ? myCollections.map((item, index) => {
-                  console.log("mycollections", item);
                   return (
                     <tbody>
                       <tr>
@@ -674,10 +683,16 @@ function CreateCollection() {
                         <td>{item.description}</td>
                         <td>{item.royalityPercentage}</td>
                         <td>
-                          {moment(item.preSaleStartTime).format("MMMM Do YYYY")}
+                          {item.preSaleStartTime
+                            ? moment(item.preSaleStartTime).format(
+                                "MMMM Do YYYY"
+                              )
+                            : "-"}
                         </td>
                         <td>
-                          {moment(item.preSaleEndTime).format("MMMM Do YYYY")}
+                          {item.preSaleEndTime
+                            ? moment(item.preSaleEndTime).format("MMMM Do YYYY")
+                            : "-"}
                         </td>
                         <td>{item.totalSupply}</td>
                         <td>
@@ -741,20 +756,25 @@ function CreateCollection() {
                         >
                           Edit
                         </button>
-                        <button
+                        {
+                          !item.isExclusive ?   <button
                           className="btn btn-admin m-1 p-1 text-light"
                           type="button"
-                          onClick={async () => {}}
+                          onClick={() => handleCollection(item._id, "isExclusive")}
                         >
                           Exclusive Collection
-                        </button>
-                        <button
-                          className="btn btn-admin m-1 p-1 text-light"
-                          type="button"
-                          onClick={async () => {}}
-                        >
-                          Hot Collection
-                        </button>
+                        </button> : ""
+                        }
+                      {
+                        !item.isHotCollection ? <button
+                        className="btn btn-admin m-1 p-1 text-light"
+                        type="button"
+                        onClick={() => handleCollection(item._id, "isHotCollection")}
+                      >
+                        Hot Collection
+                      </button>  : ""
+                      }
+                        
                       </div>
                     </tbody>
                   );
