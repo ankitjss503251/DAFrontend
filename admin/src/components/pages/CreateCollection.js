@@ -66,7 +66,6 @@ function CreateCollection() {
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
-
   useEffect(async () => {
     let res = await getEvents("0xbcb4da834f01c0e8d231d0ad36a29559d69d9f2c");
     console.log("res", res);
@@ -575,14 +574,15 @@ function CreateCollection() {
   };
 
   const setShowOnMarketplace = async (id, show) => {
+    setLoading(true);
     try {
       await UpdateCollection({
         id: id,
         isOnMarketplace: show,
       });
-      setTimeout(() => {
-        window.location.href = "/createcollection";
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.href = "/createcollection";
+      // }, 1000);
     } catch (e) {
       console.log(e);
       NotificationManager.error(e.message, "", 1500);
@@ -602,7 +602,6 @@ function CreateCollection() {
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
-      console.log("687684176", res2);
       setTitle(res2.name);
       setRoyalty(res2.royalityPercentage);
       setPreSaleStartTime(res2.preSaleStartTime);
@@ -618,10 +617,18 @@ function CreateCollection() {
     }
   };
 
-
-  const handleExclusive = () => {
-    
-  }
+  const handleExclusiveCollection = async (collectionID) => {
+    console.log("collection Id", collectionID);
+    try {
+      const updatedCol = await UpdateCollection( {
+        id: collectionID,
+        isExclusive: 1
+      });
+      console.log("updatedCol", updatedCol);
+    } catch (e) {
+      console.log("Error", e);
+    }
+  };
 
   return (
     <div className='wrapper'>
@@ -681,24 +688,32 @@ function CreateCollection() {
             myCollections != "" &&
             myCollections.length > 0
               ? myCollections.map((item, index) => {
-                  console.log("mycollections", item);
                   return (
                     <tbody>
                       <tr>
-                        <td> <img
+                        <td>
+                          {" "}
+                          <img
                             src={item.logoImage}
                             className='profile_i m-2'
                             alt=''
-                          /></td>
+                          />
+                        </td>
                         <td>{item.name}</td>
                         <td>{item.symbol}</td>
                         <td>{item.description}</td>
                         <td>{item.royalityPercentage}</td>
                         <td>
-                          {moment(item.preSaleStartTime).format("MMMM Do YYYY")}
+                          {item.preSaleStartTime
+                            ? moment(item.preSaleStartTime).format(
+                                "MMMM Do YYYY"
+                              )
+                            : "-"}
                         </td>
                         <td>
-                          {moment(item.preSaleEndTime).format("MMMM Do YYYY")}
+                          {item.preSaleEndTime
+                            ? moment(item.preSaleEndTime).format("MMMM Do YYYY")
+                            : "-"}
                         </td>
                         <td>{item.totalSupply}</td>
                         <td>
@@ -708,82 +723,69 @@ function CreateCollection() {
                         </td>
                         <td>{item.categoryID?.name}</td>
                         <td>{item.brandID?.name}</td>
-                     
-                         
-                       
-                       
                       </tr>
-                    
-                     <div className="btn_container">
 
-{item.isDeployed == 0 ? (
- 
-    <button
-      className='btn btn-admin m-1 p-1 text-light'
-      data-bs-toggle='modal'
-      data-bs-target='#exampleModal1'
-      type='button'
-      onClick={async () => {
-        setSelectedCollectionId(item._id);
-        setImportModal(true);
-      }}>
-      Import
-    </button>
- 
-) : (
-  ""
-)}
-<button
-  className='btn btn-admin m-1 p-1 text-light '
-  type='button'
-  onClick={async () => {
-    {
-      item.isOnMarketplace == 0
-        ? await setShowOnMarketplace(item._id, 1)
-        : await setShowOnMarketplace(item._id, 0);
-    }
-  }}>
-  {item.isOnMarketplace == 0 ? "Show" : "Hide"}
-</button>
-<button
-  className='btn btn-admin m-1 p-1 text-light'
-  type='button'
-  onClick={async () => {
-    window.location.href = `/importedNfts/${item.contractAddress}`;
-  }}>
-  View NFTs
-</button>
-<button
-  className='btn btn-admin m-1 p-1 text-light'
-  type='button'
-  data-bs-toggle='modal'
-  data-bs-target='#editModal'
-  onClick={async () => {
-    setSelectedCollectionId(item._id);
-    setIsEditModal("active");
-    handleEditCollection();
-  }}>
-  Edit
-</button>
-<button
-  className='btn btn-admin m-1 p-1 text-light'
-  type='button'
- 
-  onClick={async () => {
-  }}>
-  Exclusive Collection
-</button>
-<button
-  className='btn btn-admin m-1 p-1 text-light'
-  type='button'
-  
-  onClick={async () => {
-   
-  }}>
-  Hot Collection
-</button>
-</div>
-                     
+                      <div className='btn_container'>
+                        {item.isDeployed == 0 ? (
+                          <button
+                            className='btn btn-admin m-1 p-1 text-light'
+                            data-bs-toggle='modal'
+                            data-bs-target='#exampleModal1'
+                            type='button'
+                            onClick={async () => {
+                              setSelectedCollectionId(item._id);
+                              setImportModal(true);
+                            }}>
+                            Import
+                          </button>
+                        ) : (
+                          ""
+                        )}
+                        <button
+                          className='btn btn-admin m-1 p-1 text-light '
+                          type='button'
+                          onClick={async () => {
+                            {
+                              item.isOnMarketplace == 0
+                                ? await setShowOnMarketplace(item._id, 1)
+                                : await setShowOnMarketplace(item._id, 0);
+                            }
+                          }}>
+                          {item.isOnMarketplace == 0 ? "Show" : "Hide"}
+                        </button>
+                        <button
+                          className='btn btn-admin m-1 p-1 text-light'
+                          type='button'
+                          onClick={async () => {
+                            window.location.href = `/importedNfts/${item.contractAddress}`;
+                          }}>
+                          View NFTs
+                        </button>
+                        <button
+                          className='btn btn-admin m-1 p-1 text-light'
+                          type='button'
+                          data-bs-toggle='modal'
+                          data-bs-target='#editModal'
+                          onClick={async () => {
+                            setSelectedCollectionId(item._id);
+                            setIsEditModal("active");
+                            handleEditCollection();
+                          }}>
+                          Edit
+                        </button>
+                        <button
+                          className='btn btn-admin m-1 p-1 text-light'
+                          type='button'
+                          onClick={() => handleExclusiveCollection(item._id)}>
+                          Exclusive Collection
+                        </button>
+                        <button
+                          className='btn btn-admin m-1 p-1 text-light'
+                          type='button'
+                          onClick={async () => {}}>
+                          Hot Collection
+                        </button>
+                      </div>
                     </tbody>
                   );
                 })
