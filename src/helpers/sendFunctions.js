@@ -34,7 +34,8 @@ import {
   createOrder,
   createBidNft,
   acceptBid,
-  createOfferNFT
+  createOfferNFT,
+  updateBidNft,
   // InsertHistory,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
@@ -149,19 +150,32 @@ export const handleBuyNft=async (
         buyerOrder.push(parseInt(order[key]));
     }
   }
-  if(buyerOrder[5]!=ZERO_ADDRESS) {
-    let allowance=await getPaymentTokenInfo(buyerOrder[0],buyerOrder[5]);
-    console.log("allowance",allowance.allowance);
-    if(
-      new BigNumber(allowance.allowance).isLessThan(
-        new BigNumber(buyerOrder[6])
-      )
-    ) {
-      let approveRes=await handleApproveToken(buyerOrder[0],buyerOrder[5]);
-
-      if(approveRes==false) {
-        return false;
+  if (buyerOrder[5] != ZERO_ADDRESS) {
+    try {
+      let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
+      console.log("allowance", allowance, amount);
+      //check user's payment token balance
+      if (
+        new BigNumber(amount).isGreaterThan(new BigNumber(allowance.balance))
+      ) {
+        NotificationManager.error("Don't have sufficient funds");
+        return;
       }
+
+      if (
+        new BigNumber(allowance.allowance).isLessThan(
+          new BigNumber(buyerOrder[6])
+        )
+      ) {
+        let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
+
+        if (approveRes == false) {
+          return false;
+        }
+      }
+    } catch (err) {
+      console.log("error", err);
+      return;
     }
   }
 
@@ -210,7 +224,7 @@ export const handleBuyNft=async (
     options={
       from: account,
       gasLimit: 9000000,
-      value: amount,
+      value: sellerOrder[5] == ZERO_ADDRESS ? amount : 0,
     };
 
     let completeOrder=await marketplace.completeOrder(
@@ -442,7 +456,7 @@ export const putOnMarketplace=async (account,orderData) => {
     console.log("seller sign",reqParams);
 
     NotificationManager.success("Order created successfully");
-    // slowRefresh();
+    slowRefresh();
     // window.location.href = "/profile";
   } catch(err) {
     console.log("error in Api",err);
@@ -502,8 +516,10 @@ export const createBid=async (
   ownerAccount,
   buyerAccount,
   erc721,
-  qty=1,
-  bidPrice
+  qty = 1,
+  bidPrice,
+  isOffer = false,
+  bidDeadline
 ) => {
   console.log(
     "payload",
@@ -547,6 +563,10 @@ export const createBid=async (
               .toString()
           );
 
+          break;
+        case 7:
+          sellerOrder.push(SellerOrder[index]);
+          buyerOrder.push(bidDeadline);
           break;
         case 8:
           sellerOrder.push([]);
@@ -637,6 +657,8 @@ export const createBid=async (
           orderID: orderID,
           bidQuantity: Number(qty),
           buyerSignature: signature,
+          isOffer: isOffer,
+          bidDeadline: bidDeadline,
         };
         console.log("buyer signature",signature);
         await createBidNft(reqParams);
@@ -952,6 +974,27 @@ export const handleAcceptBids=async (
   // slowRefresh();
 };
 
+export const handleUpdateBidStatus = async (
+  bidID,
+  action //Delete, Cancelled, Rejected
+) => {
+  console.log("payload", bidID, action);
+
+  try {
+    let reqParams = {
+      bidID: bidID,
+      action: action, //Delete, Cancelled, Rejected
+    };
+    let res = await updateBidNft(reqParams);
+    console.log("resss", res);
+
+    NotificationManager.success(`Bid ${action} Successfully`);
+    slowRefresh();
+  } catch (e) {
+    console.log("error in api", e);
+  }
+};
+
 // export const handleCollectionCreation = async (
 //   isSingle,
 //   collectionData,
@@ -1155,27 +1198,6 @@ export const handleAcceptBids=async (
 //     slowRefresh();
 
 //     // window.location.reload();
-//   } catch (e) {
-//     console.log("error in api", e);
-//   }
-// };
-
-// export const handleUpdateBidStatus = async (
-//   bidID,
-//   action //Delete, Cancelled, Rejected
-// ) => {
-//   console.log("payload", bidID, action);
-
-//   try {
-//     let reqParams = {
-//       bidID: bidID,
-//       action: action, //Delete, Cancelled, Rejected
-//     };
-//     let res = await updateBidNft(reqParams);
-//     console.log("resss", res);
-
-//     NotificationManager.success(`Bid ${action} Successfully`);
-//     slowRefresh();
 //   } catch (e) {
 //     console.log("error in api", e);
 //   }

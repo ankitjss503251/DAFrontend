@@ -4406,10 +4406,10 @@ a:hover {
   gap: 4%;
   display: flex;
   margin-bottom: 10px;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
 }
 
-.status_ul li:hover {
+.status_ul li:hover, .status_ul li.filter_border.active {
   color: #000;
   background-color: #ef981d;
 }
@@ -4429,6 +4429,8 @@ a:hover {
   text-align: center;
   padding: 10px 10px;
 }
+
+
 
 .filter-text-left {
   text-align: left;
@@ -4723,4 +4725,32 @@ a:hover {
 .buy_now:hover{
   background-color: #0d171e !important;
   color: #ef981d !important;
+}
+
+
+.fixed_header{
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.fixed_header tbody{
+display:block;
+width: 100%;
+overflow: auto;
+height: 100px;
+}
+
+.fixed_header thead tr {
+ display: block;
+}
+
+.fixed_header thead {
+color:#fff;
+}
+
+.fixed_header th, .fixed_header td {
+padding: 5px;
+text-align: left;
+width: 200px;
 }

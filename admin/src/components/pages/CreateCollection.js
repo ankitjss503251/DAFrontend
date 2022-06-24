@@ -66,14 +66,6 @@ function CreateCollection() {
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     let data = await getImportedNFTs();
-  //     console.log("dataaaa", data);
-  //   };
-  //   fetch();
-  // }, []);
-
   useEffect(async () => {
     let res = await getEvents("0xbcb4da834f01c0e8d231d0ad36a29559d69d9f2c");
     console.log("res", res);
@@ -436,18 +428,18 @@ function CreateCollection() {
       console.log("res1 is--->", res1);
 
       console.log("contract address is--->", contractAddress);
-      await UpdateCollection({
-        id: coll._id,
-        contractAddress: contractAddress,
-        isDeployed: 1,
-      });
+      let fd = new FormData();
+      fd.append("id", coll._id);
+      fd.append("contractAddress", contractAddress);
+      fd.append("isDeployed", 1);
+      await UpdateCollection(fd);
     } catch (e) {
       console.log(e);
       NotificationManager.error(e.message, "", 1500);
       setLoading(false);
-      // setTimeout(() => {
-      //   window.location.href = "/createcollection";
-      // }, 1000);
+      setTimeout(() => {
+        window.location.href = "/createcollection";
+      }, 1000);
     }
   };
 
@@ -497,44 +489,19 @@ function CreateCollection() {
             return;
           }
         } else {
-          res = await UpdateCollection({
-            contractAddress: importedAddress.toLowerCase(),
-            link: importedCollectionLink,
-            isDeployed: 1,
-            id: selectedCollectionId,
-            isOnMarketplace: 1,
-            isImported: 1,
-            totalSupply: parseInt(originalSupply),
-          });
-          let _nfts = await getNFTList({
-            page: 1,
-            limit: 12,
-            collectionID: res._id,
-            searchText: "",
-          });
-          console.log("res", _nfts);
-
-          let nftCount = _nfts.length;
-          dbSupply = parseInt(nftCount);
-
-          await importCollection({
-            address: importedAddress,
-            totalSupply: parseInt(originalSupply),
-          });
-          console.log("coll update", res._id);
           NotificationManager.error("Collection already imported", "", 800);
-          return;
         }
       } else {
-        res = await UpdateCollection({
-          contractAddress: importedAddress.toLowerCase(),
-          link: importedCollectionLink,
-          isDeployed: 1,
-          id: selectedCollectionId,
-          isOnMarketplace: 1,
-          isImported: 1,
-          totalSupply: parseInt(originalSupply),
-        });
+        let fd = new FormData();
+        fd.append("contractAddress", importedAddress.toLowerCase());
+        fd.append("link", importedCollectionLink);
+        fd.append("isDeployed", 1);
+        fd.append("id", selectedCollectionId);
+        fd.append("isOnMarketplace", 1);
+        fd.append("isImported", 1);
+        fd.append("totalSupply", parseInt(originalSupply));
+        res = await UpdateCollection(fd);
+
         let _nfts = await getNFTList({
           page: 1,
           limit: 12,
@@ -582,14 +549,18 @@ function CreateCollection() {
   };
 
   const setShowOnMarketplace = async (id, show) => {
+    setLoading(true);
     try {
-      await UpdateCollection({
-        id: id,
-        isOnMarketplace: show,
-      });
-      setTimeout(() => {
-        window.location.href = "/createcollection";
-      }, 1000);
+      let fd = new FormData();
+
+      fd.append("id", id);
+      fd.append("isOnMarketplace", show);
+
+      await UpdateCollection(fd);
+
+      // setTimeout(() => {
+      //   window.location.href = "/createcollection";
+      // }, 1000);
     } catch (e) {
       console.log(e);
       NotificationManager.error(e.message, "", 1500);
@@ -609,7 +580,6 @@ function CreateCollection() {
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
-      console.log("687684176", res2);
       setTitle(res2.name);
       setRoyalty(res2.royalityPercentage);
       setPreSaleStartTime(res2.preSaleStartTime);
@@ -621,6 +591,18 @@ function CreateCollection() {
       setDescription(res2.description);
       setSymbol(res2.symbol);
     } catch (e) {
+      console.log("Error", e);
+    }
+  };
+
+  const handleCollection = async (collectionID, field) => {
+   try{ let fd = new FormData();
+    fd.append("id", collectionID);
+    fd.append(field, 1);
+    await UpdateCollection(fd);
+    NotificationManager.success("Collection updated", "", 1000);
+  }
+    catch(e){
       console.log("Error", e);
     }
   };
@@ -684,30 +666,58 @@ function CreateCollection() {
             myCollections != undefined &&
             myCollections != "" &&
             myCollections.length > 0
-              ? myCollections.map((item, index) => (
-                  <tbody>
-                    <tr>
-                      <td>
-                        <img
-                          src={item.logoImage}
-                          className="profile_i m-2"
-                          alt=""
-                        />
+              ? myCollections.map((item, index) => {
+                  return (
+                    <tbody>
+                      <tr>
+                        <td>
+                          {" "}
+                          <img
+                            src={item.logoImage}
+                            className="profile_i m-2"
+                            alt=""
+                          />
+                        </td>
+                        <td>{item.name}</td>
+                        <td>{item.symbol}</td>
+                        <td>{item.description}</td>
+                        <td>{item.royalityPercentage}</td>
+                        <td>
+                          {item.preSaleStartTime
+                            ? moment(item.preSaleStartTime).format(
+                                "MMMM Do YYYY"
+                              )
+                            : "-"}
+                        </td>
+                        <td>
+                          {item.preSaleEndTime
+                            ? moment(item.preSaleEndTime).format("MMMM Do YYYY")
+                            : "-"}
+                        </td>
+                        <td>{item.totalSupply}</td>
+                        <td>
+                          {Number(
+                            convertToEth(item.price.$numberDecimal)
+                          ).toFixed(4)}
+                        </td>
+                        <td>{item.categoryID?.name}</td>
+                        <td>{item.brandID?.name}</td>
+                      </tr>
+
+                      <div className="btn_container">
                         {item.isDeployed == 0 ? (
-                          <div className="add_btn mb-2 d-flex justify-content-start">
-                            <button
-                              className="btn btn-admin m-1 p-1 text-light"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal1"
-                              type="button"
-                              onClick={async () => {
-                                setSelectedCollectionId(item._id);
-                                setImportModal(true);
-                              }}
-                            >
-                              Import
-                            </button>
-                          </div>
+                          <button
+                            className="btn btn-admin m-1 p-1 text-light"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModal1"
+                            type="button"
+                            onClick={async () => {
+                              setSelectedCollectionId(item._id);
+                              setImportModal(true);
+                            }}
+                          >
+                            Import
+                          </button>
                         ) : (
                           ""
                         )}
@@ -746,28 +756,29 @@ function CreateCollection() {
                         >
                           Edit
                         </button>
-                      </td>
-                      <td>{item.name}</td>
-                      <td>{item.symbol}</td>
-                      <td>{item.description}</td>
-                      <td>{item.royalityPercentage}</td>
-                      <td>
-                        {moment(item.preSaleStartTime).format("MMMM Do YYYY")}
-                      </td>
-                      <td>
-                        {moment(item.preSaleEndTime).format("MMMM Do YYYY")}
-                      </td>
-                      <td>{item.totalSupply}</td>
-                      <td>
-                        {Number(
-                          convertToEth(item.price.$numberDecimal)
-                        ).toFixed(4)}
-                      </td>
-                      <td>{item.categoryID?.name}</td>
-                      <td>{item.brandID?.name}</td>
-                    </tr>
-                  </tbody>
-                ))
+                        {
+                          !item.isExclusive ?   <button
+                          className="btn btn-admin m-1 p-1 text-light"
+                          type="button"
+                          onClick={() => handleCollection(item._id, "isExclusive")}
+                        >
+                          Exclusive Collection
+                        </button> : ""
+                        }
+                      {
+                        !item.isHotCollection ? <button
+                        className="btn btn-admin m-1 p-1 text-light"
+                        type="button"
+                        onClick={() => handleCollection(item._id, "isHotCollection")}
+                      >
+                        Hot Collection
+                      </button>  : ""
+                      }
+                        
+                      </div>
+                    </tbody>
+                  );
+                })
               : "No Collections Found"}
           </table>
         </div>
