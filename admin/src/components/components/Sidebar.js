@@ -16,7 +16,7 @@ function Sidebar() {
 
             <ul className="list-unstyled components text-uppercase">
                 <li>
-                    <NavLink to={"/"} className="text-decoration-none text-light" activeClassName="active-link">
+                    <NavLink to={"/"} className="text-decoration-none text-light" activeclassname="active-link">
                         <Dashboardsvg /> Dashboard
                     </NavLink>
                 </li>

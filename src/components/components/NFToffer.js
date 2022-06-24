@@ -5,6 +5,8 @@ import { fetchBidNft } from "../../apiServices";
 import NotificationManager from "react-notifications/lib/NotificationManager";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
+import { handleAcceptBids } from "../../helpers/sendFunctions";
+import NFTDetails from "../pages/NFTDetails";
 
 function NFToffer(props) {
   const [currentUser, setCurrentUser] = useState("");
@@ -14,7 +16,7 @@ function NFToffer(props) {
   useEffect(() => {
     console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    else NotificationManager.error("Connect Yout Wallet", "", 800);
+    // else NotificationManager.error("Connect Yout Wallet", "", 800);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
@@ -84,18 +86,24 @@ function NFToffer(props) {
                         <td className="red_text">Cancelled</td>
                         <td>
                           <div className="text-center">
-                            <Link
+                            <button
                               to={"/"}
                               className="small_yellow_btn small_btn mr-3"
+                              onClick={async () => {
+                                await handleAcceptBids(
+                                  b,
+                                  props.NftDetails.type
+                                );
+                              }}
                             >
                               Accept
-                            </Link>
-                            <Link
+                            </button>
+                            <button
                               to={"/"}
                               className="small_border_btn small_btn"
                             >
                               Reject
-                            </Link>
+                            </button>
                           </div>
                         </td>
                       </tr>

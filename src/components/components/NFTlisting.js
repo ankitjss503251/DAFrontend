@@ -11,8 +11,8 @@ import {
   handleRemoveFromSale,
 } from "../../helpers/sendFunctions";
 
-
 function NFTlisting(props) {
+  console.log("nft listing props", props);
   const [orders, setOrders] = useState([]);
 
   const [currentUser, setCurrentUser] = useState("");
@@ -22,7 +22,7 @@ function NFTlisting(props) {
   useEffect(() => {
     console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    else NotificationManager.error("Connect Yout Wallet", "", 800);
+    // else NotificationManager.error("Connect Yout Wallet", "", 800);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
@@ -33,24 +33,24 @@ function NFTlisting(props) {
         const _orders = await getOrderByNftID({ nftID: props.id });
         console.log("orders", _orders?.results?.length);
         setOrders(_orders?.results);
-       
       }
     };
     fetch();
   }, [props.id]);
 
   return (
-    <div className="row">
-      <div className="col-md-12">
-        <div className="nft_list">
-          <table className="table text-light">
+    <div className='row'>
+      <div className='col-md-12'>
+        <div className='nft_list'>
+          <table className='table text-light'>
             <thead>
               <tr>
                 <th>FROM</th>
                 <th>PRICE</th>
                 <th>DATE</th>
+                <th>SALE TYPE</th>
                 <th>STATUS</th>
-                <th className="text-center">ACTION</th>
+                <th className='text-center'>ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -59,7 +59,7 @@ function NFTlisting(props) {
                     return (
                       <tr>
                         <td>
-                          <span className="yellow_dot circle_dot"></span>
+                          <span className='yellow_dot circle_dot'></span>
                           {o.sellerID && o.sellerID.walletAddress
                             ? o.sellerID.walletAddress.slice(0, 3) +
                               "..." +
@@ -68,9 +68,9 @@ function NFTlisting(props) {
                         </td>
                         <td>
                           <img
-                            alt=""
+                            alt=''
                             src={"../img/favicon.png"}
-                            className="img-fluid hunter_fav"
+                            className='img-fluid hunter_fav'
                           />{" "}
                           {o.price && o.price.$numberDecimal
                             ? Number(
@@ -80,28 +80,28 @@ function NFTlisting(props) {
                         </td>
                         <td>
                           {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
-                          <span className="nft_time">
+                          <span className='nft_time'>
                             {moment(o.createdOn).format("LT")}
                           </span>
                         </td>
-                        <td className="blue_text">Active</td>
+                        <td>{o.salesType === 0 ? "Fixed Sale" : o.salesType === 1 ? "Timed Auction" : "Open for Bids"}</td>
+                        <td className='blue_text'>Active</td>
                         <td>
-                          <div className="text-center">
+                          <div className='text-center'>
                             {o.sellerID?.walletAddress?.toLowerCase() ===
                             currentUser?.toLowerCase() ? (
                               <button
                                 to={"/"}
-                                className="small_yellow_btn small_btn mr-3"
+                                className='small_yellow_btn small_btn mr-3'
                                 onClick={() => {
                                   handleRemoveFromSale(o._id, currentUser);
-                                }}
-                              >
+                                }}>
                                 Remove From Sale
                               </button>
                             ) : (
                               <button
                                 to={"/"}
-                                className="small_border_btn small_btn"
+                                className='small_border_btn small_btn'
                                 onClick={async () => {
                                   if (currentUser) {
                                     o.salesType === 0
@@ -126,8 +126,7 @@ function NFTlisting(props) {
                                   } else {
                                     console.log("wallet not found");
                                   }
-                                }}
-                              >
+                                }}>
                                 {o.salesType === 0 ? "Buy Now" : "Place A Bid"}
                               </button>
                             )}

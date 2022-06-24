@@ -15,7 +15,6 @@ function CarouselCollection() {
         limit: 12,
         isHotCollection: 1,
       });
-      console.log("result of getHotCollections helper fn--->", res);
       setHotCollections(res);
     } catch (e) {
       console.log("Error in fetching all hot collections list", e);

@@ -70,6 +70,7 @@ function Marketplace() {
   const [brands, setBrands] = useState([]);
   const [cols, setCols] = useState([]);
   const [colsAdv, setColsAdv] = useState("");
+  const [salesType, setSalesType] = useState();
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -110,6 +111,7 @@ function Marketplace() {
         limit: 5,
         searchText: searchedText ? searchedText : "",
         isOnMarketplace: 1,
+        salesType: salesType
       };
       const res = await getNFTs(reqData);
       if (res?.length > 0) {
@@ -238,7 +240,7 @@ function Marketplace() {
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
-                  style={bgImgarrow}>
+                  style={bgImgarrow} value={salesType} onChange={(e) => setSalesType(e.target.value)}>
                   <option value='1' selected>
                     Single Items
                   </option>

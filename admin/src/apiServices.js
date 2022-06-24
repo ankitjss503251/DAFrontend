@@ -401,9 +401,10 @@ export const createNft = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       Authorization: localStorage.getItem("Authorization"),
     },
-    body: data,
+    body: JSON.stringify(data),
   };
   try {
     console.log("create nft");
@@ -460,7 +461,7 @@ export const getCategory = async (data) => {
     headers: {
       Authorization: localStorage.getItem("Authorization"),
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   };
   try {
     let response = await fetch(
@@ -492,17 +493,11 @@ export const createOrder = async (data, isImported) => {
   try {
     console.log("put on marketplace");
     let response;
-    if (isImported) {
-      response = await fetch(
-        process.env.REACT_APP_API_BASE_URL + "/order/createOrderImport",
-        requestOptions
-      );
-    } else {
-      response = await fetch(
-        process.env.REACT_APP_API_BASE_URL + "/order/createOrder",
-        requestOptions
-      );
-    }
+
+    response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/order/createOrder",
+      requestOptions
+    );
 
     const isJson = response.headers
       .get("content-type")
@@ -569,31 +564,31 @@ export const importNft = async (data) => {
   }
 };
 
-export const getImportedNFTs = async (data) => {
-  const requestOptions = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  };
+// export const getImportedNFTs = async (data) => {
+//   const requestOptions = {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(data),
+//   };
 
-  try {
-    let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/import/getNFT",
-      requestOptions
-    );
+//   try {
+//     let response = await fetch(
+//       process.env.REACT_APP_API_BASE_URL + "/import/getNFT",
+//       requestOptions
+//     );
 
-    const isJson = response.headers
-      .get("content-type")
-      ?.includes("application/json");
-    const datas = isJson && (await response.json());
+//     const isJson = response.headers
+//       .get("content-type")
+//       ?.includes("application/json");
+//     const datas = isJson && (await response.json());
 
-    return datas.data;
-  } catch (err) {
-    return err;
-  }
-};
+//     return datas.data;
+//   } catch (err) {
+//     return err;
+//   }
+// };
 
 export const getImportedCollections = async (data) => {
   const requestOptions = {
@@ -758,6 +753,31 @@ export const GetOrdersByNftId = async (data) => {
   }
 };
 
+export const getNFTList = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/nft/viewNFTs",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    console.log("dataass", datas);
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
 // export const GetAllUserDetails = async () => {
 //   let searchData = {
 //     length: 8,
@@ -807,42 +827,6 @@ export const GetOrdersByNftId = async (data) => {
 //       .get("content-type")
 //       ?.includes("application/json");
 //     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const getNFTList = async (data) => {
-//   // let searchData = {
-//   //   length: 9,
-//   //   start: 0,
-//   //   eType: ["All"],
-//   //   sTextsearch: "",
-//   //   sSellingType: "",
-//   //   sSortingType: "Recently Added",
-//   //   sFrom: 0,
-//   //   sTo: 0,
-//   //   sGenre: [],
-//   // };
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/viewNFTs",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     console.log("dataass", datas);
 //     return datas.data;
 //   } catch (err) {
 //     return err;
