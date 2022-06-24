@@ -10,6 +10,7 @@ import {
   handleUpdateBidStatus,
 } from "../../helpers/sendFunctions";
 import NFTDetails from "../pages/NFTDetails";
+import Clock from "./Clock";
 
 function NFToffer(props) {
   console.log("Props in NFT offer", props);
@@ -49,12 +50,13 @@ function NFToffer(props) {
     <div className="row">
       <div className="col-md-12">
         <div className="nft_list">
-          <table className="table text-light">
+          <table className="table text-light fixed_header">
             <thead>
               <tr>
                 <th>FROM</th>
                 <th>PRICE</th>
                 <th>DATE</th>
+                <th>ENDS IN</th>
                 <th>STATUS</th>
                 <th className="text-center">ACTION</th>
               </tr>
@@ -92,7 +94,25 @@ function NFToffer(props) {
                             {moment(b.createdOn).format("HH:MM:SS")}
                           </span>
                         </td>
-                        <td className="red_text">Cancelled</td>
+                        <td>
+                          {console.log(
+                            "b.deadline",
+                            new Date(b.bidDeadline * 1000) < new Date()
+                          )}
+                          <Clock
+                            deadline={moment(new Date(b.bidDeadline * 1000))
+                              .subtract({
+                                hours: 5,
+                                minutes: 30,
+                              })
+                              .toISOString()}
+                          ></Clock>
+                        </td>
+                        <td className="blue_text">
+                          {new Date(b.bidDeadline * 1000) < new Date()
+                            ? "Ended"
+                            : "Active"}
+                        </td>
                         <td className="text-center">
                           {bidOwner === currentUser.toLowerCase() ? (
                             <div className="text-center">
@@ -125,13 +145,17 @@ function NFToffer(props) {
                             bidder === currentUser.toLowerCase() ? (
                             <div className="text-center">
                               <button
-                                to={"/"}
+                                disabled={
+                                  new Date(b.bidDeadline * 1000) < new Date()
+                                }
                                 className="small_yellow_btn small_btn mr-3"
                               >
                                 Update Bid
                               </button>
                               <button
-                                to={"/"}
+                                disabled={
+                                  new Date(b.bidDeadline * 1000) < new Date()
+                                }
                                 className="small_border_btn small_btn"
                                 onClick={async () => {
                                   await handleUpdateBidStatus(
