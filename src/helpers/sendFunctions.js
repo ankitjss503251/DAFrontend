@@ -34,6 +34,7 @@ import {
   createOrder,
   createBidNft,
   acceptBid,
+  updateBidNft,
   // InsertHistory,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
@@ -854,6 +855,27 @@ export const handleAcceptBids = async (
   // slowRefresh();
 };
 
+export const handleUpdateBidStatus = async (
+  bidID,
+  action //Delete, Cancelled, Rejected
+) => {
+  console.log("payload", bidID, action);
+
+  try {
+    let reqParams = {
+      bidID: bidID,
+      action: action, //Delete, Cancelled, Rejected
+    };
+    let res = await updateBidNft(reqParams);
+    console.log("resss", res);
+
+    NotificationManager.success(`Bid ${action} Successfully`);
+    slowRefresh();
+  } catch (e) {
+    console.log("error in api", e);
+  }
+};
+
 // export const handleCollectionCreation = async (
 //   isSingle,
 //   collectionData,
@@ -1057,27 +1079,6 @@ export const handleAcceptBids = async (
 //     slowRefresh();
 
 //     // window.location.reload();
-//   } catch (e) {
-//     console.log("error in api", e);
-//   }
-// };
-
-// export const handleUpdateBidStatus = async (
-//   bidID,
-//   action //Delete, Cancelled, Rejected
-// ) => {
-//   console.log("payload", bidID, action);
-
-//   try {
-//     let reqParams = {
-//       bidID: bidID,
-//       action: action, //Delete, Cancelled, Rejected
-//     };
-//     let res = await updateBidNft(reqParams);
-//     console.log("resss", res);
-
-//     NotificationManager.success(`Bid ${action} Successfully`);
-//     slowRefresh();
 //   } catch (e) {
 //     console.log("error in api", e);
 //   }
