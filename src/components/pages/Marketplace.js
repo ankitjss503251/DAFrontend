@@ -18,6 +18,7 @@ import bgImg from "./../../assets/marketplace-bg.jpg";
 import { NotificationManager } from "react-notifications";
 import { getAllBrands } from "../../apiServices";
 import BGImg from "./../../assets/images/background.jpg";
+import { Loader } from "semantic-ui-react";
 
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
@@ -69,7 +70,9 @@ function Marketplace() {
   const [brands, setBrands] = useState([]);
   const [cols, setCols] = useState([]);
   const [colsAdv, setColsAdv] = useState("");
-  const [ERCType, setERCType] = useState(1);
+  const [ERCType, setERCType] = useState();
+  const [activeSaleType, setActiveSaleType] = useState(-1);
+  const [loader, setLoader] = useState(false);
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -86,6 +89,12 @@ function Marketplace() {
 
   useEffect(async () => {
     try {
+      const b = await getAllBrands();
+      setBrands(b);
+    } catch (e) {
+      console.log("Error", e);
+    }
+    try {
       const c = await getCategory();
       setCategory(c);
     } catch (e) {
@@ -94,31 +103,21 @@ function Marketplace() {
   }, []);
 
   useEffect(async () => {
-    try {
-      const b = await getAllBrands();
-      setBrands(b);
-    } catch (e) {
-      console.log("Error", e);
-    }
-  }, []);
-
-  useEffect(async () => {
+    setLoader(true);
     let temp = allNFTs;
-    if(searchedText){
-      setSText(searchedText);
-    }
     try {
       const reqData = {
         page: currPage,
         limit: 5,
-        searchText: sText,
+        searchText: sText ? sText : searchedText ? searchedText : "",
         isOnMarketplace: 1,
         ERCType: ERCType,
+        salesType: activeSaleType !== -1 ? activeSaleType : "",
       };
       console.log("result--->", reqData);
       const res = await getNFTs(reqData);
 
-      if (res?.length > 0) {
+      if (res.length > 0) {
         setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
           const ownedBy = await getUserById({ userID: res[i].createdBy });
@@ -146,22 +145,21 @@ function Marketplace() {
 
         temp = [...temp, res];
         setAllNFTs(temp);
-       
+        setLoader(false);
       }
       if (allNFTs && res.length <= 0) {
+        setLoader(false);
         setLoadMoreDisabled("disabled");
       }
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
     }
-  }, [loadMore, ERCType]);
-
-  
+  }, [loadMore, ERCType, sText, activeSaleType]);
 
   return (
     <div>
-      {loadMoreDisabled
-        ? NotificationManager.info("No more items to load")
+      {loadMoreDisabled && allNFTs.length > 0
+        ? NotificationManager.info("No more items to load","",800)
         : ""}
       <section className='register_hd pdd_12' style={register_bg}>
         <div className='container'>
@@ -170,6 +168,8 @@ function Marketplace() {
               <h1>Marketplace</h1>
             </div>
           </div>
+
+
         </div>
       </section>
       <section className='marketplacecollection pdd_8' style={bgImgStyle}>
@@ -188,6 +188,7 @@ function Marketplace() {
                       setAllNFTs([]);
                       setCurrPage(1);
                       setSText(e.target.value);
+                      setLoadMoreDisabled("")
                     }}
                   />
                   <button class='market_btn' type='submit'>
@@ -200,13 +201,15 @@ function Marketplace() {
                   style={bgImgarrow}
                   value={ERCType}
                   onChange={(e) => {
-                    setAllNFTs([])
-                    setCurrPage(1)
+                    setAllNFTs([]);
+                    setCurrPage(1);
                     setERCType(parseInt(e.target.value));
+                    setLoadMoreDisabled("")
                   }}>
-                  <option value='1' selected>
-                    Single Items
+                  <option value='0' selected>
+                    All Items
                   </option>
+                  <option value='1'>Single Items</option>
                   <option value='2'>Multiple Items</option>
                 </select>
                 <select
@@ -246,10 +249,58 @@ function Marketplace() {
                   </button>
                   <div id='demo' class='collapse show'>
                     <ul className='status_ul d-flex flex-wrap'>
-                      <li className='filter_border mr-2'>All NFTs</li>
-                      <li className='filter_border'>Not For Sale</li>
-                      <li className='filter_border'>Buy Now</li>
-                      <li className='filter_border'>On Auction</li>
+                      <li
+                        className={`filter_border mr-2 ${
+                          activeSaleType === 3 ? "active" : ""
+                        }`}
+                        value='3'
+                        onClick={(e) => {
+                          setAllNFTs([]);
+                          setCurrPage(1);
+                          setActiveSaleType(e.target.value);
+                          setLoadMoreDisabled("")
+                        }}>
+                        All NFTs
+                      </li>
+                      <li
+                        className={`filter_border mr-2 ${
+                          activeSaleType === 4 ? "active" : ""
+                        }`}
+                        value='4'
+                        onClick={(e) => {
+                          setAllNFTs([]);
+                          setCurrPage(1);
+                          setActiveSaleType(e.target.value);
+                          setLoadMoreDisabled("");
+                        }}>
+                        Not For Sale
+                      </li>
+                      <li
+                        className={`filter_border mr-2 ${
+                          activeSaleType === 0 ? "active" : ""
+                        }`}
+                        value='0'
+                        onClick={(e) => {
+                          setAllNFTs([]);
+                          setCurrPage(1);
+                          setActiveSaleType(e.target.value);
+                          setLoadMoreDisabled("");
+                        }}>
+                        Buy Now
+                      </li>
+                      <li
+                        className={`filter_border mr-2 ${
+                          activeSaleType === 1 ? "active" : ""
+                        }`}
+                        value='1'
+                        onClick={(e) => {
+                          setAllNFTs([]);
+                          setCurrPage(1);
+                          setActiveSaleType(e.target.value);
+                          setLoadMoreDisabled("");
+                        }}>
+                        On Auction
+                      </li>
                     </ul>
                   </div>
 
@@ -423,8 +474,9 @@ function Marketplace() {
             </div> */}
 
           <div className='row'>
-            {allNFTs?.length > 0
-              ? allNFTs.map((oIndex) => {
+            {
+              loader ? <Loader size='large' active inline='centered' /> :   allNFTs?.length > 0 ? (
+                allNFTs.map((oIndex) => {
                   return oIndex.map((card, key) => {
                     return (
                       <div className={grid}>
@@ -497,7 +549,11 @@ function Marketplace() {
                     );
                   });
                 })
-              : ""}
+              ) : (
+                <h2 className='text-white'>No NFTs Found</h2>
+              )}
+            
+          
           </div>
           {allNFTs?.length > 0 ? (
             <div className='row'>
@@ -507,7 +563,8 @@ function Marketplace() {
                   className={`btn view_all_bdr ${loadMoreDisabled}`}
                   onClick={() => {
                     setCurrPage(currPage + 1);
-                    setLoadMore(!loadMore)}}>
+                    setLoadMore(!loadMore);
+                  }}>
                   Load More
                 </button>
               </div>
