@@ -123,19 +123,26 @@ function NFToffer(props) {
                             </div>
                           ) : bidOwner !== currentUser.toLowerCase() &&
                             bidder === currentUser.toLowerCase() ? (
-                              <div className='text-center'>
-                               <button
-                              to={"/"}
-                              className='small_yellow_btn small_btn mr-3'>
-                              Update Bid
-                            </button>
+                            <div className="text-center">
                               <button
                                 to={"/"}
-                                className='small_border_btn small_btn'>
+                                className="small_yellow_btn small_btn mr-3"
+                              >
+                                Update Bid
+                              </button>
+                              <button
+                                to={"/"}
+                                className="small_border_btn small_btn"
+                                onClick={async () => {
+                                  await handleUpdateBidStatus(
+                                    b._id,
+                                    "Cancelled"
+                                  );
+                                }}
+                              >
                                 Cancel
                               </button>
                             </div>
-                           
                           ) : bidder === currentUser.toLowerCase() ? (
                             <button
                               to={"/"}
