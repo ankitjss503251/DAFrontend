@@ -19,7 +19,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          cd /var/www/html/DAFrontend/admin
+          cd /var/www/html/project/DAFrontend/admin
           pwd
           ls -la
           git add .
