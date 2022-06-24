@@ -22,6 +22,9 @@ import {
 import { NotificationManager } from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
+import Loader from "../components/Loader";
+import PopupModal from "../components/AccountModal/popupModal";
+import Logo from "../../assets/images/logo.svg";
 
 var textColor = {
   textColor: "#EF981D",
@@ -52,6 +55,23 @@ function NFTDetails() {
   const [cookies] = useCookies([]);
   const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [loader, setLoader] = useState(false);
+  const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
+  const [bidQty, setBidQty] = useState("");
+  const [bidPrice, setBidPrice] = useState("");
+  const [willPay, setWillPay] = useState("");
+  const [userBalance, setUserBalance] = useState("");
+
+  const placeBidCal = [
+    {
+      key: "Balance",
+      value: 100,
+    },
+    {
+      key: "You will pay",
+      value: 100,
+    },
+  ];
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -203,8 +223,124 @@ function NFTDetails() {
     setDatetime(dt);
   }
 
+  const placeBidModal = (
+    <PopupModal
+      content={
+        <div className='popup-content1'>
+          <h3 className='modal_heading '>Complete Checkout</h3>
+          <div className='bid_user_details my-4'>
+            <img src={Logo} />
+
+            <div className='bid_user_address'>
+              <div>
+                <span className='adr'>{`${
+                  currentUser?.slice(0, 8) + "..." + currentUser?.slice(34, 42)
+                }`}</span>
+                <span class='badge badge-success'>Connected</span>
+              </div>
+              <span className='pgn'>Polygon</span>
+            </div>
+          </div>
+          <h6 className='enter_quantity_heading required'>
+            Please Enter the Bid Quantity
+          </h6>
+          <input
+            className='form-control checkout_input'
+            type='text'
+            min='1'
+            step='1'
+            placeholder='Quantity e.g. 1,2,3...'
+            disabled={""}
+            value={bidQty}
+            onKeyPress={(e) => {
+              if (!/^\d*$/.test(e.key)) e.preventDefault();
+            }}
+            onChange={(e) => {
+              // if (Number(e.target.value) > Number(100)) {
+              //   NotificationManager.error(
+              //     "Quantity should be less than seller's order",
+              //     "",
+              //     800
+              //   );
+              //   return;
+              // }
+              setBidQty(e.target.value);
+            }}></input>
+          <h6 className='enter_price_heading required'>
+            Please Enter the Bid Price
+          </h6>
+
+          <input
+            className='form-control checkout_input'
+            type='text'
+            min='1'
+            placeholder='Price e.g. 0.001,1...'
+            value={bidPrice}
+            onKeyPress={(e) => {
+              if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+            }}
+            onChange={(e) => {
+              if (Number(e.target.value) > 100000000000000) {
+                return;
+              }
+              const re = /[+-]?[0-9]+\.?[0-9]*/;
+              let val = e.target.value;
+
+              if (e.target.value === "" || re.test(e.target.value)) {
+                const numStr = String(val);
+                if (numStr.includes(".")) {
+                  if (numStr.split(".")[1].length > 8) {
+                  } else {
+                    if (val.split(".").length > 2) {
+                      val = val.replace(/\.+$/, "");
+                    }
+                    if (val.length === 2 && val !== "0.") {
+                      val = Number(val);
+                    }
+                  }
+                } else {
+                  if (val.split(".").length > 2) {
+                    val = val.replace(/\.+$/, "");
+                  }
+                  if (val.length === 2 && val !== "0.") {
+                    val = Number(val);
+                  }
+                }
+                setBidPrice(val);
+              }
+            }}></input>
+
+          <div className='bid_user_calculations'>
+            {placeBidCal?.map(({ key, value }) => {
+              return (
+                <div className='cal_div'>
+                  <span>{key}</span>
+                  <span className='cal_div_value'>{value} MATIC</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <p className='disabled_text'>Insufficient Balance in MATIC</p>
+
+          <button className='btn-main mt-2 btn-placeABid'>
+            {"Place A Bid"}
+          </button>
+        </div>
+      }
+      handleClose={() => {
+        setIsPlaceBidModal(!isPlaceBidModal);
+        setBidQty(1);
+        setBidPrice("");
+        setWillPay("0");
+      }}
+    />
+  );
+
   return (
     <div>
+    
+      {/* <Loader /> */}
       <section style={bgImgStyle} className='pdd_8'>
         <div className='container'>
           <div className='row mb-5'>
