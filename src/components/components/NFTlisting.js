@@ -12,6 +12,8 @@ import {
 } from "../../helpers/sendFunctions";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
+import Clock from "./Clock";
+import { GENERAL_TIMESTAMP } from "../../helpers/constants";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -34,6 +36,7 @@ function NFTlisting(props) {
       value: willPay,
     },
   ];
+  const [bidDeadline, setBidDeadline] = useState(GENERAL_TIMESTAMP);
 
   useEffect(() => {
     console.log("cookies.selected_account", cookies.selected_account);
@@ -185,8 +188,9 @@ function NFTlisting(props) {
                 <th>PRICE</th>
                 <th>DATE</th>
                 <th>SALE TYPE</th>
+                <th>ENDS IN</th>
                 <th>STATUS</th>
-                <th className='text-center'>ACTION</th>
+                <th className="text-center">ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -194,8 +198,8 @@ function NFTlisting(props) {
                 ? orders.map((o, i) => {
                     return (
                       <tr>
-                        <td className='d-flex justify-content-start align-items-center mb-0'>
-                          <span className='yellow_dot circle_dot'></span>
+                        <td className="d-flex justify-content-start align-items-center mb-0">
+                          <span className="yellow_dot circle_dot"></span>
                           <span>
                             {o.sellerID && o.sellerID.walletAddress
                               ? o.sellerID.walletAddress.slice(0, 3) +
@@ -206,9 +210,9 @@ function NFTlisting(props) {
                         </td>
                         <td>
                           <img
-                            alt=''
+                            alt=""
                             src={"../img/favicon.png"}
-                            className='img-fluid hunter_fav'
+                            className="img-fluid hunter_fav"
                           />{" "}
                           {o.price && o.price.$numberDecimal
                             ? Number(
@@ -218,7 +222,7 @@ function NFTlisting(props) {
                         </td>
                         <td>
                           {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
-                          <span className='nft_time'>
+                          <span className="nft_time">
                             {moment(o.createdOn).format("LT")}
                           </span>
                         </td>
@@ -229,24 +233,66 @@ function NFTlisting(props) {
                             ? "Timed Auction"
                             : "Open for Bids"}
                         </td>
-                        <td className='blue_text'>Active</td>
                         <td>
-                          <div className='text-center'>
+                          {console.log(
+                            "o.deadline",
+                            new Date(o.deadline * 1000),
+                            new Date()
+                          )}
+                          {o.deadline == GENERAL_TIMESTAMP ? (
+                            "INFINITE"
+                          ) : (
+                            <Clock
+                              deadline={moment(new Date(o.deadline * 1000))
+                                .subtract({
+                                  hours: 5,
+                                  minutes: 30,
+                                })
+                                .toISOString()}
+                            ></Clock>
+                          )}
+                        </td>
+
+                        <td className="blue_text">
+                          {new Date(o.deadline * 1000) < new Date()
+                            ? "Ended"
+                            : "Active"}
+                        </td>
+                        <td>
+                          <div className="text-center">
                             {o.sellerID?.walletAddress?.toLowerCase() ===
                             currentUser?.toLowerCase() ? (
                               <button
                                 to={"/"}
-                                className='small_yellow_btn small_btn mr-3'
+                                className="small_yellow_btn small_btn mr-3"
                                 onClick={() => {
                                   handleRemoveFromSale(o._id, currentUser);
-                                }}>
+                                }}
+                              >
                                 Remove From Sale
                               </button>
                             ) : (
                               <button
                                 to={"/"}
-                                className='small_border_btn small_btn'
+                                disabled={
+                                  new Date(o.deadline * 1000) < new Date()
+                                }
+                                className="small_border_btn small_btn"
                                 onClick={async () => {
+                                  console.log(
+                                    "new Date(o.deadline) > new Date()",
+                                    new Date(o.deadline * 1000) > new Date()
+                                  );
+                                  if (
+                                    new Date(o.deadline * 1000) < new Date()
+                                  ) {
+                                    NotificationManager.error(
+                                      "Auction Ended",
+                                      "",
+                                      800
+                                    );
+                                    return;
+                                  }
                                   if (currentUser) {
                                     setIsPlaceBidModal(true);
                                     // o.salesType === 0
@@ -271,7 +317,8 @@ function NFTlisting(props) {
                                   } else {
                                     console.log("wallet not found");
                                   }
-                                }}>
+                                }}
+                              >
                                 {o.salesType === 0 ? "Buy Now" : "Place A Bid"}
                               </button>
                             )}
