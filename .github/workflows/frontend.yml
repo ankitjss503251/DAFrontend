@@ -17,8 +17,8 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          cd /var/www/html/DAFrontend
-          git config --global --add safe.directory /var/www/html/DAFrontend
+          cd /var/www/html/project/DAFrontend
+          git config --global --add safe.directory /var/www/html/project/DAFrontend
           sudo git add .
           sudo git commit -m "serversidechanges"
           sudo git pull origin main
