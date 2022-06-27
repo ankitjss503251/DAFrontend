@@ -307,7 +307,22 @@ function NFTlisting(props) {
           ) : Number(willPay) > Number(userBalance) ? (
             <p className="disabled_text">Insufficient Balance in MATIC</p>
           ) : (
-            <button className="btn-main mt-2 btn-placeABid">{"Buy Now"}</button>
+            <button
+              className="btn-main mt-2 btn-placeABid"
+              onClick={async () => {
+                await handleBuyNft(
+                  o._id,
+                  props?.NftDetails?.type == 1,
+                  currentUser,
+                  "1000000000000",
+                  1,
+                  false,
+                  props?.NftDetails?.collectionAddress?.toLowerCase()
+                );
+              }}
+            >
+              {"Buy Now"}
+            </button>
           )}
         </div>
       }
