@@ -23,13 +23,9 @@ import Loader from "../components/loader";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
-import { ImportNFTs } from "../../helpers/sendFunctions";
-import { fetchTokens, GetOwnerOfToken } from "../../helpers/getterFunctions";
-import { getEvents } from "../../helpers/utils";
-import { Form } from "react-bootstrap";
+import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 
 function CreateCollection() {
-  const [files, setFiles] = useState([]);
   const [logoImg, setLogoImg] = useState("");
   const [coverImg, setCoverImg] = useState("");
   const [title, setTitle] = useState("");
@@ -63,13 +59,7 @@ function CreateCollection() {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    console.log("current user is---->", currentUser, cookies.selected_account);
-  }, [currentUser]);
-
-  useEffect(async () => {
-    let res = await getEvents("0xbcb4da834f01c0e8d231d0ad36a29559d69d9f2c");
-    console.log("res", res);
-  }, []);
+  }, [cookies.selected_account]);
 
   useEffect(() => {
     if (currentUser) {
@@ -268,9 +258,10 @@ function CreateCollection() {
         fd.append("description", description);
         fd.append("logoImage", logoImg);
         fd.append("coverImage", coverImg);
+        fd.append("link", importedCollectionLink);
         fd.append("categoryID", category);
         fd.append("brandID", brand);
-        fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
+        fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
         fd.append("preSaleStartTime", preSaleStartTime);
         fd.append("preSaleEndTime", datetime2);
         fd.append("preSaleTokenAddress", contracts.USDT);
@@ -303,8 +294,8 @@ function CreateCollection() {
         try {
           setLoading(true);
 
-          if (isOffChain == "No") {
-            nftType == "1"
+          if (isOffChain === "No") {
+            nftType === "1"
               ? (res1 = await creator.deployExtendedERC721(
                   title,
                   symbol,
@@ -334,13 +325,13 @@ function CreateCollection() {
         console.log("contract address is--->", contractAddress);
         if (res1.status === 1) {
           let type;
-          if (nftType == "1") {
+          if (nftType === "1") {
             type = 1;
           } else {
             type = 2;
           }
 
-          var fd = new FormData();
+          fd = new FormData();
           fd.append("name", title);
           fd.append("symbol", symbol);
           fd.append("description", description);
@@ -351,6 +342,7 @@ function CreateCollection() {
           fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
           fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
           //fd.append("chainID", chain);
+          fd.append("link", importedCollectionLink);
           fd.append("contractAddress", contractAddress);
           fd.append("preSaleStartTime", preSaleStartTime);
           fd.append("preSaleEndTime", datetime2);
@@ -366,7 +358,7 @@ function CreateCollection() {
             let collection = await createCollection(fd);
             console.log("create Collection response is--->", collection);
             setLoading(false);
-            if (collection == "Collection created") {
+            if (collection === "Collection created") {
               NotificationManager.success(
                 "collection created successfully",
                 "",
@@ -535,6 +527,7 @@ function CreateCollection() {
           resp.isOnMarketplace = 1;
           resp.isImported = 1;
           resp.collectionID = res._id;
+          resp.totalQuantity = 1;
           console.log("resp", resp);
           await createNft({ nftData: resp });
         } catch (e) {
@@ -596,13 +589,13 @@ function CreateCollection() {
   };
 
   const handleCollection = async (collectionID, field) => {
-   try{ let fd = new FormData();
-    fd.append("id", collectionID);
-    fd.append(field, 1);
-    await UpdateCollection(fd);
-    NotificationManager.success("Collection updated", "", 1000);
-  }
-    catch(e){
+    try {
+      let fd = new FormData();
+      fd.append("id", collectionID);
+      fd.append(field, 1);
+      await UpdateCollection(fd);
+      NotificationManager.success("Collection updated", "", 1000);
+    } catch (e) {
       console.log("Error", e);
     }
   };
@@ -756,25 +749,32 @@ function CreateCollection() {
                         >
                           Edit
                         </button>
-                        {
-                          !item.isExclusive ?   <button
-                          className="btn btn-admin m-1 p-1 text-light"
-                          type="button"
-                          onClick={() => handleCollection(item._id, "isExclusive")}
-                        >
-                          Exclusive Collection
-                        </button> : ""
-                        }
-                      {
-                        !item.isHotCollection ? <button
-                        className="btn btn-admin m-1 p-1 text-light"
-                        type="button"
-                        onClick={() => handleCollection(item._id, "isHotCollection")}
-                      >
-                        Hot Collection
-                      </button>  : ""
-                      }
-                        
+                        {!item.isExclusive ? (
+                          <button
+                            className="btn btn-admin m-1 p-1 text-light"
+                            type="button"
+                            onClick={() =>
+                              handleCollection(item._id, "isExclusive")
+                            }
+                          >
+                            Exclusive Collection
+                          </button>
+                        ) : (
+                          ""
+                        )}
+                        {!item.isHotCollection ? (
+                          <button
+                            className="btn btn-admin m-1 p-1 text-light"
+                            type="button"
+                            onClick={() =>
+                              handleCollection(item._id, "isHotCollection")
+                            }
+                          >
+                            Hot Collection
+                          </button>
+                        ) : (
+                          ""
+                        )}
                       </div>
                     </tbody>
                   );
@@ -1061,7 +1061,21 @@ function CreateCollection() {
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
                 </div>
-
+                <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Minting Link *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    name="title"
+                    value={importedCollectionLink}
+                    onChange={(e) => {
+                      setImportedCollectionLink(e.target.value);
+                    }}
+                  />
+                </div>
                 <div className="col-md-6 mb-1">
                   <label for="recipient-name" className="col-form-label">
                     NFT Type *
