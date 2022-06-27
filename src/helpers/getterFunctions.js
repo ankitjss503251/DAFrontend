@@ -15,6 +15,7 @@ import {
   getBrandById,
   GetIndividualAuthorDetail,
   getCategories,
+  fetchOfferNft
 } from "../apiServices";
 import { ethers } from "ethers";
 import contracts from "../config/contracts";
@@ -193,6 +194,44 @@ export const getUsersTokenBalance = async (account, tokenAddress) => {
   console.log("token", token, "userBalance", userBalance.toString(), account);
   return userBalance.toString();
 };
+
+ export const getAllOffersByNftId = async (nftId) => {
+   let dummyData = await fetchOfferNft({
+     nNFTId: nftId,
+  
+     buyerID: "All",
+     bidStatus: "All",
+   });
+
+   let data = [];
+   console.log("dummyData---", dummyData);
+
+   dummyData?.data
+     ? // eslint-disable-next-line array-callback-return
+       dummyData.data.map((d, i) => {
+         data.push({
+           bidId: d._id,
+           bidQuantity: d.oBidQuantity,
+           bidPrice: d.oBidPrice.$numberDecimal,
+           seller: d.oOwner.sWalletAddress,
+           orderId: d.oOrderId,
+           bidder: d.oBidder.sWalletAddress,
+           bidderProfile: d.oBidder.sProfilePicUrl,
+           buyerSignature: d.oBuyerSignature,
+           bidderFullName: d.oBidder.oName
+             ? d.oBidder.oName.sFirstname
+             : d.oBidder
+             ? d.oBidder.sWalletAddress
+             : "Unnamed",
+           nftId: d.oNFTId,
+           owner: d.oSeller,
+         });
+       })
+     : data.push([]);
+
+   console.log("dummyData", data);
+   return data;
+ };
 
 // export const getUsersNFTs = async (
 //   paramType,

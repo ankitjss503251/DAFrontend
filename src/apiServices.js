@@ -654,7 +654,7 @@ export const fetchBidNft = async (data) => {
 
 
 export const fetchOfferNft = async (data) => {
-  console.log("Data", data);
+  console.log("Data for offer NFT", data);
   const requestOptions = {
     method: "POST",
     headers: {
@@ -672,8 +672,10 @@ export const fetchOfferNft = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
+    console.log("offer data in api services",datas)
     return datas.data;
   } catch (err) {
+    console.log("'error in offer-->",err)
     return err;
   }
 };

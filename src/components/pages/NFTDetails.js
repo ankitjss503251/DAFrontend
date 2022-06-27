@@ -4,6 +4,7 @@ import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
 import NFToffer from "../components/NFToffer";
 import NFTBids from "../components/NFTBids";
+ import { ethers } from "ethers";
 import NFThistory from "../components/NFThistory";
 import {
   getCollections,
@@ -55,7 +56,7 @@ function NFTDetails() {
   const [orders,setOrders]=useState([]);
   const [isModal,setModal]=useState("");
   const [offerPrice,setOfferPrice]=useState();
-  const [offerQuantity,setOfferQuantity]=useState();
+  const [offerQuantity,setOfferQuantity]=useState(1);
   const [selectedTokenFS,setSelectedTokenFS]=useState();
 
 
@@ -92,6 +93,7 @@ function NFTDetails() {
           collectionID: res[0].collection,
         };
         const nfts=await getNFTs(reqData1);
+       
         setAllNFTs(nfts);
         if (
           currentUser &&
@@ -151,6 +153,7 @@ function NFTDetails() {
   };
   const PlaceOffer=async () => {
      console.log("NFT Details---->",NFTDetails)
+   
      if(currentUser===undefined || currentUser===""){
        NotificationManager.error("Please Connect Metamask");
        return;
@@ -160,7 +163,8 @@ function NFTDetails() {
       NotificationManager.error("Enter Offer Price");
       return;
     }
-    if(offerQuantity==""||offerQuantity==undefined&&NFTDetails.type!==1) {
+    console.log("offer quantity is----->",offerQuantity)
+    if(offerQuantity==""||offerQuantity==undefined && NFTDetails.type!==1) {
       NotificationManager.error("Enter Offer Quantity");
       return;
     }
@@ -176,9 +180,9 @@ function NFTDetails() {
       NFTDetails?.ownedBy[0],
       currentUser,
       NFTDetails?.type,
-      1,
-      offerPrice,
-      deadline,NFTDetails.id)
+      offerQuantity,
+      ethers.utils.parseEther(offerPrice),
+      deadline,NFTDetails.id,)
 
     //await putOnMarketplace(currentUser, orderData);
     return;
@@ -427,7 +431,11 @@ function NFTDetails() {
                   ""
                 )}
 
-                <button type='button' className='border_btn title_color'>
+                <button type='button' 
+                className='border_btn title_color'
+                data-bs-toggle="modal"
+                data-bs-target="#brandModal"
+                onClick={() => setModal("active")}>
                   Bids / Offers
                 </button>
               </div>
@@ -843,9 +851,13 @@ function NFTDetails() {
                     disabled={NFTDetails.type===1? "disabled":""}
                     className='form-control input_design'
                     placeholder='Please Enter Quantity'
-                    value={item_qt}
+                     value={offerQuantity}
                     onChange={(event) => {
-                      setOfferQuantity(event.target.value)
+                  
+                      if(NFTDetails.type==1 &&event.target.value>1){
+                        setOfferQuantity(1);
+                        NotificationManager.error("Quantity must be 1.","",800);
+                      }
                       if(NFTDetails.type!==1&&event.target.value>NFTDetails?.totalQuantity) {
                         NotificationManager.error("Quantity must be less than or equal to total quantity.","",800);
                         return;

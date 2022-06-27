@@ -683,19 +683,24 @@ export const createOffer=async (
   ownerAccount,
   buyerAccount,
   erc721,
-  qty=1,
+  qty,
   bidPrice,
   deadline,
-  nftID
+  nftID,
+  
 ) => {
   console.log(
     "payload in send function",
+    tokenId,
+    collectionAddress,
     ownerAccount,
     buyerAccount,
     erc721,
     qty,
     bidPrice,
-    deadline
+    deadline,
+    nftID,
+    
   );
 
   let sellerOrder=[];
@@ -733,7 +738,7 @@ export const createOffer=async (
           bidStatus: "MakeOffer",
           bidPrice: bidPrice.toString(),
           nftID: nftID,
-
+          bidDeadline:deadline,
           bidQuantity: Number(qty),
           buyerSignature: signature,
         };
