@@ -16,7 +16,7 @@ import { exportInstance } from "../../apiServices";
 import contracts from "./../../config/contracts";
 import { getSignature } from "./../../helpers/getterFunctions";
 import { GENERAL_DATE, GENERAL_TIMESTAMP } from "../../helpers/constants";
-import Loader from "../components/Loader";
+import Loader from "../components/loader";
 import "../../App.css";
 
 function CreateNFTs() {

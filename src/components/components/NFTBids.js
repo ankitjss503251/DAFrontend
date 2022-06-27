@@ -10,6 +10,7 @@ import {
 } from "../../helpers/sendFunctions";
 import NFTDetails from "../pages/NFTDetails";
 import Clock from "./Clock";
+import { Tokens } from "../../helpers/tokensToSymbol";
 
 function NFTBids(props) {
   console.log("Props in NFT offer", props);
@@ -55,6 +56,7 @@ function NFTBids(props) {
                 <th>FROM</th>
                 <th>PRICE</th>
                 <th>DATE</th>
+                <th>SALE TYPE</th>
                 <th>ENDS IN</th>
                 <th>STATUS</th>
                 <th className="text-center">ACTION</th>
@@ -63,24 +65,31 @@ function NFTBids(props) {
             <tbody>
               {bids && bids.length > 0
                 ? bids.map((b, i) => {
-                    const bidOwner = b?.owner?.walletAddress.toLowerCase();
-                    const bidder = b?.bidderID?.walletAddress.toLowerCase();
+                    const bidOwner = b?.owner?.walletAddress?.toLowerCase();
+                    const bidder = b?.bidderID?.walletAddress?.toLowerCase();
                     return (
                       <tr>
                         <td className="d-flex justify-content-start align-items-center mb-0">
                           <span className="blue_dot circle_dot"></span>
                           <span>
                             {b?.bidderID?.walletAddress
-                              ? b?.bidderID?.walletAddress.slice(0, 3) +
+                              ? b?.bidderID?.walletAddress?.slice(0, 3) +
                                 "..." +
-                                b?.bidderID?.walletAddress.slice(39, 41)
+                                b?.bidderID?.walletAddress?.slice(39, 41)
                               : ""}
                           </span>
                         </td>
                         <td>
+                          {console.log("b.orderID?.paymentToken", b.orderID)}
                           <img
                             alt=""
-                            src={"../img/favicon.png"}
+                            src={
+                              b.orderID.length > 0
+                                ? Tokens[
+                                    b.orderID[0]?.paymentToken?.toLowerCase()
+                                  ]
+                                : "-"
+                            }
                             className="img-fluid hunter_fav"
                           />{" "}
                           {Number(
@@ -90,9 +99,10 @@ function NFTBids(props) {
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
                           <span className="nft_time">
-                            {moment(b.createdOn).format("HH:MM:SS")}
+                            {moment(b.createdOn).format("LT")}
                           </span>
                         </td>
+                        <td>Auction</td>
                         <td>
                           {console.log(
                             "b.deadline",
@@ -113,7 +123,7 @@ function NFTBids(props) {
                             : "Active"}
                         </td>
                         <td className="text-center">
-                          {bidOwner === currentUser.toLowerCase() ? (
+                          {bidOwner === currentUser?.toLowerCase() ? (
                             <div className="text-center">
                               <button
                                 to={"/"}
@@ -140,8 +150,8 @@ function NFTBids(props) {
                                 Reject
                               </button>
                             </div>
-                          ) : bidOwner !== currentUser.toLowerCase() &&
-                            bidder === currentUser.toLowerCase() ? (
+                          ) : bidOwner !== currentUser?.toLowerCase() &&
+                            bidder === currentUser?.toLowerCase() ? (
                             <div className="text-center">
                               <button
                                 disabled={
@@ -166,7 +176,7 @@ function NFTBids(props) {
                                 Cancel
                               </button>
                             </div>
-                          ) : bidder === currentUser.toLowerCase() ? (
+                          ) : bidder === currentUser?.toLowerCase() ? (
                             <button
                               to={"/"}
                               className="small_border_btn small_btn"
