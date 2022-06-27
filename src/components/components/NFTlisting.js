@@ -15,6 +15,7 @@ import Logo from "../../assets/images/logo.svg";
 import Clock from "./Clock";
 import { GENERAL_TIMESTAMP } from "../../helpers/constants";
 import { Tokens } from "../../helpers/tokensToSymbol";
+import { ethers } from "ethers";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -29,23 +30,12 @@ function NFTlisting(props) {
   const [currentOrder, setCurrentOrder] = useState([]);
   const [bidDeadline, setBidDeadline] = useState("");
 
-  const checkoutCal = [
-    {
-      key: "Balance",
-      value: Number(userBalance).toFixed(4),
-    },
-    {
-      key: "You will pay",
-      value: willPay,
-    },
-  ];
-
   useEffect(() => {
     if (cookies.selected_account) {
       setCurrentUser(cookies.selected_account);
-      setUserBalance(cookies.balance);
+      // setUserBalance(cookies.balance);
     }
-  }, [cookies.selected_account, cookies.balance]);
+  }, [cookies.selected_account]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -122,16 +112,6 @@ function NFTlisting(props) {
               if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (
-                Number(e.target.value) > Number(currentOrder.total_quantity)
-              ) {
-                NotificationManager.error(
-                  "Quantity should be less than seller's order",
-                  "",
-                  800
-                );
-                return;
-              }
               const re = /[+-]?[0-9]+\.?[0-9]*/;
               let val = e.target.value;
 
@@ -188,41 +168,29 @@ function NFTlisting(props) {
             />
           </div>
 
-          <div className="bid_user_calculations">
-            {checkoutCal?.map(({ key, value }) => {
-              return (
-                <div className="cal_div">
-                  <span>{key}</span>
-                  <span className="cal_div_value">{value} MATIC</span>
-                </div>
+          <button
+            className="btn-main mt-2 btn-placeABid"
+            onClick={async () => {
+              console.log(
+                " ethers.utils.parseEther(price)",
+                ethers.utils.parseEther(price.toString())
               );
-            })}
-          </div>
 
-          {Number(willPay) === 0 ? (
-            ""
-          ) : Number(willPay) > Number(userBalance) ? (
-            <p className="disabled_text">Insufficient Balance in MATIC</p>
-          ) : (
-            <button
-              className="btn-main mt-2 btn-placeABid"
-              onClick={async () => {
-                await createBid(
-                  currentOrder.nftID,
-                  currentOrder._id,
-                  currentOrder.sellerID?._id,
-                  currentUser,
-                  props?.NftDetails?.type,
-                  currentOrder.total_quantity,
-                  currentOrder.price.$numberDecimal,
-                  false,
-                  new Date(bidDeadline).valueOf() / 1000
-                );
-              }}
-            >
-              {"Place A Bid"}
-            </button>
-          )}
+              await createBid(
+                currentOrder.nftID,
+                currentOrder._id,
+                currentOrder.sellerID?._id,
+                currentUser,
+                props?.NftDetails?.type,
+                currentOrder.total_quantity,
+                ethers.utils.parseEther(price.toString()),
+                false,
+                new Date(bidDeadline).valueOf() / 1000
+              );
+            }}
+          >
+            {"Place A Bid"}
+          </button>
         </div>
       }
       handleClose={() => {
@@ -287,7 +255,6 @@ function NFTlisting(props) {
           <h6 className="enter_price_heading required">
             Please Enter the Price
           </h6>
-
           <input
             className="form-control checkout_input"
             type="text"
@@ -327,40 +294,24 @@ function NFTlisting(props) {
               }
             }}
           ></input>
-
-          <div className="bid_user_calculations">
-            {checkoutCal?.map(({ key, value }) => {
-              return (
-                <div className="cal_div">
-                  <span>{key}</span>
-                  <span className="cal_div_value">{value} MATIC</span>
-                </div>
+          (
+          <button
+            className="btn-main mt-2 btn-placeABid"
+            onClick={async () => {
+              await handleBuyNft(
+                currentOrder._id,
+                props?.NftDetails?.type === 1,
+                currentUser,
+                cookies.balance,
+                currentOrder.total_quantity,
+                false,
+                props?.NftDetails?.collectionAddress?.toLowerCase()
               );
-            })}
-          </div>
-
-          {Number(willPay) === 0 ? (
-            ""
-          ) : Number(willPay) > Number(userBalance) ? (
-            <p className="disabled_text">Insufficient Balance in MATIC</p>
-          ) : (
-            <button
-              className="btn-main mt-2 btn-placeABid"
-              onClick={async () => {
-                await handleBuyNft(
-                  currentOrder._id,
-                  props?.NftDetails?.type === 1,
-                  currentUser,
-                  cookies.balance,
-                  currentOrder.total_quantity,
-                  false,
-                  props?.NftDetails?.collectionAddress?.toLowerCase()
-                );
-              }}
-            >
-              {"Buy Now"}
-            </button>
-          )}
+            }}
+          >
+            {"Buy Now"}
+          </button>
+          )
         </div>
       }
       handleClose={() => {
@@ -486,7 +437,6 @@ function NFTlisting(props) {
                                     return;
                                   }
                                   if (currentUser) {
-                                    console.log("ooooooooo", o);
                                     o.salesType === 0
                                       ? setPrice(
                                           Number(
