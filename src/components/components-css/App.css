@@ -71,27 +71,23 @@
 
 .popup-box {
   position: fixed;
-  background: rgba(4, 4, 5, 0.9);
+  background: rgba(4, 4, 5, 81%);
   width: 100%;
   height: 100vh;
   top: 0;
   left: 0;
-  z-index: 999;
+  z-index: 9999;
 }
 
-.box {
-  position: relative;
-  width: fit-content;
-  top: 25%;
-  margin: 0 auto;
-  height: auto;
-  max-height: 50vh;
-  min-height: fit-content;
+.popup-box .box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: #fff;
-  border-radius: 16px;
-  padding: 20px;
-  border: none;
-  overflow: auto;
+  border-radius: 10px;
+  padding: 18px;
+  min-width: 400px;
 }
 
 .close-icon {
@@ -4409,7 +4405,8 @@ a:hover {
   transition: all 0.1s ease;
 }
 
-.status_ul li:hover, .status_ul li.filter_border.active {
+.status_ul li:hover,
+.status_ul li.filter_border.active {
   color: #000;
   background-color: #ef981d;
 }
@@ -4429,8 +4426,6 @@ a:hover {
   text-align: center;
   padding: 10px 10px;
 }
-
-
 
 .filter-text-left {
   text-align: left;
@@ -4701,8 +4696,7 @@ a:hover {
   /* margin-left: 15px !important; */
 }
 
-
-.buy_now{
+.buy_now {
   border: 1px solid #ef981d;
   padding: 10px 30px;
   border-radius: 50px;
@@ -4719,38 +4713,182 @@ a:hover {
   margin-right: 12px;
   background-color: #ef981d !important;
   color: #fff;
-  transition: all .3s ease;
+  transition: all 0.1s ease;
 }
 
-.buy_now:hover{
+.buy_now:hover {
   background-color: #0d171e !important;
   color: #ef981d !important;
 }
 
-
-.fixed_header{
+.fixed_header {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
 }
 
-.fixed_header tbody{
-display:block;
-width: 100%;
-overflow: auto;
-height: 100px;
+.fixed_header tbody {
+  display: block;
+  width: 100%;
+  overflow: auto;
 }
 
 .fixed_header thead tr {
- display: block;
+  display: block;
 }
 
 .fixed_header thead {
-color:#fff;
+  color: #fff;
 }
 
-.fixed_header th, .fixed_header td {
-padding: 5px;
-text-align: left;
-width: 200px;
+.fixed_header th,
+.fixed_header td {
+  padding: 5px;
+  text-align: left;
+  width: 200px;
+}
+
+.loader-section {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/********Checkout Modal style******/
+
+.popup-content1 {
+  text-align: center;
+  font-style: normal;
+}
+
+.modal_heading {
+  text-align: left;
+  font-size: 28px;
+}
+
+.bid_buy_text {
+  text-align: left;
+  font-size: 18px;
+  line-height: 24px;
+  color: #504f4f;
+}
+.bid_buy_text strong {
+  font-weight: 600;
+  color: #000;
+}
+
+.popup-content1 .bid_user_details {
+  border: 1px solid #0d171e1a;
+  padding: 8px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.bid_user_details .bid_user_address {
+  display: flex !important;
+  justify-content: center;
+  align-items: baseline;
+  flex-direction: column;
+  margin: 20px 10px 0px;
+}
+
+.bid_user_address div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bid_user_address .adr {
+  font-size: 17px;
+  font-weight: 800;
+  margin-right: 10px;
+}
+
+.bid_user_address .pgn {
+  font-size: 16px;
+  font-weight: 700;
+  color: #6c757d;
+}
+
+.badge-success {
+  color: #21ba45;
+  border-radius: 12px;
+  background: #21ba4524;
+  font-size: 12px;
+}
+
+.enter_quantity_heading,
+.enter_price_heading {
+  font-size: 18px;
+  text-align: left;
+  font-weight: 100;
+}
+
+.quantity-input-fields {
+  margin-bottom: 12px;
+}
+
+.cal_div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  color: #6c757e;
+  font-weight: 600;
+}
+
+.cal_div_value {
+  color: #000000bf;
+}
+
+.disabled_text {
+  margin: 0px;
+  margin-top: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #8180afe3;
+}
+
+.btn-main {
+  display: block;
+  text-align: center;
+  color: #fff !important;
+  background: linear-gradient(180deg, #ef981d 54.17%, #f9bf50 100%);
+  border-radius: 30px;
+  border: 2px solid #ef981d !important;
+  letter-spacing: normal;
+  outline: 0;
+  font-weight: 800;
+  padding: 10px 15px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  margin: auto;
+  transition: all 0.1s ease;
+}
+
+.btn-main:hover {
+  color: #ef981d !important;
+  background: transparent;
+}
+
+.form-control:focus {
+  color: #000 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.checkout_input {
+  padding: 0.5rem 0.75rem;
+  margin: 10px 0px;
+}
+
+
+.navbar_form input, .navbar_form input:focus{
+  color: #fff !important;
 }

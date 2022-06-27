@@ -13,7 +13,7 @@ import NFTDetails from "../pages/NFTDetails";
 import Clock from "./Clock";
 
 function NFToffer(props) {
-  console.log("Props in NFT offer", props);
+
 
   const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);

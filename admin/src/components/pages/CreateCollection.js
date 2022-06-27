@@ -54,10 +54,11 @@ function CreateCollection() {
   const [selectedCollectionId, setSelectedCollectionId] = useState("");
   const [newImportModal, setNewImportModal] = useState("");
   const [isEditModal, setIsEditModal] = useState("");
+  const [reloadContent, setReloadContent] = useState(true);
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    else NotificationManager.error("Connect Yout Metamask", "", 800);
+    // else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
 
@@ -75,7 +76,7 @@ function CreateCollection() {
       };
       fetch();
     }
-  }, [currentUser]);
+  }, [currentUser, reloadContent]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -588,14 +589,15 @@ function CreateCollection() {
     }
   };
 
-  const handleCollection = async (collectionID, field) => {
-    try {
-      let fd = new FormData();
-      fd.append("id", collectionID);
-      fd.append(field, 1);
-      await UpdateCollection(fd);
-      NotificationManager.success("Collection updated", "", 1000);
-    } catch (e) {
+  const handleCollection = async (collectionID, field, value) => {
+   try{ let fd = new FormData();
+    fd.append("id", collectionID);
+    fd.append(field, value);
+    await UpdateCollection(fd);
+    NotificationManager.success("Collection updated", "", 1000);
+    setReloadContent(!reloadContent);
+  }
+    catch(e){
       console.log("Error", e);
     }
   };
@@ -749,32 +751,22 @@ function CreateCollection() {
                         >
                           Edit
                         </button>
-                        {!item.isExclusive ? (
-                          <button
-                            className="btn btn-admin m-1 p-1 text-light"
-                            type="button"
-                            onClick={() =>
-                              handleCollection(item._id, "isExclusive")
-                            }
-                          >
-                            Exclusive Collection
-                          </button>
-                        ) : (
-                          ""
-                        )}
-                        {!item.isHotCollection ? (
-                          <button
-                            className="btn btn-admin m-1 p-1 text-light"
-                            type="button"
-                            onClick={() =>
-                              handleCollection(item._id, "isHotCollection")
-                            }
-                          >
-                            Hot Collection
-                          </button>
-                        ) : (
-                          ""
-                        )}
+                       <button
+                          className={`btn btn-admin m-1 p-1 exclusive-btn ${item.isExclusive ? "active" : ""}`}
+                          type="button"
+                          onClick={() => 
+                            handleCollection(item._id, "isExclusive", !item.isExclusive ? 1 : 0)}
+                        >
+                          Exclusive Collection
+                        </button>
+                     <button
+                        className={`btn btn-admin m-1 p-1 hot-btn ${item.isHotCollection ? "active" : ""}`}
+                        type="button"
+                        onClick={() => handleCollection(item._id, "isHotCollection", !item.isHotCollection ? 1 : 0)}
+                      >
+                        Hot Collection
+                      </button> 
+                        
                       </div>
                     </tbody>
                   );
