@@ -21,17 +21,18 @@ function NFTlisting(props) {
   const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);
   const [bids, setBids] = useState([]);
-  const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
-  const [bidQty, setBidQty] = useState(1);
-  const [bidPrice, setBidPrice] = useState("");
-  const [willPay, setWillPay] = useState("");
+  const [qty, setQty] = useState(1);
+  const [price, setPrice] = useState(0);
+  const [willPay, setWillPay] = useState(0);
   const [userBalance, setUserBalance] = useState(0);
   const [isBuyNowModal, setIsBuyNowModal] = useState(false);
+  const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState([]);
 
-  const placeBidCal = [
+  const checkoutCal = [
     {
       key: "Balance",
-      value: userBalance,
+      value: Number(userBalance).toFixed(4),
     },
     {
       key: "You will pay",
@@ -88,21 +89,21 @@ function NFTlisting(props) {
             step="1"
             placeholder="Quantity e.g. 1,2,3..."
             disabled={props ? props.NftDetails.type === 1 : false}
-            value={bidQty}
+            value={qty}
             onKeyPress={(e) => {
               if (!/^\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              // if (Number(e.target.value) > Number(100)) {
-              //   NotificationManager.error(
-              //     "Quantity should be less than seller's order",
-              //     "",
-              //     800
-              //   );
-              //   return;
-              // }
-              setBidQty(e.target.value);
-              setWillPay(e.target.value * bidPrice);
+              if (Number(e.target.value) > Number(100)) {
+                NotificationManager.error(
+                  "Quantity should be less than seller's order",
+                  "",
+                  800
+                );
+                return;
+              }
+              setQty(e.target.value);
+              setWillPay((e.target.value * price).toFixed(4));
             }}
           ></input>
           <h6 className="enter_price_heading required">
@@ -114,12 +115,19 @@ function NFTlisting(props) {
             type="text"
             min="1"
             placeholder="Price e.g. 0.001,1..."
-            value={bidPrice}
+            value={price}
             onKeyPress={(e) => {
               if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (Number(e.target.value) > 100000000000000) {
+              if (
+                Number(e.target.value) > Number(currentOrder.total_quantity)
+              ) {
+                NotificationManager.error(
+                  "Quantity should be less than seller's order",
+                  "",
+                  800
+                );
                 return;
               }
               const re = /[+-]?[0-9]+\.?[0-9]*/;
@@ -133,7 +141,7 @@ function NFTlisting(props) {
                     if (val.split(".").length > 2) {
                       val = val.replace(/\.+$/, "");
                     }
-                    if (val.length === 2 && val !== "0.") {
+                    if (val.length === 1 && val !== "0.") {
                       val = Number(val);
                     }
                   }
@@ -141,18 +149,19 @@ function NFTlisting(props) {
                   if (val.split(".").length > 2) {
                     val = val.replace(/\.+$/, "");
                   }
-                  if (val.length === 2 && val !== "0.") {
+                  if (val.length === 1 && val !== "0.") {
                     val = Number(val);
                   }
                 }
-                setBidPrice(val);
-                setWillPay(val * bidQty);
+                setPrice(val);
+                console.log("valxqty", convertToEth(val * qty));
+                setWillPay((val * qty).toFixed(4));
               }
             }}
           ></input>
 
           <div className="bid_user_calculations">
-            {placeBidCal?.map(({ key, value }) => {
+            {checkoutCal?.map(({ key, value }) => {
               return (
                 <div className="cal_div">
                   <span>{key}</span>
@@ -175,9 +184,9 @@ function NFTlisting(props) {
       }
       handleClose={() => {
         setIsPlaceBidModal(!isPlaceBidModal);
-        setBidQty(1);
-        setBidPrice("");
-        setWillPay("0");
+        setQty(1);
+        setPrice("");
+        setWillPay(0);
       }}
     />
   );
@@ -191,7 +200,6 @@ function NFTlisting(props) {
           <h3 className="modal_heading ">Complete Checkout</h3>
           <div className="bid_user_details my-4">
             <img src={Logo} />
-
             <div className="bid_user_address">
               <div>
                 <span className="adr">{`${
@@ -203,7 +211,7 @@ function NFTlisting(props) {
             </div>
           </div>
           <h6 className="enter_quantity_heading required">
-            Please Enter the Bid Quantity
+            Please Enter the Quantity
           </h6>
           <input
             className="form-control checkout_input"
@@ -212,12 +220,14 @@ function NFTlisting(props) {
             step="1"
             placeholder="Quantity e.g. 1,2,3..."
             disabled={props ? props.NftDetails.type === 1 : false}
-            value={bidQty}
+            value={qty}
             onKeyPress={(e) => {
               if (!/^\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (Number(e.target.value) > Number(100)) {
+              if (
+                Number(e.target.value) > Number(currentOrder.total_quantity)
+              ) {
                 NotificationManager.error(
                   "Quantity should be less than seller's order",
                   "",
@@ -225,12 +235,12 @@ function NFTlisting(props) {
                 );
                 return;
               }
-              setBidQty(e.target.value);
-              setWillPay(e.target.value * bidPrice);
+              setQty(e.target.value);
+              setWillPay((e.target.value * price).toFixed(4));
             }}
           ></input>
           <h6 className="enter_price_heading required">
-            Please Enter the Bid Price
+            Please Enter the Price
           </h6>
 
           <input
@@ -238,19 +248,20 @@ function NFTlisting(props) {
             type="text"
             min="1"
             placeholder="Price e.g. 0.001,1..."
-            value={bidPrice}
+            disabled={true}
+            value={price}
             onKeyPress={(e) => {
               if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (Number(e.target.value) > 100000000000000) {
-                NotificationManager.error(
-                  "Bid Price must be less than 100000000000000",
-                  "",
-                  800
-                );
-                return;
-              }
+              // if (Number(e.target.value) > 100000000000000) {
+              //   NotificationManager.error(
+              //     "Price must be less than 100000000000000",
+              //     "",
+              //     800
+              //   );
+              //   return;
+              // }
               const re = /[+-]?[0-9]+\.?[0-9]*/;
               let val = e.target.value;
 
@@ -262,7 +273,7 @@ function NFTlisting(props) {
                     if (val.split(".").length > 2) {
                       val = val.replace(/\.+$/, "");
                     }
-                    if (val.length === 2 && val !== "0.") {
+                    if (val.length === 1 && val !== "0.") {
                       val = Number(val);
                     }
                   }
@@ -270,18 +281,18 @@ function NFTlisting(props) {
                   if (val.split(".").length > 2) {
                     val = val.replace(/\.+$/, "");
                   }
-                  if (val.length === 2 && val !== "0.") {
+                  if (val.length === 1 && val !== "0.") {
                     val = Number(val);
                   }
                 }
-                setBidPrice(val);
-                setWillPay(val * bidQty);
+                setPrice(val);
+                setWillPay((val * qty).toFixed(4));
               }
             }}
           ></input>
 
           <div className="bid_user_calculations">
-            {placeBidCal?.map(({ key, value }) => {
+            {checkoutCal?.map(({ key, value }) => {
               return (
                 <div className="cal_div">
                   <span>{key}</span>
@@ -296,17 +307,15 @@ function NFTlisting(props) {
           ) : Number(willPay) > Number(userBalance) ? (
             <p className="disabled_text">Insufficient Balance in MATIC</p>
           ) : (
-            <button className="btn-main mt-2 btn-placeABid">
-              {"Place A Bid"}
-            </button>
+            <button className="btn-main mt-2 btn-placeABid">{"Buy Now"}</button>
           )}
         </div>
       }
       handleClose={() => {
-        setIsBuyNowModal(!isPlaceBidModal);
-        setBidQty(1);
-        setBidPrice("");
-        setWillPay("0");
+        setIsBuyNowModal(!isBuyNowModal);
+        setQty(1);
+        setPrice("");
+        setWillPay(0);
       }}
     />
   );
@@ -314,6 +323,7 @@ function NFTlisting(props) {
   return (
     <div className="row">
       {isPlaceBidModal ? placeBidModal : ""}
+      {isBuyNowModal ? buyNowModal : ""}
       <div className="col-md-12">
         <div className="nft_list">
           <table className="table text-light">
@@ -424,10 +434,26 @@ function NFTlisting(props) {
                                     return;
                                   }
                                   if (currentUser) {
+                                    console.log("ooooooooo", o);
+                                    o.salesType === 0
+                                      ? setPrice(
+                                          Number(
+                                            convertToEth(o.price.$numberDecimal)
+                                          ).toFixed(4)
+                                        )
+                                      : setPrice("");
+                                    props.NftDetails.type === 1 &&
+                                    o.salesType === 0
+                                      ? setWillPay(
+                                          Number(
+                                            convertToEth(o.price.$numberDecimal)
+                                          ).toFixed(4) * qty
+                                        )
+                                      : setWillPay(0);
+                                    setCurrentOrder(o);
                                     o.salesType === 0
                                       ? setIsBuyNowModal(true)
                                       : setIsPlaceBidModal(true);
-
                                     // o.salesType === 0
                                     //   ? await handleBuyNft(
                                     //       o._id,

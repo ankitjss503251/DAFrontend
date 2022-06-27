@@ -142,7 +142,7 @@ const Header = function () {
       setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
         path: "/",
       });
-      setCookie("balance", s[0].accounts[0].balance.MATIC, { path: "/" });
+      setCookie("balance", s[0].accounts[0].balance?.MATIC, { path: "/" });
     }
   }, []);
 
@@ -244,7 +244,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message);
-            // slowRefresh(1000);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -281,7 +281,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message, "", 800);
-            // slowRefresh(1000);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -300,7 +300,7 @@ const Header = function () {
     await Logout(cookies["selected_account"]);
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);
-    // slowRefresh(1000);
+    slowRefresh(1000);
   };
 
   // const onLogin = async () => {
