@@ -8,7 +8,7 @@ import { getNFTList, GetOrdersByNftId } from "../../apiServices";
 import { handleBuyNft } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
 import NotificationManager from "react-notifications/lib/NotificationManager";
-import Loader from "./../components/loader";
+import Loader from "./../components/Loader";
 import { getCollections } from "./../../helpers/getterFunctions";
 import moment from "moment";
 
@@ -148,8 +148,8 @@ function MintEventSlider(props) {
       {nfts && nfts.length > 0
         ? nfts.map((n, i) => {
             return (
-              <div className='mintevent text-center'>
-                <div className='start_btn'>
+              <div className="mintevent text-center">
+                <div className="start_btn">
                   Start
                   <span>Live</span>
                 </div>
@@ -157,32 +157,33 @@ function MintEventSlider(props) {
                 <p>
                   {n.quantity_minted} / {n.totalQuantity} Minted
                 </p>
-                <div className='da_img mb-3'>
-                  <img src={"../img/mint/da.png"} alt='' />
+                <div className="da_img mb-3">
+                  <img src={"../img/mint/da.png"} alt="" />
                 </div>
-                <Link to={"#"} className='connect_wallet_btn mb-4'>
+                <Link to={"#"} className="connect_wallet_btn mb-4">
                   {" "}
                   <Wallet /> Connect Wallet
                 </Link>
-                <div className='mintprice'>Mint Price {props.price} HNTR</div>
-                <div className='amount'>
+                <div className="mintprice">Mint Price {props.price} HNTR</div>
+                <div className="amount">
                   <h5>Select Amount</h5>
                   <p>Minimum for mint is 1*</p>
-                  <div className='qt_selector'>
+                  <div className="qt_selector">
                     <button
                       onClick={() => {
                         let mint = currQty - 1;
                         if (mint < 1) mint = 1;
                         setCurrQty(Number(mint));
-                      }}>
+                      }}
+                    >
                       -
                     </button>
 
                     <input
-                      type='text'
-                      name=''
-                      required=''
-                      id=''
+                      type="text"
+                      name=""
+                      required=""
+                      id=""
                       onChange={(e) => {
                         setCurrQty(Number(e.target.value));
                       }}
@@ -195,19 +196,21 @@ function MintEventSlider(props) {
                         if (mint > n.totalQuantity - n.quantity_minted)
                           mint = n.totalQuantity - n.quantity_minted;
                         setCurrQty(Number(mint));
-                      }}>
+                      }}
+                    >
                       +
                     </button>
                   </div>
-                  <div className='mint_btn mt-4'>
+                  <div className="mint_btn mt-4">
                     <button
-                      className=''
-                      type='button'
+                      className=""
+                      type="button"
                       onClick={async (e) => {
                         console.log("index", i);
                         await handleMint(i);
                       }}
-                      disabled={!isMintEnabled}>
+                      disabled={!isMintEnabled}
+                    >
                       Mint
                     </button>
                   </div>

@@ -543,6 +543,10 @@ export const createBid = async (
           sellerOrder.push(SellerOrder[index]);
           buyerOrder.push(SellerOrder[index]);
           break;
+        case 2:
+          sellerOrder.push(Number(SellerOrder[index]));
+          buyerOrder.push(Number(SellerOrder[index]));
+          break;
         case 3:
           sellerOrder.push(SellerOrder[index]);
           console.log("bid nQuantity", Number(qty));

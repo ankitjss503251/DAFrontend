@@ -26,6 +26,7 @@ import Avatar from "./../assets/images/avatar5.jpg";
 // import { GENERAL_DATE, GENERAL_TIMESTAMP } from "./constants";
 import NotificationManager from "react-notifications/lib/NotificationManager";
 
+
 // const ipfsAPI = require("ipfs-api");
 // const ipfs = ipfsAPI("ipfs.infura.io", "5001", {
 //   protocol: "https",
@@ -192,6 +193,203 @@ export const getUsersTokenBalance = async (account, tokenAddress) => {
   let userBalance = await token.balanceOf(account);
   console.log("token", token, "userBalance", userBalance.toString(), account);
   return userBalance.toString();
+};
+
+export const getCollections = async (req) => {
+  let data = [];
+  let formattedData = [];
+  try {
+    let reqBody = {
+      page: req.page,
+      limit: req.limit,
+      collectionID: req.collectionID,
+      userID: req.userID,
+      categoryID: req.categoryID,
+      brandID: req.brandID,
+      ERCType: req.ERCType,
+      searchText: req.searchText,
+      filterString: req.filterString,
+      isMinted: req.isMinted,
+      isHotCollection: req.isHotCollection,
+      isExclusive: req.isExclusive,
+      isOnMarketplace: req.isOnMarketplace,
+    };
+
+    data = await getAllCollections(reqBody);
+  } catch (e) {
+    console.log("Error in getCollections API--->", e);
+  }
+  let arr = [];
+  if (data && data.results && data.results.length > 0) arr = data.results[0];
+  else return [];
+  arr
+    ? arr.map((coll, key) => {
+        formattedData[key] = {
+          _id: coll._id,
+          logoImg: coll.logoImage,
+          coverImg: coll.coverImage,
+          name: coll.name,
+          desc: coll.description,
+          saleStartTime: coll.preSaleStartTime,
+          saleEndTime: coll.preSaleEndTime,
+          price: coll.price.$numberDecimal,
+          items: coll.nftCount,
+          totalSupply: coll.totalSupply,
+          contractAddress: coll.contractAddress,
+          brand: coll.brandID,
+          createdBy: coll.createdBy,
+          link: coll.link,
+        };
+      })
+    : (formattedData[0] = {});
+  return formattedData;
+};
+
+export const getNFTs = async (req) => {
+  let data = [];
+  let formattedData = [];
+  try {
+    let reqBody = {
+      page: req.page,
+      limit: req.limit,
+      nftID: req.nftID,
+      collectionID: req.collectionID,
+      userID: req.userID,
+      categoryID: req.categoryID,
+      brandID: req.brandID,
+      isLazyMinted: req.isLazyMinted,
+      ERCType: req.ERCType,
+      searchText: req.searchText,
+      isMinted: req.isMinted,
+      isOnMarketplace: req.isOnMarketplace,
+    };
+
+    data = await getNFTList(reqBody);
+  } catch (e) {
+    console.log("Error in getNFts API--->", e);
+  }
+
+  let arr = [];
+  if (data && data.length > 0) arr = data;
+  else return [];
+
+  arr
+    ? arr.map((nft, key) => {
+        formattedData[key] = {
+          id: nft._id,
+          image: nft.image,
+          name: nft.name,
+          desc: nft.description,
+          collectionAddress: nft.collectionAddress,
+          ownedBy: nft.ownedBy,
+          like:
+            nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
+          Qty: nft.totalQuantity,
+          collection: nft.collectionID,
+          assetsInfo: nft?.assetsInfo[0],
+          catergoryInfo: nft?.categoryID,
+          tokenId: nft.tokenID,
+          createdBy: nft.createdBy,
+          type: nft.type,
+          attributes: nft.attributes,
+          totalQuantity: nft.totalQuantity,
+        };
+      })
+    : (formattedData[0] = {});
+  return formattedData;
+};
+
+export const getAuthors = async () => {
+  let data = [];
+  let formattedData = [];
+  try {
+    let reqBody = {
+      page: 1,
+      limit: 12,
+      searchText: "",
+    };
+    data = await GetAllUserDetails(reqBody);
+  } catch (e) {
+    console.log("Error in getAllUserDetails API--->", e);
+  }
+  let arr = [];
+  if (data && data.results && data.results.length > 0) arr = data.results[0];
+  else return [];
+  arr
+    ? arr.map((author, key) => {
+        formattedData[key] = {
+          _id: author._id,
+          profile: author.profileIcon,
+          name: author.username,
+        };
+      })
+    : (formattedData[0] = {});
+  return formattedData;
+};
+
+export const getOrderByNftID = async (reqBody) => {
+  let data = [];
+
+  try {
+    data = await GetOrdersByNftId(reqBody);
+  } catch (e) {
+    console.log("Error in getOrderByNftID API", e);
+  }
+
+  return data;
+};
+
+export const getBrandDetailsById = async (reqBody) => {
+  let brand = [];
+  try {
+    brand = await getBrandById(reqBody);
+  } catch (e) {
+    console.log("Error in getBrandByID API", e);
+  }
+  return brand;
+};
+
+export const getUserById = async (reqBody) => {
+  let user = [];
+  try {
+    user = await GetIndividualAuthorDetail(reqBody);
+  } catch (e) {
+    console.log("Error in getUserByID API", e);
+  }
+  return user;
+};
+
+export const getCategory = async (data) => {
+  let category = [];
+  try {
+    category = await getCategories(data);
+  } catch (e) {
+    console.log("Error in getCategory API", e);
+  }
+
+  return category;
+};
+
+export const getPrice = async (reqBody) => {
+  let data = [];
+  let order = {};
+  let min = "000000000000000";
+  try {
+    data = await GetOrdersByNftId(reqBody);
+    data = data.results;
+    if (data) {
+      data.map((i) => {
+        console.log("comp--->", min < i.price.$numberDecimal);
+        if (min < i.price.$numberDecimal) {
+          min = i.price.$numberDecimal;
+          order = i;
+        }
+      });
+    }
+    return order;
+  } catch (e) {
+    console.log("Error in getting nft order details", e);
+  }
 };
 
 // export const getUsersNFTs = async (
@@ -403,311 +601,3 @@ export const getUsersTokenBalance = async (account, tokenAddress) => {
 //   });
 //   return data.length > 0;
 // };
-
-// export const getAllBidsByNftId = async (nftId) => {
-//   let dummyData = await fetchBidNft({
-//     nNFTId: nftId,
-//     orderID: "All",
-//     buyerID: "All",
-//     bidStatus: "All",
-//   });
-
-//   let data = [];
-//   console.log("dummyData---", dummyData);
-
-//   dummyData?.data
-//     ? // eslint-disable-next-line array-callback-return
-//       dummyData.data.map((d, i) => {
-//         data.push({
-//           bidId: d._id,
-//           bidQuantity: d.oBidQuantity,
-//           bidPrice: d.oBidPrice.$numberDecimal,
-//           seller: d.oOwner.sWalletAddress,
-//           orderId: d.oOrderId,
-//           bidder: d.oBidder.sWalletAddress,
-//           bidderProfile: d.oBidder.sProfilePicUrl,
-//           buyerSignature: d.oBuyerSignature,
-//           bidderFullName: d.oBidder.oName
-//             ? d.oBidder.oName.sFirstname
-//             : d.oBidder
-//             ? d.oBidder.sWalletAddress
-//             : "Unnamed",
-//           nftId: d.oNFTId,
-//           owner: d.oSeller,
-//         });
-//       })
-//     : data.push([]);
-
-//   console.log("dummyData", data);
-//   return data;
-// };
-
-// export const GetNftsByCollection = async (owned, collection) => {
-//   // let status;
-
-//   let formattedData = [];
-//   let details = [];
-
-//   let searchParams;
-//   try {
-//     searchParams = {
-//       collection: collection,
-//     };
-//     console.log("collection", collection);
-//     details = await GetCollectionsNftList(searchParams, owned);
-//     console.log("details2", details);
-//   } catch (e) {
-//     console.log("Error in api", e);
-//   }
-
-//   let arr = [];
-//   if (details && details.results && details.results.length > 0)
-//     arr = details.results[0];
-//   else return [];
-//   arr
-//     ? arr.map(async (data, key) => {
-//         console.log("arr", data);
-//         // let authorData = await GetIndividualAuthorDetail({ userId: data.nCreater });
-//         formattedData[key] = {
-//           deadline:
-//             data && data.nOrders.length > 0
-//               ? data.nOrders[0].oValidUpto !== GENERAL_TIMESTAMP
-//                 ? data.nOrders[0].oValidUpto
-//                 : ""
-//               : "",
-//           auction_end_date:
-//             data && data.nOrders.length > 0
-//               ? data.nOrders[0].auction_end_date !== GENERAL_DATE
-//                 ? data.nOrders[0].auction_end_date
-//                 : ""
-//               : "",
-//           authorLink: "#",
-//           previewLink: "#",
-//           nftLink: "#",
-//           bidLink: "#",
-//           authorImg: "/img/author/author-7.jpg",
-//           previewImg: data.nHash
-//             ? "https://decryptnft.mypinata.cloud/ipfs/" + data.nHash
-//             : "/img/author/author-7.jpg",
-//           title: data ? data.nTitle : "",
-//           price: "",
-//           bid: "",
-//           likes: data.nUser_likes?.length,
-//           id: data ? data._id : "",
-//           // creator: authorData.sProfilePicUrl?`https://decryptnft.mypinata.cloud/ipfs/${authorData.sProfilePicUrl}`:"",
-//         };
-//       })
-//     : (formattedData[0] = {});
-
-//   return formattedData;
-// };
-
-// export const getMaxAllowedDate = () => {
-//   var dtToday = new Date();
-
-//   var month = dtToday.getMonth() + 1;
-//   var day = dtToday.getDate();
-//   var year = dtToday.getFullYear();
-//   if (month < 10) month = "0" + month.toString();
-//   if (day < 10) day = "0" + day.toString();
-
-//   var maxDate = year + "-" + month + "-" + day;
-//   return maxDate;
-// };
-
-export const getCollections = async (req) => {
-  let data = [];
-  let formattedData = [];
-  try {
-    let reqBody = {
-      page: req.page,
-      limit: req.limit,
-      collectionID: req.collectionID,
-      userID: req.userID,
-      categoryID: req.categoryID,
-      brandID: req.brandID,
-      ERCType: req.ERCType,
-      searchText: req.searchText,
-      filterString: req.filterString,
-      isMinted: req.isMinted,
-      isHotCollection: req.isHotCollection,
-      isExclusive: req.isExclusive,
-      isOnMarketplace: req.isOnMarketplace,
-    };
-
-    data = await getAllCollections(reqBody);
-  } catch (e) {
-    console.log("Error in getCollections API--->", e);
-  }
-  let arr = [];
-  if (data && data.results && data.results.length > 0) arr = data.results[0];
-  else return [];
-  arr
-    ? arr.map((coll, key) => {
-        formattedData[key] = {
-          _id: coll._id,
-          logoImg: coll.logoImage,
-          coverImg: coll.coverImage,
-          name: coll.name,
-          desc: coll.description,
-          saleStartTime: coll.preSaleStartTime,
-          saleEndTime: coll.preSaleEndTime,
-          price: coll.price.$numberDecimal,
-          items: coll.nftCount,
-          totalSupply: coll.totalSupply,
-          contractAddress: coll.contractAddress,
-          brand: coll.brandID,
-          createdBy: coll.createdBy,
-          link: coll.link,
-        };
-      })
-    : (formattedData[0] = {});
-  return formattedData;
-};
-
-export const getNFTs = async (req) => {
-  let data = [];
-  let formattedData = [];
-  try {
-    let reqBody = {
-      page: req.page,
-      limit: req.limit,
-      nftID: req.nftID,
-      collectionID: req.collectionID,
-      userID: req.userID,
-      categoryID: req.categoryID,
-      brandID: req.brandID,
-      isLazyMinted: req.isLazyMinted,
-      ERCType: req.ERCType,
-      searchText: req.searchText,
-      isMinted: req.isMinted,
-      isOnMarketplace: req.isOnMarketplace,
-    };
-
-    data = await getNFTList(reqBody);
-  } catch (e) {
-    console.log("Error in getNFts API--->", e);
-  }
-
-  let arr = [];
-  if (data && data.length > 0) arr = data;
-  else return [];
-
-  arr
-    ? arr.map((nft, key) => {
-        formattedData[key] = {
-          id: nft._id,
-          image: nft.image,
-          name: nft.name,
-          desc: nft.description,
-          collectionAddress: nft.collectionAddress,
-          ownedBy: nft.ownedBy,
-          like:
-            nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
-          Qty: nft.totalQuantity,
-          collection: nft.collectionID,
-          assetsInfo: nft?.assetsInfo[0],
-          catergoryInfo: nft?.categoryID,
-          tokenId: nft.tokenID,
-          createdBy: nft.createdBy,
-          type: nft.type,
-          attributes: nft.attributes,
-          totalQuantity: nft.totalQuantity,
-        };
-      })
-    : (formattedData[0] = {});
-  return formattedData;
-};
-
-export const getAuthors = async () => {
-  let data = [];
-  let formattedData = [];
-  try {
-    let reqBody = {
-      page: 1,
-      limit: 12,
-      searchText: "",
-    };
-    data = await GetAllUserDetails(reqBody);
-  } catch (e) {
-    console.log("Error in getAllUserDetails API--->", e);
-  }
-  let arr = [];
-  if (data && data.results && data.results.length > 0) arr = data.results[0];
-  else return [];
-  arr
-    ? arr.map((author, key) => {
-        formattedData[key] = {
-          _id: author._id,
-          profile: author.profileIcon,
-          name: author.username,
-        };
-      })
-    : (formattedData[0] = {});
-  return formattedData;
-};
-
-export const getOrderByNftID = async (reqBody) => {
-  let data = [];
-
-  try {
-    data = await GetOrdersByNftId(reqBody);
-  } catch (e) {
-    console.log("Error in getOrderByNftID API", e);
-  }
-
-  return data;
-};
-
-export const getBrandDetailsById = async (reqBody) => {
-  let brand = [];
-  try {
-    brand = await getBrandById(reqBody);
-  } catch (e) {
-    console.log("Error in getBrandByID API", e);
-  }
-  return brand;
-};
-
-export const getUserById = async (reqBody) => {
-  let user = [];
-  try {
-    user = await GetIndividualAuthorDetail(reqBody);
-  } catch (e) {
-    console.log("Error in getUserByID API", e);
-  }
-  return user;
-};
-
-export const getCategory = async (data) => {
-  let category = [];
-  try {
-    category = await getCategories(data);
-  } catch (e) {
-    console.log("Error in getCategory API", e);
-  }
-
-  return category;
-};
-
-export const getPrice = async (reqbody) => {
-  let data = [];
-  let order = {};
-  let min = "000000000000000";
-  try {
-    data = await GetOrdersByNftId(reqbody);
-    data = data.results;
-    if (data) {
-      data.map((i) => {
-        console.log("comp--->", min < i.price.$numberDecimal);
-        if (min < i.price.$numberDecimal) {
-          min = i.price.$numberDecimal;
-          order = i;
-        }
-      });
-    }
-    return order;
-  } catch (e) {
-    console.log("Error in getting nft order details", e);
-  }
-};
