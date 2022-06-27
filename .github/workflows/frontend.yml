@@ -14,15 +14,15 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: |
           cd /var/www/html/DAFrontend
           git config --global --add safe.directory /var/www/html/DAFrontend
-          sudo git add .
-          sudo git commit -m "serversidechanges"
-          sudo git pull origin main
-          sudo yarn
-          sudo yarn run build
-          sudo pm2 ls
-          sudo pm2 restart all
+           git add .
+           git commit -m "serversidechanges"
+           git pull origin main
+           yarn
+           yarn run build
+           pm2 ls
+           pm2 restart all
