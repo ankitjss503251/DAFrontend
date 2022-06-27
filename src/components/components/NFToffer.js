@@ -100,7 +100,21 @@ function NFToffer(props) {
                             {moment(b.createdOn).format("HH:MM:SS")}
                           </span>
                         </td>
-                        <td className='red_text'>Cancelled</td>
+                        <td className='red_text'> {console.log(
+                            "b.deadline",
+                            new Date(b.bidDeadline * 1000) < new Date()
+                          )}
+                          <Clock
+                            deadline={moment(new Date(b.bidDeadline * 1000))
+                              .subtract({
+                                hours: 5,
+                                minutes: 30,
+                              })
+                              .toISOString()}
+                          ></Clock></td>
+                           <td className='red_text'> {new Date(b.bidDeadline * 1000) < new Date()
+                            ? "Ended"
+                            : "Active"}</td>
                         <td className='text-center'>
                           {bidOwner === currentUser?.toLowerCase() ? (
                             <div className='text-center'>
@@ -131,12 +145,7 @@ function NFToffer(props) {
                               className='small_yellow_btn small_btn mr-3'>
                               Update Bid
                             </button>
-                              <button
-                                to={"/"}
-                                className="small_yellow_btn small_btn mr-3"
-                              >
-                                Update Bid
-                              </button>
+                          
                               <button
                                 to={"/"}
                                 className="small_border_btn small_btn"
