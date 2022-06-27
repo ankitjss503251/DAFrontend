@@ -20,7 +20,6 @@ function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
   const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);
-  const [bids, setBids] = useState([]);
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(0);
   const [willPay, setWillPay] = useState(0);
@@ -28,6 +27,7 @@ function NFTlisting(props) {
   const [isBuyNowModal, setIsBuyNowModal] = useState(false);
   const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState([]);
+  const [bidDeadline, setBidDeadline] = useState("");
 
   const checkoutCal = [
     {
@@ -67,13 +67,15 @@ function NFTlisting(props) {
         <div className="popup-content1">
           <h3 className="modal_heading ">Complete Checkout</h3>
           <div className="bid_user_details my-4">
-            <img src={Logo} />
+            <img src={Logo} alt="" />
 
             <div className="bid_user_address">
               <div>
-                <span className="adr">{`${
-                  currentUser?.slice(0, 8) + "..." + currentUser?.slice(34, 42)
-                }`}</span>
+                <span className="adr">
+                  {currentUser?.slice(0, 8) +
+                    "..." +
+                    currentUser?.slice(34, 42)}
+                </span>
                 <span class="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
@@ -160,6 +162,32 @@ function NFTlisting(props) {
             }}
           ></input>
 
+          <div className="form-control checkout_input">
+            <h6 className="enter_price_heading required">
+              Bid Expiration date
+            </h6>
+            {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
+            <input
+              className="form-control checkout_input"
+              type="datetime-local"
+              value={(bidDeadline || "").toString().substring(0, 16)}
+              onChange={(ev) => {
+                if (!ev.target["validity"].valid) return;
+                const dt = ev.target["value"] + ":00Z";
+                const ct = moment().toISOString();
+                if (dt < ct) {
+                  NotificationManager.error(
+                    "Expiration date should not be of past date",
+                    "",
+                    800
+                  );
+                  return;
+                }
+                setBidDeadline(dt);
+              }}
+            />
+          </div>
+
           <div className="bid_user_calculations">
             {checkoutCal?.map(({ key, value }) => {
               return (
@@ -176,7 +204,22 @@ function NFTlisting(props) {
           ) : Number(willPay) > Number(userBalance) ? (
             <p className="disabled_text">Insufficient Balance in MATIC</p>
           ) : (
-            <button className="btn-main mt-2 btn-placeABid">
+            <button
+              className="btn-main mt-2 btn-placeABid"
+              onClick={async () => {
+                await createBid(
+                  currentOrder.nftID,
+                  currentOrder._id,
+                  currentOrder.sellerID?._id,
+                  currentUser,
+                  props?.NftDetails?.type,
+                  currentOrder.total_quantity,
+                  currentOrder.price.$numberDecimal,
+                  false,
+                  new Date(bidDeadline).valueOf() / 1000
+                );
+              }}
+            >
               {"Place A Bid"}
             </button>
           )}
@@ -199,12 +242,14 @@ function NFTlisting(props) {
         <div className="popup-content1">
           <h3 className="modal_heading ">Complete Checkout</h3>
           <div className="bid_user_details my-4">
-            <img src={Logo} />
+            <img src={Logo} alt="" />
             <div className="bid_user_address">
               <div>
-                <span className="adr">{`${
-                  currentUser?.slice(0, 8) + "..." + currentUser?.slice(34, 42)
-                }`}</span>
+                <span className="adr">
+                  {currentUser?.slice(0, 8) +
+                    "..." +
+                    currentUser?.slice(34, 42)}
+                </span>
                 <span class="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
@@ -254,14 +299,6 @@ function NFTlisting(props) {
               if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              // if (Number(e.target.value) > 100000000000000) {
-              //   NotificationManager.error(
-              //     "Price must be less than 100000000000000",
-              //     "",
-              //     800
-              //   );
-              //   return;
-              // }
               const re = /[+-]?[0-9]+\.?[0-9]*/;
               let val = e.target.value;
 
@@ -311,11 +348,11 @@ function NFTlisting(props) {
               className="btn-main mt-2 btn-placeABid"
               onClick={async () => {
                 await handleBuyNft(
-                  o._id,
-                  props?.NftDetails?.type == 1,
+                  currentOrder._id,
+                  props?.NftDetails?.type === 1,
                   currentUser,
-                  "1000000000000",
-                  1,
+                  cookies.balance,
+                  currentOrder.total_quantity,
                   false,
                   props?.NftDetails?.collectionAddress?.toLowerCase()
                 );
@@ -394,7 +431,7 @@ function NFTlisting(props) {
                             : "Open for Bids"}
                         </td>
                         <td>
-                          {o.deadline == GENERAL_TIMESTAMP ? (
+                          {o.deadline === GENERAL_TIMESTAMP ? (
                             "INFINITE"
                           ) : (
                             <Clock
@@ -469,25 +506,6 @@ function NFTlisting(props) {
                                     o.salesType === 0
                                       ? setIsBuyNowModal(true)
                                       : setIsPlaceBidModal(true);
-                                    // o.salesType === 0
-                                    //   ? await handleBuyNft(
-                                    //       o._id,
-                                    //       props?.NftDetails?.type == 1,
-                                    //       currentUser,
-                                    //       "1000000000000",
-                                    //       1,
-                                    //       false,
-                                    //       props?.NftDetails?.collectionAddress?.toLowerCase()
-                                    //     )
-                                    //   : await createBid(
-                                    //       o.nftID,
-                                    //       o._id,
-                                    //       o.sellerID?._id,
-                                    //       currentUser,
-                                    //       props?.NftDetails?.type,
-                                    //       1,
-                                    //       o.price.$numberDecimal
-                                    //     );
                                   } else {
                                     NotificationManager.error(
                                       "wallet not connected",
