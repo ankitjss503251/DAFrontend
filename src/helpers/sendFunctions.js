@@ -150,7 +150,7 @@ export const handleBuyNft=async (
         buyerOrder.push(parseInt(order[key]));
     }
   }
-  if (buyerOrder[5] != ZERO_ADDRESS) {
+  if (buyerOrder[5] !== ZERO_ADDRESS) {
     try {
       let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
       console.log("allowance", allowance, amount);
@@ -545,6 +545,10 @@ export const createBid=async (
         case 1:
           sellerOrder.push(SellerOrder[index]);
           buyerOrder.push(SellerOrder[index]);
+          break;
+        case 2:
+          sellerOrder.push(Number(SellerOrder[index]));
+          buyerOrder.push(Number(SellerOrder[index]));
           break;
         case 3:
           sellerOrder.push(SellerOrder[index]);

@@ -13,8 +13,6 @@ import NFTDetails from "../pages/NFTDetails";
 import Clock from "./Clock";
 
 function NFToffer(props) {
-  console.log("Props in NFT offer", props);
-
   const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);
   const [offer, setOffer] = useState([]);
@@ -56,8 +54,6 @@ function NFToffer(props) {
       <div className="col-md-12">
         <div className="nft_list">
           <table className="table text-light fixed_header">
-
- 
             <thead>
               <tr>
                 <th>FROM</th>
@@ -79,7 +75,7 @@ function NFToffer(props) {
                     return (
                       <tr>
                         <td className="d-flex justify-content-start align-items-center mb-0">
-                          <span className='blue_dot circle_dot'></span>
+                          <span className="blue_dot circle_dot"></span>
                           <span>
                           {b?.bidderID?.walletAddress
                             ? b?.bidderID?.walletAddress?.slice(0, 3) +
@@ -90,9 +86,9 @@ function NFToffer(props) {
                         </td>
                         <td>
                           <img
-                            alt=''
+                            alt=""
                             src={"../img/favicon.png"}
-                            className='img-fluid hunter_fav'
+                            className="img-fluid hunter_fav"
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
@@ -100,7 +96,7 @@ function NFToffer(props) {
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
-                          <span className='nft_time'>
+                          <span className="nft_time">
                             {moment(b.createdOn).format("HH:MM:SS")}
                           </span>
                         </td>
@@ -110,18 +106,20 @@ function NFToffer(props) {
                             <div className='text-center'>
                               <button
                                 to={"/"}
-                                className='small_yellow_btn small_btn mr-3'
+                                className="small_yellow_btn small_btn mr-3"
                                 onClick={async () => {
                                   await handleAcceptBids(
                                     b,
                                     props.NftDetails.type
                                   );
-                                }}>
+                                }}
+                              >
                                 Accept
                               </button>
                               <button
                                 to={"/"}
-                                className='small_border_btn small_btn'>
+                                className="small_border_btn small_btn"
+                              >
                                 Reject
                               </button>
                             </div>
@@ -135,7 +133,14 @@ function NFToffer(props) {
                             </button>
                               <button
                                 to={"/"}
-                                className='small_border_btn small_btn'>
+                                className="small_yellow_btn small_btn mr-3"
+                              >
+                                Update Bid
+                              </button>
+                              <button
+                                to={"/"}
+                                className="small_border_btn small_btn"
+                              >
                                 Cancel
                               </button>
                             </div>
@@ -143,7 +148,8 @@ function NFToffer(props) {
                           ) : bidder === currentUser?.toLowerCase() ? (
                             <button
                               to={"/"}
-                              className='small_border_btn small_btn'>
+                              className="small_border_btn small_btn"
+                            >
                               Place a Bid
                             </button>
                           ) : (
