@@ -1,38 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React,{useState,useEffect} from "react";
 import Footer from "../components/footer";
 import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
 import NFToffer from "../components/NFToffer";
 import NFTBids from "../components/NFTBids";
+ import { ethers } from "ethers";
 import NFThistory from "../components/NFThistory";
 import {
   getCollections,
   getNFTs,
   getOrderByNftID,
 } from "../../helpers/getterFunctions";
-import { useParams } from "react-router-dom";
-import { convertToEth } from "../../helpers/numberFormatter";
-import { putOnMarketplace } from "../../helpers/sendFunctions";
-import { useCookies } from "react-cookie";
+import {useParams} from "react-router-dom";
+import {convertToEth} from "../../helpers/numberFormatter";
+import {createOffer,putOnMarketplace} from "../../helpers/sendFunctions";
+import {useCookies} from "react-cookie";
 import contracts from "../../config/contracts";
 import {
   GENERAL_DATE,
   GENERAL_TIMESTAMP,
   ZERO_ADDRESS,
 } from "../../helpers/constants";
-import { NotificationManager } from "react-notifications";
+import {NotificationManager} from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
 import Loader from "../components/Loader";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 
-var textColor = {
+var textColor={
   textColor: "#EF981D",
 };
 
 function NFTDetails() {
-  var bgImgStyle = {
+  var bgImgStyle={
     backgroundImage: `url(${BGImg})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
@@ -58,19 +59,25 @@ function NFTDetails() {
   const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loader, setLoader] = useState(false);
+  const [isModal,setModal]=useState("");
+  const [offerPrice,setOfferPrice]=useState();
+  const [offerQuantity,setOfferQuantity]=useState(1);
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-  }, [cookies.selected_account]);
+    if(cookies.selected_account) setCurrentUser(cookies.selected_account);
+    // else NotificationManager.error("Connect Yout Wallet", "", 800);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[cookies.selected_account]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    window.scrollTo(0,0);
+  },[]);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetch=async () => {
       try {
-        const reqData = {
+        const reqData={
           page: 1,
           limit: 12,
           nftID: id,
@@ -83,12 +90,13 @@ function NFTDetails() {
         setNFTDetails(res[0]);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
-        const reqData1 = {
+        const reqData1={
           page: 1,
           limit: 12,
           collectionID: res[0].collection,
         };
-        const nfts = await getNFTs(reqData1);
+        const nfts=await getNFTs(reqData1);
+       
         setAllNFTs(nfts);
 
         if (
@@ -96,9 +104,9 @@ function NFTDetails() {
           res[0].ownedBy &&
           res[0]?.ownedBy[0]?.address?.toLowerCase()
         ) {
-          for (let i = 0; i < res[0]?.ownedBy?.length; i++) {
-            if (
-              res[0]?.ownedBy[i]?.address?.toLowerCase() ===
+          for(let i=0;i<res[0]?.ownedBy?.length;i++) {
+            if(
+              res[0]?.ownedBy[i]?.address?.toLowerCase()===
               currentUser?.toLowerCase()
             ) {
               setOwned(true);
@@ -107,20 +115,20 @@ function NFTDetails() {
           }
         }
 
-        if (id) {
-          const _orders = await getOrderByNftID({ nftID: id });
-          console.log("orders123", _orders?.results);
+        if(id) {
+          const _orders=await getOrderByNftID({nftID: id});
+          console.log("orders123",_orders?.results);
           setOrders(_orders?.results);
         }
-      } catch (e) {
-        console.log("Error in fetching nft Details", e);
+      } catch(e) {
+        console.log("Error in fetching nft Details",e);
       }
     };
     fetch();
-  }, [id, currentUser]);
+  },[id,currentUser]);
 
-  const PutMarketplace = async () => {
-    console.log("sale type", marketplaceSaleType);
+  const PutMarketplace=async () => {
+    console.log("sale type",marketplaceSaleType);
 
     console.log(
       "contracts[selectedToken]",
@@ -130,27 +138,63 @@ function NFTDetails() {
     let orderData = {
       nftId: NFTDetails.id,
       collection: NFTDetails.collectionAddress,
-      price: itemprice ? itemprice : "0",
+      price: itemprice? itemprice:"0",
       quantity: item_qt,
-      saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
-      salt: Math.round(Math.random() * 10000000),
-      endTime: datetime ? datetime : GENERAL_DATE,
+      saleType: marketplaceSaleType===1||marketplaceSaleType===2? 1:0,
+      salt: Math.round(Math.random()*10000000),
+      endTime: datetime? datetime:GENERAL_DATE,
       chosenType: marketplaceSaleType,
-      minimumBid: item_bid !== "" ? item_bid : 0,
+      minimumBid: item_bid!==""? item_bid:0,
       // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
       tokenAddress:
         marketplaceSaleType === 0
           ? contracts[selectedTokenFS]
           : contracts[selectedToken],
       tokenId: NFTDetails.tokenId,
-      erc721: NFTDetails.type === 1,
+      erc721: NFTDetails.type===1,
     };
-    await putOnMarketplace(currentUser, orderData);
+    await putOnMarketplace(currentUser,orderData);
+  };
+  const PlaceOffer=async () => {
+     console.log("NFT Details---->",NFTDetails)
+   
+     if(currentUser===undefined || currentUser===""){
+       NotificationManager.error("Please Connect Metamask");
+       return;
+     }
+
+    if(offerPrice==""||offerPrice==undefined) {
+      NotificationManager.error("Enter Offer Price");
+      return;
+    }
+    console.log("offer quantity is----->",offerQuantity)
+    if(offerQuantity==""||offerQuantity==undefined && NFTDetails.type!==1) {
+      NotificationManager.error("Enter Offer Quantity");
+      return;
+    }
+    if(datetime=="") {
+      NotificationManager.error("Enter Offer EndTime");
+      return;
+    }
+
+    let deadline=moment(datetime).unix()
+
+    await createOffer(NFTDetails?.tokenId,
+      collection?.contractAddress,
+      NFTDetails?.ownedBy[0],
+      currentUser,
+      NFTDetails?.type,
+      offerQuantity,
+      ethers.utils.parseEther(offerPrice),
+      deadline,NFTDetails.id,)
+
+    //await putOnMarketplace(currentUser, orderData);
+    return;
   };
 
   // Popup
 
-  const handleMpShow = () => {
+  const handleMpShow=() => {
     document.getElementById("tab_opt_1").classList.remove("put_hide");
     document.getElementById("tab_opt_1").classList.add("put_show");
     document.getElementById("tab_opt_2").classList.remove("put_hide");
@@ -167,7 +211,7 @@ function NFTDetails() {
     setmarketplaceSaleType(0);
   };
 
-  const handleMpShow1 = () => {
+  const handleMpShow1=() => {
     document.getElementById("tab_opt_1").classList.remove("put_show");
     document.getElementById("tab_opt_1").classList.add("put_hide");
     document.getElementById("tab_opt_2").classList.remove("put_hide");
@@ -184,7 +228,7 @@ function NFTDetails() {
     setmarketplaceSaleType(1);
   };
 
-  const handleMpShow2 = () => {
+  const handleMpShow2=() => {
     document.getElementById("tab_opt_1").classList.remove("put_show");
     document.getElementById("tab_opt_1").classList.add("put_hide");
     document.getElementById("tab_opt_2").classList.remove("put_hide");
@@ -202,18 +246,37 @@ function NFTDetails() {
   };
 
   function handleChange(ev) {
-    if (!ev.target["validity"].valid) return;
-    const dt = ev.target["value"] + ":00Z";
-    const ct = moment().toISOString();
-    if (dt < ct) {
+
+    if(!ev.target["validity"].valid) return;
+
+    const dt=ev.target["value"]+":00Z";
+
+    const ct=moment().toISOString();
+
+    if(dt<ct) {
+
       NotificationManager.error(
-        "Expiration date should not be of past date",
+
+        "Start date should not be of past date",
+
         "",
+
         800
+
       );
+
       return;
+
     }
+
+    console.log("start date---->",dt,ct);
+
     setDatetime(dt);
+
+
+    console.log("end datetime is--->",datetime)
+    console.log("end time is--->",dt)
+    console.log("offer ends time is---->",new Date(ev.target.value))
   }
 
   return (
@@ -371,7 +434,11 @@ function NFTDetails() {
                   ""
                 )}
 
-                <button type="button" className="border_btn title_color">
+                <button type='button' 
+                className='border_btn title_color'
+                data-bs-toggle="modal"
+                data-bs-target="#brandModal"
+                onClick={() => setModal("active")}>
                   Bids / Offers
                 </button>
               </div>
@@ -739,6 +806,104 @@ function NFTDetails() {
           </div>
         </div>
       </div>
+
+      {/*Bid/Offer Modal*/}
+
+      <div className="modal markitplace" id="brandModal">
+        <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div className="modal-content">
+            {/* <!-- Modal Header --> */}
+            <div className="modal-header p-4">
+              <h4 className="text-light title_20 mb-0">Offer</h4>
+              <button
+                type="button"
+                className="btn-close text-light"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+
+            {/* <!-- Modal body --> */}
+            <div className="modal-body">
+
+
+
+
+              <div className="tab-content">
+                <div className="mb-3" id="tab_opt_1">
+                  <label htmlfor="item_price" className="form-label">
+                    Price
+                  </label>
+                  <input
+                    type="text"
+                    name="item_price"
+                    id="item_price"
+                    min="0"
+                    max="18"
+                    className="form-control input_design"
+                    placeholder="Please Enter Price (MATIC)"
+                    value={offerPrice}
+                    onChange={(event) => setOfferPrice(event.target.value)}
+                  />
+                </div>
+                <div className="mb-3" id="tab_opt_2">
+                  <label htmlfor="item_qt" className="form-label">
+                    Quantity
+                  </label>
+                  <input
+                    type='text'
+                    name='item_qt'
+                    id='item_qt'
+                    min='1'
+                    disabled={NFTDetails.type===1? "disabled":""}
+                    className='form-control input_design'
+                    placeholder='Please Enter Quantity'
+                     value={offerQuantity}
+                    onChange={(event) => {
+                  
+                      if(NFTDetails.type==1 &&event.target.value>1){
+                        setOfferQuantity(1);
+                        NotificationManager.error("Quantity must be 1.","",800);
+                      }
+                      if(NFTDetails.type!==1&&event.target.value>NFTDetails?.totalQuantity) {
+                        NotificationManager.error("Quantity must be less than or equal to total quantity.","",800);
+                        return;
+                      }
+
+                    }}
+                  />
+                </div>
+
+
+                <div id="tab_opt_5" className="mb-3 ">
+                  <label for="item_ex_date" className="form-label">
+                    Expiration date
+                  </label>
+                  {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
+                  <input
+                    type="datetime-local"
+                    value={(datetime||"").toString().substring(0,16)}
+                    //value={datetime}
+                    onChange={handleChange}
+                    className="input_design"
+                  />
+                </div>
+                <div className="mt-5 mb-3 text-center">
+                  <button
+                    type="button"
+                    className="square_yello"
+                    href="/mintcollectionlive"
+                    onClick={PlaceOffer}
+                  >
+                    Place Offer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/*Bid/Offer Modal Ends*/}
       <Footer />
     </div>
   );

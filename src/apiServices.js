@@ -334,6 +334,33 @@ export const createOrder = async (data) => {
   }
 };
 
+export const createOrderBuffer = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      Authorization: localStorage.getItem("Authorization"),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    console.log("create Order Buffer");
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/order/createOrderBuffer",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas;
+  } catch (err) {
+    return err;
+  }
+};
+
 export const getOrderDetails = async (data) => {
   const requestOptions = {
     method: "POST",
@@ -573,6 +600,33 @@ export const createBidNft = async (data) => {
   }
 };
 
+export const createOfferNFT = async (data) => {
+  console.log("data for createOfer is--->",data)
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/bid/createOffer",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+
+
 export const fetchBidNft = async (data) => {
   console.log("Data", data);
   const requestOptions = {
@@ -597,6 +651,35 @@ export const fetchBidNft = async (data) => {
     return err;
   }
 };
+
+
+export const fetchOfferNft = async (data) => {
+  console.log("Data for offer NFT", data);
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/bid/fetchOfferNft",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    console.log("offer data in api services",datas)
+    return datas.data;
+  } catch (err) {
+    console.log("'error in offer-->",err)
+    return err;
+  }
+};
+
 
 export const acceptBid = async (data) => {
   const requestOptions = {
