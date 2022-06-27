@@ -691,6 +691,7 @@ export const createOffer=async (
   bidPrice,
   deadline,
   nftID,
+  tokenAddress
   
 ) => {
   console.log(
@@ -745,6 +746,7 @@ export const createOffer=async (
           bidDeadline:deadline,
           bidQuantity: Number(qty),
           buyerSignature: signature,
+          tokenAddress:tokenAddress
         };
         console.log("req params is--->",reqParams)
 
