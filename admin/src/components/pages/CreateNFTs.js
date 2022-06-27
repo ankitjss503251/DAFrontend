@@ -27,9 +27,8 @@ function CreateNFTs() {
   const [currentUser, setCurrentUser] = useState();
   const uploadedImage = React.useRef(null);
   const imageUploader = React.useRef(null);
-  const [cookies, setCookie, removeCookie] = useCookies([]);
+  const [cookies] = useCookies([]);
   const [collections, setCollections] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
   const [nfts, setNfts] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -79,10 +78,7 @@ function CreateNFTs() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Wallet", "", 800);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    console.log("current user is---->", currentUser, cookies.selected_account);
-  }, [currentUser]);
+  }, [cookies.selected_account]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -93,7 +89,6 @@ function CreateNFTs() {
       let res = await GetMyNftList(reqBody);
       if (res && res.results && res.results.length > 0) {
         setNfts(res.results[0]);
-        setTotalCount(res.count);
       }
       console.log("Ress", res);
     };
@@ -283,7 +278,7 @@ function CreateNFTs() {
       let data = await GetMyCollectionsList(reqBody);
       if (data && data.results && data.results.length > 0)
         setCollections(data?.results[0]);
-      setTotalCount(data?.count);
+
       // console.log("data", data);
     };
     fetch();
