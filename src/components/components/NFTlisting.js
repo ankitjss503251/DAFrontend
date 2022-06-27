@@ -26,8 +26,9 @@ function NFTlisting(props) {
   const [willPay, setWillPay] = useState("");
   const [userBalance, setUserBalance] = useState(0);
   const [isBuyNowModal, setIsBuyNowModal] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState([]);
 
-  const placeBidCal = [
+  const checkoutCal = [
     {
       key: "Balance",
       value: userBalance,
@@ -45,16 +46,15 @@ function NFTlisting(props) {
     }
   }, [cookies.selected_account]);
 
-  useEffect(() => {
-    const fetch = async () => {
-      if (props.id) {
+  useEffect(async() => {
+  
         const _orders = await getOrderByNftID({ nftID: props.id });
-        console.log("orders", _orders?.results?.length);
+        console.log("orders", _orders?.results);
+       
         setOrders(_orders?.results);
       }
-    };
-    fetch();
-  }, [props.id]);
+   
+  , []);
 
   // Place Bid Checkout Modal
 
@@ -148,7 +148,7 @@ function NFTlisting(props) {
             }}></input>
 
           <div className='bid_user_calculations'>
-            {placeBidCal?.map(({ key, value }) => {
+            {checkoutCal?.map(({ key, value }) => {
               return (
                 <div className='cal_div'>
                   <span>{key}</span>
@@ -187,7 +187,6 @@ function NFTlisting(props) {
           <h3 className='modal_heading '>Complete Checkout</h3>
           <div className='bid_user_details my-4'>
             <img src={Logo} />
-
             <div className='bid_user_address'>
               <div>
                 <span className='adr'>{`${
@@ -225,7 +224,7 @@ function NFTlisting(props) {
               setWillPay(e.target.value * bidPrice);
             }}></input>
           <h6 className='enter_price_heading required'>
-            Please Enter the Bid Price
+            Please Enter the Price
           </h6>
 
           <input
@@ -233,6 +232,7 @@ function NFTlisting(props) {
             type='text'
             min='1'
             placeholder='Price e.g. 0.001,1...'
+            disabled={props ? props.NftDetails.type === 1 : false}
             value={bidPrice}
             onKeyPress={(e) => {
               if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -240,7 +240,7 @@ function NFTlisting(props) {
             onChange={(e) => {
               if (Number(e.target.value) > 100000000000000) {
                 NotificationManager.error(
-                  "Bid Price must be less than 100000000000000",
+                  "Price must be less than 100000000000000",
                   "",
                   800
                 );
@@ -275,7 +275,7 @@ function NFTlisting(props) {
             }}></input>
 
           <div className='bid_user_calculations'>
-            {placeBidCal?.map(({ key, value }) => {
+            {checkoutCal?.map(({ key, value }) => {
               return (
                 <div className='cal_div'>
                   <span>{key}</span>
@@ -291,13 +291,13 @@ function NFTlisting(props) {
             <p className='disabled_text'>Insufficient Balance in MATIC</p>
           ) : (
             <button className='btn-main mt-2 btn-placeABid'>
-              {"Place A Bid"}
+              {"Buy Now"}
             </button>
           )}
         </div>
       }
       handleClose={() => {
-        setIsBuyNowModal(!isPlaceBidModal);
+        setIsBuyNowModal(!isBuyNowModal);
         setBidQty(1);
         setBidPrice("");
         setWillPay("0");
@@ -308,6 +308,7 @@ function NFTlisting(props) {
   return (
     <div className='row'>
       {isPlaceBidModal ? placeBidModal : ""}
+      {isBuyNowModal ? buyNowModal : ""}
       <div className='col-md-12'>
         <div className='nft_list'>
           <table className='table text-light'>
@@ -325,6 +326,7 @@ function NFTlisting(props) {
             <tbody>
               {orders && orders.length > 0
                 ? orders.map((o, i) => {
+                  // setCurrentOrder(o);
                     return (
                       <tr>
                         <td className='d-flex justify-content-start align-items-center mb-0'>
