@@ -52,7 +52,7 @@ function NFTlisting(props) {
       console.log("orders", _orders);
       setOrders(_orders?.results);
     }
-  }, [props]);
+  }, [props.id]);
 
   // Place Bid Checkout Modal
 
