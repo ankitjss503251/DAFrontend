@@ -3,7 +3,7 @@ import Footer from "../components/footer";
 import { createGlobalStyle } from "styled-components";
 import { updateProfile } from "../../apiServices";
 import { NotificationManager } from "react-notifications";
-import Loader from "../components/loader";
+import Loader from "../components/Loader";
 
 const GlobalStyles = createGlobalStyle`
   header#myHeader.navbar.sticky.white {

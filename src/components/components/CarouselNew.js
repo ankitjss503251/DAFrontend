@@ -169,7 +169,7 @@ function ItemsList() {
                     </div>
                     <Link
                       to={`/NFTdetails/${card.id}`}
-                      className='border_btn width-100 title_color'>
+                      className='border_btn  title_color'>
                       {card.isNftOnSale ? "Buy" : "View"}
                     </Link>
                   </div>

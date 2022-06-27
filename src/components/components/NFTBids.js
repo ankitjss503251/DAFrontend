@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { fetchBidNft } from "../../apiServices";
 import NotificationManager from "react-notifications/lib/NotificationManager";
@@ -22,7 +21,7 @@ function NFTBids(props) {
   useEffect(() => {
     console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Wallet", "", 800);
+    // else NotificationManager.error("Connect Your Wallet", "", 800);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
