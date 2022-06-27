@@ -32,7 +32,7 @@ const AuthorList = () => {
                       />
                       <div className="auther_info">
                         <h6>{card.name ? card.name : "Unnamed"}</h6>
-                        <p>3.2 ETH</p>
+                        {/* <p>3.2 ETH</p> */}
                       </div>
                     </div>
                   </Link>

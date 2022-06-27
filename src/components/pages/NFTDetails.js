@@ -23,6 +23,9 @@ import {
 import { NotificationManager } from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
+import Loader from "../components/Loader";
+import PopupModal from "../components/AccountModal/popupModal";
+import Logo from "../../assets/images/logo.svg";
 
 var textColor = {
   textColor: "#EF981D",
@@ -54,6 +57,7 @@ function NFTDetails() {
   const [cookies] = useCookies([]);
   const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -86,6 +90,7 @@ function NFTDetails() {
         };
         const nfts = await getNFTs(reqData1);
         setAllNFTs(nfts);
+      
         if (
           currentUser &&
           res[0].ownedBy &&
@@ -213,6 +218,7 @@ function NFTDetails() {
 
   return (
     <div>
+      {/* <Loader /> */}
       <section style={bgImgStyle} className='pdd_8'>
         <div className='container'>
           <div className='row mb-5'>
@@ -250,21 +256,19 @@ function NFTDetails() {
                 </span>
               </div>
               <ul
-                className="nav nav-pills mb-4 w-100"
-                id="pills-tab"
-                role="tablist"
-              >
-                <li className="nav-item w-100" role="presentation">
+                className='nav nav-pills mb-4 w-100'
+                id='pills-tab'
+                role='tablist'>
+                <li className='nav-item w-100' role='presentation'>
                   <button
-                    className="nav-link active details-btn "
-                    id="pills-home-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-home"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-home"
-                    aria-selected="true"
-                  >
+                    className='nav-link active details-btn '
+                    id='pills-home-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-home'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-home'
+                    aria-selected='true'>
                     Details
                   </button>
                 </li>
@@ -280,13 +284,11 @@ function NFTDetails() {
                       ? NFTDetails?.attributes?.map((attr, key) => {
                           const rarity = parseInt(attr?.rarity);
                           return (
-
-                            <div className="col-md-6 mb-4" key={key}>
-                              <div className="tab_label">
-                                <div className="d-flex align-items-start flex-column">
+                            <div className='col-md-6 mb-4' key={key}>
+                              <div className='tab_label'>
+                                <div className='d-flex align-items-start flex-column'>
                                   <p>{attr.trait_type}</p>
-                                  <span className="big_text">{attr.value}</span>
-
+                                  <span className='big_text'>{attr.value}</span>
                                 </div>
                                 {rarity ? (
                                   <p>
@@ -297,14 +299,13 @@ function NFTDetails() {
                                 )}
                               </div>
                               {rarity ? (
-                                <div className="progress mt-2">
+                                <div className='progress mt-2'>
                                   <div
                                     className={`progress-bar w-${rarity}`}
-                                    role="progressbar"
+                                    role='progressbar'
                                     aria-valuenow={rarity}
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                  ></div>
+                                    aria-valuemin='0'
+                                    aria-valuemax='100'></div>
                                 </div>
                               ) : (
                                 ""
@@ -339,11 +340,10 @@ function NFTDetails() {
                 {orders.length <= 0 ? (
                   owned ? (
                     <button
-                      type="button"
-                      className="title_color buy_now"
-                      data-bs-toggle="modal"
-                      data-bs-target="#detailPop"
-                    >
+                      type='button'
+                      className='title_color buy_now'
+                      data-bs-toggle='modal'
+                      data-bs-target='#detailPop'>
                       {console.log(
                         "dataaa",
                         orders.length,
@@ -358,9 +358,7 @@ function NFTDetails() {
                     ""
                   )
                 ) : !owned ? (
-
-                  <button type="button" className="title_color buy_now">
-
+                  <button type='button' className='title_color buy_now'>
                     Buy Now
                   </button>
                 ) : (
@@ -478,11 +476,10 @@ function NFTDetails() {
               </div>
             </div>
 
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Bids</h3>
-              <div className="table-responsive">
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Bids</h3>
+              <div className='table-responsive'>
                 <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
-
               </div>
             </div>
             <div className='col-md-12 mb-5'>
@@ -603,13 +600,13 @@ function NFTDetails() {
                     Quantity
                   </label>
                   <input
-                    type="text"
-                    name="item_qt"
-                    id="item_qt"
-                    min="1"
+                    type='text'
+                    name='item_qt'
+                    id='item_qt'
+                    min='1'
                     disabled={NFTDetails.type === 1 ? "disabled" : ""}
-                    className="form-control input_design"
-                    placeholder="Please Enter Quantity"
+                    className='form-control input_design'
+                    placeholder='Please Enter Quantity'
                     value={item_qt}
                     onChange={(event) => {
                       if (
@@ -644,24 +641,23 @@ function NFTDetails() {
                   />
                 </div>
 
-                <div id="tab_opt_4" className="mb-3">
-                  <label htmlfor="Payment" className="form-label">
+                <div id='tab_opt_4' className='mb-3'>
+                  <label htmlfor='Payment' className='form-label'>
                     Payment Token
                   </label>
 
                   {marketplaceSaleType == 0 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="BNB"
+                        className='form-select input_design select_bg'
+                        name='BNB'
                         value={selectedTokenFS}
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
                           console.log("selected token", selectedTokenFS);
                           setSelectedTokenFS(event.target.value);
-                        }}
-                      >
+                        }}>
                         {" "}
                         <option value={"BNB"} selected>
                           BNB
@@ -673,13 +669,12 @@ function NFTDetails() {
                   ) : marketplaceSaleType == 1 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="USDT"
+                        className='form-select input_design select_bg'
+                        name='USDT'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         {" "}
                         <option value={"USDT"} selected>
                           USDT
@@ -689,20 +684,18 @@ function NFTDetails() {
                   ) : (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="USDT"
+                        className='form-select input_design select_bg'
+                        name='USDT'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         <option value={"USDT"} selected>
                           USDT
                         </option>
                       </select>
                     </>
                   )}
-
                 </div>
                 <div id='tab_opt_5' className='mb-3 put_hide'>
                   <label for='item_ex_date' className='form-label'>
@@ -710,9 +703,7 @@ function NFTDetails() {
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
                   <input
-
-                    type="datetime-local"
-
+                    type='datetime-local'
                     value={datetime.toString().substring(0, 16)}
                     onChange={handleChange}
                     className='input_design'
