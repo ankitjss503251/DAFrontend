@@ -16,7 +16,7 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: |
           cd /var/www/html/DAFrontend/admin
@@ -26,3 +26,5 @@ jobs:
           git commit -m "serversideupdate"
           git pull 
           yarn run build
+          pm2 ls 
+          pm2 restart all
