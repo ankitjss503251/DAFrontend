@@ -12,6 +12,8 @@ import {
   getBrandDetailsById,
   getCollections,
   getNFTs,
+  getCategory,
+  getPrice,
   getUserById,
 } from "../../helpers/getterFunctions";
 import AllNFTs from "../SVG/AllNFTs";
@@ -19,7 +21,6 @@ import Firearmsvg from "../SVG/Firearmsvg";
 import Soldierssvg from "../SVG/Soldierssvg";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-
 
 const bgImgStyle = {
   backgroundImage: "url(./../../assets/images/background.jpg)",
@@ -30,7 +31,6 @@ const bgImgStyle = {
   backgroundColor: "#000",
 };
 
-
 function CollectionWithCollection() {
   const { brandID } = useParams();
   const [brandDetails, setBrandDetails] = useState([]);
@@ -39,6 +39,7 @@ function CollectionWithCollection() {
   const [togglemode, setTogglemode] = useState("filterhide");
   const [nfts, setNfts] = useState([]);
   const [isCopied, setIsCopied] = useState(false);
+  const [category, setCategory] = useState([]);
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -52,6 +53,15 @@ function CollectionWithCollection() {
         .classList.remove("active");
     }
   };
+
+  
+  useEffect(async() => {
+    try {const c = await getCategory();
+     setCategory(c);}
+     catch(e){
+       console.log("Error",e);
+     }
+   },[]);
 
   var bgImgarrow = {
     backgroundImage: `url(${arrow})`,
@@ -102,10 +112,19 @@ function CollectionWithCollection() {
           temp[cnt] = {
             ...n,
             collectionName: cols[i].name,
-            price: cols[i].price,
           };
           cnt++;
         });
+      }
+
+      for (let i = 0; i < temp.length; i++) {
+        const order = await getPrice({
+          nftID: temp[i].id,
+        });
+        temp[i] = {
+          ...temp[i],
+          price: order.price.$numberDecimal,
+        };
       }
       setNfts(temp);
     } catch (e) {
@@ -192,7 +211,7 @@ function CollectionWithCollection() {
               {isCopied ? <p className='copied'>Copied!</p> : ""}
             </span>
           </div>
-        
+
           <ul className='collection_status mt-5 mb-5'>
             <li>
               <h4>{brandDetails?.nftCount}</h4>
@@ -263,19 +282,19 @@ function CollectionWithCollection() {
                   class='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option selected>Single Items</option>
-                  <option value='1'>Single Items 1</option>
-                  <option value='2'>Single Items 2</option>
-                  <option value='3'>Single Items 3</option>
+                  <option value='1' selected>
+                    Single Items
+                  </option>
+                  <option value='2'>Multiple Items</option>
                 </select>
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option selected>Price: Low to High</option>
-                  <option value='1'>$2000</option>
-                  <option value='2'>$4000</option>
-                  <option value='3'>$6000</option>
+                  <option value='1' selected>
+                    Price: Low to High
+                  </option>
+                  <option value='2'>Price: High to Low</option>
                 </select>
                 {/* <div className="market_div"> */}
                 <div id='gridtwo' className='market_grid' onClick={gridtwo}>
@@ -285,7 +304,10 @@ function CollectionWithCollection() {
                   <Threegrid />
                 </div>
                 {/* </div> */}
-                <button type='button' className='filter_btn' onClick={filterToggle}>
+                <button
+                  type='button'
+                  className='filter_btn'
+                  onClick={filterToggle}>
                   Adv.Filter
                 </button>
               </div>
@@ -394,35 +416,27 @@ function CollectionWithCollection() {
                   Categories <UpArrow />
                 </button>
                 <div id='demo4' class='collapse show'>
-                  <ul>
-                    <li>
-                      <Link to={"/marketplace"} className='sub-items'>
-                        <AllNFTs />
-                        All NFTs
-                      </Link>
+                <ul>
+                    <li className="sub-items">
+                    <form action="#" className="checked_form">
+                        <div class="form-check form-check-inline">
+                          <input type="radio" id="allnfts" name="radio-group" />
+                          <label for="allnfts">All NFTs</label>
+                        </div>
+                        {category ? category.map((c) => {
+                          return  <div class="form-check form-check-inline">
+                          <input type="radio" id={c.name} name="radio-group" />
+                          <label for={c.name}>{c.name}</label>
+                        </div>
+                        }):""}
+                       
+                      </form>
                     </li>
-                    <li>
-                      <Link to={"/marketplaceCollection"} className='sub-items'>
-                        <Firearmsvg />
-                        Firearms
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Soldiers"} className='sub-items'>
-                        <Soldierssvg />
-                        Soldiers
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Accesories"} className='sub-items'>
-                        <Soldierssvg />
-                        Accesories
-                      </Link>
-                    </li>
+                 
                   </ul>
                 </div>
               </div>
-              <div className='filtercol'>
+              {/* <div className='filtercol'>
                 <button
                   type='button'
                   class='drop_down_tlt mb-4'
@@ -453,7 +467,7 @@ function CollectionWithCollection() {
                     </li>
                   </ul>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

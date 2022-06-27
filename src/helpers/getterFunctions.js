@@ -14,8 +14,9 @@ import {
   getNFTList,
   getBrandById,
   GetIndividualAuthorDetail,
+  getCategories,
 } from "../apiServices";
-// import { ethers } from "ethers";
+import { ethers } from "ethers";
 import contracts from "../config/contracts";
 import erc20Abi from "./../config/abis/erc20.json";
 import erc721Abi from "./../config/abis/simpleERC721.json";
@@ -23,7 +24,7 @@ import erc1155Abi from "./../config/abis/simpleERC1155.json";
 import Avatar from "./../assets/images/avatar5.jpg";
 // import { fetchBidNft } from "../apiServices";
 // import { GENERAL_DATE, GENERAL_TIMESTAMP } from "./constants";
-// import NotificationManager from "react-notifications/lib/NotificationManager";
+import NotificationManager from "react-notifications/lib/NotificationManager";
 
 // const ipfsAPI = require("ipfs-api");
 // const ipfs = ipfsAPI("ipfs.infura.io", "5001", {
@@ -42,7 +43,7 @@ export const buildSellOrder = async (id) => {
     console.log("details 123", details);
     const order = [
       details.sellerID?.walletAddress.toLowerCase(),
-      details.tokenAddress,
+      details.collectionAddress,
       details.tokenID,
       details.total_quantity,
       details.salesType,
@@ -74,11 +75,14 @@ export const GetOwnerOfToken = async (
   );
   console.log("collectionInsatnce", collectionInstance);
   let balance = 0;
+  console.log("isERC721", isERC721);
   if (isERC721) {
+    console.log("is 721");
     let owner = await collectionInstance.ownerOf(tokenId);
     if (owner.toLowerCase() === account.toLowerCase()) {
       balance = "1";
     }
+    console.log("balance", balance.toString());
   } else balance = await collectionInstance.balanceOf(account, tokenId);
   console.log("balance", balance.toString());
   return balance.toString();
@@ -98,6 +102,96 @@ export const getPaymentTokenInfo = async (userWallet, tokenAddress) => {
     balance: balance.toString(),
     allowance: allowance.toString(),
   };
+};
+
+const toTypedOrder = (
+  account,
+  tokenAddress,
+  id,
+  quantity,
+  listingType,
+  paymentTokenAddress,
+  valueToPay,
+  deadline,
+  bundleTokens,
+  bundleTokensQuantity,
+  salt
+) => {
+  const domain = {
+    chainId: process.env.REACT_APP_CHAIN_ID,
+    name: "Decrypt Marketplace",
+    verifyingContract: contracts.MARKETPLACE,
+    version: "1",
+  };
+
+  const types = {
+    Order: [
+      { name: "user", type: "address" },
+      { name: "tokenAddress", type: "address" },
+      { name: "tokenId", type: "uint256" },
+      { name: "quantity", type: "uint256" },
+      { name: "listingType", type: "uint256" },
+      { name: "paymentToken", type: "address" },
+      { name: "value", type: "uint256" },
+      { name: "deadline", type: "uint256" },
+      { name: "bundleTokens", type: "uint256[]" },
+      { name: "bundleTokensQuantity", type: "uint256[]" },
+      { name: "salt", type: "uint256" },
+    ],
+  };
+
+  const value = {
+    user: account,
+    tokenAddress: tokenAddress,
+    tokenId: id,
+    quantity: quantity,
+    listingType: listingType,
+    paymentToken: paymentTokenAddress,
+    value: valueToPay,
+    deadline: deadline,
+    bundleTokens: bundleTokens,
+    bundleTokensQuantity: bundleTokensQuantity,
+    salt: salt,
+  };
+
+  return { domain, types, value };
+};
+
+export const getSignature = async (signer, ...args) => {
+  try {
+    console.log("111");
+    const order = toTypedOrder(...args);
+    console.log("order is---->", order);
+    let provider = new ethers.providers.Web3Provider(window.ethereum);
+    console.log("222");
+    const signer1 = provider.getSigner();
+    console.log("333");
+    const signedTypedHash = await signer1._signTypedData(
+      order.domain,
+      order.types,
+      order.value
+    );
+    console.log("444");
+    const sig = ethers.utils.splitSignature(signedTypedHash);
+    console.log("555");
+
+    return [sig.v, sig.r, sig.s];
+  } catch (e) {
+    if (e.code === 4001) {
+      NotificationManager.error("User denied ");
+      return false;
+    }
+    console.log("error in api", e);
+    return false;
+  }
+};
+
+export const getUsersTokenBalance = async (account, tokenAddress) => {
+  let token;
+  token = await exportInstance(tokenAddress, erc20Abi);
+  let userBalance = await token.balanceOf(account);
+  console.log("token", token, "userBalance", userBalance.toString(), account);
+  return userBalance.toString();
 };
 
 // export const getUsersNFTs = async (
@@ -266,88 +360,6 @@ export const getPaymentTokenInfo = async (userWallet, tokenAddress) => {
 //   return counts;
 // };
 
-// const toTypedOrder = (
-//   account,
-//   tokenAddress,
-//   id,
-//   quantity,
-//   listingType,
-//   paymentTokenAddress,
-//   valueToPay,
-//   deadline,
-//   bundleTokens,
-//   bundleTokensQuantity,
-//   salt
-// ) => {
-//   const domain = {
-//     chainId: process.env.REACT_APP_CHAIN_ID,
-//     name: "Decrypt Marketplace",
-//     verifyingContract: contracts.MARKETPLACE,
-//     version: "1",
-//   };
-
-//   const types = {
-//     Order: [
-//       { name: "user", type: "address" },
-//       { name: "tokenAddress", type: "address" },
-//       { name: "tokenId", type: "uint256" },
-//       { name: "quantity", type: "uint256" },
-//       { name: "listingType", type: "uint256" },
-//       { name: "paymentToken", type: "address" },
-//       { name: "value", type: "uint256" },
-//       { name: "deadline", type: "uint256" },
-//       { name: "bundleTokens", type: "uint256[]" },
-//       { name: "bundleTokensQuantity", type: "uint256[]" },
-//       { name: "salt", type: "uint256" },
-//     ],
-//   };
-
-//   const value = {
-//     user: account,
-//     tokenAddress: tokenAddress,
-//     tokenId: id,
-//     quantity: quantity,
-//     listingType: listingType,
-//     paymentToken: paymentTokenAddress,
-//     value: valueToPay,
-//     deadline: deadline,
-//     bundleTokens: bundleTokens,
-//     bundleTokensQuantity: bundleTokensQuantity,
-//     salt: salt,
-//   };
-
-//   return { domain, types, value };
-// };
-
-// export const getSignature = async (signer, ...args) => {
-//   try {
-//     console.log("111");
-//     const order = toTypedOrder(...args);
-//     console.log("order is---->", order);
-//     let provider = new ethers.providers.Web3Provider(window.ethereum);
-//     console.log("222");
-//     const signer1 = provider.getSigner();
-//     console.log("333");
-//     const signedTypedHash = await signer1._signTypedData(
-//       order.domain,
-//       order.types,
-//       order.value
-//     );
-//     console.log("444");
-//     const sig = ethers.utils.splitSignature(signedTypedHash);
-//     console.log("555");
-
-//     return [sig.v, sig.r, sig.s];
-//   } catch (e) {
-//     if (e.code === 4001) {
-//       NotificationManager.error("User denied ");
-//       return false;
-//     }
-//     console.log("error in api", e);
-//     return false;
-//   }
-// };
-
 // export const getNextId = async (collection) => {
 //   try {
 //     let details = await GetCollectionsByAddress({
@@ -369,14 +381,6 @@ export const getPaymentTokenInfo = async (userWallet, tokenAddress) => {
 //   } catch (e) {
 //     console.log("error in api", e);
 //   }
-// };
-
-// export const getUsersTokenBalance = async (account, tokenAddress) => {
-//   let token;
-//   token = await exportInstance(tokenAddress, erc20Abi);
-//   let userBalance = await token.balanceOf(account);
-//   console.log("token", token, "userBalance", userBalance.toString(), account);
-//   return userBalance.toString();
 // };
 
 // export const getTokenNameAndSymbolByAddress = async (address) => {
@@ -528,6 +532,7 @@ export const getCollections = async (req) => {
       isMinted: req.isMinted,
       isHotCollection: req.isHotCollection,
       isExclusive: req.isExclusive,
+      isOnMarketplace: req.isOnMarketplace,
     };
 
     data = await getAllCollections(reqBody);
@@ -553,10 +558,10 @@ export const getCollections = async (req) => {
           contractAddress: coll.contractAddress,
           brand: coll.brandID,
           createdBy: coll.createdBy,
+          link: coll.link,
         };
       })
     : (formattedData[0] = {});
-  console.log("formattedData--->", formattedData);
   return formattedData;
 };
 
@@ -576,13 +581,14 @@ export const getNFTs = async (req) => {
       ERCType: req.ERCType,
       searchText: req.searchText,
       isMinted: req.isMinted,
+      isOnMarketplace: req.isOnMarketplace,
     };
 
     data = await getNFTList(reqBody);
   } catch (e) {
     console.log("Error in getNFts API--->", e);
   }
- 
+
   let arr = [];
   if (data && data.length > 0) arr = data;
   else return [];
@@ -594,6 +600,8 @@ export const getNFTs = async (req) => {
           image: nft.image,
           name: nft.name,
           desc: nft.description,
+          collectionAddress: nft.collectionAddress,
+          ownedBy: nft.ownedBy,
           like:
             nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
           Qty: nft.totalQuantity,
@@ -602,6 +610,9 @@ export const getNFTs = async (req) => {
           catergoryInfo: nft?.categoryID,
           tokenId: nft.tokenID,
           createdBy: nft.createdBy,
+          type: nft.type,
+          attributes: nft.attributes,
+          totalQuantity: nft.totalQuantity,
         };
       })
     : (formattedData[0] = {});
@@ -638,21 +649,12 @@ export const getAuthors = async () => {
 
 export const getOrderByNftID = async (reqBody) => {
   let data = [];
-  let formattedData = [];
+
   try {
     data = await GetOrdersByNftId(reqBody);
-    console.log("data in getOrderByNftID", data);
   } catch (e) {
     console.log("Error in getOrderByNftID API", e);
   }
-  // let arr = [];
-  // if (data && data.results && data.results.length > 0) arr = data.results[0];
-  // else return [];
-  // arr
-  //   ? arr.map((coll, key) => {
-  //       formattedData[key] = {};
-  //     })
-  //   : (formattedData[0] = {});
 
   return data;
 };
@@ -675,4 +677,37 @@ export const getUserById = async (reqBody) => {
     console.log("Error in getUserByID API", e);
   }
   return user;
+};
+
+export const getCategory = async (data) => {
+  let category = [];
+  try {
+    category = await getCategories(data);
+  } catch (e) {
+    console.log("Error in getCategory API", e);
+  }
+
+  return category;
+};
+
+export const getPrice = async (reqbody) => {
+  let data = [];
+  let order = {};
+  let min = "000000000000000";
+  try {
+    data = await GetOrdersByNftId(reqbody);
+    data = data.results;
+    if (data) {
+      data.map((i) => {
+        console.log("comp--->", min < i.price.$numberDecimal);
+        if (min < i.price.$numberDecimal) {
+          min = i.price.$numberDecimal;
+          order = i;
+        }
+      });
+    }
+    return order;
+  } catch (e) {
+    console.log("Error in getting nft order details", e);
+  }
 };

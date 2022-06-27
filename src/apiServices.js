@@ -146,7 +146,7 @@ export const checkuseraddress = async (account) => {
 };
 
 export const updateProfile = async (data) => {
-  console.log("data in api iis------>", data);
+  // console.log("data in api iis------>", data);
   let formData = new FormData();
 
   formData.append("userName", data.uname ? data.uname : "");
@@ -158,7 +158,7 @@ export const updateProfile = async (data) => {
   //formData.append("sWalletAddress", account);
   formData.append("userProfile", data.profilePic ? data.profilePic : "");
 
-  console.log("form data is---->", formData);
+  // console.log("form data is---->", formData);
   const requestOptions = {
     method: "PUT",
     headers: {
@@ -200,6 +200,7 @@ export const getNFTList = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
+
     return datas.data;
   } catch (err) {
     return err;
@@ -306,6 +307,33 @@ export const GetIndividualAuthorDetail = async (data) => {
   }
 };
 
+export const createOrder = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      Authorization: localStorage.getItem("Authorization"),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    console.log("put on marketplace");
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/order/createOrder",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas;
+  } catch (err) {
+    return err;
+  }
+};
+
 export const getOrderDetails = async (data) => {
   const requestOptions = {
     method: "POST",
@@ -385,7 +413,7 @@ export const DeleteOrder = async (data) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: window.sessionStorage.getItem("Authorization"),
+      Authorization: localStorage.getItem("Authorization"),
     },
     body: JSON.stringify(data),
   };
@@ -451,6 +479,29 @@ export const getBrandById = async (data) => {
   }
 };
 
+export const getCategories = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/utils/getCategory",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
 export const GetCombinedNfts = async (data) => {
   const requestOptions = {
     method: "POST",
@@ -470,8 +521,127 @@ export const GetCombinedNfts = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("collection data---->", datas);
     return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const getAllBrands = async (data) => {
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/utils/getAllBrand",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const createBidNft = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/bid/createBidNft",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const fetchBidNft = async (data) => {
+  console.log("Data", data);
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/bid/fetchBidNft",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const acceptBid = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/bid/acceptBidNft",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const updateBidNft = async (data) => {
+  console.log("dataaa", data);
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization"),
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/bid/updateBidNft",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas;
   } catch (err) {
     return err;
   }
@@ -793,55 +963,7 @@ export const GetCombinedNfts = async (data) => {
 //   }
 // };
 
-// export const updateBidNft = async (data) => {
-//   console.log("dataaa", data);
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/bid/updateBidNft",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas;
-//   } catch (err) {
-//     return err;
-//   }
-// };
 
-// export const fetchBidNft = async (data) => {
-//   console.log("Data", data);
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/bid/fetchBidNft",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
 
 // export const Follow = async (data) => {
 //   const requestOptions = {

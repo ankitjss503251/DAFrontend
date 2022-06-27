@@ -5,32 +5,36 @@ import Footer from "../components/footer";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
 // import { Marketplacecartj } from "../../Data/dummyJSON";
-import { getNFTs } from "../../helpers/getterFunctions";
+import {
+  getCategory,
+  getCollections,
+  getNFTs,
+} from "../../helpers/getterFunctions";
 import { Link, useParams } from "react-router-dom";
 import { getOrderByNftID, getUserById } from "./../../helpers/getterFunctions";
 import { convertToEth } from "../../helpers/numberFormatter";
-import AllNFTs from "../SVG/AllNFTs";
-import Firearmsvg from "../SVG/Firearmsvg";
-import Soldierssvg from "../SVG/Soldierssvg";
 import UpArrow from "../SVG/dropdown";
 import bgImg from "./../../assets/marketplace-bg.jpg";
 import { NotificationManager } from "react-notifications";
+import { getAllBrands } from "../../apiServices";
+import BGImg from "./../../assets/images/background.jpg";
+import { Loader } from "semantic-ui-react";
 
-
-var bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
   backgroundRepeat: "no-repeat",
 };
 
 function Marketplace() {
+  var bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -46,7 +50,7 @@ function Marketplace() {
   };
 
   var register_bg = {
-    backgroundImage:`url(${bgImg})` ,
+    backgroundImage: `url(${bgImg})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     backgroundPositionX: "center",
@@ -60,8 +64,15 @@ function Marketplace() {
   const { searchedText } = useParams();
   const [loadMore, setLoadMore] = useState(false);
   const [togglemode, setTogglemode] = useState("filterhide");
-  const [loadMoreDisabled, setLoadMoreDisabled] = useState(false);
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
+  const [category, setCategory] = useState([]);
   const [sText, setSText] = useState("");
+  const [brands, setBrands] = useState([]);
+  const [cols, setCols] = useState([]);
+  const [colsAdv, setColsAdv] = useState("");
+  const [ERCType, setERCType] = useState();
+  const [activeSaleType, setActiveSaleType] = useState(-1);
+  const [loader, setLoader] = useState(false);
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -77,16 +88,37 @@ function Marketplace() {
   };
 
   useEffect(async () => {
+    try {
+      const b = await getAllBrands();
+      setBrands(b);
+    } catch (e) {
+      console.log("Error", e);
+    }
+    try {
+      const c = await getCategory();
+      setCategory(c);
+    } catch (e) {
+      console.log("Error", e);
+    }
+  }, []);
+
+  useEffect(async () => {
+    setLoader(true);
     let temp = allNFTs;
     try {
       const reqData = {
         page: currPage,
         limit: 5,
-        searchText: searchedText ? searchedText : "",
+        searchText: sText ? sText : searchedText ? searchedText : "",
+        isOnMarketplace: 1,
+        ERCType: ERCType,
+        salesType: activeSaleType !== -1 ? activeSaleType : "",
       };
+      console.log("result--->", reqData);
       const res = await getNFTs(reqData);
-      if (res?.length > 0) {
-        setLoadMoreDisabled(false);
+
+      if (res.length > 0) {
+        setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
           const ownedBy = await getUserById({ userID: res[i].createdBy });
           const orderDet = await getOrderByNftID({ nftId: res[i].id });
@@ -112,27 +144,22 @@ function Marketplace() {
         }
 
         temp = [...temp, res];
-        console.log("temp--->", temp);
         setAllNFTs(temp);
-        setCurrPage(currPage + 1);
-      } if(res.length < 0){
-        setLoadMoreDisabled(true);
+        setLoader(false);
+      }
+      if (allNFTs && res.length <= 0) {
+        setLoader(false);
+        setLoadMoreDisabled("disabled");
       }
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
     }
-    console.log("allNFTs--->", allNFTs);
-  }, [loadMore]);
-
-
-  const handleSearch = () => {
-
-  }
+  }, [loadMore, ERCType, sText, activeSaleType]);
 
   return (
     <div>
-      {loadMoreDisabled
-        ? NotificationManager.info("No more items to load")
+      {loadMoreDisabled && allNFTs.length > 0
+        ? NotificationManager.info("No more items to load","",800)
         : ""}
       <section className='register_hd pdd_12' style={register_bg}>
         <div className='container'>
@@ -141,6 +168,8 @@ function Marketplace() {
               <h1>Marketplace</h1>
             </div>
           </div>
+
+
         </div>
       </section>
       <section className='marketplacecollection pdd_8' style={bgImgStyle}>
@@ -155,29 +184,42 @@ function Marketplace() {
                     placeholder='Search item here...'
                     aria-label='Search'
                     value={sText}
-                    onChange={e => setSText(e.target.value)}
+                    onChange={(e) => {
+                      setAllNFTs([]);
+                      setCurrPage(1);
+                      setSText(e.target.value);
+                      setLoadMoreDisabled("")
+                    }}
                   />
-                  <button class='market_btn' type='submit' onClick={handleSearch}>
+                  <button class='market_btn' type='submit'>
                     <img src='../img/search.svg' alt='' />
                   </button>
                 </form>
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
-                  style={bgImgarrow}>
-                  <option selected>Single Items</option>
-                  <option value='1'>Single Items 1</option>
-                  <option value='2'>Single Items 2</option>
-                  <option value='3'>Single Items 3</option>
+                  style={bgImgarrow}
+                  value={ERCType}
+                  onChange={(e) => {
+                    setAllNFTs([]);
+                    setCurrPage(1);
+                    setERCType(parseInt(e.target.value));
+                    setLoadMoreDisabled("")
+                  }}>
+                  <option value='0' selected>
+                    All Items
+                  </option>
+                  <option value='1'>Single Items</option>
+                  <option value='2'>Multiple Items</option>
                 </select>
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option selected>Price: Low to High</option>
-                  <option value='1'>$2000</option>
-                  <option value='2'>$4000</option>
-                  <option value='3'>$6000</option>
+                  <option value='1' selected>
+                    Price: Low to High
+                  </option>
+                  <option value='2'>Price: High to Low</option>
                 </select>
                 {/* <div className="market_div"> */}
                 <div id='gridtwo' className='market_grid' onClick={gridtwo}>
@@ -206,22 +248,58 @@ function Marketplace() {
                     Status <UpArrow />
                   </button>
                   <div id='demo' class='collapse show'>
-                    <ul className='status_ul'>
-                      <li>
-                        <Link to={"/"} className='filter_border'>
-                          Buy Now
-                        </Link>
-                        <Link to={"/"} className='filter_border'>
-                          On Auction
-                        </Link>
+                    <ul className='status_ul d-flex flex-wrap'>
+                      <li
+                        className={`filter_border mr-2 ${
+                          activeSaleType === 3 ? "active" : ""
+                        }`}
+                        value='3'
+                        onClick={(e) => {
+                          setAllNFTs([]);
+                          setCurrPage(1);
+                          setActiveSaleType(e.target.value);
+                          setLoadMoreDisabled("")
+                        }}>
+                        All NFTs
                       </li>
-                      <li>
-                        <Link to={"/"} className='filter_border'>
-                          Now
-                        </Link>
-                        <Link to={"/"} className='filter_border'>
-                          Offers
-                        </Link>
+                      <li
+                        className={`filter_border mr-2 ${
+                          activeSaleType === 4 ? "active" : ""
+                        }`}
+                        value='4'
+                        onClick={(e) => {
+                          setAllNFTs([]);
+                          setCurrPage(1);
+                          setActiveSaleType(e.target.value);
+                          setLoadMoreDisabled("");
+                        }}>
+                        Not For Sale
+                      </li>
+                      <li
+                        className={`filter_border mr-2 ${
+                          activeSaleType === 0 ? "active" : ""
+                        }`}
+                        value='0'
+                        onClick={(e) => {
+                          setAllNFTs([]);
+                          setCurrPage(1);
+                          setActiveSaleType(e.target.value);
+                          setLoadMoreDisabled("");
+                        }}>
+                        Buy Now
+                      </li>
+                      <li
+                        className={`filter_border mr-2 ${
+                          activeSaleType === 1 ? "active" : ""
+                        }`}
+                        value='1'
+                        onClick={(e) => {
+                          setAllNFTs([]);
+                          setCurrPage(1);
+                          setActiveSaleType(e.target.value);
+                          setLoadMoreDisabled("");
+                        }}>
+                        On Auction
                       </li>
                     </ul>
                   </div>
@@ -280,12 +358,41 @@ function Marketplace() {
                     data-bs-target='#demo3'>
                     Collections <UpArrow />
                   </button>
-                  <div id='demo3' class='collapse show'>
+                  <div id='demo3' class='collapse show '>
                     <input
                       type='text'
                       placeholder='Filter'
-                      className='filter_apply filter-text-left filter_padd'
+                      className='filter_apply filter-text-left filter_padd mb-3'
+                      value={colsAdv}
+                      onChange={async (e) => {
+                        setColsAdv(e.target.value);
+                        const reqData = {
+                          page: 1,
+                          limit: 12,
+                          searchText: e.target.value,
+                        };
+                        try {
+                          const col = await getCollections(reqData);
+                          setCols(col);
+                        } catch (e) {
+                          console.log("Error", e);
+                        }
+                      }}
                     />
+                    {cols && cols.length > 0 && colsAdv !== ""
+                      ? cols.map((i) => {
+                          return (
+                            <div class='form-check form-check-inline'>
+                              <input
+                                type='radio'
+                                id={i.name}
+                                name='radio-group'
+                              />
+                              <label for={i.name}>{i.name}</label>
+                            </div>
+                          );
+                        })
+                      : ""}
                   </div>
                 </form>
               </div>
@@ -299,29 +406,23 @@ function Marketplace() {
                 </button>
                 <div id='demo4' class='collapse show'>
                   <ul>
-                    <li>
-                      <Link to={"/marketplace"} className='sub-items'>
-                        <AllNFTs />
-                        All NFTs
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/marketplaceCollection"} className='sub-items'>
-                        <Firearmsvg />
-                        Firearms
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Soldiers"} className='sub-items'>
-                        <Soldierssvg />
-                        Soldiers
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Accesories"} className='sub-items'>
-                        <Soldierssvg />
-                        Accesories
-                      </Link>
+                    <li className='sub-items'>
+                      <form action='#' className='checked_form'>
+                        {category
+                          ? category.map((c) => {
+                              return (
+                                <div class='form-check form-check-inline'>
+                                  <input
+                                    type='radio'
+                                    id={c.name}
+                                    name='radio-group'
+                                  />
+                                  <label for={c.name}>{c.name}</label>
+                                </div>
+                              );
+                            })
+                          : ""}
+                      </form>
                     </li>
                   </ul>
                 </div>
@@ -336,23 +437,29 @@ function Marketplace() {
                 </button>
                 <div id='demo5' class='collapse show'>
                   <ul>
-                    <li>
+                    {/* <li>
                       <input
                         type='text'
                         placeholder='Filter'
                         className='filter_apply  filter-text-left filter_padd'
                       />
-                    </li>
+                    </li> */}
                     <li>
                       <form action='#' className='checked_form'>
-                        <div class='form-check form-check-inline'>
-                          <input type='radio' id='test1' name='radio-group' />
-                          <label for='test1'>Apple</label>
-                        </div>
-                        <div class='form-check form-check-inline'>
-                          <input type='radio' id='test2' name='radio-group' />
-                          <label for='test2'>Apple</label>
-                        </div>
+                        {brands
+                          ? brands.map((b) => {
+                              return (
+                                <div class='form-check form-check-inline'>
+                                  <input
+                                    type='radio'
+                                    id={b.name}
+                                    name='radio-group'
+                                  />
+                                  <label for={b.name}>{b.name}</label>
+                                </div>
+                              );
+                            })
+                          : ""}
                       </form>
                     </li>
                   </ul>
@@ -367,8 +474,9 @@ function Marketplace() {
             </div> */}
 
           <div className='row'>
-            {allNFTs?.length > 0
-              ? allNFTs.map((oIndex) => {
+            {
+              loader ? <Loader size='large' active inline='centered' /> :   allNFTs?.length > 0 ? (
+                allNFTs.map((oIndex) => {
                   return oIndex.map((card, key) => {
                     return (
                       <div className={grid}>
@@ -392,9 +500,6 @@ function Marketplace() {
                                 />
                               </div>
                             </a>
-                            {/* <div className='profile_right'>
-                              <span>sfs</span>
-                            </div> */}
                           </div>
                           <a href={`/NFTdetails/${card.id}`}>
                             <img
@@ -444,21 +549,29 @@ function Marketplace() {
                     );
                   });
                 })
-              : ""}
+              ) : (
+                <h2 className='text-white'>No NFTs Found</h2>
+              )}
+            
+          
           </div>
-          {
-            allNFTs?.length > 0 ?  <div className='row'>
-            <div class='col-md-12 text-center mt-5'>
-              <button
-                class='view_all_bdr'
-                disabled={loadMoreDisabled}
-                onClick={() => setLoadMore(!loadMore)}>
-                Load More
-              </button>
+          {allNFTs?.length > 0 ? (
+            <div className='row'>
+              <div class='col-md-12 text-center mt-5'>
+                <button
+                  type='button'
+                  className={`btn view_all_bdr ${loadMoreDisabled}`}
+                  onClick={() => {
+                    setCurrPage(currPage + 1);
+                    setLoadMore(!loadMore);
+                  }}>
+                  Load More
+                </button>
+              </div>
             </div>
-          </div> : ""
-          }
-         
+          ) : (
+            ""
+          )}
         </div>
       </section>
       <Footer />
