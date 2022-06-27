@@ -178,7 +178,10 @@ function NFTDetails() {
     }
 
     let deadline=moment(datetime).unix()
-
+    let tokenAddress= 
+    marketplaceSaleType === 0
+      ? contracts[selectedTokenFS]
+      : contracts[selectedToken]
     await createOffer(NFTDetails?.tokenId,
       collection?.contractAddress,
       NFTDetails?.ownedBy[0],
@@ -186,7 +189,11 @@ function NFTDetails() {
       NFTDetails?.type,
       offerQuantity,
       ethers.utils.parseEther(offerPrice),
-      deadline,NFTDetails.id,)
+      deadline,NFTDetails.id,
+      tokenAddress
+     
+      )
+      
 
     //await putOnMarketplace(currentUser, orderData);
     return;
@@ -269,14 +276,12 @@ function NFTDetails() {
 
     }
 
-    console.log("start date---->",dt,ct);
+ 
 
     setDatetime(dt);
 
 
-    console.log("end datetime is--->",datetime)
-    console.log("end time is--->",dt)
-    console.log("offer ends time is---->",new Date(ev.target.value))
+
   }
 
   return (
@@ -872,7 +877,65 @@ function NFTDetails() {
                     }}
                   />
                 </div>
+ <div id="tab_opt_4" className="mb-3">
+                  <label htmlfor="Payment" className="form-label">
+                    Payment Token
+                  </label>
 
+                  {marketplaceSaleType === 0 ? (
+                    <>
+                      <select
+                        className="form-select input_design select_bg"
+                        name="BNB"
+                        value={selectedTokenFS}
+                        onChange={(event) => {
+                          event.preventDefault();
+                          event.persist();
+                          console.log("selected token", selectedTokenFS);
+                          setSelectedTokenFS(event.target.value);
+                        }}
+                      >
+                        {" "}
+                        <option value={"BNB"} selected>
+                          BNB
+                        </option>
+                        <option value={"HNTR"}>HNTR</option>
+                        <option value={"USDT"}>USDT</option>
+                      </select>
+                    </>
+                  ) : marketplaceSaleType == 1 ? (
+                    <>
+                      <select
+                        className="form-select input_design select_bg"
+                        name="USDT"
+                        value={selectedToken}
+                        onChange={(event) =>
+                          setSelectedToken(event.target.value)
+                        }
+                      >
+                        {" "}
+                        <option value={"USDT"} selected>
+                          USDT
+                        </option>
+                      </select>
+                    </>
+                  ) : (
+                    <>
+                      <select
+                        className="form-select input_design select_bg"
+                        name="USDT"
+                        value={selectedToken}
+                        onChange={(event) =>
+                          setSelectedToken(event.target.value)
+                        }
+                      >
+                        <option value={"USDT"} selected>
+                          USDT
+                        </option>
+                      </select>
+                    </>
+                  )}
+                </div>
 
                 <div id="tab_opt_5" className="mb-3 ">
                   <label for="item_ex_date" className="form-label">
