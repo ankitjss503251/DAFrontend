@@ -4887,3 +4887,8 @@ a:hover {
   padding: 0.5rem 0.75rem;
   margin: 10px 0px;
 }
+
+
+.navbar_form input, .navbar_form input:focus{
+  color: #fff !important;
+}
