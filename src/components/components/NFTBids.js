@@ -5,6 +5,7 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import {
+  createBid,
   handleAcceptBids,
   handleUpdateBidStatus,
 } from "../../helpers/sendFunctions";
@@ -13,6 +14,8 @@ import Clock from "./Clock";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
+import { ethers } from "ethers";
+import Spinner from "./Spinner";
 
 function NFTBids(props) {
   console.log("Props in NFT offer", props);
@@ -22,11 +25,10 @@ function NFTBids(props) {
   const [bids, setBids] = useState([]);
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(0);
-  const [willPay, setWillPay] = useState(0);
-  const [userBalance, setUserBalance] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [isUpdateBidModal, setIsUpdateBidModal] = useState(false);
   const [currentBid, setCurrentBid] = useState([]);
-  const [bidDeadline, setBidDeadline] = useState("");
+  const [reloadContent, setReloadContent] = useState(false);
 
   // const checkoutCal = [
   //   {
@@ -64,7 +66,16 @@ function NFTBids(props) {
       }
     };
     fetch();
-  }, [props.id]);
+  }, [props.id, reloadContent]);
+
+  useEffect(() => {
+    var body = document.body;
+    if (loading || isUpdateBidModal) {
+      body.classList.add("overflow_hidden");
+    } else {
+      body.classList.remove("overflow_hidden");
+    }
+  }, [loading, isUpdateBidModal]);
 
   // Update Bid Checkout Modal
 
@@ -112,7 +123,6 @@ function NFTBids(props) {
                 return;
               }
               setQty(e.target.value);
-              setWillPay((e.target.value * price).toFixed(4));
             }}></input>
           <h6 className='enter_price_heading required'>
             Please Enter the Bid Price
@@ -160,16 +170,14 @@ function NFTBids(props) {
                   }
                 }
                 setPrice(val);
-                console.log("valxqty", convertToEth(val * qty));
-                setWillPay((val * qty).toFixed(4));
               }
             }}></input>
 
-          <div className='form-control checkout_input'>
+          {/* <div className='form-control checkout_input'>
             <h6 className='enter_price_heading required'>
               Bid Expiration date
             </h6>
-            {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
+          
             <input
               className='form-control checkout_input'
               type='datetime-local'
@@ -190,7 +198,7 @@ function NFTBids(props) {
                 console.log("dtt", dt);
               }}
             />
-          </div>
+          </div> */}
 
           {/* <div className='bid_user_calculations'>
             {checkoutCal?.map(({ key, value }) => {
@@ -209,7 +217,33 @@ function NFTBids(props) {
             <p className='disabled_text'>Insufficient Balance in MATIC</p>
           ) : ( */}
           <button className='btn-main mt-2 btn-placeABid' onClick={async () => {
-         
+            setIsUpdateBidModal(false);
+            setLoading(true);
+          if (
+            Number(price) <
+            Number(convertToEth(currentBid.price?.$numberDecimal))
+          ) {
+            NotificationManager.error(
+              "Bid Price must be greater than minimum bid",
+              "",
+              800
+            );
+            setLoading(false);
+            return;
+          }
+          await createBid(
+            currentBid.nftID,
+            currentBid.orderID[0]._id,
+            currentBid.orderID[0].sellerID,
+            currentUser,
+            props?.NftDetails?.type,
+            currentBid.total_quantity,
+            ethers.utils.parseEther(price.toString()),
+            false,
+            // new Date(bidDeadline).valueOf() / 1000
+          );
+          setLoading(false);
+          setReloadContent(!reloadContent);
           }}>
             {"Update Bid"}
           </button>
@@ -220,13 +254,13 @@ function NFTBids(props) {
         setIsUpdateBidModal(!isUpdateBidModal);
         setQty(1);
         setPrice("");
-        setWillPay(0);
       }}
     />
   );
 
   return (
     <div className='row'>
+       {loading ? <Spinner /> : ""}
       {isUpdateBidModal ? updateBidModal : ""}
       <div className='col-md-12'>
         <div className='nft_list'>
@@ -307,10 +341,13 @@ function NFTBids(props) {
                                 to={"/"}
                                 className='small_yellow_btn small_btn mr-3'
                                 onClick={async () => {
+                                  setLoading(true);
                                   await handleAcceptBids(
                                     b,
                                     props.NftDetails.type
                                   );
+                                  setLoading(false);
+                                  setReloadContent(!reloadContent)
                                 }}>
                                 Accept
                               </button>
@@ -336,11 +373,11 @@ function NFTBids(props) {
                                 className='small_yellow_btn small_btn mr-3'
                                 onClick={() => {
                                   setCurrentBid(b);
-                                  setBidDeadline(
-                                    moment(b.bidDeadline * 1000)
-                                      .utc()
-                                      .format()
-                                  );
+                                  // setBidDeadline(
+                                  //   moment(b.bidDeadline * 1000)
+                                  //     .utc()
+                                  //     .format()
+                                  // );
                                   setPrice(
                                     Number(
                                       convertToEth(b?.bidPrice?.$numberDecimal)
@@ -367,6 +404,7 @@ function NFTBids(props) {
                                     b._id,
                                     "Cancelled"
                                   );
+                                 
                                 }}>
                                 Cancel
                               </button>

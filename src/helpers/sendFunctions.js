@@ -535,6 +535,7 @@ export const createBid = async (
   let buyerOrder = [];
   try {
     SellerOrder = await buildSellOrder(orderID);
+    console.log("SellerOrder",SellerOrder)
     for (let index = 0; index < 11; index++) {
       switch (index) {
         case 0:
@@ -989,7 +990,6 @@ export const handleUpdateBidStatus = async (
     console.log("resss", res);
 
     NotificationManager.success(`Bid ${action} Successfully`);
-    slowRefresh();
   } catch (e) {
     console.log("error in api", e);
   }

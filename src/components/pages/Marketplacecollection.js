@@ -48,7 +48,7 @@ function Marketplacecollection() {
       if (!t.includes(searchedText)) {
         const reqData = {
           page: currPage,
-          limit: 1,
+          limit: 12,
           searchText: searchedText ? searchedText : "",
           isOnMarketplace: 1,
         };
@@ -258,28 +258,7 @@ function Marketplacecollection() {
                                 <h4 className='collname'>{card.name}</h4>
                                 <p>{card.desc}</p>
                               </a>
-                              <div className="collection_text">
-                                <a
-                                  href={`/collectionwithcollection/${card?.brand?._id}`}
-                                >
-                                  <div className="coll_profileimg">
-                                    <img
-                                      alt=""
-                                      className="profile_img"
-                                      src={card?.brand?.logoImage}
-                                    />
-                                    <img
-                                      alt=""
-                                      className="check_img"
-                                      src={"../img/collections/check.png"}
-                                    />
-                                  </div>
-                                </a>
-                                <a href={`/collection/${card?._id}`}>
-                                  <h4 className="collname">THOR</h4>
-                                  <p>{card?.desc}</p>
-                                </a>
-                              </div>
+                          
                             </div>
                           </div>
                         </div>
