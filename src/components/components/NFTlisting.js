@@ -175,7 +175,17 @@ function NFTlisting(props) {
                 " ethers.utils.parseEther(price)",
                 ethers.utils.parseEther(price.toString())
               );
-
+              if (
+                Number(price) <
+                Number(convertToEth(currentOrder.price?.$numberDecimal))
+              ) {
+                NotificationManager.error(
+                  "Bid Price must be greater than minimum bid",
+                  "",
+                  800
+                );
+                return;
+              }
               await createBid(
                 currentOrder.nftID,
                 currentOrder._id,
@@ -294,7 +304,7 @@ function NFTlisting(props) {
               }
             }}
           ></input>
-          (
+
           <button
             className="btn-main mt-2 btn-placeABid"
             onClick={async () => {
@@ -311,7 +321,6 @@ function NFTlisting(props) {
           >
             {"Buy Now"}
           </button>
-          )
         </div>
       }
       handleClose={() => {
