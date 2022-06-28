@@ -33,17 +33,17 @@ function NFToffer(props) {
         bidStatus: "All",
         //orderID: "All",
       };
-      console.log("fetch NFT is Called",searchParams)
+      console.log("fetch NFT is Called", searchParams);
 
       let _data = await fetchOfferNft(searchParams);
       console.log("offer data123", _data.data);
       if (_data && _data.data.length > 0) {
-        console.log("in if of offer data")
-        let a=_data.data;
-        console.log("a is ---------->",a)
+        console.log("in if of offer data");
+        let a = _data.data;
+        console.log("a is ---------->", a);
         setOffer(a);
         console.log("bid data", _data.data[0]);
-        console.log("offer data is----------->",offer)
+        console.log("offer data is----------->", offer);
       }
     };
     fetch();
@@ -65,23 +65,22 @@ function NFToffer(props) {
               </tr>
             </thead>
             <tbody>
-             
-                  {offer && offer.length > 0
+              {offer && offer.length > 0
                 ? offer.map((b, i) => {
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
-                    console.log("b isss--->",b.bidPrice.$numberDecimal)
-                    
+                    console.log("b isss--->", b.bidPrice.$numberDecimal);
+
                     return (
                       <tr>
                         <td className="d-flex justify-content-start align-items-center mb-0">
                           <span className="blue_dot circle_dot"></span>
                           <span>
-                          {b?.bidderID?.walletAddress
-                            ? b?.bidderID?.walletAddress?.slice(0, 3) +
-                              "..." +
-                              b?.bidderID?.walletAddress?.slice(39, 41)
-                            : ""}
+                            {b?.bidderID?.walletAddress
+                              ? b?.bidderID?.walletAddress?.slice(0, 3) +
+                                "..." +
+                                b?.bidderID?.walletAddress?.slice(39, 41)
+                              : ""}
                           </span>
                         </td>
                         <td>
@@ -100,7 +99,9 @@ function NFToffer(props) {
                             {moment(b.createdOn).format("HH:MM:SS")}
                           </span>
                         </td>
-                        <td className='red_text'> {console.log(
+                        <td className="red_text">
+                          {" "}
+                          {console.log(
                             "b.deadline",
                             new Date(b.bidDeadline * 1000) < new Date()
                           )}
@@ -111,8 +112,11 @@ function NFToffer(props) {
                                 minutes: 30,
                               })
                               .toISOString()}
-                          ></Clock></td>
-                           <td className='red_text'> {new Date(b.bidDeadline * 1000) < new Date()
+                          ></Clock>
+                        </td>
+                        <td className="red_text">
+                          {" "}
+                          {new Date(b.bidDeadline * 1000) < new Date()
                             ? "Ended"
                             : "Active"}
                         </td>
@@ -146,7 +150,6 @@ function NFToffer(props) {
                                   new Date(b.bidDeadline * 1000) < new Date()
                                 }
                                 className="small_yellow_btn small_btn mr-3"
-                                
                               >
                                 Update Bid
                               </button>
@@ -168,7 +171,12 @@ function NFToffer(props) {
                           ) : bidder === currentUser.toLowerCase() ? (
                             <button
                               to={"/"}
+<<<<<<< HEAD
                               className='small_yellow_btn small_btn mr-3'>
+=======
+                              className="small_yellow_btn small_btn mr-3"
+                            >
+>>>>>>> f6e735786d63c68e5626d4b00ca3eb43d3e69488
                               Update Bid
                             </button>
                           ) : (
@@ -179,7 +187,10 @@ function NFToffer(props) {
                     );
                   })
                 : ""}
+<<<<<<< HEAD
              
+=======
+>>>>>>> f6e735786d63c68e5626d4b00ca3eb43d3e69488
             </tbody>
           </table>
         </div>
