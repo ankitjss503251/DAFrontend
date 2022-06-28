@@ -76,7 +76,7 @@
   height: 100vh;
   top: 0;
   left: 0;
-  z-index: 9999;
+  z-index: 9900;
 }
 
 .popup-box .box {
@@ -1729,7 +1729,7 @@ label {
   color: #ffffff;
   text-shadow: 4px 4px 5px rgb(0 0 0 / 70%);
 }
-/* markitPlace Page*/
+/* marketPlace Page*/
 .marketplace_box {
   background: linear-gradient(180deg, #313f4a 46.35%, #0d171e 100%);
   border: 3px solid #313f4a;
@@ -4630,7 +4630,7 @@ a:hover {
   line-height: inherit;
   color: #fff;
 }
-.markitplace .modal-header {
+.marketplace .modal-header {
   background: linear-gradient(180deg, #ef981d 54.17%, #f9bf50 100%);
   border: 0;
   border-bottom: 1px solid #ef981d;
@@ -4655,7 +4655,7 @@ a:hover {
   background-size: 17px;
   background-position: 98%;
 }
-.markitplace .navbtn {
+.marketplace .navbtn {
   color: rgba(0, 0, 0, 0.6);
   background: none;
   border: 2px solid #ef981d;
@@ -4669,17 +4669,25 @@ a:hover {
   width: 200px;
   height: 200px;
 }
-.markitplace .navbtn.active {
+.marketplace .navbtn.active {
   color: #fff;
   background: linear-gradient(180deg, #ef981d 54.17%, #f9bf50 100%);
 }
-.markitplace .navbtn i.fa {
+.marketplace .navbtn i.fa {
   font-size: 30px;
   margin-bottom: 15px;
   color: #fff;
 }
-.modal.markitplace {
+.modal.marketplace {
   background: rgba(0, 0, 0, 0.6);
+}
+
+.putOnMarketplace{
+  display: none;
+}
+
+.putOnMarketplace.active{
+  display: block;
 }
 .input_design option {
   color: #000;
@@ -4945,4 +4953,26 @@ a:hover {
     height: 100%;
     border-radius: inherit;
     border: none;
+  }
+
+
+  .spinner-container{
+    
+    background: rgba(0,0,0,.6);
+    z-index: 9999;
+  }
+
+  .spinner-container div{
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* background: #fff; */
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  body.overflow_hidden{
+    overflow: hidden;
   }

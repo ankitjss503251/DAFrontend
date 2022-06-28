@@ -481,7 +481,7 @@ function Marketplace() {
               allNFTs.map((oIndex) => {
                 return oIndex.map((card, key) => {
                   return (
-                    <div className={`${grid} items_slide_container`}>
+                    <div className={grid} >
                       <div className='items_slide' key={key}>
                         <div className='items_profileimg' key={key}>
                           <a href={`/author/${card.createdBy}`}>

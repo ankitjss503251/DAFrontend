@@ -24,10 +24,8 @@ import {
 import { NotificationManager } from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
-import Loader from "../components/Loader";
-import PopupModal from "../components/AccountModal/popupModal";
-import Logo from "../../assets/images/logo.svg";
 import { Tokens } from "../../helpers/tokensToSymbol";
+import Spinner from "../components/Spinner";
 
 var textColor = {
   textColor: "#EF981D",
@@ -59,8 +57,9 @@ function NFTDetails() {
   const [cookies] = useCookies([]);
   const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
-  const [loader, setLoader] = useState(false);
-  const [isModal, setModal] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isPutOnMarketplace, setIsPutonMarketplace] = useState("");
+  const [modal, setModal] = useState(false);
   const [offerPrice, setOfferPrice] = useState();
   const [offerQuantity, setOfferQuantity] = useState(1);
 
@@ -130,6 +129,7 @@ function NFTDetails() {
   }, [id, currentUser]);
 
   const PutMarketplace = async () => {
+    setLoading(true);
     console.log("sale type", marketplaceSaleType);
 
     console.log(
@@ -137,10 +137,15 @@ function NFTDetails() {
       contracts[selectedTokenFS],
       selectedTokenFS
     );
+    if(itemprice === undefined || itemprice === "" || itemprice === 0){
+        NotificationManager.error("Please Enter a price","",800);
+        setLoading(false);
+        return;
+    }
     let orderData = {
       nftId: NFTDetails.id,
       collection: NFTDetails.collectionAddress,
-      price: itemprice ? itemprice : "0",
+      price: itemprice ,
       quantity: item_qt,
       saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
       salt: Math.round(Math.random() * 10000000),
@@ -156,17 +161,22 @@ function NFTDetails() {
       erc721: NFTDetails.type === 1,
     };
     await putOnMarketplace(currentUser, orderData);
+    setLoading(false);
   };
+
+
   const PlaceOffer = async () => {
     console.log("NFT Details---->", NFTDetails);
 
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
+      setLoading(false);
       return;
     }
 
     if (offerPrice == "" || offerPrice == undefined) {
       NotificationManager.error("Enter Offer Price");
+      setLoading(false);
       return;
     }
     console.log("offer quantity is----->", offerQuantity);
@@ -175,10 +185,12 @@ function NFTDetails() {
       (offerQuantity == undefined && NFTDetails.type !== 1)
     ) {
       NotificationManager.error("Enter Offer Quantity");
+      setLoading(false);
       return;
     }
     if (datetime == "") {
       NotificationManager.error("Enter Offer EndTime");
+      setLoading(false);
       return;
     }
 
@@ -199,7 +211,7 @@ function NFTDetails() {
       NFTDetails.id,
       tokenAddress
     );
-
+  setLoading(false);
     //await putOnMarketplace(currentUser, orderData);
     return;
   };
@@ -281,7 +293,7 @@ function NFTDetails() {
 
   return (
     <div>
-      {/* <Loader /> */}
+      {loading ? <Spinner /> : ""}
       <section style={bgImgStyle} className='pdd_8'>
         <div className='container'>
           <div className='row mb-5'>
@@ -599,7 +611,7 @@ function NFTDetails() {
       </section>
 
       {/* <!-- The Modal --> */}
-      <div className='modal markitplace' id='detailPop'>
+      <div className={`modal marketplace putOnMarketplace ${isPutOnMarketplace}`} id='detailPop'>
         <div className='modal-dialog modal-lg modal-dialog-centered'>
           <div className='modal-content'>
             {/* <!-- Modal Header --> */}
@@ -799,7 +811,7 @@ function NFTDetails() {
 
       {/*Bid/Offer Modal*/}
 
-      <div className='modal markitplace' id='brandModal'>
+      <div className='modal marketplace' id='brandModal'>
         <div className='modal-dialog modal-lg modal-dialog-centered'>
           <div className='modal-content'>
             {/* <!-- Modal Header --> */}

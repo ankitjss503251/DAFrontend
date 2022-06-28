@@ -990,7 +990,6 @@ export const handleUpdateBidStatus = async (
     console.log("resss", res);
 
     NotificationManager.success(`Bid ${action} Successfully`);
-    slowRefresh();
   } catch (e) {
     console.log("error in api", e);
   }

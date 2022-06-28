@@ -16,6 +16,7 @@ import Clock from "./Clock";
 import { GENERAL_TIMESTAMP } from "../../helpers/constants";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import { ethers } from "ethers";
+import Spinner from "./Spinner";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -29,6 +30,7 @@ function NFTlisting(props) {
   const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState([]);
   const [bidDeadline, setBidDeadline] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (cookies.selected_account) {
@@ -48,6 +50,15 @@ function NFTlisting(props) {
     };
     fetch();
   }, [props.id]);
+
+  useEffect(() => {
+    var body = document.body;
+    if (loading || isPlaceBidModal || isBuyNowModal) {
+      body.classList.add("overflow_hidden");
+    } else {
+      body.classList.remove("overflow_hidden");
+    }
+  }, [loading, isPlaceBidModal, isBuyNowModal]);
 
   // Place Bid Checkout Modal
 
@@ -140,11 +151,11 @@ function NFTlisting(props) {
               }
             }}></input>
 
-          <div className='form-control checkout_input'>
+          {/* <div className='form-control checkout_input'>
             <h6 className='enter_price_heading required'>
               Bid Expiration date
             </h6>
-            {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
+          
             <input
               className='form-control checkout_input'
               type='datetime-local'
@@ -164,7 +175,7 @@ function NFTlisting(props) {
                 setBidDeadline(dt);
               }}
             />
-          </div>
+          </div> */}
 
           <button
             className='btn-main mt-2 btn-placeABid'
@@ -173,6 +184,8 @@ function NFTlisting(props) {
               //   " ethers.utils.parseEther(price)",
               //   ethers.utils.parseEther(price.toString())
               // );
+              setIsPlaceBidModal(false);
+              setLoading(true);
               if (
                 Number(price) <
                 Number(convertToEth(currentOrder.price?.$numberDecimal))
@@ -182,9 +195,10 @@ function NFTlisting(props) {
                   "",
                   800
                 );
+                setLoading(false);
                 return;
               }
-              await createBid(
+              const cb = await createBid(
                 currentOrder.nftID,
                 currentOrder._id,
                 currentOrder.sellerID?._id,
@@ -195,6 +209,8 @@ function NFTlisting(props) {
                 false
                 // new Date(bidDeadline).valueOf() / 1000
               );
+              console.log("cbbb", cb);
+              setLoading(false);
             }}>
             {"Place A Bid"}
           </button>
@@ -303,7 +319,9 @@ function NFTlisting(props) {
           <button
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
-              await handleBuyNft(
+              setIsBuyNowModal(false);
+              setLoading(true);
+              const hbn = await handleBuyNft(
                 currentOrder._id,
                 props?.NftDetails?.type === 1,
                 currentUser,
@@ -312,6 +330,8 @@ function NFTlisting(props) {
                 false,
                 props?.NftDetails?.collectionAddress?.toLowerCase()
               );
+              setLoading(false);
+              console.log("hbnnnn", hbn);
             }}>
             {"Buy Now"}
           </button>
@@ -328,6 +348,7 @@ function NFTlisting(props) {
 
   return (
     <div className='row'>
+      {loading ? <Spinner /> : ""}
       {isPlaceBidModal ? placeBidModal : ""}
       {isBuyNowModal ? buyNowModal : ""}
       <div className='col-md-12'>
