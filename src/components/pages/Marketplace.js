@@ -408,6 +408,14 @@ function Marketplace() {
                   <ul>
                     <li className='sub-items'>
                       <form action='#' className='checked_form'>
+                      <div class='form-check form-check-inline'>
+                                  <input
+                                    type='radio'
+                                    id="all"
+                                    name='radio-group'
+                                  />
+                                  <label for="all">All</label>
+                                </div>
                         {category
                           ? category.map((c) => {
                               return (
