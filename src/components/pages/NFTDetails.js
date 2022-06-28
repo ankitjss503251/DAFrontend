@@ -27,6 +27,7 @@ import moment from "moment";
 import Loader from "../components/Loader";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
+import { Tokens } from "../../helpers/tokensToSymbol";
 
 var textColor = {
   textColor: "#EF981D",
@@ -91,7 +92,6 @@ function NFTDetails() {
         console.table("nft detail------>>>", res[0]);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
-        console.table("collection detail------>>>", res[0]);
         const reqData1 = {
           page: 1,
           limit: 12,
@@ -390,51 +390,56 @@ function NFTDetails() {
               </div>
               <div className='price_box'>
                 <h4>Price</h4>
-                <div className='price_div'>
-                  <img
-                    src={"../img/favicon.png"}
-                    className='img-fluid'
-                    alt=''
-                  />
-                  {Number(convertToEth(collection?.price)).toFixed(4)} HNTR
-                </div>
-                {console.log("is owned", owned, orders?.length)}
+                {orders.length > 0 ? (
+                  <div className="price_div">
+                    <img
+                      src={Tokens[orders[0].paymentToken]}
+                      className="img-fluid hunter_fav"
+                      alt=""
+                    />
+                    {Number(
+                      convertToEth(orders[0].price.$numberDecimal)
+                    ).toFixed(4)}{" "}
+                  </div>
+                ) : (
+                  ""
+                )}
 
                 {orders.length <= 0 ? (
                   owned ? (
                     <button
-                      type='button'
-                      className='title_color buy_now'
-                      data-bs-toggle='modal'
-                      data-bs-target='#detailPop'>
-                      {console.log(
-                        "dataaa",
-                        orders.length,
-                        orders?.sellerID?.walletAddress?.toLowerCase() ===
-                          currentUser?.toLowerCase(),
-                        orders?.sellerID?.walletAddress?.toLowerCase(),
-                        currentUser?.toLowerCase()
-                      )}
+                      type="button"
+                      className="title_color buy_now"
+                      data-bs-toggle="modal"
+                      data-bs-target="#detailPop"
+                    >
                       Put On Marketplace
                     </button>
                   ) : (
                     ""
                   )
-                ) : !owned ? (
-                  <button type='button' className='title_color buy_now'>
-                    Buy Now
-                  </button>
+                ) : !owned && orders.length > 0 ? (
+                  orders[0].salesType === 0 ? (
+                    <button type="button" className="title_color buy_now">
+                      Buy Now
+                    </button>
+                  ) : (
+                    <button type="button" className="title_color buy_now">
+                      Place A Bid
+                    </button>
+                  )
                 ) : (
                   ""
                 )}
 
                 <button
-                  type='button'
-                  className='border_btn title_color'
-                  data-bs-toggle='modal'
-                  data-bs-target='#brandModal'
-                  onClick={() => setModal("active")}>
-                  Bids / Offers
+                  type="button"
+                  className="border_btn title_color"
+                  data-bs-toggle="modal"
+                  data-bs-target="#brandModal"
+                  onClick={() => setModal("active")}
+                >
+                  Make Offers
                 </button>
               </div>
             </div>
@@ -544,9 +549,9 @@ function NFTDetails() {
               </div>
             </div>
 
-            <div className='col-md-12 mb-5'>
-              <h3 className='title_36 mb-4'>Bids</h3>
-              <div className='table-responsive'>
+            <div className="col-md-12 mb-5">
+              <h3 className="title_36 mb-4">Bids</h3>
+              <div className="table-responsive">
                 <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
@@ -807,10 +812,10 @@ function NFTDetails() {
             </div>
 
             {/* <!-- Modal body --> */}
-            <div className='modal-body'>
-              <div className='tab-content'>
-                <div className='mb-3' id='tab_opt_1'>
-                  <label htmlfor='item_price' className='form-label'>
+            <div className="modal-body">
+              <div className="tab-content">
+                <div className="mb-3" id="tab_opt_1">
+                  <label htmlfor="item_price" className="form-label">
                     Price
                   </label>
                   <input
@@ -830,13 +835,13 @@ function NFTDetails() {
                     Quantity
                   </label>
                   <input
-                    type='text'
-                    name='item_qt'
-                    id='item_qt'
-                    min='1'
+                    type="text"
+                    name="item_qt"
+                    id="item_qt"
+                    min="1"
                     disabled={NFTDetails.type === 1 ? "disabled" : ""}
-                    className='form-control input_design'
-                    placeholder='Please Enter Quantity'
+                    className="form-control input_design"
+                    placeholder="Please Enter Quantity"
                     value={offerQuantity}
                     onChange={(event) => {
                       if (NFTDetails.type == 1 && event.target.value > 1) {
@@ -861,8 +866,8 @@ function NFTDetails() {
                     }}
                   />
                 </div>
-                <div id='tab_opt_4' className='mb-3'>
-                  <label htmlfor='Payment' className='form-label'>
+                <div id="tab_opt_4" className="mb-3">
+                  <label htmlfor="Payment" className="form-label">
                     Payment Token
                   </label>
 
@@ -924,7 +929,7 @@ function NFTDetails() {
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
                   <input
-                    type='datetime-local'
+                    type="datetime-local"
                     value={(datetime || "").toString().substring(0, 16)}
                     //value={datetime}
                     onChange={handleChange}
