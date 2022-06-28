@@ -24,10 +24,8 @@ import {
 import { NotificationManager } from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
-import Loader from "../components/Loader";
-import PopupModal from "../components/AccountModal/popupModal";
-import Logo from "../../assets/images/logo.svg";
 import { Tokens } from "../../helpers/tokensToSymbol";
+import Spinner from "../components/Spinner";
 
 var textColor = {
   textColor: "#EF981D",
@@ -59,8 +57,9 @@ function NFTDetails() {
   const [cookies] = useCookies([]);
   const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
-  const [loader, setLoader] = useState(false);
-  const [isModal, setModal] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isPutOnMarketplace, setIsPutonMarketplace] = useState("");
+  const [modal, setModal] = useState(false);
   const [offerPrice, setOfferPrice] = useState();
   const [offerQuantity, setOfferQuantity] = useState(1);
 
@@ -89,6 +88,7 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+        console.table("nft detail------>>>", res[0]);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
         const reqData1 = {
@@ -129,6 +129,7 @@ function NFTDetails() {
   }, [id, currentUser]);
 
   const PutMarketplace = async () => {
+    setLoading(true);
     console.log("sale type", marketplaceSaleType);
 
     console.log(
@@ -136,10 +137,15 @@ function NFTDetails() {
       contracts[selectedTokenFS],
       selectedTokenFS
     );
+    if(itemprice === undefined || itemprice === "" || itemprice === 0){
+        NotificationManager.error("Please Enter a price","",800);
+        setLoading(false);
+        return;
+    }
     let orderData = {
       nftId: NFTDetails.id,
       collection: NFTDetails.collectionAddress,
-      price: itemprice ? itemprice : "0",
+      price: itemprice ,
       quantity: item_qt,
       saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
       salt: Math.round(Math.random() * 10000000),
@@ -155,17 +161,22 @@ function NFTDetails() {
       erc721: NFTDetails.type === 1,
     };
     await putOnMarketplace(currentUser, orderData);
+    setLoading(false);
   };
+
+
   const PlaceOffer = async () => {
     console.log("NFT Details---->", NFTDetails);
 
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
+      setLoading(false);
       return;
     }
 
     if (offerPrice == "" || offerPrice == undefined) {
       NotificationManager.error("Enter Offer Price");
+      setLoading(false);
       return;
     }
     console.log("offer quantity is----->", offerQuantity);
@@ -174,10 +185,12 @@ function NFTDetails() {
       (offerQuantity == undefined && NFTDetails.type !== 1)
     ) {
       NotificationManager.error("Enter Offer Quantity");
+      setLoading(false);
       return;
     }
     if (datetime == "") {
       NotificationManager.error("Enter Offer EndTime");
+      setLoading(false);
       return;
     }
 
@@ -198,7 +211,7 @@ function NFTDetails() {
       NFTDetails.id,
       tokenAddress
     );
-
+  setLoading(false);
     //await putOnMarketplace(currentUser, orderData);
     return;
   };
@@ -280,81 +293,77 @@ function NFTDetails() {
 
   return (
     <div>
-      {/* <Loader /> */}
-      <section style={bgImgStyle} className="pdd_8">
-        <div className="container">
-          <div className="row mb-5">
-            <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5">
+      {loading ? <Spinner /> : ""}
+      <section style={bgImgStyle} className='pdd_8'>
+        <div className='container'>
+          <div className='row mb-5'>
+            <div className='col-lg-6 mb-xl-5 mb-lg-5 mb-5'>
               <img
                 src={NFTDetails?.image}
-                className="img-fluid nftimg"
-                alt=""
+                className='img-fluid nftimg'
+                alt=''
               />
             </div>
-            <div className="col-lg-6 nft_details">
-              <p className="mb-0">
+            <div className='col-lg-6 nft_details'>
+              <p className='mb-0'>
                 {collection?.name} Collection{" "}
-                <img src={"../img/check.png"} className="img-fluid" alt="" />
+                <img src={"../img/check.png"} className='img-fluid' alt='' />
               </p>
-              <h1 className="mb-3">{NFTDetails?.name}</h1>
-              <div className="owner_by mb-4">
+              <h1 className='mb-3'>{NFTDetails?.name}</h1>
+              <div className='owner_by mb-4'>
                 <p>
                   Owned by{" "}
                   <span style={textColor}>{collection?.createdBy}</span>
                 </p>
-                <span className="add_wishlist">
+                <span className='add_wishlist'>
                   <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    xmlns='http://www.w3.org/2000/svg'>
                     <path
-                      d="M21.6328 6.64689C21.3187 5.91947 20.8657 5.2603 20.2992 4.70626C19.7323 4.15058 19.064 3.70898 18.3305 3.40548C17.5699 3.08953 16.7541 2.92781 15.9305 2.9297C14.775 2.9297 13.6477 3.24611 12.668 3.84377C12.4336 3.98673 12.2109 4.14376 12 4.31486C11.7891 4.14376 11.5664 3.98673 11.332 3.84377C10.3523 3.24611 9.225 2.9297 8.06953 2.9297C7.2375 2.9297 6.43125 3.08908 5.66953 3.40548C4.93359 3.71017 4.27031 4.14845 3.70078 4.70626C3.13359 5.25967 2.6805 5.919 2.36719 6.64689C2.04141 7.40392 1.875 8.20782 1.875 9.03516C1.875 9.81563 2.03438 10.6289 2.35078 11.4563C2.61563 12.1477 2.99531 12.8648 3.48047 13.5891C4.24922 14.7352 5.30625 15.9305 6.61875 17.1422C8.79375 19.1508 10.9477 20.5383 11.0391 20.5945L11.5945 20.9508C11.8406 21.1078 12.157 21.1078 12.4031 20.9508L12.9586 20.5945C13.05 20.5359 15.2016 19.1508 17.3789 17.1422C18.6914 15.9305 19.7484 14.7352 20.5172 13.5891C21.0023 12.8648 21.3844 12.1477 21.6469 11.4563C21.9633 10.6289 22.1227 9.81563 22.1227 9.03516C22.125 8.20782 21.9586 7.40392 21.6328 6.64689Z"
-                      fill="#9E9E9E"
+                      d='M21.6328 6.64689C21.3187 5.91947 20.8657 5.2603 20.2992 4.70626C19.7323 4.15058 19.064 3.70898 18.3305 3.40548C17.5699 3.08953 16.7541 2.92781 15.9305 2.9297C14.775 2.9297 13.6477 3.24611 12.668 3.84377C12.4336 3.98673 12.2109 4.14376 12 4.31486C11.7891 4.14376 11.5664 3.98673 11.332 3.84377C10.3523 3.24611 9.225 2.9297 8.06953 2.9297C7.2375 2.9297 6.43125 3.08908 5.66953 3.40548C4.93359 3.71017 4.27031 4.14845 3.70078 4.70626C3.13359 5.25967 2.6805 5.919 2.36719 6.64689C2.04141 7.40392 1.875 8.20782 1.875 9.03516C1.875 9.81563 2.03438 10.6289 2.35078 11.4563C2.61563 12.1477 2.99531 12.8648 3.48047 13.5891C4.24922 14.7352 5.30625 15.9305 6.61875 17.1422C8.79375 19.1508 10.9477 20.5383 11.0391 20.5945L11.5945 20.9508C11.8406 21.1078 12.157 21.1078 12.4031 20.9508L12.9586 20.5945C13.05 20.5359 15.2016 19.1508 17.3789 17.1422C18.6914 15.9305 19.7484 14.7352 20.5172 13.5891C21.0023 12.8648 21.3844 12.1477 21.6469 11.4563C21.9633 10.6289 22.1227 9.81563 22.1227 9.03516C22.125 8.20782 21.9586 7.40392 21.6328 6.64689Z'
+                      fill='#9E9E9E'
                     />
                   </svg>{" "}
                   {NFTDetails?.like} favourites
                 </span>
               </div>
               <ul
-                className="nav nav-pills mb-4 w-100"
-                id="pills-tab"
-                role="tablist"
-              >
-                <li className="nav-item w-100" role="presentation">
+                className='nav nav-pills mb-4 w-100'
+                id='pills-tab'
+                role='tablist'>
+                <li className='nav-item w-100' role='presentation'>
                   <button
-                    className="nav-link active details-btn "
-                    id="pills-home-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-home"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-home"
-                    aria-selected="true"
-                  >
+                    className='nav-link active details-btn '
+                    id='pills-home-tab'
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-home'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-home'
+                    aria-selected='true'>
                     Details
                   </button>
                 </li>
               </ul>
-              <div className="tab-content" id="pills-tabContent">
+              <div className='tab-content' id='pills-tabContent'>
                 <div
-                  className="tab-pane fade show active"
-                  id="pills-home"
-                  role="tabpanel"
-                  aria-labelledby="pills-home-tab"
-                >
-                  <div className="row">
+                  className='tab-pane fade show active'
+                  id='pills-home'
+                  role='tabpanel'
+                  aria-labelledby='pills-home-tab'>
+                  <div className='row'>
                     {NFTDetails
                       ? NFTDetails?.attributes?.map((attr, key) => {
                           const rarity = parseInt(attr?.rarity);
                           return (
-                            <div className="col-md-6 mb-4" key={key}>
-                              <div className="tab_label">
-                                <div className="d-flex align-items-start flex-column">
+                            <div className='col-md-6 mb-4' key={key}>
+                              <div className='tab_label'>
+                                <div className='d-flex align-items-start flex-column'>
                                   <p>{attr.trait_type}</p>
-                                  <span className="big_text">{attr.value}</span>
+                                  <span className='big_text'>{attr.value}</span>
                                 </div>
                                 {rarity ? (
                                   <p>
@@ -365,14 +374,13 @@ function NFTDetails() {
                                 )}
                               </div>
                               {rarity ? (
-                                <div className="progress mt-2">
+                                <div className='progress mt-2'>
                                   <div
                                     className={`progress-bar w-${rarity}`}
-                                    role="progressbar"
+                                    role='progressbar'
                                     aria-valuenow={rarity}
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                  ></div>
+                                    aria-valuemin='0'
+                                    aria-valuemax='100'></div>
                                 </div>
                               ) : (
                                 ""
@@ -392,7 +400,7 @@ function NFTDetails() {
                   </div>
                 </div>
               </div>
-              <div className="price_box">
+              <div className='price_box'>
                 <h4>Price</h4>
                 {orders.length > 0 ? (
                   <div className="price_div">
@@ -448,86 +456,86 @@ function NFTDetails() {
               </div>
             </div>
           </div>
-          <div className="row">
-            <div className="col-lg-6 mb-5 width_45 auto_right">
-              <h3 className="title_36 mb-4">Description</h3>
-              <p className="textdes">{NFTDetails?.desc} </p>
+          <div className='row'>
+            <div className='col-lg-6 mb-5 width_45 auto_right'>
+              <h3 className='title_36 mb-4'>Description</h3>
+              <p className='textdes'>{NFTDetails?.desc} </p>
             </div>
-            <div className="col-lg-6 mb-5">
-              <h3 className="title_36 mb-4">
+            <div className='col-lg-6 mb-5'>
+              <h3 className='title_36 mb-4'>
                 About {collection?.name} Collection
               </h3>
-              <div className="row">
-                <div className="col-md-4 nftDetails_img_con">
-                  <img src={collection?.logoImg} alt="" className="img-fluid" />
+              <div className='row'>
+                <div className='col-md-4 nftDetails_img_con'>
+                  <img src={collection?.logoImg} alt='' className='img-fluid' />
                 </div>
-                <div className="col-md-8">
-                  <p className="textdes">{collection?.description} </p>
+                <div className='col-md-8'>
+                  <p className='textdes'>{collection?.description} </p>
                 </div>
               </div>
             </div>
-            <div className="col-lg-6 mb-5 width_45 auto_right">
-              <h3 className="title_36 mb-4">Asset Details</h3>
-              <ul className="nft_detaillist">
+            <div className='col-lg-6 mb-5 width_45 auto_right'>
+              <h3 className='title_36 mb-4'>Asset Details</h3>
+              <ul className='nft_detaillist'>
                 <li>
-                  <span className="asset_title">Size</span>
-                  <span className="asset_detail">
+                  <span className='asset_title'>Size</span>
+                  <span className='asset_detail'>
                     {NFTDetails?.assetsInfo?.size} KB
                   </span>
                 </li>
                 <li>
-                  <span className="asset_title">Dimension</span>
-                  <span className="asset_detail">
+                  <span className='asset_title'>Dimension</span>
+                  <span className='asset_detail'>
                     {NFTDetails?.assetsInfo?.dimension} px
                   </span>
                 </li>
                 <li>
-                  <span className="asset_title">Format</span>
-                  <span className="asset_detail">
+                  <span className='asset_title'>Format</span>
+                  <span className='asset_detail'>
                     {NFTDetails?.assetsInfo?.type}
                   </span>
                 </li>
               </ul>
             </div>
-            <div className="col-lg-6 mb-5">
-              <h3 className="title_36 mb-4">Blockchain Details</h3>
-              <ul className="nft_detaillist">
+            <div className='col-lg-6 mb-5'>
+              <h3 className='title_36 mb-4'>Blockchain Details</h3>
+              <ul className='nft_detaillist'>
                 <li>
-                  <span className="asset_title">Contact Address</span>
-                  <span className="asset_detail">
+                  <span className='asset_title'>Contact Address</span>
+                  <span className='asset_detail'>
                     {collection?.contractAddress?.slice(0, 4) +
                       "..." +
                       collection?.contractAddress?.slice(38, 42)}
                   </span>
                 </li>
                 <li>
-                  <span className="asset_title">Token ID</span>
-                  <span className="asset_detail">{NFTDetails?.tokenId}</span>
+                  <span className='asset_title'>Token ID</span>
+                  <span className='asset_detail'>{NFTDetails?.tokenId}</span>
                 </li>
                 <li>
-                  <span className="asset_title">Blockchain</span>
-                  <span className="asset_detail">Binance Smart Chain</span>
+                  <span className='asset_title'>Blockchain</span>
+                  <span className='asset_detail'>Binance Smart Chain</span>
                 </li>
               </ul>
             </div>
-            <div className="col-lg-6 mb-5 width_45 auto_right">
-              <h3 className="title_36 mb-4">Properties</h3>
-              <ul className="nft_detaillist">
+            <div className='col-lg-6 mb-5 width_45 auto_right'>
+              <h3 className='title_36 mb-4'>Properties</h3>
+              <ul className='nft_detaillist'>
                 <li>
-                  <span className="asset_title">SERIAL</span>
-                  <span className="asset_detail">{NFTDetails?.tokenId}</span>
+                  <span className='asset_title'>SERIAL</span>
+                  <span className='asset_detail'>{NFTDetails?.tokenId}</span>
                 </li>
                 <li>
-                  <span className="asset_title">TYPE</span>
-                  <span className="asset_detail">
+                  <span className='asset_title'>TYPE</span>
+                  <span className='asset_detail'>
                     {NFTDetails?.catergoryInfo?.name}
                   </span>
                 </li>
               </ul>
             </div>
-            <div className="col-lg-6 mb-5">
-              <h3 className="title_36 mb-4">Levels</h3>
-              <ul className="nft_detailnumber">
+            <div className='col-lg-6 mb-5'>
+              <h3 className='title_36 mb-4'>Levels</h3>
+              <ul className='nft_detailnumber'>
                 <li>
                   <span>1</span>Generation
                 </li>
@@ -536,19 +544,19 @@ function NFTDetails() {
                 </li>
               </ul>
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>
                 Trading History for Meta Marines
               </h3>
               <img
                 src={"../img/nftdetails/graf.png"}
-                alt=""
-                className="img-fluid box_shadow"
+                alt=''
+                className='img-fluid box_shadow'
               />
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Listings</h3>
-              <div className="table-responsive">
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Listings</h3>
+              <div className='table-responsive'>
                 <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
@@ -559,22 +567,22 @@ function NFTDetails() {
                 <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Offers</h3>
-              <div className="table-responsive">
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Offers</h3>
+              <div className='table-responsive'>
                 <NFToffer id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Histoy</h3>
-              <div className="table-responsive">
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Histoy</h3>
+              <div className='table-responsive'>
                 <NFThistory />
               </div>
             </div>
             {allNFTs.length > 1 ? (
               <>
-                <div className="col-md-12 ">
-                  <h3 className="title_36 mb-4">
+                <div className='col-md-12 '>
+                  <h3 className='title_36 mb-4'>
                     More from {collection?.name} Collection
                   </h3>
                   <FirearmsCollection
@@ -584,11 +592,10 @@ function NFTDetails() {
                   />
                 </div>
                 {allNFTs.length > 4 ? (
-                  <div className="col-md-12 text-center mt-5">
+                  <div className='col-md-12 text-center mt-5'>
                     <a
-                      className="view_all_bdr"
-                      href={`/collection/${collection?._id}`}
-                    >
+                      className='view_all_bdr'
+                      href={`/collection/${collection?._id}`}>
                       View All
                     </a>
                   </div>
@@ -604,92 +611,87 @@ function NFTDetails() {
       </section>
 
       {/* <!-- The Modal --> */}
-      <div className="modal markitplace" id="detailPop">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content">
+      <div className={`modal marketplace putOnMarketplace ${isPutOnMarketplace}`} id='detailPop'>
+        <div className='modal-dialog modal-lg modal-dialog-centered'>
+          <div className='modal-content'>
             {/* <!-- Modal Header --> */}
-            <div className="modal-header p-4">
-              <h4 className="text-light title_20 mb-0">Put on Marketplace</h4>
+            <div className='modal-header p-4'>
+              <h4 className='text-light title_20 mb-0'>Put on Marketplace</h4>
               <button
-                type="button"
-                className="btn-close text-light"
-                data-bs-dismiss="modal"
-              ></button>
+                type='button'
+                className='btn-close text-light'
+                data-bs-dismiss='modal'></button>
             </div>
 
             {/* <!-- Modal body --> */}
-            <div className="modal-body">
-              <h3 className="text-light text_16">Select method</h3>
+            <div className='modal-body'>
+              <h3 className='text-light text_16'>Select method</h3>
 
               <ul
-                className="d-flex mb-4 justify-content-around g-3"
-                id="pills-tab"
-                role="tablist"
-              >
-                <li className="list-unstyled">
+                className='d-flex mb-4 justify-content-around g-3'
+                id='pills-tab'
+                role='tablist'>
+                <li className='list-unstyled'>
                   <button
-                    id="btn1"
-                    className="navbtn active"
-                    type="button"
-                    onClick={handleMpShow}
-                  >
-                    <i className="fa fa-tag"></i>
-                    <span className="title_20 d-block">Fixed price</span>
+                    id='btn1'
+                    className='navbtn active'
+                    type='button'
+                    onClick={handleMpShow}>
+                    <i className='fa fa-tag'></i>
+                    <span className='title_20 d-block'>Fixed price</span>
                   </button>
                 </li>
-                <li className="list-unstyled">
+                <li className='list-unstyled'>
                   <button
-                    id="btn2"
-                    className="navbtn"
-                    type="button"
-                    onClick={handleMpShow1}
-                  >
-                    <i className="fa fa-hourglass-1"></i>
-                    <span className="title_20 d-block">Timed auction</span>
+                    id='btn2'
+                    className='navbtn'
+                    type='button'
+                    onClick={handleMpShow1}>
+                    <i className='fa fa-hourglass-1'></i>
+                    <span className='title_20 d-block'>Timed auction</span>
                   </button>
                 </li>
-                <li className="list-unstyled">
+                <li className='list-unstyled'>
                   <button
-                    id="btn3"
-                    className="navbtn"
-                    type="button"
-                    onClick={handleMpShow2}
-                  >
-                    <i className="fa fa-users"></i>
-                    <span className="title_20 d-block">Open for bids</span>
+                    id='btn3'
+                    className='navbtn'
+                    type='button'
+                    onClick={handleMpShow2}>
+                    <i className='fa fa-users'></i>
+                    <span className='title_20 d-block'>Open for bids</span>
                   </button>
                 </li>
               </ul>
 
-              <div className="tab-content">
-                <div className="mb-3" id="tab_opt_1">
-                  <label htmlfor="item_price" className="form-label">
+              <div className='tab-content'>
+                <div className='mb-3' id='tab_opt_1'>
+                  <label htmlfor='item_price' className='form-label'>
                     Price
                   </label>
                   <input
-                    type="text"
-                    name="item_price"
-                    id="item_price"
-                    min="0"
-                    max="18"
-                    className="form-control input_design"
-                    placeholder="Please Enter Price (MATIC)"
+                    type='text'
+                    name='item_price'
+                    id='item_price'
+                    min='0'
+                    max='18'
+                    className='form-control input_design'
+                    placeholder='Please Enter Price (MATIC)'
                     value={itemprice}
                     onChange={(event) => setItemprice(event.target.value)}
                   />
                 </div>
-                <div className="mb-3" id="tab_opt_2">
-                  <label htmlfor="item_qt" className="form-label">
+                <div className='mb-3' id='tab_opt_2'>
+                  <label htmlfor='item_qt' className='form-label'>
                     Quantity
                   </label>
                   <input
-                    type="text"
-                    name="item_qt"
-                    id="item_qt"
-                    min="1"
+                    type='text'
+                    name='item_qt'
+                    id='item_qt'
+                    min='1'
                     disabled={NFTDetails.type === 1 ? "disabled" : ""}
-                    className="form-control input_design"
-                    placeholder="Please Enter Quantity"
+                    className='form-control input_design'
+                    placeholder='Please Enter Quantity'
                     value={item_qt}
                     onChange={(event) => {
                       if (
@@ -707,41 +709,40 @@ function NFTDetails() {
                     }}
                   />
                 </div>
-                <div id="tab_opt_3" className="mb-3 put_hide">
-                  <label htmlfor="item_bid" className="form-label">
+                <div id='tab_opt_3' className='mb-3 put_hide'>
+                  <label htmlfor='item_bid' className='form-label'>
                     Minimum bid
                   </label>
                   <input
-                    type="text"
-                    name="item_bid"
-                    id="item_bid"
-                    min="0"
-                    max="18"
-                    className="form-control input_design"
-                    placeholder="Enter Minimum Bid"
+                    type='text'
+                    name='item_bid'
+                    id='item_bid'
+                    min='0'
+                    max='18'
+                    className='form-control input_design'
+                    placeholder='Enter Minimum Bid'
                     value={item_bid}
                     onChange={(event) => setItem_bid(event.target.value)}
                   />
                 </div>
 
-                <div id="tab_opt_4" className="mb-3">
-                  <label htmlfor="Payment" className="form-label">
+                <div id='tab_opt_4' className='mb-3'>
+                  <label htmlfor='Payment' className='form-label'>
                     Payment Token
                   </label>
 
                   {marketplaceSaleType === 0 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="BNB"
+                        className='form-select input_design select_bg'
+                        name='BNB'
                         value={selectedTokenFS}
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
                           console.log("selected token", selectedTokenFS);
                           setSelectedTokenFS(event.target.value);
-                        }}
-                      >
+                        }}>
                         {" "}
                         <option value={"BNB"} selected>
                           BNB
@@ -753,13 +754,12 @@ function NFTDetails() {
                   ) : marketplaceSaleType == 1 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="USDT"
+                        className='form-select input_design select_bg'
+                        name='USDT'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         {" "}
                         <option value={"USDT"} selected>
                           USDT
@@ -769,13 +769,12 @@ function NFTDetails() {
                   ) : (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="USDT"
+                        className='form-select input_design select_bg'
+                        name='USDT'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         <option value={"USDT"} selected>
                           USDT
                         </option>
@@ -783,25 +782,24 @@ function NFTDetails() {
                     </>
                   )}
                 </div>
-                <div id="tab_opt_5" className="mb-3 put_hide">
-                  <label for="item_ex_date" className="form-label">
+                <div id='tab_opt_5' className='mb-3 put_hide'>
+                  <label for='item_ex_date' className='form-label'>
                     Expiration date
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
                   <input
-                    type="datetime-local"
+                    type='datetime-local'
                     value={datetime.toString().substring(0, 16)}
                     onChange={handleChange}
-                    className="input_design"
+                    className='input_design'
                   />
                 </div>
-                <div className="mt-5 mb-3 text-center">
+                <div className='mt-5 mb-3 text-center'>
                   <button
-                    type="button"
-                    className="square_yello"
-                    href="/mintcollectionlive"
-                    onClick={PutMarketplace}
-                  >
+                    type='button'
+                    className='square_yello'
+                    href='/mintcollectionlive'
+                    onClick={PutMarketplace}>
                     Put On Marketplace
                   </button>
                 </div>
@@ -813,17 +811,16 @@ function NFTDetails() {
 
       {/*Bid/Offer Modal*/}
 
-      <div className="modal markitplace" id="brandModal">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content">
+      <div className='modal marketplace' id='brandModal'>
+        <div className='modal-dialog modal-lg modal-dialog-centered'>
+          <div className='modal-content'>
             {/* <!-- Modal Header --> */}
-            <div className="modal-header p-4">
-              <h4 className="text-light title_20 mb-0">Offer</h4>
+            <div className='modal-header p-4'>
+              <h4 className='text-light title_20 mb-0'>Offer</h4>
               <button
-                type="button"
-                className="btn-close text-light"
-                data-bs-dismiss="modal"
-              ></button>
+                type='button'
+                className='btn-close text-light'
+                data-bs-dismiss='modal'></button>
             </div>
 
             {/* <!-- Modal body --> */}
@@ -834,19 +831,19 @@ function NFTDetails() {
                     Price
                   </label>
                   <input
-                    type="text"
-                    name="item_price"
-                    id="item_price"
-                    min="0"
-                    max="18"
-                    className="form-control input_design"
-                    placeholder="Please Enter Price (MATIC)"
+                    type='text'
+                    name='item_price'
+                    id='item_price'
+                    min='0'
+                    max='18'
+                    className='form-control input_design'
+                    placeholder='Please Enter Price (MATIC)'
                     value={offerPrice}
                     onChange={(event) => setOfferPrice(event.target.value)}
                   />
                 </div>
-                <div className="mb-3" id="tab_opt_2">
-                  <label htmlfor="item_qt" className="form-label">
+                <div className='mb-3' id='tab_opt_2'>
+                  <label htmlfor='item_qt' className='form-label'>
                     Quantity
                   </label>
                   <input
@@ -889,16 +886,15 @@ function NFTDetails() {
                   {marketplaceSaleType === 0 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="BNB"
+                        className='form-select input_design select_bg'
+                        name='BNB'
                         value={selectedTokenFS}
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
                           console.log("selected token", selectedTokenFS);
                           setSelectedTokenFS(event.target.value);
-                        }}
-                      >
+                        }}>
                         {" "}
                         <option value={"BNB"} selected>
                           BNB
@@ -910,13 +906,12 @@ function NFTDetails() {
                   ) : marketplaceSaleType == 1 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="USDT"
+                        className='form-select input_design select_bg'
+                        name='USDT'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         {" "}
                         <option value={"USDT"} selected>
                           USDT
@@ -926,13 +921,12 @@ function NFTDetails() {
                   ) : (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="USDT"
+                        className='form-select input_design select_bg'
+                        name='USDT'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         <option value={"USDT"} selected>
                           USDT
                         </option>
@@ -941,8 +935,8 @@ function NFTDetails() {
                   )}
                 </div>
 
-                <div id="tab_opt_5" className="mb-3 ">
-                  <label for="item_ex_date" className="form-label">
+                <div id='tab_opt_5' className='mb-3 '>
+                  <label for='item_ex_date' className='form-label'>
                     Expiration date
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
@@ -951,16 +945,15 @@ function NFTDetails() {
                     value={(datetime || "").toString().substring(0, 16)}
                     //value={datetime}
                     onChange={handleChange}
-                    className="input_design"
+                    className='input_design'
                   />
                 </div>
-                <div className="mt-5 mb-3 text-center">
+                <div className='mt-5 mb-3 text-center'>
                   <button
-                    type="button"
-                    className="square_yello"
-                    href="/mintcollectionlive"
-                    onClick={PlaceOffer}
-                  >
+                    type='button'
+                    className='square_yello'
+                    href='/mintcollectionlive'
+                    onClick={PlaceOffer}>
                     Place Offer
                   </button>
                 </div>
