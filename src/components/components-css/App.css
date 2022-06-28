@@ -3831,6 +3831,7 @@ a:hover {
   color: #ffffff;
   padding: 5px 20px;
   display: inline-block;
+  width: max-content;
 }
 .auther_cart .dropdown-menu li {
   padding: 0px;

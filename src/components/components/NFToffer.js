@@ -113,7 +113,7 @@ function NFToffer(props) {
                         </td>
                         <td className="text-center">
                           {bidOwner === currentUser.toLowerCase() ? (
-                            <div className="text-center">
+                            <div className="d-flex justify-content-center align-items-center">
                               <button
                                 to={"/"}
                                 className="small_yellow_btn small_btn mr-3"
@@ -141,12 +141,13 @@ function NFToffer(props) {
                             </div>
                           ) : bidOwner !== currentUser.toLowerCase() &&
                             bidder === currentUser.toLowerCase() ? (
-                            <div className="text-center">
+                            <div className="d-flex justify-content-center align-items-center">
                               <button
                                 disabled={
                                   new Date(b.bidDeadline * 1000) < new Date()
                                 }
                                 className="small_yellow_btn small_btn mr-3"
+                                
                               >
                                 Update Bid
                               </button>
@@ -215,7 +216,7 @@ function NFToffer(props) {
                         <td className="red_text">Cancelled</td>
                         <td className="text-center">
                           {bidOwner === currentUser.toLowerCase() ? (
-                            <div className="text-center">
+                            <div className="d-flex justify-content-center align-items-center">
                               <button
                                 to={"/"}
                                 className="small_yellow_btn small_btn mr-3"
@@ -237,7 +238,7 @@ function NFToffer(props) {
                             </div>
                           ) : bidOwner !== currentUser.toLowerCase() &&
                             bidder === currentUser.toLowerCase() ? (
-                            <div className="text-center">
+                            <div className="d-flex justify-content-center align-items-center">
                               <button
                                 to={"/"}
                                 className="small_yellow_btn small_btn mr-3"
@@ -301,7 +302,7 @@ function NFToffer(props) {
                         <td className="red_text">Cancelled</td>
                         <td className="text-center">
                           {bidOwner === currentUser.toLowerCase() ? (
-                            <div className="text-center">
+                            <div className="d-flex justify-content-center align-items-center">
                               <button
                                 to={"/"}
                                 className="small_yellow_btn small_btn mr-3"
@@ -323,7 +324,7 @@ function NFToffer(props) {
                             </div>
                           ) : bidOwner !== currentUser.toLowerCase() &&
                             bidder === currentUser.toLowerCase() ? (
-                            <div className="text-center">
+                            <div className="d-flex justify-content-center align-items-center">
                               <button
                                 to={"/"}
                                 className="small_yellow_btn small_btn mr-3"
