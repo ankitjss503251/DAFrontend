@@ -5,6 +5,7 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import {
+  createBid,
   handleAcceptBids,
   handleUpdateBidStatus,
 } from "../../helpers/sendFunctions";
@@ -13,6 +14,7 @@ import Clock from "./Clock";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
+import { ethers } from "ethers";
 
 function NFTBids(props) {
   console.log("Props in NFT offer", props);
@@ -209,7 +211,28 @@ function NFTBids(props) {
             <p className='disabled_text'>Insufficient Balance in MATIC</p>
           ) : ( */}
           <button className='btn-main mt-2 btn-placeABid' onClick={async () => {
-         
+          if (
+            Number(price) <
+            Number(convertToEth(currentBid.price?.$numberDecimal))
+          ) {
+            NotificationManager.error(
+              "Bid Price must be greater than minimum bid",
+              "",
+              800
+            );
+            return;
+          }
+          await createBid(
+            currentBid.nftID,
+            currentBid.orderID[0]._id,
+            currentBid.orderID[0].sellerID,
+            currentUser,
+            props?.NftDetails?.type,
+            currentBid.total_quantity,
+            ethers.utils.parseEther(price.toString()),
+            false,
+            // new Date(bidDeadline).valueOf() / 1000
+          );
           }}>
             {"Update Bid"}
           </button>

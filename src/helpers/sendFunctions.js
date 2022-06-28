@@ -535,6 +535,7 @@ export const createBid = async (
   let buyerOrder = [];
   try {
     SellerOrder = await buildSellOrder(orderID);
+    console.log("SellerOrder",SellerOrder)
     for (let index = 0; index < 11; index++) {
       switch (index) {
         case 0:

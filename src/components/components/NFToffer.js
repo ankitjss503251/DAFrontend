@@ -171,12 +171,8 @@ function NFToffer(props) {
                           ) : bidder === currentUser.toLowerCase() ? (
                             <button
                               to={"/"}
-<<<<<<< HEAD
-                              className='small_yellow_btn small_btn mr-3'>
-=======
                               className="small_yellow_btn small_btn mr-3"
                             >
->>>>>>> f6e735786d63c68e5626d4b00ca3eb43d3e69488
                               Update Bid
                             </button>
                           ) : (
@@ -187,10 +183,6 @@ function NFToffer(props) {
                     );
                   })
                 : ""}
-<<<<<<< HEAD
-             
-=======
->>>>>>> f6e735786d63c68e5626d4b00ca3eb43d3e69488
             </tbody>
           </table>
         </div>
