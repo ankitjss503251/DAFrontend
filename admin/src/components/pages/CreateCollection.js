@@ -475,7 +475,10 @@ function CreateCollection() {
 
             await importCollection({
               address: importedAddress,
-              totalSupply: parseInt(originalSupply),
+              totalSupply: parseInt(originalSupply)
+                ? parseInt(originalSupply)
+                : 0,
+              name: title,
             });
           } catch (e) {
             console.log("error", e);
@@ -590,14 +593,14 @@ function CreateCollection() {
   };
 
   const handleCollection = async (collectionID, field, value) => {
-   try{ let fd = new FormData();
-    fd.append("id", collectionID);
-    fd.append(field, value);
-    await UpdateCollection(fd);
-    NotificationManager.success("Collection updated", "", 1000);
-    setReloadContent(!reloadContent);
-  }
-    catch(e){
+    try {
+      let fd = new FormData();
+      fd.append("id", collectionID);
+      fd.append(field, value);
+      await UpdateCollection(fd);
+      NotificationManager.success("Collection updated", "", 1000);
+      setReloadContent(!reloadContent);
+    } catch (e) {
       console.log("Error", e);
     }
   };
@@ -720,14 +723,14 @@ function CreateCollection() {
                           className="btn btn-admin m-1 p-1 text-light "
                           type="button"
                           onClick={async () => {
-                            {
+                            
                               item.isOnMarketplace == 0
                                 ? await setShowOnMarketplace(item._id, 1)
                                 : await setShowOnMarketplace(item._id, 0);
-                            }
+                            
                           }}
                         >
-                          {item.isOnMarketplace == 0 ? "Show" : "Hide"}
+                          {item.isOnMarketplace === 0 ? "Show" : "Hide"}
                         </button>
                         <button
                           className="btn btn-admin m-1 p-1 text-light"
@@ -751,22 +754,36 @@ function CreateCollection() {
                         >
                           Edit
                         </button>
-                       <button
-                          className={`btn btn-admin m-1 p-1 exclusive-btn ${item.isExclusive ? "active" : ""}`}
+                        <button
+                          className={`btn btn-admin m-1 p-1 exclusive-btn ${
+                            item.isExclusive ? "active" : ""
+                          }`}
                           type="button"
-                          onClick={() => 
-                            handleCollection(item._id, "isExclusive", !item.isExclusive ? 1 : 0)}
+                          onClick={() =>
+                            handleCollection(
+                              item._id,
+                              "isExclusive",
+                              !item.isExclusive ? 1 : 0
+                            )
+                          }
                         >
                           Exclusive Collection
                         </button>
-                     <button
-                        className={`btn btn-admin m-1 p-1 hot-btn ${item.isHotCollection ? "active" : ""}`}
-                        type="button"
-                        onClick={() => handleCollection(item._id, "isHotCollection", !item.isHotCollection ? 1 : 0)}
-                      >
-                        Hot Collection
-                      </button> 
-                        
+                        <button
+                          className={`btn btn-admin m-1 p-1 hot-btn ${
+                            item.isHotCollection ? "active" : ""
+                          }`}
+                          type="button"
+                          onClick={() =>
+                            handleCollection(
+                              item._id,
+                              "isHotCollection",
+                              !item.isHotCollection ? 1 : 0
+                            )
+                          }
+                        >
+                          Hot Collection
+                        </button>
                       </div>
                     </tbody>
                   );
