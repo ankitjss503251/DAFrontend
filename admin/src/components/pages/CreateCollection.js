@@ -324,64 +324,55 @@ function CreateCollection() {
         }
 
         console.log("contract address is--->", contractAddress);
-        if (res1.status === 1) {
-          let type;
-          if (nftType === "1") {
-            type = 1;
-          } else {
-            type = 2;
-          }
 
-          fd = new FormData();
-          fd.append("name", title);
-          fd.append("symbol", symbol);
-          fd.append("description", description);
-          fd.append("logoImage", logoImg);
-          fd.append("coverImage", coverImg);
-          fd.append("categoryID", category);
-          fd.append("brandID", brand);
-          fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
-          fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
-          //fd.append("chainID", chain);
-          fd.append("link", importedCollectionLink);
-          fd.append("contractAddress", contractAddress);
-          fd.append("preSaleStartTime", preSaleStartTime);
-          fd.append("preSaleEndTime", datetime2);
-          fd.append("preSaleTokenAddress", contracts.USDT);
-          fd.append("totalSupply", maxSupply);
-          fd.append("type", type);
-          fd.append("price", ethers.utils.parseEther(price.toString()));
-          fd.append("royality", royalty * 1000);
-
-          console.log("form data is---->", fd.value);
-
-          try {
-            let collection = await createCollection(fd);
-            console.log("create Collection response is--->", collection);
-            setLoading(false);
-            if (collection === "Collection created") {
-              NotificationManager.success(
-                "collection created successfully",
-                "",
-                1800
-              );
-              setLoading(false);
-              setTimeout(() => {
-                window.location.href = "/createcollection";
-              }, 1000);
-            } else {
-              NotificationManager.error(collection, "", 1800);
-              console.log("category message", collection);
-              setLoading(false);
-            }
-          } catch (e) {
-            NotificationManager.error(e.message, "", 1800);
-            setLoading(false);
-          }
+        let type;
+        if (nftType === "1") {
+          type = 1;
         } else {
-          NotificationManager.error("Something went wrong", "", 1800);
+          type = 2;
+        }
+
+        fd = new FormData();
+        fd.append("name", title);
+        fd.append("symbol", symbol);
+        fd.append("description", description);
+        fd.append("logoImage", logoImg);
+        fd.append("coverImage", coverImg);
+        fd.append("categoryID", category);
+        fd.append("brandID", brand);
+        fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
+        fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
+        //fd.append("chainID", chain);
+        fd.append("link", importedCollectionLink);
+        fd.append("contractAddress", contractAddress);
+        fd.append("preSaleStartTime", preSaleStartTime);
+        fd.append("preSaleEndTime", datetime2);
+        fd.append("preSaleTokenAddress", contracts.USDT);
+        fd.append("totalSupply", maxSupply);
+        fd.append("type", type);
+        fd.append("price", ethers.utils.parseEther(price.toString()));
+        fd.append("royality", royalty * 1000);
+
+        console.log("form data is---->", fd.value);
+
+        try {
+          await createCollection(fd);
+        } catch (e) {
+          NotificationManager.error(e.message, "", 1800);
           setLoading(false);
         }
+        setLoading(false);
+
+        NotificationManager.success(
+          "collection created successfully",
+          "",
+          1800
+        );
+        setLoading(false);
+
+        setTimeout(() => {
+          window.location.href = "/createcollection";
+        }, 1000);
       }
     }
   };
