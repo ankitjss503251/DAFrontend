@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useCookies } from "react-cookie";
 import { updateProfile, getProfile } from "../../apiServices";
 import { NotificationManager } from "react-notifications";
+import DefaultProfileImg from "../../assets/imagePlaceholder.jpg";
 
 const twiterImg = {
   backgroundImage: "url(./img/profile/akar-icons_twitter-fill.png)",
@@ -417,7 +418,7 @@ function Profile() {
                     <img
                       ref={uploadedImage}
                       src={
-                        profilePic ? profilePic : "../img/profile/profile1.png"
+                        profilePic ? profilePic : DefaultProfileImg
                       }
                       style={{
                         width: "100%",

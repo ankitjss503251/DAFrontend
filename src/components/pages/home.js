@@ -478,7 +478,7 @@ const Home = () => {
                   );
                 })
               : ""}
-            {upcomingMints.length > 0 ? (
+            {upcomingMints.length > 3 ? (
               <div class='col-md-12 text-center mt-5'>
                 <Link to={"/mintcollectionlive"} className='view_all_bdr'>
                   View All
