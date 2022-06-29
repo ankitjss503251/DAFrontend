@@ -1344,6 +1344,7 @@ function CreateCollection() {
                       style={{
                         display: "none",
                       }}
+                     
                     />
                     <div
                       className='update_btn'

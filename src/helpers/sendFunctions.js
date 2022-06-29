@@ -664,10 +664,7 @@ export const createBid = async (
           isOffer: isOffer,
           bidDeadline: SellerOrder[7],
         };
-        console.log("buyer signature", signature);
         await createBidNft(reqParams);
-        NotificationManager.success("Bid Placed Successfully");
-        // slowRefresh();
       }
 
       // window.location.reload();

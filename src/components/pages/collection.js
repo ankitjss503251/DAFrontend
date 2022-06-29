@@ -239,19 +239,19 @@ function Collection() {
           </div>
           <ul className='collection_status mt-5 mb-5'>
             <li>
-              <h4>10.0k</h4>
+              <h4>{collectionDetails?.totalSupply ? collectionDetails.totalSupply : "-"}</h4>
               <p>items</p>
             </li>
             <li>
-              <h4>1.2k</h4>
+              <h4>{collectionDetails?.owners ? collectionDetails.owners : "-"}</h4>
               <p>owners</p>
             </li>
             <li>
-              <h4>498</h4>
+              <h4>{collectionDetails?.price ? Number(collectionDetails.price) : "-"}</h4>
               <p>floor price</p>
             </li>
             <li>
-              <h4>1.3M</h4>
+              <h4>{collectionDetails?.volumeTraded ? collectionDetails.volumeTraded : "-"}</h4>
               <p>volume traded</p>
             </li>
           </ul>
@@ -349,7 +349,7 @@ function Collection() {
             }) : ""
             }
 
-            {nftList ? (
+            {nftList.length > 12 ? (
               <div class='col-md-12 text-center mt-5'>
                 <button class={`btn view_all_bdr ${loadMoreDisabled}`} onClick={() => setLoadMore(!loadMore)}>
                   Load More

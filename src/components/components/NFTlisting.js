@@ -17,6 +17,7 @@ import { GENERAL_TIMESTAMP } from "../../helpers/constants";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import { ethers } from "ethers";
 import Spinner from "./Spinner";
+import { slowRefresh } from "../../helpers/NotifyStatus";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -198,19 +199,26 @@ function NFTlisting(props) {
                 setLoading(false);
                 return;
               }
-              const cb = await createBid(
-                currentOrder.nftID,
-                currentOrder._id,
-                currentOrder.sellerID?._id,
-                currentUser,
-                props?.NftDetails?.type,
-                currentOrder.total_quantity,
-                ethers.utils.parseEther(price.toString()),
-                false
-                // new Date(bidDeadline).valueOf() / 1000
-              );
-              console.log("cbbb", cb);
-              setLoading(false);
+              try{
+
+                await createBid(
+                 currentOrder.nftID,
+                 currentOrder._id,
+                 currentOrder.sellerID?._id,
+                 currentUser,
+                 props?.NftDetails?.type,
+                 currentOrder.total_quantity,
+                 ethers.utils.parseEther(price.toString()),
+                 false
+                 // new Date(bidDeadline).valueOf() / 1000
+               );
+               NotificationManager.success("Bid Placed Successfully","",800);
+               setLoading(false);
+               slowRefresh(1000);
+              }
+              catch(e){
+                NotificationManager.error("Something went wrong","",800);
+              }
             }}>
             {"Place A Bid"}
           </button>
@@ -331,7 +339,6 @@ function NFTlisting(props) {
                 props?.NftDetails?.collectionAddress?.toLowerCase()
               );
               setLoading(false);
-              console.log("hbnnnn", hbn);
             }}>
             {"Buy Now"}
           </button>

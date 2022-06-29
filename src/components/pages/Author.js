@@ -13,21 +13,11 @@ import { GetIndividualAuthorDetail, GetOwnedNftList } from "../../apiServices";
 import moment from "moment";
 import coverImg from "./../../assets/images/authorbg.jpg";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
-import { arrayify } from "ethers/lib/utils";
-import AllNFTs from "../SVG/AllNFTs";
-import Firearmsvg from "../SVG/Firearmsvg";
-import Soldierssvg from "../SVG/Soldierssvg";
 import UpArrow from "../SVG/dropdown";
 import { getCategory } from "../../helpers/getterFunctions";
+import BGImg from "../../assets/images/background.jpg";
 
-const bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
+
 
 function Author() {
   const { id } = useParams();
@@ -46,6 +36,15 @@ function Author() {
   var bgImgarrow = {
     backgroundImage: `url(${arrow})`,
     backgroundRepeat: "no-repeat",
+  };
+
+  const bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
   };
 
   const filterToggle = () => {
