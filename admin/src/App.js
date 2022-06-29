@@ -1,13 +1,13 @@
 // import logo from './logo.svg';
 import React, { useState } from "react";
 import "./App.css";
-import Home from "./components/pages/Home";
+import Home1 from "./components/pages/Home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Form from "./components/pages/Form";
 import Table from "./components/pages/Table";
 import Performance from "./components/pages/Performance";
 import Navbar from "./components/Navbar";
-import CreateCollection from "./components/pages/CreateCollection";
+import CreateCollection1 from "./components/pages/CreateCollection";
 import CreateNFTs from "./components/pages/CreateNFTs";
 import Rightarrow from "./components/SVG/rightarrow";
 import CreateBrands from "./components/pages/CreateBrands";
@@ -19,7 +19,9 @@ import NotificationPopup from "./components/components/NotificationPopup";
 import { NotificationContainer } from "react-notifications";
 import ImportCard from "./components/pages/ImportedData/importCard";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
-
+import withLogin from "./components/components/withLogin";
+const Home = withLogin(Home1);
+const CreateCollection = withLogin(CreateCollection1);
 const instaImg = {
   backgroundImage: "url(./images/main_bg.png)",
   backgroundRepeat: "no-repeat",
@@ -30,7 +32,7 @@ const instaImg = {
 function App() {
   const [mode, setMode] = useState("Darkmode");
   const [notificationpopup, setNotificationPopup] = useState(null);
-
+  const isAdminLogin  = document.location.pathname.substring(1)=='sadmin';
   const showNotificationPopup = (message, title) => {
     setNotificationPopup({
       msg: message,
@@ -63,7 +65,7 @@ function App() {
       </div>
 
       <BrowserRouter>
-        <Navbar />
+      {isAdminLogin?null:<Navbar />}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
@@ -72,6 +74,7 @@ function App() {
             element={<Navbar />}
             toggleMode={toggleMode}
           />
+          <Route path="sadmin" element={<Login />} />
           <Route path="form" element={<Form />} />
           <Route path="table" element={<Table />} />
           <Route path="performance" element={<Performance />} />

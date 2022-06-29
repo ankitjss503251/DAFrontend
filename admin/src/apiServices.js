@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import Web3 from "web3";
-
+import API from './helpers/apiClient.ts';
+import {getCookie,setCookie} from './helpers/utils.ts';
 const web3 = new Web3(
   "https://polygon-mumbai.g.alchemy.com/v2/8RAii8kDi0Fwe47iF1_WLjpcSfp3q3R6"
 );
@@ -753,6 +754,15 @@ export const GetOrdersByNftId = async (data) => {
     return err;
   }
 };
+
+export const adminLogin = ({username,password})=>{
+     return API.post('/auth/superAdminLogin',{username,password})
+               .then(res=>{
+                 let {token} = res?.data;
+                setCookie('connect.auth',token,100);
+                return res;
+               });
+}
 
 // export const GetAllUserDetails = async () => {
 //   let searchData = {
