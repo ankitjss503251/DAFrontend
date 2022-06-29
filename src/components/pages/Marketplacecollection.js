@@ -116,6 +116,7 @@ function Marketplacecollection() {
                 className='tab_btn mb-5 nav nav-pills1'
                 id='pills-tab'
                 role='tablist'>
+                  {categories?.length > 0 ? 
                 <li class='nav-item' role='presentation'>
                   <button
                     class={!showTab ? "nav-link active" : "nav-link"}
@@ -132,7 +133,7 @@ function Marketplacecollection() {
                     }}>
                     All
                   </button>
-                </li>
+                </li> : ""}
                 {categories?.length > 0
                   ? categories.map((cat, key) => {
                       return (
