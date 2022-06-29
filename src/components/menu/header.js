@@ -22,6 +22,7 @@ import PopupModal from "./../components/AccountModal/popupModal";
 import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
+import defaultProfile from "../../assets/images/favicon.png";
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
@@ -207,6 +208,7 @@ const Header = function () {
       console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
+      
       try {
         userAuth(primaryWallet, address);
       } catch (e) {
@@ -582,15 +584,41 @@ const Header = function () {
                     </div>
                   </li>
                   <li className='nav-item'>
+<<<<<<< HEAD
                     <NavLink to='' tabindex='-1'>
                       <img src='../img/header_icon.png' alt='header_icon' />
+=======
+                    <NavLink to='' tabindex='-1' className='profile_pic'>
+                      <img
+                        src={
+                          userDetails?.profileIcon
+                            ? userDetails.profileIcon
+                            : defaultProfile
+                        }
+                        className='img-fluid hunter_fav'
+                        alt='favicon'
+                      />
+>>>>>>> 46ef6b2f497ced1904f2677dc053603f2a462594
                     </NavLink>
                     <ul className='sub_menu'>
                       <li className='sub_pdd'>
                         <span className='Connected'>Connected </span>
                         <div className='sub_div'>
+<<<<<<< HEAD
                           <div className=''>
                             <img src='./img/favicon.png' alt='favicon' />
+=======
+                          <div className='profile_pic mr-3'>
+                            <img
+                              src={
+                                userDetails?.profileIcon
+                                  ? userDetails.profileIcon
+                                  : defaultProfile
+                              }
+                              className='img-fluid hunter_fav'
+                              alt='favicon'
+                            />
+>>>>>>> 46ef6b2f497ced1904f2677dc053603f2a462594
                           </div>
                           <div className=''>
                             <h6>
@@ -623,7 +651,13 @@ const Header = function () {
                         </NavLink>
                       </li>
                       <li>
+<<<<<<< HEAD
                         <NavLink to={"/NFTdetails"} className='sub-items'>
+=======
+                        <NavLink
+                          to={`/author/${userDetails?._id}`}
+                          className='sub-items'>
+>>>>>>> 46ef6b2f497ced1904f2677dc053603f2a462594
                           <svg
                             width='20'
                             height='20'
