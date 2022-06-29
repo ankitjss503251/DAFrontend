@@ -482,7 +482,7 @@ function Marketplace() {
                 return oIndex.map((card, key) => {
                   return (
                     <div className={grid} >
-                      <div className='items_slide' key={key}>
+                      <div className='items_slide h-100' key={key}>
                         <div className='items_profileimg' key={key}>
                           <a href={`/author/${card.createdBy}`}>
                             <div className='profile_left nft-logo-img'>
@@ -507,7 +507,7 @@ function Marketplace() {
                           <img
                             alt=''
                             src={card.image}
-                            class='img-fluid items_img width-100 my-3'
+                            class='img-fluid items_img w-100 my-3'
                           />
                         </a>
                         <div className='items_text nft-info-div'>

@@ -106,7 +106,7 @@ function ItemsList() {
         {putOnSaleItems
           ? putOnSaleItems.map((card, key) => {
               return (
-                <div className='items_slide' key={key}>
+                <div className='items_slide h-100'  key={key}>
                   <div className='items_profileimg'>
                     <a href={`/author/${card.creatorID}`}>
                       <div className='profile_left nft-logo-img'>

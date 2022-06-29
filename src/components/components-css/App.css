@@ -1775,8 +1775,8 @@ label {
 }
 .marketplacecollection .items_img {
   background-color: #c1bdbd2e;
-  height: 260px;
-  object-fit: cover;
+  height: 260px !important;
+  object-fit: cover !important;
 }
 .marketplace_form input {
   border: 1px solid #e0e0e0;
@@ -5003,4 +5003,10 @@ a:hover {
 
   body.overflow_hidden{
     overflow: hidden;
+  }
+
+  .items_img.my-3{
+    background-color: #c1bdbd2e;
+    height: 260px !important;
+    object-fit: cover !important;
   }
