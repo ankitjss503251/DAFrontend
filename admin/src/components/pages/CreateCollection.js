@@ -682,14 +682,9 @@ function CreateCollection() {
                         <td>{item.brandID?.name}</td>
                       </tr>
 
-<<<<<<< HEAD
-                      <div className="btn_container">
-                        {item.isDeployed == 0 ? (
-=======
+
                       <div className='btn_container'>
-                        {item.isImported === 0 ? (
->>>>>>> 46ef6b2f497ced1904f2677dc053603f2a462594
-                          <button
+                        {item.isImported === 0 ? (                          <button
                             className='btn btn-admin m-1 p-1 text-light'
                             data-bs-toggle='modal'
                             data-bs-target='#exampleModal1'
@@ -709,20 +704,11 @@ function CreateCollection() {
                           }`}
                           type='button'
                           onClick={async () => {
-<<<<<<< HEAD
-                            
-                              item.isOnMarketplace == 0
-                                ? await setShowOnMarketplace(item._id, 1)
-                                : await setShowOnMarketplace(item._id, 0);
-                            
-                          }}
-                        >
-=======
+
                             item.isOnMarketplace === 0
                               ? await setShowOnMarketplace(item._id, 1)
                               : await setShowOnMarketplace(item._id, 0);
                           }}>
->>>>>>> 46ef6b2f497ced1904f2677dc053603f2a462594
                           {item.isOnMarketplace === 0 ? "Show" : "Hide"}
                         </button>
                         <button
