@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
+
 import { NotificationManager } from "react-notifications";
 import {
   GENERAL_DATE,
@@ -50,6 +51,7 @@ import { convertToEth } from "./numberFormatter";
 import erc721Abi from "./../config/abis/simpleERC721.json";
 import { slowRefresh } from "./NotifyStatus";
 import moment from "moment";
+import { parseEther } from "ethers/lib/utils";
 
 export const handleBuyNft = async (
   id,
@@ -896,6 +898,8 @@ export const handleUpdateBidStatus = async (
     console.log("error in api", e);
   }
 };
+
+
 
 // export const handleCollectionCreation = async (
 //   isSingle,

@@ -2,10 +2,13 @@ import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import Footer from "../components/footer";
 import MintEventSlider from "../components/MintEventSlider";
-import { getAllCollections, getNFTList } from "../../apiServices";
 import { useCookies } from "react-cookie";
 import { convertToEth } from "../../helpers/numberFormatter";
-import NotificationManager from "react-notifications/lib/NotificationManager";
+import Cookies from 'js-cookie';
+import { BigNumber } from "bignumber.js";
+import { fetchInfo,
+   fetchTotalSupply} from "../../helpers/gachyiCalls";
+
 
 const bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -20,7 +23,9 @@ function MultiMintingPage(props) {
   const [currentUser, setCurrentUser] = useState();
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [collectionDetails, setCollectionDetails] = useState();
-
+  const [categories,setcategories] = useState();
+  const [price, setPrice] = useState();
+  const [totalSupply, setTotalSupply] = useState();
   const { id } = useParams();
 
   useEffect(() => {
@@ -39,37 +44,21 @@ function MultiMintingPage(props) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
 
-    console.log("current user is---->", currentUser, cookies.selected_account);
+    // console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
   useEffect(() => {
-    const fetch = async () => {
-      let reqBody = { page: 1, limit: 12, collectionID: id };
-      // let nfts = await getNFTList(reqBody);
-      // if (nfts && nfts.results && nfts.results.length > 0) setNfts(nfts);
-      reqBody = {
-        page: 1,
-        limit: 12,
-        collectionID: id,
-        userID: "",
-        categoryID: "",
-        brandID: "",
-        ERCType: "",
-        searchText: "",
-        filterString: "",
-        isMinted: "",
-        isHotCollection: "",
-        isExclusive: "",
-      };
-
-      let collection = await getAllCollections(reqBody);
-
-      if (collection && collection.results && collection.results.length > 0) {
-        console.log("collections", collection?.results[0][0]);
-        setCollectionDetails(collection.results[0][0]);
-      }
-    };
-    fetch();
+    const getPrice = async () => {
+      let getcateg = await fetchInfo(0);
+      setPrice( convertToEth(new BigNumber(getcateg.price.toString())));
+    }
+    
+    const getTotalsupply = async () => {
+      let result = await fetchTotalSupply();
+      setTotalSupply(result.toString());
+    }
+    getPrice();
+    getTotalsupply();
   }, []);
 
   return (
@@ -121,14 +110,12 @@ function MultiMintingPage(props) {
           </ul>
           <ul className="collection_status mt-5 mb-5">
             <li>
-              <h4>{collectionDetails?.totalSupply}</h4>
+              <h4>{totalSupply}</h4>
               <p>items</p>
             </li>
             <li>
               <h4>
-                {Number(
-                  convertToEth(collectionDetails?.price.$numberDecimal)
-                ).toFixed(4)}
+                {price}
               </h4>
               <p>HNTR</p>
             </li>
