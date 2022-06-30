@@ -39,13 +39,12 @@ function NFToffer(props) {
       let _data=await fetchOfferNft(searchParams);
       console.log("offer data123",_data.data);
       if(_data&&_data.data.length>0) {
-        console.log("in if of offer data");
+     
         let a=_data.data;
-        console.log("a is ---------->",a);
+        
         setOffer(a);
         console.log("bid data",_data.data[0]);
-        console.log("offer data is----------->",offer);
-        console.log("Props in nft offerrrrr issssssssss----->",props)
+       
       }
     };
     fetch();

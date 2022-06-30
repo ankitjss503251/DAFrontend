@@ -17,6 +17,7 @@ import { GENERAL_TIMESTAMP } from "../../helpers/constants";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import { ethers } from "ethers";
 import Spinner from "./Spinner";
+import { slowRefresh } from "../../helpers/NotifyStatus";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -146,8 +147,6 @@ function NFTlisting(props) {
                   }
                 }
                 setPrice(val);
-                console.log("valxqty", convertToEth(val * qty));
-                setWillPay((val * qty).toFixed(4));
               }
             }}></input>
 
@@ -195,22 +194,28 @@ function NFTlisting(props) {
                   "",
                   800
                 );
+                setIsPlaceBidModal(true);
                 setLoading(false);
                 return;
               }
-              const cb = await createBid(
-                currentOrder.nftID,
-                currentOrder._id,
-                currentOrder.sellerID?._id,
-                currentUser,
-                props?.NftDetails?.type,
-                currentOrder.total_quantity,
-                ethers.utils.parseEther(price.toString()),
-                false
-                // new Date(bidDeadline).valueOf() / 1000
-              );
-              console.log("cbbb", cb);
-              setLoading(false);
+              try {
+                await createBid(
+                  currentOrder.nftID,
+                  currentOrder._id,
+                  currentOrder.sellerID?._id,
+                  currentUser,
+                  props?.NftDetails?.type,
+                  currentOrder.total_quantity,
+                  ethers.utils.parseEther(price.toString()),
+                  false
+                  // new Date(bidDeadline).valueOf() / 1000
+                );
+                NotificationManager.success("Bid Placed Successfully", "", 800);
+                setLoading(false);
+                slowRefresh(1000);
+              } catch (e) {
+                NotificationManager.error("Something went wrong", "", 800);
+              }
             }}>
             {"Place A Bid"}
           </button>
@@ -275,7 +280,7 @@ function NFTlisting(props) {
               setWillPay((e.target.value * price).toFixed(4));
             }}></input>
           <h6 className='enter_price_heading required'>
-            Please Enter the Price
+            Price
           </h6>
           <input
             className='form-control checkout_input'
@@ -284,37 +289,7 @@ function NFTlisting(props) {
             placeholder='Price e.g. 0.001,1...'
             disabled={true}
             value={price}
-            onKeyPress={(e) => {
-              if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
-            }}
-            onChange={(e) => {
-              const re = /[+-]?[0-9]+\.?[0-9]*/;
-              let val = e.target.value;
-
-              if (e.target.value === "" || re.test(e.target.value)) {
-                const numStr = String(val);
-                if (numStr.includes(".")) {
-                  if (numStr.split(".")[1].length > 8) {
-                  } else {
-                    if (val.split(".").length > 2) {
-                      val = val.replace(/\.+$/, "");
-                    }
-                    if (val.length === 1 && val !== "0.") {
-                      val = Number(val);
-                    }
-                  }
-                } else {
-                  if (val.split(".").length > 2) {
-                    val = val.replace(/\.+$/, "");
-                  }
-                  if (val.length === 1 && val !== "0.") {
-                    val = Number(val);
-                  }
-                }
-                setPrice(val);
-                setWillPay((val * qty).toFixed(4));
-              }
-            }}></input>
+           ></input>
 
           <button
             className='btn-main mt-2 btn-placeABid'
@@ -331,7 +306,6 @@ function NFTlisting(props) {
                 props?.NftDetails?.collectionAddress?.toLowerCase()
               );
               setLoading(false);
-              console.log("hbnnnn", hbn);
             }}>
             {"Buy Now"}
           </button>
@@ -431,8 +405,10 @@ function NFTlisting(props) {
                               <button
                                 to={"/"}
                                 className='small_yellow_btn small_btn mr-3'
-                                onClick={() => {
-                                  handleRemoveFromSale(o._id, currentUser);
+                                onClick={async() => {
+                                  setLoading(true);
+                                 await handleRemoveFromSale(o._id, currentUser);
+                                  setLoading(false);
                                 }}>
                                 Remove From Sale
                               </button>
@@ -464,13 +440,13 @@ function NFTlisting(props) {
                                         )
                                       : setPrice("");
                                     props.NftDetails.type === 1 &&
-                                    o.salesType === 0
-                                      ? setWillPay(
-                                          Number(
-                                            convertToEth(o.price.$numberDecimal)
-                                          ).toFixed(4) * qty
-                                        )
-                                      : setWillPay(0);
+                                    // o.salesType === 0
+                                    //   ? setWillPay(
+                                    //       Number(
+                                    //         convertToEth(o.price.$numberDecimal)
+                                    //       ).toFixed(4) * qty
+                                    //     )
+                                    //   : setWillPay(0);
                                     setCurrentOrder(o);
                                     o.salesType === 0
                                       ? setIsBuyNowModal(true)

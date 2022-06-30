@@ -1775,8 +1775,8 @@ label {
 }
 .marketplacecollection .items_img {
   background-color: #c1bdbd2e;
-  height: 260px;
-  object-fit: cover;
+  height: 260px !important;
+  object-fit: cover !important;
 }
 .marketplace_form input {
   border: 1px solid #e0e0e0;
@@ -2203,6 +2203,21 @@ button.filter_btn.active {
   width: 29px;
   height: 29px;
   margin-right: 10px;
+}
+
+.profile_pic{
+  display: block;
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+}
+
+
+.profile_pic img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 .nft_svg {
   margin-right: 10px;
@@ -2690,7 +2705,15 @@ span.special_text {
 .profile_me {
   height: 100%;
   width: 100%;
+  border-radius: 100%;
 }
+.profile_me img{
+  width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+}
+
 .profile_images li h4 {
   font-family: "Montserrat";
   font-style: normal;
@@ -4895,17 +4918,22 @@ a:hover {
   background: transparent;
 }
 
-.form-control:focus {
+/* .form-control:focus {
   color: #000 !important;
   box-shadow: none !important;
   background: transparent !important;
-}
+} */
 
 .checkout_input {
   padding: 0.5rem 0.75rem;
   margin: 10px 0px;
 }
 
+
+.checkout_input:focus{
+  color: #000 !important;
+  background: transparent !important;
+}
 
 .navbar_form input, .navbar_form input:focus{
   color: #fff !important;
@@ -4975,4 +5003,10 @@ a:hover {
 
   body.overflow_hidden{
     overflow: hidden;
+  }
+
+  .items_img.my-3{
+    background-color: #c1bdbd2e;
+    height: 260px !important;
+    object-fit: cover !important;
   }

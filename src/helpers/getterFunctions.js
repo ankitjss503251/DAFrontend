@@ -278,6 +278,7 @@ export const getCollections=async (req) => {
         brand: coll.brandID,
         createdBy: coll.createdBy,
         link: coll.link,
+        volumeTraded: coll.volumeTraded
       };
     })
     :(formattedData[0]={});
