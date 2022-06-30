@@ -1037,7 +1037,7 @@ export const handleAcceptOffers=async (
 
 ) => {
   console.log("bid data is--->",bidData)
-  let options;
+
 
   let buyerOrder=[];
   let sellerOrder=[];
@@ -1132,10 +1132,31 @@ export const handleAcceptOffers=async (
   //    return;
   //  }
   //}
+  let approvalRes;
 
+  let options = {
+  
+  from: account,
+  
+  gasLimit: 9000000,
+  
+  value: 0,
+  
+  };
   if(!approval) {
-    NotificationManager.error("Seller didn't approved marketplace");
-    return;
+    approvalRes = await NFTcontract.setApprovalForAll(
+ contracts.MARKETPLACE,
+ true,
+ options)
+ 
+ console.log("approval Res is---->",approvalRes)
+ let a=await approvalRes.wait();
+ console.log("a--------->",a)
+      if(a.status!==1){
+        NotificationManager.error("Marketplace has not approval");
+        return;
+      }
+  
   }
 
   let paymentTokenData=await getPaymentTokenInfo(
