@@ -11,17 +11,12 @@ import {
   getNFTs,
   getOrderByNftID,
 } from "../../helpers/getterFunctions";
-<<<<<<< HEAD
-import {useParams} from "react-router-dom";
-import {convertToEth} from "../../helpers/numberFormatter";
-import {createOffer,putOnMarketplace} from "../../helpers/sendFunctions";
-import {useCookies} from "react-cookie";
-=======
+
 import { useParams } from "react-router-dom";
 import { convertToEth } from "../../helpers/numberFormatter";
 import { createOffer, putOnMarketplace, handleBuyNft, createBid } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
->>>>>>> 92e7bdf5bef3af1ec2d77b2c7a4fe012d3358532
+
 import contracts from "../../config/contracts";
 import {
   GENERAL_DATE,
@@ -52,29 +47,7 @@ function NFTDetails() {
     backgroundColor: "#000",
   };
 
-<<<<<<< HEAD
-  const {id}=useParams();
 
-  const [NFTDetails,setNFTDetails]=useState([]);
-  const [allNFTs,setAllNFTs]=useState([]);
-  const [collection,setCollection]=useState([]);
-  const [marketplaceSaleType,setmarketplaceSaleType]=useState(0);
-  const [itemprice,setItemprice]=useState(0);
-  const [item_qt,setItem_qt]=useState(1);
-  const [item_bid,setItem_bid]=useState(0);
-  const [selectedToken,setSelectedToken]=useState("USDT");
-  const [selectedTokenFS,setSelectedTokenFS]=useState("BNB");
-  const [datetime,setDatetime]=useState("");
-  const [currentUser,setCurrentUser]=useState();
-  const [cookies]=useCookies([]);
-  const [owned,setOwned]=useState(false);
-  const [orders,setOrders]=useState([]);
-  const [loading,setLoading]=useState(false);
-  const [isPutOnMarketplace,setIsPutonMarketplace]=useState("");
-  const [modal,setModal]=useState(false);
-  const [offerPrice,setOfferPrice]=useState();
-  const [offerQuantity,setOfferQuantity]=useState(1);
-=======
   const { id } = useParams();
 
   const [NFTDetails, setNFTDetails] = useState([]);
@@ -101,7 +74,7 @@ function NFTDetails() {
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState("");
   const [firstOrderNFT, setFirstOrderNFT] = useState([]);
->>>>>>> 92e7bdf5bef3af1ec2d77b2c7a4fe012d3358532
+
 
   useEffect(() => {
     if(cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -157,13 +130,13 @@ function NFTDetails() {
           }
         }
 
+
         if(id) {
           const _orders=await getOrderByNftID({nftID: id});
           console.log("orders123",_orders?.results);
+
           setOrders(_orders?.results);
-          console.log("_orders?.results", _orders?.results[0]);
-          const _nft = await getNFTList({page:1,limit:1, nftID: _orders?.results[0].nftID });
-          console.log("_nft", _nft[0]);
+          const _nft = await getNFTList({page:1,limit:1, nftID: _orders?.results[0]?.nftID });
           setFirstOrderNFT(_nft[0]);
         }
       } catch(e) {
@@ -182,12 +155,7 @@ function NFTDetails() {
       contracts[selectedTokenFS],
       selectedTokenFS
     );
-<<<<<<< HEAD
-    if(itemprice===undefined||itemprice===""||itemprice===0) {
-      NotificationManager.error("Please Enter a price","",800);
-      setLoading(false);
-      return;
-=======
+
     if (marketplaceSaleType === 0) {
       if (itemprice === undefined || itemprice === "" || itemprice === 0) {
         NotificationManager.error("Please Enter a price", "", 800);
@@ -200,7 +168,7 @@ function NFTDetails() {
         setLoading(false);
         return;
       }
->>>>>>> 92e7bdf5bef3af1ec2d77b2c7a4fe012d3358532
+
     }
     let orderData={
       nftId: NFTDetails.id,
@@ -224,13 +192,10 @@ function NFTDetails() {
     setLoading(false);
   };
 
-<<<<<<< HEAD
+
 
   const PlaceOffer=async () => {
-=======
-  const PlaceOffer = async () => {
-    console.log("NFT Details---->", NFTDetails);
->>>>>>> 92e7bdf5bef3af1ec2d77b2c7a4fe012d3358532
+
 
 
     if(currentUser===undefined||currentUser==="") {
