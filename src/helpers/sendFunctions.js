@@ -464,6 +464,7 @@ export const putOnMarketplace = async (account, orderData) => {
 };
 
 export const handleRemoveFromSale = async (orderId, account) => {
+  
   let marketplace;
   let order;
   let details;

@@ -368,6 +368,7 @@ function NFTBids(props) {
                                     b._id,
                                     "Rejected"
                                   );
+                                  setReloadContent(!reloadContent)
                                 }}>
                                 Reject
                               </button>
@@ -390,7 +391,7 @@ function NFTBids(props) {
                                   setPrice(
                                     Number(
                                       convertToEth(b?.bidPrice?.$numberDecimal)
-                                    ).toFixed(4)
+                                    )
                                   );
                                   setIsUpdateBidModal(true);
                                   console.log(
@@ -413,6 +414,7 @@ function NFTBids(props) {
                                     b._id,
                                     "Cancelled"
                                   );
+                                  setReloadContent(!reloadContent);
                                 }}>
                                 Cancel
                               </button>
