@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
 import BGImg from "./../../assets/images/background.jpg";
 import MarketplaceBGIamge from "../../assets/marketplace-bg.jpg";
+import CollectionSkeletonCard from "../components/Skeleton/CollectionSkeletonCard";
 
 
 
@@ -167,6 +168,7 @@ function Marketplacecollection() {
               role='tabpanel'
               aria-labelledby='all'>
               <div className='row'>
+             
                 {allCollections && allCollections.length > 0
                   ? allCollections.map((oIndex) => {
                       return oIndex.map((card) => (
@@ -282,6 +284,7 @@ function Marketplacecollection() {
             ) : (
               ""
             )}
+               <CollectionSkeletonCard cards={3}/> 
           </div>
         </div>
       </section>

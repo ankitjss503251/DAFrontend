@@ -73,7 +73,7 @@ function Marketplace() {
   const [ERCType, setERCType] = useState();
   const [activeSaleType, setActiveSaleType] = useState(-1);
   const [loader, setLoader] = useState(false);
-  const [cardCount, setCardCount] = useState(1);
+  const [cardCount, setCardCount] = useState(0);
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -116,7 +116,7 @@ function Marketplace() {
         salesType: activeSaleType !== -1 ? activeSaleType : "",
       };
       const res = await getNFTs(reqData);
-      console.log("length of res--->",cardCount+res.length - 1)
+      console.log("length of res--->", cardCount + res.length );
       setCardCount(cardCount + res.length);
       if (res.length > 0) {
         setLoadMoreDisabled("");
@@ -186,6 +186,7 @@ function Marketplace() {
                     onChange={(e) => {
                       setAllNFTs([]);
                       setCurrPage(1);
+                      setCardCount(0);
                       setSText(e.target.value);
                       setLoadMoreDisabled("");
                     }}
@@ -202,6 +203,7 @@ function Marketplace() {
                   onChange={(e) => {
                     setAllNFTs([]);
                     setCurrPage(1);
+                    setCardCount(0);
                     setERCType(parseInt(e.target.value));
                     setLoadMoreDisabled("");
                   }}>
@@ -256,6 +258,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -269,6 +272,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -282,6 +286,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -295,6 +300,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
