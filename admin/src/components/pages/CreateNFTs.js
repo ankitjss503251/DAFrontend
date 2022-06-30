@@ -225,7 +225,7 @@ function CreateNFTs() {
       console.log("sellerOrder", sellerOrder);
       try {
         let signature = await getSignature(currentUser, ...sellerOrder);
-        if (signature == false) {
+        if (signature === false) {
           NotificationManager.error("signature not found", "", 800);
           setLoading(false);
           return;
