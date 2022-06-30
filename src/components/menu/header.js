@@ -122,6 +122,7 @@ const Header = function () {
   const [catg, setCatg] = useState([]);
   const [label, setLabel] = useState("");
 
+
   useEffect(async () => {
     const cat = await getCategory();
     setCatg(cat);
@@ -162,7 +163,9 @@ const Header = function () {
     console.log("provider in useEffect", provider);
     if (provider) {
       const state = onboard.state.get().wallets;
-      console.log("wallets state", state);
+     if(state.length === 0 ){
+     await disconnectWallet();
+     }
       provider.on("accountsChanged", (accounts) => {
         if (account && accounts[0] !== undefined) {
           const wallets = onboard.state.get().wallets;
@@ -196,8 +199,6 @@ const Header = function () {
 
   const connectWallet = async () => {
     const wallets = await onboard.connectWallet();
-    const state = onboard.state.get();
-    console.log("wallets state", state);
     if (wallets.length !== 0) {
       await onboard.setChain({
         chainId: process.env.REACT_APP_CHAIN_ID,
@@ -282,7 +283,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message, "", 800);
-            slowRefresh(1000);
+            // slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -300,7 +301,7 @@ const Header = function () {
     await Logout(cookies["selected_account"]);
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);
-    slowRefresh(1000);
+    // slowRefresh(1000);
   };
 
   // const onLogin = async () => {

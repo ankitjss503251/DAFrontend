@@ -6,7 +6,7 @@ const SkeletonCard = ({ cards, grid }) => {
     .fill(0)
     .map((_, i) => (
       <div className={grid}>
-        <div className='items_slide'>
+        <div className='items_slide' key={i}>
           <Skeleton
             circle={true}
             height={80}

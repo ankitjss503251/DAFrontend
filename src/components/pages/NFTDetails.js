@@ -127,11 +127,8 @@ function NFTDetails() {
 
         if (id) {
           const _orders = await getOrderByNftID({ nftID: id });
-          console.log("orders123", _orders?.results);
           setOrders(_orders?.results);
-          console.log("_orders?.results", _orders?.results[0]);
-          const _nft = await getNFTList({page:1,limit:1, nftID: _orders?.results[0].nftID });
-          console.log("_nft", _nft[0]);
+          const _nft = await getNFTList({page:1,limit:1, nftID: _orders?.results[0]?.nftID });
           setFirstOrderNFT(_nft[0]);
         }
       } catch (e) {

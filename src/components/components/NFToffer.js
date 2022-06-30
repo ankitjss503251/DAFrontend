@@ -63,7 +63,6 @@ function NFToffer(props) {
                 ? offer.map((b, i) => {
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
-                    console.log("b isss--->", b.bidPrice.$numberDecimal);
 
                     return (
                       <tr>

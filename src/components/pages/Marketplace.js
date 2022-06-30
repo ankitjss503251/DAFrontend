@@ -560,7 +560,7 @@ function Marketplace() {
                 });
               })
             ) : (
-              <h2 className='text-white'>No NFTs Found</h2>
+              <h2 className='text-white'>No NFT Found</h2>
             )}
           </div>
           {allNFTs?.length > 0 ? (
