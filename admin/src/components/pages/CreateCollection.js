@@ -682,9 +682,9 @@ function CreateCollection() {
                         <td>{item.brandID?.name}</td>
                       </tr>
 
+
                       <div className='btn_container'>
-                        {item.isImported === 0 ? (
-                          <button
+                        {item.isImported === 0 ? (                          <button
                             className='btn btn-admin m-1 p-1 text-light'
                             data-bs-toggle='modal'
                             data-bs-target='#exampleModal1'
@@ -704,13 +704,22 @@ function CreateCollection() {
                           }`}
                           type='button'
                           onClick={async () => {
+
                             item.isOnMarketplace === 0
                               ? await setShowOnMarketplace(item._id, 1)
                               : await setShowOnMarketplace(item._id, 0);
                           }}>
                           {item.isOnMarketplace === 0 ? "Show" : "Hide"}
                         </button>
-
+                        <button
+                          className="btn btn-admin m-1 p-1 text-light"
+                          type="button"
+                          onClick={async () => {
+                            window.location.href = `/importedNfts/${item.contractAddress}`;
+                          }}
+                        >
+                          View NFTs
+                        </button>
                         <button
                           className='btn btn-admin m-1 p-1 text-light'
                           type='button'

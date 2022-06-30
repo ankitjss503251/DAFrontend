@@ -184,6 +184,7 @@ const Header = function () {
           });
         }
       });
+
     }
   }, [provider, account, chainId]);
 
@@ -297,6 +298,7 @@ const Header = function () {
   };
 
   const disconnectWallet = async () => {
+  
     await onboard.disconnectWallet({ label: label });
     await Logout(cookies["selected_account"]);
     refreshState();
