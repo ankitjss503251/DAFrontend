@@ -157,7 +157,7 @@ function NFToffer(props) {
                               }
                               className="small_yellow_btn small_btn mr-3"
                             >
-                              Update Bid
+                              Update Offer
                             </button>
                             <button
                               disabled={
@@ -179,7 +179,7 @@ function NFToffer(props) {
                             to={"/"}
                             className="small_yellow_btn small_btn mr-3"
                           >
-                            Update Bid
+                            Update Offer
                           </button>
                         ):(
                           ""

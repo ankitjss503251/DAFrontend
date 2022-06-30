@@ -1160,45 +1160,48 @@ export const handleAcceptOffers=async (
       marketPlaceABI.abi
     );
     let completeOrder;
-    //try {
-    //  options={
-    //    from: sellerOrder[0],
-    //    gasPrice: 10000000000,
-    //    gasLimit: 9000000,
-    //    value: 0,
-    //  };
-    //  console.log("here bid",options);
-    //  completeOrder=await marketplace.completeOrder(
-    //    sellerOrder,
-    //    sellerSignature,
-    //    buyerOrder,
-    //    buyerSignature,
-    //    options
-    //  );
-    //  completeOrder=await completeOrder.wait();
-    //  if(completeOrder.status===0) {
-    //    // NotificationManager.error("Transaction Failed");
-    //    return false;
-    //  } else {
-    //    // NotificationManager.success("Transaction successful");
-    //  }
-    //} catch(e) {
-    //  console.log("error in contract",e);
-    //  return;
-    //}
-    // try {
-    //   let reqParams = {
-    //     bidID: bidData._id,
-    //     erc721: isERC721,
-    //     status: isERC721 ? 2 : 1,
-    //     qty_sold: details.quantity_sold + bidData.bidQuantity,
-    //   };
+    try {
+      options={
+        from: sellerOrder[0],
+        gasPrice: 10000000000,
+        gasLimit: 9000000,
+        value: 0,
+      };
+      console.log("here bid",options);
+      completeOrder=await marketplace.completeOrder(
+        sellerOrder,
+        sellerSignature,
+        buyerOrder,
+        buyerSignature,
+        options
+      );
+      completeOrder=await completeOrder.wait();
+      if(completeOrder.status===0) {
+        // NotificationManager.error("Transaction Failed");
+        return false;
+      } else {
+        // NotificationManager.success("Transaction successful");
+      }
+    } catch(e) {
+      console.log("error in contract",e);
+      return;
+    }
+    
+    let erc721=props.NftDetails.type==1?1:2;
+    
+     try {
+       let reqParams = {
+         bidID: bidData._id,
+         erc721: erc721,
+         status: erc721 ? 2 : 1,
+         qty_sold: bidData.bidQuantity,
+       };
 
-    //   await acceptBid(reqParams);
-    // } catch (e) {
-    //   console.log("error in api", e);
-    //   return;
-    // }
+       await acceptBid(reqParams);
+     } catch (e) {
+       console.log("error in api", e);
+       return;
+     }
     try {
       await handleUpdateBidStatus(bidData._id,"Accepted")
 
