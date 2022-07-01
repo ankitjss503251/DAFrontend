@@ -11,10 +11,12 @@ import {
   getNFTs,
   getOrderByNftID,
 } from "../../helpers/getterFunctions";
+
 import { useParams } from "react-router-dom";
 import { convertToEth } from "../../helpers/numberFormatter";
 import { createOffer, putOnMarketplace, handleBuyNft, createBid } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
+
 import contracts from "../../config/contracts";
 import {
   GENERAL_DATE,
@@ -45,6 +47,7 @@ function NFTDetails() {
     backgroundColor: "#000",
   };
 
+
   const { id } = useParams();
 
   const [NFTDetails, setNFTDetails] = useState([]);
@@ -71,6 +74,7 @@ function NFTDetails() {
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState("");
   const [firstOrderNFT, setFirstOrderNFT] = useState([]);
+
 
   useEffect(() => {
     if(cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -126,13 +130,13 @@ function NFTDetails() {
           }
         }
 
+
         if(id) {
           const _orders=await getOrderByNftID({nftID: id});
           console.log("orders123",_orders?.results);
+
           setOrders(_orders?.results);
-          console.log("_orders?.results", _orders?.results[0]);
-          const _nft = await getNFTList({page:1,limit:1, nftID: _orders?.results[0].nftID });
-          console.log("_nft", _nft[0]);
+          const _nft = await getNFTList({page:1,limit:1, nftID: _orders?.results[0]?.nftID });
           setFirstOrderNFT(_nft[0]);
         }
       } catch(e) {
@@ -151,6 +155,7 @@ function NFTDetails() {
       contracts[selectedTokenFS],
       selectedTokenFS
     );
+
     if (marketplaceSaleType === 0) {
       if (itemprice === undefined || itemprice === "" || itemprice === 0) {
         NotificationManager.error("Please Enter a price", "", 800);
@@ -163,6 +168,7 @@ function NFTDetails() {
         setLoading(false);
         return;
       }
+
     }
     let orderData={
       nftId: NFTDetails.id,
@@ -187,9 +193,7 @@ function NFTDetails() {
   };
 
   const PlaceOffer = async () => {
-    console.log("NFT Details---->", NFTDetails);
-
-
+  setLoading(true)
     if(currentUser===undefined||currentUser==="") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);
@@ -234,6 +238,7 @@ function NFTDetails() {
       tokenAddress
     );
     setLoading(false);
+    slowRefresh(1000)
     //await putOnMarketplace(currentUser, orderData);
     return;
   };

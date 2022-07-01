@@ -22,6 +22,7 @@ import {
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 import BGImg from "../../assets/images/background.jpg";
+import { convertToEth } from "../../helpers/numberFormatter";
 
 const options = [
   { value: "chocolate", label: "Chocolate" },
@@ -255,7 +256,7 @@ function Collection() {
             <li>
               <h4>
                 {collectionDetails?.price
-                  ? Number(collectionDetails.price)
+                  ? Number(convertToEth(collectionDetails.price))
                   : "-"}
               </h4>
               <p>floor price</p>

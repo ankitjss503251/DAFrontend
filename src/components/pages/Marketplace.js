@@ -18,7 +18,7 @@ import bgImg from "./../../assets/marketplace-bg.jpg";
 import { NotificationManager } from "react-notifications";
 import { getAllBrands } from "../../apiServices";
 import BGImg from "./../../assets/images/background.jpg";
-import { Loader } from "semantic-ui-react";
+import SkeletonCard from "../components/Skeleton/NFTSkeletonCard";
 
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
@@ -73,6 +73,7 @@ function Marketplace() {
   const [ERCType, setERCType] = useState();
   const [activeSaleType, setActiveSaleType] = useState(-1);
   const [loader, setLoader] = useState(false);
+  const [cardCount, setCardCount] = useState(0);
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -108,14 +109,15 @@ function Marketplace() {
     try {
       const reqData = {
         page: currPage,
-        limit: 8,
+        limit: 12,
         searchText: sText ? sText : searchedText ? searchedText : "",
         isOnMarketplace: 1,
         ERCType: ERCType,
         salesType: activeSaleType !== -1 ? activeSaleType : "",
       };
       const res = await getNFTs(reqData);
-
+      console.log("length of res--->", cardCount + res.length );
+      setCardCount(cardCount + res.length);
       if (res.length > 0) {
         setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
@@ -184,6 +186,7 @@ function Marketplace() {
                     onChange={(e) => {
                       setAllNFTs([]);
                       setCurrPage(1);
+                      setCardCount(0);
                       setSText(e.target.value);
                       setLoadMoreDisabled("");
                     }}
@@ -200,6 +203,7 @@ function Marketplace() {
                   onChange={(e) => {
                     setAllNFTs([]);
                     setCurrPage(1);
+                    setCardCount(0);
                     setERCType(parseInt(e.target.value));
                     setLoadMoreDisabled("");
                   }}>
@@ -254,6 +258,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -267,6 +272,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -280,6 +286,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -293,6 +300,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -470,20 +478,20 @@ function Marketplace() {
           </div>
 
           {/* <div className="row">
-            
+             
               <Marketplacecart />
             </div> */}
 
           <div className='row'>
             {loader ? (
-              <Loader size='large' active inline='centered' />
+              <SkeletonCard cards={cardCount} grid={grid} />
             ) : allNFTs?.length > 0 ? (
               allNFTs.map((oIndex) => {
                 return oIndex.map((card, key) => {
                   return (
-                    <div className={grid} >
+                    <div className={grid}>
                       <div className='items_slide h-100' key={key}>
-                        <div className='items_profileimg' key={key}>
+                        <div className='items_profileimg'>
                           <a href={`/author/${card.createdBy}`}>
                             <div className='profile_left nft-logo-img'>
                               <img
@@ -503,7 +511,7 @@ function Marketplace() {
                             </div>
                           </a>
                         </div>
-                        <a href={`/NFTdetails/${card.id}`} className="nft-cont">
+                        <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
                           <img
                             alt=''
                             src={card.image}
@@ -552,7 +560,7 @@ function Marketplace() {
                 });
               })
             ) : (
-              <h2 className='text-white'>No NFTs Found</h2>
+              <h2 className='text-white'>No NFT Found</h2>
             )}
           </div>
           {allNFTs?.length > 0 ? (

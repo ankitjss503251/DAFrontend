@@ -47,6 +47,7 @@ import Header from "./menu/header";
 // import {DUMMY_COLLECTIONS} from "../dummyJSON";
 
 import {NotificationContainer} from 'react-notifications';
+import { SkeletonTheme } from "react-loading-skeleton";
 
 
 const App = (props) => {
@@ -54,6 +55,7 @@ const App = (props) => {
 
   
   return (
+    <SkeletonTheme baseColor="#202020" highlightColor="#444">
     <Router>
       <Header />
       <Routes>
@@ -100,6 +102,7 @@ const App = (props) => {
       </Routes>
       <NotificationContainer/>
     </Router>
+    </SkeletonTheme>
   );
 };
 

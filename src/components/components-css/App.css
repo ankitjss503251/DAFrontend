@@ -4949,14 +4949,14 @@ a:hover {
   border-radius: 10px;
   }
   
-  a.nft-cont {
+  .nft-cont {
      display: block;
      position: relative;
-     top: -55px;
+     top: -50px;
      border-radius: 5px;
   }
   
-  a.nft-cont img{
+  .nft-cont img{
   
      border-radius: inherit;
      width: 100% !important;
