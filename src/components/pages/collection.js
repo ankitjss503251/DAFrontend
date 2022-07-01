@@ -21,8 +21,8 @@ import {
 } from "../../helpers/getterFunctions";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
-import BGImg from "../../assets/images/background.jpg"
-
+import BGImg from "../../assets/images/background.jpg";
+import { convertToEth } from "../../helpers/numberFormatter";
 
 const options = [
   { value: "chocolate", label: "Chocolate" },
@@ -135,11 +135,11 @@ function Collection() {
         temp = [...temp, nfts];
         setCurrPage(currPage + 1);
         setNftList(temp[0]);
-        for(let i = 0; i < temp[0].length; i++){
+        for (let i = 0; i < temp[0].length; i++) {
           temp[0][i] = {
             ...temp[0][i],
-            price: res[0]?.price
-          }
+            price: res[0]?.price,
+          };
         }
       }
       if (!nftList && nfts.length <= 0) {
@@ -150,64 +150,63 @@ function Collection() {
     }
   }, [loadMore]);
 
-
-
   return (
     <div style={bgImgStyle}>
-       {loadMoreDisabled
+      {loadMoreDisabled
         ? NotificationManager.info("No more items to load")
         : ""}
       <section
-        className='collection_banner pdd_8'
+        className="collection_banner pdd_8"
         style={{
           backgroundImage: `url(${collectionDetails?.coverImg})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-        }}></section>
-      <section className='collection_info'>
-        <div className='container'>
-          <div className='collection_pick'>
+        }}
+      ></section>
+      <section className="collection_info">
+        <div className="container">
+          <div className="collection_pick">
             <img
-              alt=''
+              alt=""
               src={collectionDetails?.logoImg}
-              class='img-fluid collection_profile'
+              class="img-fluid collection_profile"
             />
             <img
-              alt=''
+              alt=""
               src={"../img/collections/check.png"}
-              class='img-fluid check_img'
+              class="img-fluid check_img"
             />
           </div>
-          <h1 className='collection_title text-center'>
+          <h1 className="collection_title text-center">
             {collectionDetails?.name}
           </h1>
-          <ul class='collection_social mb-4'>
+          <ul class="collection_social mb-4">
             <li>
               <Link to={"/"}>
-                <i class='fa fa-facebook fa-lg'></i>
+                <i class="fa fa-facebook fa-lg"></i>
               </Link>
             </li>
             <li>
               <Link to={"/"}>
-                <i class='fa fa-twitter fa-lg'></i>
+                <i class="fa fa-twitter fa-lg"></i>
               </Link>
             </li>
             <li>
               <Link to={"/"}>
-                <i class='fa fa-linkedin fa-lg'></i>
+                <i class="fa fa-linkedin fa-lg"></i>
               </Link>
             </li>
             <li>
               <Link to={"/"}>
-                <i class='fa fa-pinterest fa-lg'></i>
+                <i class="fa fa-pinterest fa-lg"></i>
               </Link>
             </li>
           </ul>
 
-          <div className='coppycode text-center'>
-            <span className='ctc'>
-              <img alt='' src={"../img/favicon.png"} class='img-fluid' />
-              <div className=''>
+          <div className="coppycode text-center">
+            <span className="ctc">
+              <img alt="" src={"../img/favicon.png"} class="img-fluid" />
+              <div className="">
                 {collectionDetails?.contractAddress?.slice(0, 4) +
                   "..." +
                   collectionDetails?.contractAddress?.slice(38, 42)}
@@ -221,57 +220,77 @@ function Collection() {
                   setTimeout(() => {
                     setIsCopied(false);
                   }, 3000);
-                }}>
+                }}
+              >
                 <svg
-                  width='21'
-                  height='24'
-                  viewBox='0 0 21 24'
-                  fill='none'
-                  xmlns='http://www.w3.org/2000/svg'>
+                  width="21"
+                  height="24"
+                  viewBox="0 0 21 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
                   <path
-                    d='M15 21V22.875C15 23.4963 14.4963 24 13.875 24H1.125C0.503672 24 0 23.4963 0 22.875V5.625C0 5.00367 0.503672 4.5 1.125 4.5H4.5V18.375C4.5 19.8225 5.67755 21 7.125 21H15ZM15 4.875V0H7.125C6.50367 0 6 0.503672 6 1.125V18.375C6 18.9963 6.50367 19.5 7.125 19.5H19.875C20.4963 19.5 21 18.9963 21 18.375V6H16.125C15.5063 6 15 5.49375 15 4.875ZM20.6705 3.42052L17.5795 0.329484C17.3685 0.11852 17.0824 1.55998e-06 16.784 0L16.5 0V4.5H21V4.21598C21 3.91763 20.8815 3.63149 20.6705 3.42052Z'
-                    fill='#fff'
+                    d="M15 21V22.875C15 23.4963 14.4963 24 13.875 24H1.125C0.503672 24 0 23.4963 0 22.875V5.625C0 5.00367 0.503672 4.5 1.125 4.5H4.5V18.375C4.5 19.8225 5.67755 21 7.125 21H15ZM15 4.875V0H7.125C6.50367 0 6 0.503672 6 1.125V18.375C6 18.9963 6.50367 19.5 7.125 19.5H19.875C20.4963 19.5 21 18.9963 21 18.375V6H16.125C15.5063 6 15 5.49375 15 4.875ZM20.6705 3.42052L17.5795 0.329484C17.3685 0.11852 17.0824 1.55998e-06 16.784 0L16.5 0V4.5H21V4.21598C21 3.91763 20.8815 3.63149 20.6705 3.42052Z"
+                    fill="#fff"
                   />
                 </svg>
               </CopyToClipboard>
-              {isCopied ? <p className='copied'>Copied!</p> : ""}
+              {isCopied ? <p className="copied">Copied!</p> : ""}
             </span>
           </div>
-          <ul className='collection_status mt-5 mb-5'>
+          <ul className="collection_status mt-5 mb-5">
             <li>
-              <h4>10.0k</h4>
+              <h4>
+                {collectionDetails?.totalSupply
+                  ? collectionDetails.totalSupply
+                  : "-"}
+              </h4>
               <p>items</p>
             </li>
             <li>
-              <h4>1.2k</h4>
+              <h4>
+                {collectionDetails?.owners ? collectionDetails.owners : "-"}
+              </h4>
               <p>owners</p>
             </li>
             <li>
-              <h4>498</h4>
+              <h4>
+                {collectionDetails?.price
+                  ? Number(convertToEth(collectionDetails.price))
+                  : "-"}
+              </h4>
               <p>floor price</p>
             </li>
             <li>
-              <h4>1.3M</h4>
+              <h4>
+                {collectionDetails?.volumeTraded
+                  ? collectionDetails.volumeTraded
+                  : "-"}
+              </h4>
               <p>volume traded</p>
             </li>
           </ul>
-          <div className='collection_description text-center'>
+          <div className="collection_description text-center">
             <p>{collectionDetails?.desc}</p>
-            <span className='top_arrow'>
-              <img alt='' src={"../img/top_arrow.png"} class='img-fluid' />
+            <span className="top_arrow">
+              <img alt="" src={"../img/top_arrow.png"} class="img-fluid" />
             </span>
           </div>
 
-          <div className='row mb-5'>
-            <div className='col-md-12 text-center item_active'>
-              <NavLink activeclassname='active-link' to={-1} className='mr-3'>
-                <span className='mr-3'>
+          <div className="row mb-5">
+            <div className="col-md-12 text-center item_active">
+              <NavLink
+                to={`/collections/{$collectionDetails?.collection}`}
+                activeclassname="active-link"
+                className="mr-3"
+              >
+                <span className="mr-3">
                   <ItemSVG />
                 </span>{" "}
                 Items
               </NavLink>
               <NavLink to={"/collectionActivity"}>
-                <span className='mr-3'>
+                <span className="mr-3">
                   <ActivitySVG />
                 </span>{" "}
                 Activity
@@ -279,46 +298,48 @@ function Collection() {
             </div>
           </div>
 
-          <div className='row'>
-            <div className='col-lg-12'>
-              <div className='market_search_form mb-4'>
-                <form class='d-flex marketplace_form'>
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="market_search_form mb-4">
+                <form class="d-flex marketplace_form">
                   <input
-                    class=' me-2'
-                    type='search'
-                    placeholder='Search item here...'
-                    aria-label='Search'
+                    class=" me-2"
+                    type="search"
+                    placeholder="Search item here..."
+                    aria-label="Search"
                   />
-                  <button class='market_btn' type='submit'>
-                    <img src='../img/search.svg' alt='' />
+                  <button class="market_btn" type="submit">
+                    <img src="../img/search.svg" alt="" />
                   </button>
                 </form>
                 <select
-                  class='market_select_form form-select'
-                  aria-label='Default select example'
-                  style={bgImgarrow}>
-                  <option value='all' selected>
+                  class="market_select_form form-select"
+                  aria-label="Default select example"
+                  style={bgImgarrow}
+                >
+                  <option value="all" selected>
                     All NFTs
                   </option>
-                  <option value='buyNow'>Buy Now</option>
-                  <option value='onAuction'>On Auction</option>
-                  <option value='notForSale'>Not for Sale</option>
+                  <option value="buyNow">Buy Now</option>
+                  <option value="onAuction">On Auction</option>
+                  <option value="notForSale">Not for Sale</option>
                 </select>
                 <select
-                  class='market_select_form form-select'
-                  aria-label='Default select example'
-                  style={bgImgarrow}>
-                  <option value='1' selected>
+                  class="market_select_form form-select"
+                  aria-label="Default select example"
+                  style={bgImgarrow}
+                >
+                  <option value="1" selected>
                     Price: Low to High
                   </option>
-                  <option value='2'>Price: High to Low</option>
+                  <option value="2">Price: High to Low</option>
                 </select>
                 {/* <div className="market_div"> */}
 
-                <div id='gridtwo' className='market_grid' onClick={gridtwo}>
+                <div id="gridtwo" className="market_grid" onClick={gridtwo}>
                   <Twogrid />
                 </div>
-                <div id='gridthree' className='market_grid' onClick={gridthree}>
+                <div id="gridthree" className="market_grid" onClick={gridthree}>
                   <Threegrid />
                 </div>
                 {/* </div> */}
@@ -333,25 +354,28 @@ function Collection() {
           </div>
         </div>
       </section>
-      <section className='collection_list mb-5 pb-5'>
-        <div className='container'>
-          <div className='row'>
-            {
-            nftList.length > 0 ? nftList?.map((n, k) =>{
-              return (
-                <div className={grid} key={k}>
-                  <CollectionList
-                    nft={n}
-                    collectionName={collectionDetails?.name}
-                  />
-                </div>
-              )
-            }) : ""
-            }
+      <section className="collection_list mb-5 pb-5">
+        <div className="container">
+          <div className="row">
+            {nftList.length > 0
+              ? nftList?.map((n, k) => {
+                  return (
+                    <div className={grid} key={k}>
+                      <CollectionList
+                        nft={n}
+                        collectionName={collectionDetails?.name}
+                      />
+                    </div>
+                  );
+                })
+              : ""}
 
-            {nftList ? (
-              <div class='col-md-12 text-center mt-5'>
-                <button class={`btn view_all_bdr ${loadMoreDisabled}`} onClick={() => setLoadMore(!loadMore)}>
+            {nftList.length > 12 ? (
+              <div class="col-md-12 text-center mt-5">
+                <button
+                  class={`btn view_all_bdr ${loadMoreDisabled}`}
+                  onClick={() => setLoadMore(!loadMore)}
+                >
                   Load More
                 </button>
               </div>

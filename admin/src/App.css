@@ -900,3 +900,20 @@ tbody td {
 .logo:hover{
   color: #fff;
 }
+
+
+
+.exclusive-btn, .hot-btn,.showHide-btn{
+  background: transparent;
+    border: 1px solid #ef981d !important;
+    color: #ef981d !important;
+}
+
+.exclusive-btn.active, .hot-btn.active, .showHide-btn.active{
+  background:  linear-gradient(180deg, #ef981d, #f9bf50) !important;
+  color: #fff !important;
+}
+
+.exclusive-btn:focus, .hot-btn:focus, .showHide-btn:focus{
+  box-shadow:  none !important;
+}

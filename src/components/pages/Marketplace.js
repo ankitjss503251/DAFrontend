@@ -18,7 +18,7 @@ import bgImg from "./../../assets/marketplace-bg.jpg";
 import { NotificationManager } from "react-notifications";
 import { getAllBrands } from "../../apiServices";
 import BGImg from "./../../assets/images/background.jpg";
-import { Loader } from "semantic-ui-react";
+import SkeletonCard from "../components/Skeleton/NFTSkeletonCard";
 
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
@@ -73,6 +73,7 @@ function Marketplace() {
   const [ERCType, setERCType] = useState();
   const [activeSaleType, setActiveSaleType] = useState(-1);
   const [loader, setLoader] = useState(false);
+  const [cardCount, setCardCount] = useState(0);
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -108,15 +109,15 @@ function Marketplace() {
     try {
       const reqData = {
         page: currPage,
-        limit: 5,
+        limit: 12,
         searchText: sText ? sText : searchedText ? searchedText : "",
         isOnMarketplace: 1,
         ERCType: ERCType,
         salesType: activeSaleType !== -1 ? activeSaleType : "",
       };
-      console.log("result--->", reqData);
       const res = await getNFTs(reqData);
-
+      console.log("length of res--->", cardCount + res.length );
+      setCardCount(cardCount + res.length);
       if (res.length > 0) {
         setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
@@ -159,7 +160,7 @@ function Marketplace() {
   return (
     <div>
       {loadMoreDisabled && allNFTs.length > 0
-        ? NotificationManager.info("No more items to load","",800)
+        ? NotificationManager.info("No more items to load", "", 800)
         : ""}
       <section className='register_hd pdd_12' style={register_bg}>
         <div className='container'>
@@ -168,8 +169,6 @@ function Marketplace() {
               <h1>Marketplace</h1>
             </div>
           </div>
-
-
         </div>
       </section>
       <section className='marketplacecollection pdd_8' style={bgImgStyle}>
@@ -187,8 +186,9 @@ function Marketplace() {
                     onChange={(e) => {
                       setAllNFTs([]);
                       setCurrPage(1);
+                      setCardCount(0);
                       setSText(e.target.value);
-                      setLoadMoreDisabled("")
+                      setLoadMoreDisabled("");
                     }}
                   />
                   <button class='market_btn' type='submit'>
@@ -203,8 +203,9 @@ function Marketplace() {
                   onChange={(e) => {
                     setAllNFTs([]);
                     setCurrPage(1);
+                    setCardCount(0);
                     setERCType(parseInt(e.target.value));
-                    setLoadMoreDisabled("")
+                    setLoadMoreDisabled("");
                   }}>
                   <option value='0' selected>
                     All Items
@@ -257,8 +258,9 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
-                          setLoadMoreDisabled("")
+                          setLoadMoreDisabled("");
                         }}>
                         All NFTs
                       </li>
@@ -270,6 +272,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -283,6 +286,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -296,6 +300,7 @@ function Marketplace() {
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
+                          setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
                         }}>
@@ -408,6 +413,10 @@ function Marketplace() {
                   <ul>
                     <li className='sub-items'>
                       <form action='#' className='checked_form'>
+                        <div class='form-check form-check-inline'>
+                          <input type='radio' id='all' name='radio-group' />
+                          <label for='all'>All</label>
+                        </div>
                         {category
                           ? category.map((c) => {
                               return (
@@ -469,91 +478,90 @@ function Marketplace() {
           </div>
 
           {/* <div className="row">
-            
+             
               <Marketplacecart />
             </div> */}
 
           <div className='row'>
-            {
-              loader ? <Loader size='large' active inline='centered' /> :   allNFTs?.length > 0 ? (
-                allNFTs.map((oIndex) => {
-                  return oIndex.map((card, key) => {
-                    return (
-                      <div className={grid}>
-                        <div className='items_slide' key={key}>
-                          <div className='items_profileimg' key={key}>
-                            <a href={`/author/${card.createdBy}`}>
-                              <div className='profile_left'>
-                                <img
-                                  alt=''
-                                  className='profile_img'
-                                  src={
-                                    card.creatorImg
-                                      ? card.creatorImg
-                                      : "../img/collections/profile1.png"
-                                  }
-                                />
-                                <img
-                                  alt=''
-                                  className='icheck_img'
-                                  src={"../img/collections/check.png"}
-                                />
-                              </div>
-                            </a>
-                          </div>
-                          <a href={`/NFTdetails/${card.id}`}>
-                            <img
-                              alt=''
-                              src={card.image}
-                              class='img-fluid items_img width-100 my-3'
-                            />
-                          </a>
-                          <div className='items_text'>
-                            <div className='items_info '>
-                              <div className='items_left'>
-                                <h3 className=''>{card.name}</h3>
-                                <p>
-                                  {card.price !== "NaN" ? card.price : "0.0000"}{" "}
-                                  HNTR
-                                </p>
-                              </div>
-                              <div className='items_right justify-content-end d-flex'>
-                                <span>
-                                  <svg
-                                    width='16'
-                                    height='14'
-                                    viewBox='0 0 16 14'
-                                    fill='none'
-                                    xmlns='http://www.w3.org/2000/svg'>
-                                    <path
-                                      d='M15.1062 2.75379C14.866 2.21491 14.5197 1.72658 14.0866 1.31613C13.6532 0.904465 13.1422 0.577318 12.5814 0.352482C11.9998 0.118416 11.3761 -0.00139215 10.7464 1.22043e-05C9.86295 1.22043e-05 9.00102 0.234414 8.25198 0.677172C8.07278 0.783086 7.90255 0.899419 7.74127 1.02617C7.57999 0.899419 7.40976 0.783086 7.23056 0.677172C6.48152 0.234414 5.61959 1.22043e-05 4.73615 1.22043e-05C4.10001 1.22043e-05 3.48357 0.118081 2.90118 0.352482C2.33851 0.578202 1.83138 0.902892 1.39594 1.31613C0.962277 1.72611 0.615857 2.21456 0.376312 2.75379C0.127229 3.31462 0 3.91017 0 4.52309C0 5.10128 0.121853 5.70378 0.363768 6.31669C0.56626 6.82891 0.856557 7.36021 1.22749 7.89673C1.81526 8.74579 2.62343 9.6313 3.62693 10.529C5.28987 12.017 6.93668 13.0449 7.00657 13.0866L7.43126 13.3505C7.61942 13.4668 7.86133 13.4668 8.04949 13.3505L8.47418 13.0866C8.54407 13.0431 10.1891 12.017 11.8538 10.529C12.8573 9.6313 13.6655 8.74579 14.2533 7.89673C14.6242 7.36021 14.9163 6.82891 15.117 6.31669C15.3589 5.70378 15.4808 5.10128 15.4808 4.52309C15.4825 3.91017 15.3553 3.31462 15.1062 2.75379Z'
-                                      fill='#AAAAAA'
-                                    />
-                                  </svg>
-                                  {card.like}
-                                </span>
-                              </div>
+            {loader ? (
+              <SkeletonCard cards={cardCount} grid={grid} />
+            ) : allNFTs?.length > 0 ? (
+              allNFTs.map((oIndex) => {
+                return oIndex.map((card, key) => {
+                  return (
+                    <div className={grid}>
+                      <div className='items_slide h-100' key={key}>
+                        <div className='items_profileimg'>
+                          <a href={`/author/${card.createdBy}`}>
+                            <div className='profile_left nft-logo-img'>
+                              <img
+                                alt=''
+                                className='profile_img creatorImg'
+                                src={
+                                  card.creatorImg
+                                    ? card.creatorImg
+                                    : "../img/collections/profile1.png"
+                                }
+                              />
+                              <img
+                                alt=''
+                                className='icheck_img'
+                                src={"../img/collections/check.png"}
+                              />
                             </div>
-                            <Link
-                              to={`/NFTdetails/${card.id}`}
-                              className='border_btn width-100 title_color'>
-                              {card.isNftOnSale
-                                ? card.salesType === 0
-                                  ? "Buy Now"
-                                  : "Place Bid"
-                                : "View"}
-                            </Link>
+                          </a>
+                        </div>
+                        <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
+                          <img
+                            alt=''
+                            src={card.image}
+                            class='img-fluid items_img w-100 my-3'
+                          />
+                        </a>
+                        <div className='items_text nft-info-div'>
+                          <div className='items_info '>
+                            <div className='items_left'>
+                              <h3 className=''>{card.name}</h3>
+                              <p>
+                                {card.price !== "NaN" ? card.price : "0.0000"}{" "}
+                                HNTR
+                              </p>
+                            </div>
+                            <div className='items_right justify-content-end d-flex'>
+                              <span>
+                                <svg
+                                  width='16'
+                                  height='14'
+                                  viewBox='0 0 16 14'
+                                  fill='none'
+                                  xmlns='http://www.w3.org/2000/svg'>
+                                  <path
+                                    d='M15.1062 2.75379C14.866 2.21491 14.5197 1.72658 14.0866 1.31613C13.6532 0.904465 13.1422 0.577318 12.5814 0.352482C11.9998 0.118416 11.3761 -0.00139215 10.7464 1.22043e-05C9.86295 1.22043e-05 9.00102 0.234414 8.25198 0.677172C8.07278 0.783086 7.90255 0.899419 7.74127 1.02617C7.57999 0.899419 7.40976 0.783086 7.23056 0.677172C6.48152 0.234414 5.61959 1.22043e-05 4.73615 1.22043e-05C4.10001 1.22043e-05 3.48357 0.118081 2.90118 0.352482C2.33851 0.578202 1.83138 0.902892 1.39594 1.31613C0.962277 1.72611 0.615857 2.21456 0.376312 2.75379C0.127229 3.31462 0 3.91017 0 4.52309C0 5.10128 0.121853 5.70378 0.363768 6.31669C0.56626 6.82891 0.856557 7.36021 1.22749 7.89673C1.81526 8.74579 2.62343 9.6313 3.62693 10.529C5.28987 12.017 6.93668 13.0449 7.00657 13.0866L7.43126 13.3505C7.61942 13.4668 7.86133 13.4668 8.04949 13.3505L8.47418 13.0866C8.54407 13.0431 10.1891 12.017 11.8538 10.529C12.8573 9.6313 13.6655 8.74579 14.2533 7.89673C14.6242 7.36021 14.9163 6.82891 15.117 6.31669C15.3589 5.70378 15.4808 5.10128 15.4808 4.52309C15.4825 3.91017 15.3553 3.31462 15.1062 2.75379Z'
+                                    fill='#AAAAAA'
+                                  />
+                                </svg>
+                                {card.like}
+                              </span>
+                            </div>
                           </div>
+                          <Link
+                            to={`/NFTdetails/${card.id}`}
+                            className='border_btn width-100 title_color'>
+                            {card.isNftOnSale
+                              ? card.salesType === 0
+                                ? "Buy Now"
+                                : "Place Bid"
+                              : "View"}
+                          </Link>
                         </div>
                       </div>
-                    );
-                  });
-                })
-              ) : (
-                <h2 className='text-white'>No NFTs Found</h2>
-              )}
-            
-          
+                    </div>
+                  );
+                });
+              })
+            ) : (
+              <h2 className='text-white'>No NFT Found</h2>
+            )}
           </div>
           {allNFTs?.length > 0 ? (
             <div className='row'>

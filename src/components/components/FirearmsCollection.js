@@ -64,7 +64,7 @@ function FirearmsCollection(props) {
                           />
                         </span>
                         <h3 className=''>{card.name}</h3>
-                        <p className='justify-content-start'>
+                        <p>
                           <img
                             alt=''
                             src={"../img/favicon.png"}
