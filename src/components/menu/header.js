@@ -568,7 +568,7 @@ const Header = function () {
                 </>
               ) : (
                 <>
-                  <li className='nav-item'>
+                  {/* <li className='nav-item'>
                     <div className='cart_qt'>
                       <svg
                         width='25'
@@ -583,7 +583,7 @@ const Header = function () {
                       </svg>
                       <span className='cartqt'>9</span>
                     </div>
-                  </li>
+                  </li> */}
                   <li className='nav-item'>
                     <NavLink to='' tabindex='-1' className='profile_pic'>
                       <img

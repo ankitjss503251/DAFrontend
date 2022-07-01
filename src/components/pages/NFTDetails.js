@@ -195,7 +195,7 @@ function NFTDetails() {
 
 
   const PlaceOffer=async () => {
-
+    setLoading(true)
 
 
     if(currentUser===undefined||currentUser==="") {
@@ -242,6 +242,7 @@ function NFTDetails() {
       tokenAddress
     );
     setLoading(false);
+    slowRefresh(1000);
     //await putOnMarketplace(currentUser, orderData);
     return;
   };
