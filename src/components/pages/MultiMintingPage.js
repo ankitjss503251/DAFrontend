@@ -1,14 +1,13 @@
 import { useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,lazy } from "react";
 import Footer from "../components/footer";
 import MintEventSlider from "../components/MintEventSlider";
 import { useCookies } from "react-cookie";
 import { convertToEth } from "../../helpers/numberFormatter";
 import Cookies from 'js-cookie';
 import { BigNumber } from "bignumber.js";
-import { fetchInfo,
-   fetchTotalSupply} from "../../helpers/gachyiCalls";
-
+const testCall =  import (1? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyicalls");
+  console.log(testCall);
 
 const bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -30,6 +29,7 @@ function MultiMintingPage(props) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    
   }, []);
 
   const bgImage = {
@@ -48,17 +48,14 @@ function MultiMintingPage(props) {
   }, [currentUser]);
 
   useEffect(() => {
-    const getPrice = async () => {
-      let getcateg = await fetchInfo(0);
-      setPrice( convertToEth(new BigNumber(getcateg.price.toString())));
+    const fetchData = async () => {
+    let { fetchInfo }= await testCall
+      let getcateg = await fetchInfo();
+      setTotalSupply(getcateg[2].toString());
+      setPrice( convertToEth(new BigNumber(getcateg[0].toString())));
     }
-    
-    const getTotalsupply = async () => {
-      let result = await fetchTotalSupply();
-      setTotalSupply(result.toString());
-    }
-    getPrice();
-    getTotalsupply();
+    setInterval(fetchData, 10000)
+  
   }, []);
 
   return (

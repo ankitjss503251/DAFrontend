@@ -7,8 +7,8 @@ import Wallet from "../SVG/wallet";
 import { convertToEth } from "../../helpers/numberFormatter";
 
 import {  fetchInfo,
-         testMintGachyi,
-         mintTokensGachyi } from "../../helpers/gachyiCalls"
+         testMint,
+         mintTokens } from "../../helpers/Contract-Calls/rockstarCall";
 import BigNumber from "bignumber.js";
 import { useCookies } from "react-cookie";
 export const msgTrigger = async (str) => {
@@ -54,17 +54,18 @@ function MintEventSlider(props) {
 
 
   useEffect(() => {
-    const getPrice = async () => {
-      let getcateg = await fetchInfo(0);
-      setPrice( convertToEth(new BigNumber(getcateg.price.toString())));
+    const fetchData = async () => {
+      let getcateg = await fetchInfo();
+      console.log("priccccccccccccce",convertToEth(new BigNumber(getcateg[0].toString())));
+      setPrice( convertToEth(new BigNumber(getcateg[0].toString())));
     }
-    getPrice();
+    fetchData();
   }, []);
-  const mintFunction = async (id,qty,price,user) => {
-     let result = await testMintGachyi(id,qty,user,price)
+  const mintFunction = async (qty,price,user) => {
+     let result = await testMint(qty,price,user)
      if(result){
       console.log("in  mint section");
-      let txn = await mintTokensGachyi(id,qty,user,price)
+      let txn = await mintTokens(qty,user)
       console.log(txn);
       
      }
@@ -131,7 +132,7 @@ function MintEventSlider(props) {
               type='button'
               onClick={async (e) => {
                 // console.log("index", i);
-                await mintFunction(0,currQty,price,cookies.selected_account);
+                await mintFunction(currQty,price,cookies.selected_account);
               }}
             // disabled={!isMintEnabled}
             >
