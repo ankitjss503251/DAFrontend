@@ -192,12 +192,8 @@ function NFTDetails() {
     setLoading(false);
   };
 
-
-
-  const PlaceOffer=async () => {
-
-
-
+  const PlaceOffer = async () => {
+  setLoading(true)
     if(currentUser===undefined||currentUser==="") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);
@@ -242,6 +238,7 @@ function NFTDetails() {
       tokenAddress
     );
     setLoading(false);
+    slowRefresh(1000)
     //await putOnMarketplace(currentUser, orderData);
     return;
   };
