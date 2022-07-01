@@ -163,9 +163,7 @@ const Header = function () {
     console.log("provider in useEffect", provider);
     if (provider) {
       const state = onboard.state.get().wallets;
-     if(state.length === 0 ){
-     await disconnectWallet();
-     }
+    
       provider.on("accountsChanged", (accounts) => {
         if (account && accounts[0] !== undefined) {
           const wallets = onboard.state.get().wallets;

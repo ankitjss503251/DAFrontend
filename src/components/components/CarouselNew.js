@@ -23,7 +23,7 @@ function ItemsList() {
       const res = await getNFTs(reqData);
       for (let i = 0; i < res.length; i++) {
         const ownedBy = await getUserById({ userID: res[i].createdBy });
-        const orderDet = await getOrderByNftID({ nftId: res[i].id });
+        const orderDet = await getOrderByNftID({ page:1, limit:1,nftID: res[i].id });
 
         if (orderDet?.results?.length > 0) {
           res[i] = {

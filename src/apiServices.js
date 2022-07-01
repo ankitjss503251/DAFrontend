@@ -390,7 +390,8 @@ export const GetOrdersByNftId = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+    
+      "Content-Type": "application/json"
     },
     body: JSON.stringify(data),
   };
@@ -484,16 +485,17 @@ export const GetOwnedNftList = async (data) => {
   }
 };
 
-export const getBrandById = async (data) => {
+export const getBrandById = async (brandID) => {
   const requestOptions = {
-    method: "POST",
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization")
     },
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + `/utils/getBrandByID/${data}`,
+      process.env.REACT_APP_API_BASE_URL + `/utils/getBrandByID/${brandID}`,
       requestOptions
     );
     const isJson = response.headers

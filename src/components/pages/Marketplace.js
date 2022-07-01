@@ -116,19 +116,18 @@ function Marketplace() {
         salesType: activeSaleType !== -1 ? activeSaleType : "",
       };
       const res = await getNFTs(reqData);
-      console.log("length of res--->", cardCount + res.length );
       setCardCount(cardCount + res.length);
       if (res.length > 0) {
         setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
           const ownedBy = await getUserById({ userID: res[i].createdBy });
-          const orderDet = await getOrderByNftID({ nftId: res[i].id });
+          const orderDet = await getOrderByNftID({ page:1, limit:1, nftID: res[i].id });
           res[i] = {
             ...res[i],
             salesType: orderDet?.results[0]?.salesType,
-            price: Number(
+            price: orderDet?.results[0]?.price?.$numberDecimal === undefined ? "--" : Number(
               convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
-            ).toFixed(4),
+            ).toFixed(6).slice(0,-2),
             creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
           };
           if (orderDet?.results?.length > 0) {
@@ -523,7 +522,7 @@ function Marketplace() {
                             <div className='items_left'>
                               <h3 className=''>{card.name}</h3>
                               <p>
-                                {card.price !== "NaN" ? card.price : "0.0000"}{" "}
+                                {card.price}{" "}
                                 HNTR
                               </p>
                             </div>

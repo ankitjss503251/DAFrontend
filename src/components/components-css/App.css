@@ -2149,6 +2149,7 @@ button.filter_btn.active {
   padding: 0px;
   margin: 0;
   list-style: none;
+  max-height: 178px;
 }
 .nft_list th,
 .nft_list h6 {

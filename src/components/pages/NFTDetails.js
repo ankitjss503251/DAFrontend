@@ -456,7 +456,7 @@ function NFTDetails() {
                 NotificationManager.error("Something went wrong", "", 800);
               }
             }}>
-            {"Place A Bid"}
+            {"Place Bid"}
           </button>
         </div>
       }
@@ -675,7 +675,7 @@ function NFTDetails() {
                     />
                     {Number(
                       convertToEth(orders[0].price.$numberDecimal)
-                    ).toFixed(4)}{" "}
+                    ).toFixed(6).slice(0,-2)}{" "}
                   </div>
                 ):(
                   ""
@@ -710,7 +710,7 @@ function NFTDetails() {
                       onClick={() => {
                         setIsPlaceBidModal(true);
                       }}>
-                      Place A Bid
+                      Place Bid
                     </button>
                   )
                 ):(
