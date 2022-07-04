@@ -13,7 +13,7 @@ import {
   getCollections,
   getNFTs,
   getCategory,
-  getOrderByNftID,
+  getPrice,
 } from "../../helpers/getterFunctions";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
@@ -71,6 +71,7 @@ function Collection() {
   const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
   const [cardCount, setCardCount] = useState(0);
   const [loader, setLoader] = useState(false);
+  const [searchFor, setSearchFor] = useState("");
   const { id, searchedText } = useParams();
 
   useEffect(async () => {
@@ -118,28 +119,29 @@ function Collection() {
         page: 1,
         limit: 1,
         collectionID: id,
-        searchText: searchedText ? searchedText : "",
+        searchText: searchedText ? searchedText : ""
       };
       const res = await getCollections(reqData);
-      console.log("collll", res[0]);
       setCollectionDetails(res[0]);
       const data = {
         page: currPage,
-        limit: 4,
+        limit: 12,
         collectionID: id,
+        searchText: searchFor
       };
       const nfts = await getNFTs(data);
       setCardCount(cardCount + nfts.length);
       if (nfts.length > 0) {
         setLoadMoreDisabled("");
         for (let i = 0; i < nfts.length; i++) {
-          const order = await getOrderByNftID({ page: 1, limit:1,nftID: nfts[i].id });
+          const order = await getPrice({ nftID: nfts[i].id });
           nfts[i] = {
             ...nfts[i],
-            price:  order?.results[0]?.price?.$numberDecimal === undefined ? "--" : Number(
-              convertToEth(order?.results[0]?.price?.$numberDecimal)
+            price:  order?.price?.$numberDecimal === undefined ? "--" : Number(
+              convertToEth(order?.price?.$numberDecimal)
             ).toFixed(6).slice(0, -2),
-            saleType: order?.results[0]?.salesType
+            saleType: order?.salesType,
+            collectionName: res[0].name
           };
         }
         temp = [...temp, ...nfts];
@@ -148,16 +150,17 @@ function Collection() {
       if (nftList && nfts.length <= 0) {
         setLoader(false);
         setLoadMoreDisabled("disabled");
+        return;
       }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
     setLoader(false);
-  }, [loadMore]);
+  }, [loadMore, searchFor]);
 
   return (
     <div style={bgImgStyle}>
-      {loadMoreDisabled
+      {loadMoreDisabled && nftList
         ? NotificationManager.info("No more items to load")
         : ""}
       <section
@@ -308,6 +311,14 @@ function Collection() {
                     type='search'
                     placeholder='Search item here...'
                     aria-label='Search'
+                    value={searchFor}
+                    onChange={(e) => {
+                      setNftList([]);
+                      setCurrPage(1);
+                      setCardCount(0);
+                      setSearchFor(e.target.value);
+                      setLoadMoreDisabled("");
+                    }}
                   />
                   <button class='market_btn' type='submit'>
                     <img src='../img/search.svg' alt='' />
@@ -318,7 +329,7 @@ function Collection() {
                   aria-label='Default select example'
                   style={bgImgarrow}>
                   <option value='all' selected>
-                    All NFTs
+                    Sales Type
                   </option>
                   <option value='buyNow'>Buy Now</option>
                   <option value='onAuction'>On Auction</option>
@@ -364,7 +375,6 @@ function Collection() {
                   <div className={grid} key={k}>
                     <CollectionList
                       nft={n}
-                      collectionName={collectionDetails?.name}
                     />
                   </div>
                 );
@@ -373,7 +383,7 @@ function Collection() {
               ""
             )}
 
-            {nftList.length > 3 ? (
+            {nftList.length > 12 ? (
               <div class='col-md-12 text-center mt-5'>
                 <button
                   class={`btn view_all_bdr ${loadMoreDisabled}`}

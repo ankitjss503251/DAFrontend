@@ -6,7 +6,6 @@ var mint_bg = {
 };
 
 function MintLivetab(props) {
-  console.log("props--->", props.ongoing);
   return (
     <div className="container">
       <ul className="nav nav-pills mb-5 mint_tab" id="pills-tab" role="tablist">
