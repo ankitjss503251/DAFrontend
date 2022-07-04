@@ -192,17 +192,11 @@ function NFTDetails() {
     setLoading(false);
   };
 
-<<<<<<< HEAD
 
 
   const PlaceOffer=async () => {
     setLoading(true)
 
-
-=======
-  const PlaceOffer = async () => {
-  setLoading(true)
->>>>>>> 99c69834e031c48fe3c24707a5c4aa2e03a4b8af
     if(currentUser===undefined||currentUser==="") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);
@@ -247,11 +241,9 @@ function NFTDetails() {
       tokenAddress
     );
     setLoading(false);
-<<<<<<< HEAD
+
     slowRefresh(1000);
-=======
-    slowRefresh(1000)
->>>>>>> 99c69834e031c48fe3c24707a5c4aa2e03a4b8af
+
     //await putOnMarketplace(currentUser, orderData);
     return;
   };

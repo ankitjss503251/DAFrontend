@@ -162,8 +162,6 @@ const Header = function () {
   useEffect(async () => {
     console.log("provider in useEffect", provider);
     if (provider) {
-      const state = onboard.state.get().wallets;
-    
       provider.on("accountsChanged", (accounts) => {
         if (account && accounts[0] !== undefined) {
           const wallets = onboard.state.get().wallets;
@@ -282,7 +280,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message, "", 800);
-            // slowRefresh(1000);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -301,7 +299,7 @@ const Header = function () {
     await Logout(cookies["selected_account"]);
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);
-    // slowRefresh(1000);
+    slowRefresh(1000);
   };
 
   // const onLogin = async () => {

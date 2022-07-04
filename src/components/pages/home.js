@@ -239,7 +239,7 @@ const Home = () => {
                             </li>
                             <li>
                               <img alt='' src={"../img/mint/items.svg"} />{" "}
-                              {`${card.items} items`}
+                              {`${card.totalSupply} items`}
                             </li>
                           </ul>
                           {ct < st ? (

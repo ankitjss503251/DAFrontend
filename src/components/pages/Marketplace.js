@@ -150,6 +150,7 @@ function Marketplace() {
       if (allNFTs && res.length <= 0) {
         setLoader(false);
         setLoadMoreDisabled("disabled");
+        
       }
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
@@ -559,7 +560,7 @@ function Marketplace() {
                 });
               })
             ) : (
-              <h2 className='text-white'>No NFT Found</h2>
+              <h2 className='text-white text-center'>No NFT Found</h2>
             )}
           </div>
           {allNFTs?.length > 0 ? (

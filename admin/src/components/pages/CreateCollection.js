@@ -24,6 +24,7 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
+import {slowRefresh} from "../../helpers/NotifyStatus";
 
 function CreateCollection() {
   const [logoImg, setLogoImg] = useState("");
@@ -500,6 +501,7 @@ function CreateCollection() {
         let nftCount = _nfts.length;
         dbSupply = parseInt(nftCount);
         console.log("coll update", res._id);
+        slowRefresh(1000);
       }
 
       for (let i = dbSupply; i < parseInt(originalSupply); i++) {

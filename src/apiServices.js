@@ -489,13 +489,12 @@ export const getBrandById = async (brandID) => {
   const requestOptions = {
     method: "GET",
     headers: {
-      "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization")
+      "Content-Type": "application/json"
     },
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + `/utils/getBrandByID/${brandID}`,
+      process.env.REACT_APP_API_BASE_URL + `/utils/showBrandByID/${brandID}`,
       requestOptions
     );
     const isJson = response.headers

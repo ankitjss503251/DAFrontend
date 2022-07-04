@@ -15,13 +15,14 @@ import {
   getCategory,
   getPrice,
   getUserById,
-  getOrderByNftID
+  getOrderByNftID,
 } from "../../helpers/getterFunctions";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 // import { CopyToClipboard } from "react-copy-to-clipboard";
 import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 import BGImg from "../../assets/images/background.jpg";
 import { convertToEth } from "../../helpers/numberFormatter";
+import NotificationManager from "react-notifications/lib/NotificationManager";
 
 function CollectionWithCollection() {
   const bgImgStyle = {
@@ -44,6 +45,8 @@ function CollectionWithCollection() {
   const [currPage, setCurrPage] = useState(1);
   const [loader, setLoader] = useState(false);
   const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
+  const [cardCount, setCardCount] = useState(0);
+  const [searchFor, setSearchFor] = useState("");
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -109,36 +112,40 @@ function CollectionWithCollection() {
       for (let i = 0; i < cols.length; i++) {
         const nft = await getNFTs({
           page: currPage,
-          limit: 3,
+          limit: 12,
           collectionID: cols[i]?._id,
+          searchText: searchFor
         });
-        nft.map(async(n) => {
-          const order = await getOrderByNftID({ page: 1, limit:1,nftID: nfts[i]?.id });
-          nfts[i] = {
-            ...nfts[i],
-            price:  order?.results[0]?.price?.$numberDecimal === undefined ? "--" : Number(
-              convertToEth(order?.results[0]?.price?.$numberDecimal)
-            ).toFixed(6).slice(0, -2),
-            saleType: order?.results[0]?.salesType
-          };
-          temp[cnt] = {
-            ...n,
-            collectionName: cols[i].name,
-          };
-          cnt++;
-        });
+        setCardCount(cardCount + nft.length);
+        if (nft.length > 0) {
+          for (let j = 0; j < nft.length; j++) {
+            const order = await getPrice({
+              nftID: nft[j].id,
+            });
+            nft[j] = {
+              ...nft[j],
+              price:
+                order?.price?.$numberDecimal === undefined
+                  ? "--"
+                  : Number(convertToEth(order?.price?.$numberDecimal))
+                      .toFixed(6)
+                      .slice(0, -2),
+              saleType: order?.salesType,
+            };
+            temp[cnt] = {
+              ...nft[j],
+              collectionName: cols[i]?.name,
+            };
+            console.log("nft", temp[cnt]);
+            cnt++;
+          }
+        }
+        if (nfts && nft.length <= 0) {
+          setLoader(false);
+          setLoadMoreDisabled("disabled");
+          return;
+        }
       }
-
-      for (let i = 0; i < temp.length; i++) {
-        const order = await getPrice({
-          nftID: temp[i].id,
-        });
-        temp[i] = {
-          ...temp[i],
-          price: order?.price?.$numberDecimal,
-        };
-      }
-      
       setNfts(temp);
       setLoader(false);
     } catch (e) {
@@ -154,6 +161,9 @@ function CollectionWithCollection() {
 
   return (
     <div style={bgImgStyle}>
+      {loadMoreDisabled && nfts.length > 0
+        ? NotificationManager.info("No more items to load", "", 800)
+        : ""}
       <section className='collection_banner pdd_8' style={bgImage}></section>
       <section className='collection_info'>
         <div className='container'>
@@ -287,6 +297,14 @@ function CollectionWithCollection() {
                     type='search'
                     placeholder='Search item here...'
                     aria-label='Search'
+                    value={searchFor}
+                    onChange={(e) => {
+                      setNfts([]);
+                      setCurrPage(1);
+                      setCardCount(0);
+                      setSearchFor(e.target.value);
+                      setLoadMoreDisabled("");
+                    }}
                   />
                   <button class='market_btn' type='submit'>
                     <img src='../img/search.svg' alt='' />
@@ -496,7 +514,7 @@ function CollectionWithCollection() {
         <div className='container'>
           <div className='row'>
             {loader ? (
-              <CollectionsNFT cards={4} grid={grid} />
+              <CollectionsNFT cards={cardCount} grid={grid} />
             ) : (
               nfts?.map((card) => {
                 return (
@@ -513,7 +531,6 @@ function CollectionWithCollection() {
                   className={`btn view_all_bdr ${loadMoreDisabled}`}
                   onClick={() => {
                     setCurrPage(currPage + 1);
-                   
                   }}>
                   Load More
                 </button>
