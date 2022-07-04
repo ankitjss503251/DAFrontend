@@ -423,7 +423,7 @@ function NFTBids(props) {
                             <button
                               to={"/"}
                               className='small_border_btn small_btn'>
-                              Place a Bid
+                              Place Bid
                             </button>
                           ) : (
                             ""
