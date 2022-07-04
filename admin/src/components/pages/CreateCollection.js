@@ -354,7 +354,6 @@ function CreateCollection() {
         fd.append("price", ethers.utils.parseEther(price.toString()));
         fd.append("royality", royalty * 1000);
 
-        console.log("form data is---->", fd.value);
 
         try {
           await createCollection(fd);

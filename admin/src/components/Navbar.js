@@ -210,7 +210,7 @@ const Navbar = (props) => {
               path: "/",
             });
             getUserProfile();
-            NotificationManager.success(res.message);
+            NotificationManager.success(res?.message);
             slowRefresh(1000);
             return;
           }
@@ -229,7 +229,7 @@ const Navbar = (props) => {
             res.message === "User not found" ||
             res.message === "Login Invalid"
           ) {
-            NotificationManager.error(res.message);
+            NotificationManager.error(res?.message);
             return;
           } else {
             setAccount(primaryWallet.accounts[0].address);

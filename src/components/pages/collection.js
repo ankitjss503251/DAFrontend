@@ -122,7 +122,6 @@ function Collection() {
         searchText: searchedText ? searchedText : ""
       };
       const res = await getCollections(reqData);
-      console.log("collll", res[0]);
       setCollectionDetails(res[0]);
       const data = {
         page: currPage,

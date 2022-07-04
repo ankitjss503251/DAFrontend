@@ -82,8 +82,6 @@ function Author() {
       let _owned = await GetOwnedNftList(reqBody);
       setTotalOwned(_owned.count);
       if (_owned && _owned.results.length > 0) setOwnedNFTs(_owned.results[0]);
-      console.log("owned nfts", _owned.results[0]);
-      console.log("in user profile api", _profile);
     };
     fetch();
   }, [id]);
@@ -547,8 +545,8 @@ function Author() {
               aria-labelledby="pills-Sale-tab"
             >
               <div className="row">
-                {AuthorCard?.map((card) => (
-                  <div className={grid} key={card.id}>
+                {AuthorCard?.map((card, key) => (
+                  <div className={grid} key={key}>
                     <AuthorListing
                       image={card.img}
                       submenu={card.Subheading}
@@ -569,8 +567,8 @@ function Author() {
               aria-labelledby="pills-Favourited-tab"
             >
               <div className="row">
-                {AuthorCard.map((card) => (
-                  <div className={grid} key={card.id}>
+                {AuthorCard.map((card, key) => (
+                  <div className={grid} key={key}>
                     <AuthorListing
                       image={card.img}
                       submenu={card.Subheading}
@@ -591,8 +589,8 @@ function Author() {
               aria-labelledby="pills-Activity-tab"
             >
               <div className="row">
-                {AuthorCard.map((card) => (
-                  <div className={grid} key={card.id}>
+                {AuthorCard.map((card, key) => (
+                  <div className={grid} key={key}>
                     <AuthorListing
                       image={card.img}
                       submenu={card.Subheading}

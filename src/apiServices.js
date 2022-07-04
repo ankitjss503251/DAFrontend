@@ -113,7 +113,6 @@ export const getProfile = async () => {
     .get("content-type")
     ?.includes("application/json");
   const data = isJson && (await response.json());
-  console.log("data is----->", data);
   return data;
 };
 
@@ -158,7 +157,6 @@ export const updateProfile = async (data) => {
   //formData.append("sWalletAddress", account);
   formData.append("userProfile", data.profilePic ? data.profilePic : "");
 
-  // console.log("form data is---->", formData);
   const requestOptions = {
     method: "PUT",
     headers: {
@@ -379,7 +377,6 @@ export const getOrderDetails = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("get order data is--->", datas);
     return datas.data;
   } catch (err) {
     return err;
