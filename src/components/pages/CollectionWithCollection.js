@@ -47,6 +47,7 @@ function CollectionWithCollection() {
   const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
   const [cardCount, setCardCount] = useState(0);
   const [searchFor, setSearchFor] = useState("");
+  const [ERCType, setERCType] = useState()
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -114,7 +115,8 @@ function CollectionWithCollection() {
           page: currPage,
           limit: 12,
           collectionID: cols[i]?._id,
-          searchText: searchFor
+          searchText: searchFor,
+          ERCType: ERCType,
         });
         setCardCount(cardCount + nft.length);
         if (nft.length > 0) {
@@ -151,7 +153,7 @@ function CollectionWithCollection() {
     } catch (e) {
       console.log("error in get brandbyID", e);
     }
-  }, [currPage]);
+  }, [currPage, searchFor, ERCType]);
 
   const bgImage = {
     backgroundImage: `url(${brandDetails?.coverImage})`,
@@ -313,12 +315,22 @@ function CollectionWithCollection() {
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
-                  style={bgImgarrow}>
-                  <option value='1' selected>
-                    Single Items
+                  style={bgImgarrow}
+                  value={ERCType}
+                  onChange={(e) => {
+                    setNfts([]);
+                    setCurrPage(1);
+                    setCardCount(0);
+                    setERCType(parseInt(e.target.value));
+                    setLoadMoreDisabled("");
+                  }}>
+                  <option value='0' selected>
+                    All Items
                   </option>
+                  <option value='1'>Single Items</option>
                   <option value='2'>Multiple Items</option>
                 </select>
+               
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
