@@ -61,7 +61,9 @@ function Marketplacecollection() {
           setAllCollections(temp);
         }
         if (allCollections && res.length <= 0) {
+          setLoader(false);
           setLoadMoreDisabled("disabled");
+          return;
         }
       } else {
         setLoader(true);
@@ -82,7 +84,7 @@ function Marketplacecollection() {
       console.log("Error in fetching all collections list", e);
     }
     setLoader(false);
-  }, [loadMore, searchedText]);
+  }, [loadMore, searchedText,showTab]);
 
   const handleCategoryChange = async (category) => {
     setLoader(true);
@@ -143,7 +145,6 @@ function Marketplacecollection() {
                         setShowTab("");
                         setAllCollections([]);
                         setCardCount(0);
-                        window.location.href = "/marketplacecollection";
                       }}>
                       All
                     </button>
@@ -170,6 +171,7 @@ function Marketplacecollection() {
                               setActiveCat([]);
                               setCardCount(0);
                               handleCategoryChange(cat);
+                              setLoadMoreDisabled("");
                               setShowTab("show active");
                             }}>
                             {cat.name}
@@ -230,7 +232,7 @@ function Marketplacecollection() {
                 ) : (
                   <h2 className='text-white text-center'>No Collection Found</h2>
                 )}
-                {allCollections.length > 0 ? (
+                {allCollections.length > 3 ? (
                   <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                     <button
                       type='button'
@@ -295,7 +297,7 @@ function Marketplacecollection() {
                   ) : (
                     <h2 className='text-white text-center'>No Collection Found</h2>
                   )}
-                  {activeCat?.length > 1 ? (
+                  {activeCat?.length > 3 ? (
                     <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                       <button
                         type='button'

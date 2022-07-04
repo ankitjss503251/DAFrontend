@@ -13,7 +13,7 @@ import {
   getCollections,
   getNFTs,
   getCategory,
-  getOrderByNftID,
+  getPrice,
 } from "../../helpers/getterFunctions";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
@@ -125,7 +125,7 @@ function Collection() {
       setCollectionDetails(res[0]);
       const data = {
         page: currPage,
-        limit: 4,
+        limit: 12,
         collectionID: id,
       };
       const nfts = await getNFTs(data);
@@ -133,13 +133,14 @@ function Collection() {
       if (nfts.length > 0) {
         setLoadMoreDisabled("");
         for (let i = 0; i < nfts.length; i++) {
-          const order = await getOrderByNftID({ page: 1, limit:1,nftID: nfts[i].id });
+          const order = await getPrice({ nftID: nfts[i].id });
           nfts[i] = {
             ...nfts[i],
-            price:  order?.results[0]?.price?.$numberDecimal === undefined ? "--" : Number(
-              convertToEth(order?.results[0]?.price?.$numberDecimal)
+            price:  order?.price?.$numberDecimal === undefined ? "--" : Number(
+              convertToEth(order?.price?.$numberDecimal)
             ).toFixed(6).slice(0, -2),
-            saleType: order?.results[0]?.salesType
+            saleType: order?.salesType,
+            collectionName: res[0].name
           };
         }
         temp = [...temp, ...nfts];
@@ -148,6 +149,7 @@ function Collection() {
       if (nftList && nfts.length <= 0) {
         setLoader(false);
         setLoadMoreDisabled("disabled");
+        return;
       }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
@@ -157,7 +159,7 @@ function Collection() {
 
   return (
     <div style={bgImgStyle}>
-      {loadMoreDisabled
+      {loadMoreDisabled && nftList
         ? NotificationManager.info("No more items to load")
         : ""}
       <section
@@ -364,7 +366,6 @@ function Collection() {
                   <div className={grid} key={k}>
                     <CollectionList
                       nft={n}
-                      collectionName={collectionDetails?.name}
                     />
                   </div>
                 );

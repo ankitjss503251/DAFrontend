@@ -527,14 +527,14 @@ function CollectionWithCollection() {
           <div className='row'>
             {loader ? (
               <CollectionsNFT cards={cardCount} grid={grid} />
-            ) : (
+            ) : ( nfts?.length > 0 ? (
               nfts?.map((card) => {
                 return (
                   <div className={grid} key={card.id}>
                     <CollectionList nft={card} />
                   </div>
                 );
-              })
+              }) ) :   <h2 className='text-white text-center'>No NFT Found</h2>
             )}
             {nfts.length > 6 && (
               <div class='col-md-12 text-center mt-5'>
