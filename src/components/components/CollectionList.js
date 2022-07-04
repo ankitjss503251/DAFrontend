@@ -1,12 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { convertToEth } from "../../helpers/numberFormatter";
 
 function CollectionList(props) {
   return (
     <Link to={`/NFTdetails/${props.nft.id}`}>
       <div className='collection_items'>
-        <img alt='' src={props.nft.image} class='img-fluid width-100' />
+        <img
+          alt=''
+          src={props.nft.image}
+          class='img-fluid width-100'
+          style={{ height: "306.52px" }}
+        />
         <div className='coll_itemstext'>
           <div className='collection_row mb-3'>
             <div className='collection_col'>
@@ -47,7 +51,7 @@ function CollectionList(props) {
                     fill='#393939'
                   />
                 </svg>
-               -
+                {props.nft.price}
               </span>
               {/* <span>
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -60,7 +64,7 @@ function CollectionList(props) {
           <div className='collection_row align-items-center'>
             <div className='collection_col'>
               <Link className='buy_btn' to={`/NFTdetails/${props.nft.id}`}>
-                Buy Now
+               {props.nft.saleType === 0 ? "Buy Now" : (props.nft.saleType === 1 || props.nft.saleType === 2 ? "Place Bid" : "View")}
               </Link>
             </div>
             <div className='collection_col text-end'>
