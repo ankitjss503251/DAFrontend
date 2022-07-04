@@ -71,6 +71,7 @@ function Collection() {
   const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
   const [cardCount, setCardCount] = useState(0);
   const [loader, setLoader] = useState(false);
+  const [searchFor, setSearchFor] = useState("");
   const { id, searchedText } = useParams();
 
   useEffect(async () => {
@@ -118,7 +119,7 @@ function Collection() {
         page: 1,
         limit: 1,
         collectionID: id,
-        searchText: searchedText ? searchedText : "",
+        searchText: searchedText ? searchedText : ""
       };
       const res = await getCollections(reqData);
       console.log("collll", res[0]);
@@ -127,6 +128,7 @@ function Collection() {
         page: currPage,
         limit: 12,
         collectionID: id,
+        searchText: searchFor
       };
       const nfts = await getNFTs(data);
       setCardCount(cardCount + nfts.length);
@@ -155,7 +157,7 @@ function Collection() {
       console.log("Error in fetching all collections list", e);
     }
     setLoader(false);
-  }, [loadMore]);
+  }, [loadMore, searchFor]);
 
   return (
     <div style={bgImgStyle}>
@@ -310,6 +312,14 @@ function Collection() {
                     type='search'
                     placeholder='Search item here...'
                     aria-label='Search'
+                    value={searchFor}
+                    onChange={(e) => {
+                      setNftList([]);
+                      setCurrPage(1);
+                      setCardCount(0);
+                      setSearchFor(e.target.value);
+                      setLoadMoreDisabled("");
+                    }}
                   />
                   <button class='market_btn' type='submit'>
                     <img src='../img/search.svg' alt='' />
@@ -320,7 +330,7 @@ function Collection() {
                   aria-label='Default select example'
                   style={bgImgarrow}>
                   <option value='all' selected>
-                    All NFTs
+                    Sales Type
                   </option>
                   <option value='buyNow'>Buy Now</option>
                   <option value='onAuction'>On Auction</option>
@@ -374,7 +384,7 @@ function Collection() {
               ""
             )}
 
-            {nftList.length > 3 ? (
+            {nftList.length > 12 ? (
               <div class='col-md-12 text-center mt-5'>
                 <button
                   class={`btn view_all_bdr ${loadMoreDisabled}`}

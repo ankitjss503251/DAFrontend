@@ -61,7 +61,6 @@ function MintEventSlider(props) {
   }, []);
 
   useEffect(() => {
-    console.log("props.id", props.id);
 
     const fetch = async () => {
       let reqBody = {

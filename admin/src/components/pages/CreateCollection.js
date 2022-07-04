@@ -59,7 +59,7 @@ function CreateCollection() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Your Metamask", "", 800);
+    else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
 
@@ -604,7 +604,10 @@ function CreateCollection() {
             type="button"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
-            onClick={() => setModal("active")}
+            onClick={() => {
+              
+              
+              setModal("active")}}
           >
             + Add Collection
           </button>

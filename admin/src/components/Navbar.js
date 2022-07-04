@@ -247,7 +247,7 @@ const Navbar = (props) => {
               path: "/",
             });
             getUserProfile();
-            NotificationManager.success(res.message);
+            NotificationManager.success(res?.message);
             slowRefresh(1000);
             return;
           }
