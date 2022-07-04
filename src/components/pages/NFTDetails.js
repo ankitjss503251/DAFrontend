@@ -306,15 +306,11 @@ function NFTDetails() {
     if(dt<ct) {
       NotificationManager.error(
         "Start date should not be of past date",
-
         "",
-
         800
       );
-
       return;
     }
-
     setDatetime(dt);
   }
 
@@ -842,7 +838,7 @@ function NFTDetails() {
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>Offers</h3>
               <div className='table-responsive'>
-                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails} />
+                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails} collectionAddress={collection?.contractAddress} />
               </div>
             </div>
             <div className='col-md-12 mb-5'>
