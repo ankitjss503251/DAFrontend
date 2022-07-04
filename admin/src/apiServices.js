@@ -1360,7 +1360,7 @@ export const getNFTList = async (data) => {
 // };
 
 // export const createBidNft = async (data) => {
-//   console.log("place a bid");
+//   console.log("Place Bid");
 
 //   const requestOptions = {
 //     method: "POST",

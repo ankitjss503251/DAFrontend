@@ -192,8 +192,11 @@ function NFTDetails() {
     setLoading(false);
   };
 
-  const PlaceOffer = async () => {
-  setLoading(true)
+
+
+  const PlaceOffer=async () => {
+    setLoading(true)
+
     if(currentUser===undefined||currentUser==="") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);
@@ -238,7 +241,9 @@ function NFTDetails() {
       tokenAddress
     );
     setLoading(false);
-    slowRefresh(1000)
+
+    slowRefresh(1000);
+
     //await putOnMarketplace(currentUser, orderData);
     return;
   };
@@ -452,7 +457,7 @@ function NFTDetails() {
                 NotificationManager.error("Something went wrong", "", 800);
               }
             }}>
-            {"Place A Bid"}
+            {"Place Bid"}
           </button>
         </div>
       }
@@ -671,7 +676,7 @@ function NFTDetails() {
                     />
                     {Number(
                       convertToEth(orders[0].price.$numberDecimal)
-                    ).toFixed(4)}{" "}
+                    ).toFixed(6).slice(0,-2)}{" "}
                   </div>
                 ):(
                   ""
@@ -706,7 +711,7 @@ function NFTDetails() {
                       onClick={() => {
                         setIsPlaceBidModal(true);
                       }}>
-                      Place A Bid
+                      Place Bid
                     </button>
                   )
                 ):(
