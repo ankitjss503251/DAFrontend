@@ -514,6 +514,9 @@ function Marketplace() {
                         <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
                           <img
                             alt=''
+                            onError={(e) => {
+                              e.target.src = "../img/collections/profile1.png"
+                            }}
                             src={card.image}
                             class='img-fluid items_img w-100 my-3'
                           />

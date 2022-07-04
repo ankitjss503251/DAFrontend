@@ -35,7 +35,7 @@ function ItemsList() {
               : Number(convertToEth(orderDet?.price?.$numberDecimal))
                   .toFixed(6)
                   .slice(0, -2),
-          saleType: orderDet?.salestype,
+          saleType: orderDet?.salesType,
         };
       }
 

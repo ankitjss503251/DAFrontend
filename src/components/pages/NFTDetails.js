@@ -105,6 +105,7 @@ function NFTDetails() {
         console.table("nft detail------>>>",res[0]);
         const c=await getCollections({collectionID: res[0].collection});
         setCollection(c[0]);
+        
         const reqData1={
           page: 1,
           limit: 12,
@@ -747,7 +748,7 @@ function NFTDetails() {
                   <img src={collection?.logoImg} alt='' className='img-fluid' />
                 </div>
                 <div className='col-md-8'>
-                  <p className='textdes'>{collection?.description} </p>
+                  <p className='textdes'>{collection?.desc} </p>
                 </div>
               </div>
             </div>

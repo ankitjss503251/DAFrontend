@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Footer from "../components/footer";
-// import Relatedcollection from '../components/Relatedcollection';
 import AuthorListing from "../components/AuthorListing";
 import DownloadSVG from "../SVG/DownloadSVG";
 import OffermadeSVG from "../SVG/OffermadeSVG";
@@ -16,6 +15,7 @@ import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 import UpArrow from "../SVG/dropdown";
 import { getCategory } from "../../helpers/getterFunctions";
 import BGImg from "../../assets/images/background.jpg";
+import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 
 
 
@@ -26,6 +26,8 @@ function Author() {
   const [totalOwned, setTotalOwned] = useState(0);
   const [category, setCategory] = useState([]);
   const [togglemode, setTogglemode] = useState("filterhide");
+  const [loader, setLoader] = useState(false);
+  const [cardCount, setCardCount] = useState(1);
 
   const bgImage = {
     backgroundImage: `url(${coverImg})`,
@@ -71,17 +73,20 @@ function Author() {
 
   useEffect(() => {
     const fetch = async () => {
+      setLoader(true);
       let _profile = await GetIndividualAuthorDetail({ userID: id });
       setProfile(_profile);
       let reqBody = {
         page: 1,
         limit: 12,
-        userWalletAddress: _profile.walletAddress.toLowerCase(),
+        userWalletAddress: _profile?.walletAddress?.toLowerCase(),
         searchType: "owned",
       };
       let _owned = await GetOwnedNftList(reqBody);
+      setCardCount(cardCount + _owned.count);
       setTotalOwned(_owned.count);
       if (_owned && _owned.results.length > 0) setOwnedNFTs(_owned.results[0]);
+      setLoader(false);
     };
     fetch();
   }, [id]);
@@ -310,14 +315,14 @@ function Author() {
                   </button>
                 </form>
                 <select
-                  className="market_select_form form-select"
-                  aria-label="Default select example"
-                  style={bgImgarrow}
-                >
-                  <option value="1" selected>
-                    Single Items
+                  class='market_select_form form-select'
+                  aria-label='Default select example'
+                  style={bgImgarrow}>
+                  <option value='0' selected>
+                    All Items
                   </option>
-                  <option value="2">Multiple Items</option>
+                  <option value='1'>Single Items</option>
+                  <option value='2'>Multiple Items</option>
                 </select>
                 <select
                   className="market_select_form form-select"
@@ -527,7 +532,9 @@ function Author() {
               aria-labelledby="pills-Owned-tab"
             >
               <div className="row">
-                {ownedNFTs?.map((card, key) => (
+              {loader ? (
+              <CollectionsNFT cards={cardCount} grid={grid} />
+            ) : ownedNFTs?.map((card, key) => (
                   <div className={grid} key={key}>
                     <AuthorListing
                       image={card.image}

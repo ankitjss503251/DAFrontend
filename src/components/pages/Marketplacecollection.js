@@ -201,6 +201,9 @@ function Marketplacecollection() {
                             <img
                               className='img-fluid w-100'
                               src={card?.logoImg}
+                              onError={(e) => {
+                                e.target.src = ""
+                              }}
                               alt=''
                             />
                           </a>
