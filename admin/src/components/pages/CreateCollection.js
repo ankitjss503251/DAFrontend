@@ -59,7 +59,7 @@ function CreateCollection() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Your Metamask", "", 800);
+    else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
 
@@ -354,7 +354,6 @@ function CreateCollection() {
         fd.append("price", ethers.utils.parseEther(price.toString()));
         fd.append("royality", royalty * 1000);
 
-        console.log("form data is---->", fd.value);
 
         try {
           await createCollection(fd);
@@ -604,7 +603,10 @@ function CreateCollection() {
             type="button"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
-            onClick={() => setModal("active")}
+            onClick={() => {
+              
+              
+              setModal("active")}}
           >
             + Add Collection
           </button>

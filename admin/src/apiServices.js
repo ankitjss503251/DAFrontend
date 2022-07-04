@@ -388,7 +388,6 @@ export const GetBrand = async (id) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("brand data is---->", datas);
     if (datas.data) return datas.data;
     return [];
   } catch (err) {
@@ -471,7 +470,6 @@ export const getCategory = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("category data is---->", datas);
     if (datas.data) return datas.data;
     return [];
   } catch (err) {
@@ -687,7 +685,6 @@ export const getOrderDetails = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("get order data is--->", datas);
     return datas.data;
   } catch (err) {
     return err;

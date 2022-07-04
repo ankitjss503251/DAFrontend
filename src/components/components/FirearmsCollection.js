@@ -4,7 +4,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 function FirearmsCollection(props) {
-  console.log("props", props);
   var settings = {
     infinite: false,
     speed: 500,

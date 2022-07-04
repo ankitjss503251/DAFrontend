@@ -255,7 +255,7 @@ const Header = function () {
           const res = await Login(address);
           console.log("Login API response", res);
           if (res.message === "Wallet Address required") {
-            NotificationManager.info(res.message);
+            NotificationManager.info(res?.message);
             refreshState();
             return;
           } else if (

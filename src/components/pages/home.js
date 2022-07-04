@@ -568,11 +568,14 @@ const Home = () => {
           <div className='col-lg-12'>
             <CarouselNew />
           </div>
+          {
+            upcomingMints.length > 0 ?
           <div class='col-md-12 text-center mt-5'>
             <Link to={"/marketplace"} className='view_all_bdr'>
               View All
             </Link>
-          </div>
+          </div> : ""
+          }
         </div>
       </section>
 
