@@ -121,13 +121,22 @@ function Marketplace() {
         setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
           const ownedBy = await getUserById({ userID: res[i].createdBy });
-          const orderDet = await getOrderByNftID({ page:1, limit:1, nftID: res[i].id });
+          const orderDet = await getOrderByNftID({
+            page: 1,
+            limit: 1,
+            nftID: res[i].id,
+          });
           res[i] = {
             ...res[i],
             salesType: orderDet?.results[0]?.salesType,
-            price: orderDet?.results[0]?.price?.$numberDecimal === undefined ? "--" : Number(
-              convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
-            ).toFixed(6).slice(0,-2),
+            price:
+              orderDet?.results[0]?.price?.$numberDecimal === undefined
+                ? "--"
+                : Number(
+                    convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
+                  )
+                    .toFixed(6)
+                    .slice(0, -2),
             creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
           };
           if (orderDet?.results?.length > 0) {
@@ -150,7 +159,6 @@ function Marketplace() {
       if (allNFTs && res.length <= 0) {
         setLoader(false);
         setLoadMoreDisabled("disabled");
-        
       }
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
@@ -514,6 +522,9 @@ function Marketplace() {
                         <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
                           <img
                             alt=''
+                            onError={(e) => {
+                              e.target.src = "../img/collections/list4.png";
+                            }}
                             src={card.image}
                             class='img-fluid items_img w-100 my-3'
                           />
@@ -522,10 +533,7 @@ function Marketplace() {
                           <div className='items_info '>
                             <div className='items_left'>
                               <h3 className=''>{card.name}</h3>
-                              <p>
-                                {card.price}{" "}
-                                HNTR
-                              </p>
+                              <p>{card.price} HNTR</p>
                             </div>
                             <div className='items_right justify-content-end d-flex'>
                               <span>
