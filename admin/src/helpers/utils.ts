@@ -20,9 +20,20 @@ export function getCookie(cname:string) {
   }
   return "";
 }
+export function deleteCookie(cname:string) {
+     setCookie(cname,"",-1);
+}
 /******    Cookies  end       ******/
-
-export function isAdmin()
+export function deleteIsAdmin()
+{
+  deleteCookie('connect.auth');
+}
+export function isSuperAdmin()
 {
   return getCookie('connect.auth');
+}
+
+export function isLoggedIn()
+{
+  return isAdmin() || true;
 }

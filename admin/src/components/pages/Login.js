@@ -1,11 +1,12 @@
 import React,{useState,useEffect} from 'react';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link,useNavigate,useSearchParams } from 'react-router-dom';
 import {adminLogin} from '../../apiServices';
 
 function Login(props) {
-
   const [state,setState] = useState({});
   const navigate         = useNavigate();
+  const [searchParams]   = useSearchParams();
+  const nextUrl          = props.next || (searchParams.get('next')=='/sadmin'?'/':searchParams.get('next')) || '/';
   
 
   function hasError()
@@ -19,8 +20,8 @@ function Login(props) {
       if(!hasError())
       {
         adminLogin(state).then(success=>{
-            navigate(props.next || '/');
-             window.location.reload();
+            navigate(nextUrl);
+             //window.location.reload();
         })
         .catch((error)=>{
           console.log(error.status);

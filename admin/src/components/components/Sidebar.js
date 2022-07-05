@@ -6,9 +6,8 @@ import Tablesvg from '../SVG/tablesvg';
 import Performancesvg from '../SVG/performancesvg';
 import Collectionsvg from '../SVG/collectionsvg';
 import Nftsvg from '../SVG/nftsvg';
-
+import {isSuperAdmin} from '../../apiServices';
 function Sidebar() {
-
 //   const [active, setActive] = useState('active');
 
   return (
@@ -16,7 +15,7 @@ function Sidebar() {
 
             <ul className="list-unstyled components text-uppercase">
                 <li>
-                    <NavLink to={"/"} className="text-decoration-none text-light" activeClassName="active-link">
+                    <NavLink to={"/"} className="text-decoration-none text-light" activeclassname="active-link">
                         <Dashboardsvg /> Dashboard
                     </NavLink>
                 </li>
@@ -30,6 +29,13 @@ function Sidebar() {
                         <Tablesvg /> Tables
                     </NavLink>
                 </li>
+                {isSuperAdmin && isSuperAdmin()?
+                <li>
+                    <NavLink to={'/admins'} className="text-decoration-none text-light">
+                        <Formsvg /> Admins List
+                    </NavLink>
+                </li>
+                :null}
                 <li>
                     <NavLink to={'/createcollection'} className="text-decoration-none text-light">
                         <Collectionsvg /> Create Collection

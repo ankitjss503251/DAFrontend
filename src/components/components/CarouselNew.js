@@ -29,20 +29,19 @@ function ItemsList() {
           res[i] = {
             ...res[i],
             isNftOnSale: true,
-            creatorImg: ownedBy?.profileIcon ? ownedBy?.profileIcon : "",
-            creatorID: ownedBy?._id,
+            creatorImg: ownedBy ? ownedBy?.profileIcon : "",
+            creatorID: ownedBy ? ownedBy._id : "",
             price: orderDet?.results[0]?.price?.$numberDecimal,
           };
         } else {
           res[i] = {
             ...res[i],
             isNftOnSale: false,
-            creatorImg: ownedBy?.profileIcon ? ownedBy?.profileIcon : "",
-            creatorID: ownedBy?._id,
+            creatorImg: ownedBy ? ownedBy.profileIcon : "",
+            creatorID: ownedBy ? ownedBy._id : "",
             price: orderDet?.results[0]?.price?.$numberDecimal,
           };
         }
-        console.log("order details--->", res[i]);
       }
 
       setPutOnSaleItems(res);
@@ -110,10 +109,10 @@ function ItemsList() {
                 <div className='items_slide' key={key}>
                   <div className='items_profileimg'>
                     <a href={`/author/${card.creatorID}`}>
-                      <div className='profile_left'>
+                      <div className='profile_left nft-logo-img'>
                         <img
                           alt=''
-                          className='profile_img'
+                          className='profile_img creatorImg'
                           src={
                             card.creatorImg
                               ? card.creatorImg
@@ -131,20 +130,25 @@ function ItemsList() {
                   <span>514d 18h 42m 39s</span>
                 </div> */}
                   </div>
-                  <a href={`/NFTdetails/${card.id}`}>
-                    <div className='coverImg_cont'>
+                  <a href={`/NFTdetails/${card.id}`} className="nft-cont">
+                    
                       <img
                         alt=''
                         src={card.image}
                         class='img-fluid items_img my-3'
                       />
-                    </div>
+                    
                   </a>
-                  <div className='items_text'>
+                  <div className='items_text nft-info-div'>
                     <div className='items_info'>
                       <div className='items_left'>
                         <h3 className=''>{card.name}</h3>
-                        <p>{card.price ? Number(convertToEth(card.price)).toFixed(4) : "0.0000"} HNTR</p>
+                        <p>
+                          {card.price
+                            ? Number(convertToEth(card.price)).toFixed(4)
+                            : "0.0000"}{" "}
+                          HNTR
+                        </p>
                       </div>
                       <div className='items_right justify-content-end d-flex'>
                         <span>
@@ -165,7 +169,7 @@ function ItemsList() {
                     </div>
                     <Link
                       to={`/NFTdetails/${card.id}`}
-                      className='border_btn width-100 title_color'>
+                      className='border_btn  title_color w-100'>
                       {card.isNftOnSale ? "Buy" : "View"}
                     </Link>
                   </div>

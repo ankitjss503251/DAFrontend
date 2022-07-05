@@ -3,79 +3,317 @@ import Footer from "../components/footer";
 import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
 import NFToffer from "../components/NFToffer";
+import NFTBids from "../components/NFTBids";
+import { ethers } from "ethers";
 import NFThistory from "../components/NFThistory";
-import { getCollections, getNFTs } from "../../helpers/getterFunctions";
+import {
+  getCollections,
+  getNFTs,
+  getOrderByNftID,
+} from "../../helpers/getterFunctions";
 import { useParams } from "react-router-dom";
 import { convertToEth } from "../../helpers/numberFormatter";
+import { createOffer, putOnMarketplace } from "../../helpers/sendFunctions";
+import { useCookies } from "react-cookie";
+import contracts from "../../config/contracts";
+import {
+  GENERAL_DATE,
+  GENERAL_TIMESTAMP,
+  ZERO_ADDRESS,
+} from "../../helpers/constants";
+import { NotificationManager } from "react-notifications";
+import BGImg from "../../assets/images/background.jpg";
+import moment from "moment";
+import { Tokens } from "../../helpers/tokensToSymbol";
+import Spinner from "../components/Spinner";
 
-var bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
 var textColor = {
   textColor: "#EF981D",
 };
 
 function NFTDetails() {
+  var bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
+  };
+
   const { id } = useParams();
 
   const [NFTDetails, setNFTDetails] = useState([]);
   const [allNFTs, setAllNFTs] = useState([]);
   const [collection, setCollection] = useState([]);
+  const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
+  const [itemprice, setItemprice] = useState(0);
+  const [item_qt, setItem_qt] = useState(1);
+  const [item_bid, setItem_bid] = useState(0);
+  const [selectedToken, setSelectedToken] = useState("USDT");
+  const [selectedTokenFS, setSelectedTokenFS] = useState("BNB");
+  const [datetime, setDatetime] = useState("");
+  const [currentUser, setCurrentUser] = useState();
+  const [cookies] = useCookies([]);
+  const [owned, setOwned] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isPutOnMarketplace, setIsPutonMarketplace] = useState("");
+  const [modal, setModal] = useState(false);
+  const [offerPrice, setOfferPrice] = useState();
+  const [offerQuantity, setOfferQuantity] = useState(1);
+
+  useEffect(() => {
+    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    // else NotificationManager.error("Connect Yout Wallet", "", 800);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cookies.selected_account]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(async () => {
-    try {
-      const reqData = {
-        page: 1,
-        limit: 12,
-        nftID: id,
-      };
-      const res = await getNFTs(reqData);
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const reqData = {
+          page: 1,
+          limit: 12,
+          nftID: id,
+        };
+        const res = await getNFTs(reqData);
+        if (res.length === 0) {
+          window.location.href = "/marketplace";
+          return;
+        }
+        setNFTDetails(res[0]);
+        console.table("nft detail------>>>", res[0]);
+        const c = await getCollections({ collectionID: res[0].collection });
+        setCollection(c[0]);
+        const reqData1 = {
+          page: 1,
+          limit: 12,
+          collectionID: res[0].collection,
+        };
+        const nfts = await getNFTs(reqData1);
 
-      setNFTDetails(res[0]);
-      const c = await getCollections({ collectionID: res[0].collection });
-      console.log("in here", c[0]);
-      setCollection(c[0]);
-      const reqData1 = {
-        page: 1,
-        limit: 12,
-        collectionID: res[0].collection,
-      };
-      const nfts = await getNFTs(reqData1);
-      setAllNFTs(nfts);
-    } catch (e) {
-      console.log("Error in fetching nft Details", e);
+        setAllNFTs(nfts);
+
+        if (
+          currentUser &&
+          res[0].ownedBy &&
+          res[0]?.ownedBy[0]?.address?.toLowerCase()
+        ) {
+          for (let i = 0; i < res[0]?.ownedBy?.length; i++) {
+            if (
+              res[0]?.ownedBy[i]?.address?.toLowerCase() ===
+              currentUser?.toLowerCase()
+            ) {
+              setOwned(true);
+              break;
+            }
+          }
+        }
+
+        if (id) {
+          const _orders = await getOrderByNftID({ nftID: id });
+          console.log("orders123", _orders?.results);
+          setOrders(_orders?.results);
+        }
+      } catch (e) {
+        console.log("Error in fetching nft Details", e);
+      }
+    };
+    fetch();
+  }, [id, currentUser]);
+
+  const PutMarketplace = async () => {
+    setLoading(true);
+    console.log("sale type", marketplaceSaleType);
+
+    console.log(
+      "contracts[selectedToken]",
+      contracts[selectedTokenFS],
+      selectedTokenFS
+    );
+    if(itemprice === undefined || itemprice === "" || itemprice === 0){
+        NotificationManager.error("Please Enter a price","",800);
+        setLoading(false);
+        return;
     }
-  }, []);
+    let orderData = {
+      nftId: NFTDetails.id,
+      collection: NFTDetails.collectionAddress,
+      price: itemprice ,
+      quantity: item_qt,
+      saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
+      salt: Math.round(Math.random() * 10000000),
+      endTime: datetime ? datetime : GENERAL_DATE,
+      chosenType: marketplaceSaleType,
+      minimumBid: item_bid !== "" ? item_bid : 0,
+      // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
+      tokenAddress:
+        marketplaceSaleType === 0
+          ? contracts[selectedTokenFS]
+          : contracts[selectedToken],
+      tokenId: NFTDetails.tokenId,
+      erc721: NFTDetails.type === 1,
+    };
+    await putOnMarketplace(currentUser, orderData);
+    setLoading(false);
+  };
+
+
+  const PlaceOffer = async () => {
+    console.log("NFT Details---->", NFTDetails);
+
+    if (currentUser === undefined || currentUser === "") {
+      NotificationManager.error("Please Connect Metamask");
+      setLoading(false);
+      return;
+    }
+
+    if (offerPrice == "" || offerPrice == undefined) {
+      NotificationManager.error("Enter Offer Price");
+      setLoading(false);
+      return;
+    }
+    console.log("offer quantity is----->", offerQuantity);
+    if (
+      offerQuantity == "" ||
+      (offerQuantity == undefined && NFTDetails.type !== 1)
+    ) {
+      NotificationManager.error("Enter Offer Quantity");
+      setLoading(false);
+      return;
+    }
+    if (datetime == "") {
+      NotificationManager.error("Enter Offer EndTime");
+      setLoading(false);
+      return;
+    }
+
+    let deadline = moment(datetime).unix();
+    let tokenAddress =
+      marketplaceSaleType === 0
+        ? contracts[selectedTokenFS]
+        : contracts[selectedToken];
+    await createOffer(
+      NFTDetails?.tokenId,
+      collection?.contractAddress,
+      NFTDetails?.ownedBy[0],
+      currentUser,
+      NFTDetails?.type,
+      offerQuantity,
+      ethers.utils.parseEther(offerPrice),
+      deadline,
+      NFTDetails.id,
+      tokenAddress
+    );
+  setLoading(false);
+    //await putOnMarketplace(currentUser, orderData);
+    return;
+  };
+
+  // Popup
+
+  const handleMpShow = () => {
+    document.getElementById("tab_opt_1").classList.remove("put_hide");
+    document.getElementById("tab_opt_1").classList.add("put_show");
+    document.getElementById("tab_opt_2").classList.remove("put_hide");
+    document.getElementById("tab_opt_2").classList.add("put_show");
+    document.getElementById("tab_opt_3").classList.remove("put_show");
+    document.getElementById("tab_opt_3").classList.add("put_hide");
+    document.getElementById("tab_opt_4").classList.remove("put_show");
+    document.getElementById("tab_opt_4").classList.add("put_hide");
+    document.getElementById("tab_opt_5").classList.remove("put_show");
+    document.getElementById("tab_opt_5").classList.add("put_hide");
+    document.getElementById("btn1").classList.add("active");
+    document.getElementById("btn2").classList.remove("active");
+    document.getElementById("btn3").classList.remove("active");
+    setmarketplaceSaleType(0);
+  };
+
+  const handleMpShow1 = () => {
+    document.getElementById("tab_opt_1").classList.remove("put_show");
+    document.getElementById("tab_opt_1").classList.add("put_hide");
+    document.getElementById("tab_opt_2").classList.remove("put_hide");
+    document.getElementById("tab_opt_2").classList.add("put_show");
+    document.getElementById("tab_opt_3").classList.remove("put_hide");
+    document.getElementById("tab_opt_3").classList.add("put_show");
+    document.getElementById("tab_opt_4").classList.remove("put_hide");
+    document.getElementById("tab_opt_4").classList.add("put_show");
+    document.getElementById("tab_opt_5").classList.remove("put_hide");
+    document.getElementById("tab_opt_5").classList.add("put_show");
+    document.getElementById("btn1").classList.remove("active");
+    document.getElementById("btn2").classList.add("active");
+    document.getElementById("btn3").classList.remove("active");
+    setmarketplaceSaleType(1);
+  };
+
+  const handleMpShow2 = () => {
+    document.getElementById("tab_opt_1").classList.remove("put_show");
+    document.getElementById("tab_opt_1").classList.add("put_hide");
+    document.getElementById("tab_opt_2").classList.remove("put_hide");
+    document.getElementById("tab_opt_2").classList.add("put_show");
+    document.getElementById("tab_opt_3").classList.remove("put_hide");
+    document.getElementById("tab_opt_3").classList.add("put_show");
+    document.getElementById("tab_opt_4").classList.remove("put_hide");
+    document.getElementById("tab_opt_4").classList.add("put_show");
+    document.getElementById("tab_opt_5").classList.remove("put_show");
+    document.getElementById("tab_opt_5").classList.add("put_hide");
+    document.getElementById("btn1").classList.remove("active");
+    document.getElementById("btn2").classList.remove("active");
+    document.getElementById("btn3").classList.add("active");
+    setmarketplaceSaleType(2);
+  };
+
+  function handleChange(ev) {
+    if (!ev.target["validity"].valid) return;
+
+    const dt = ev.target["value"] + ":00Z";
+
+    const ct = moment().toISOString();
+
+    if (dt < ct) {
+      NotificationManager.error(
+        "Start date should not be of past date",
+
+        "",
+
+        800
+      );
+
+      return;
+    }
+
+    setDatetime(dt);
+  }
 
   return (
     <div>
+      {loading ? <Spinner /> : ""}
       <section style={bgImgStyle} className='pdd_8'>
         <div className='container'>
           <div className='row mb-5'>
             <div className='col-lg-6 mb-xl-5 mb-lg-5 mb-5'>
-              <img src={NFTDetails?.image} class='img-fluid nftimg' alt='' />
+              <img
+                src={NFTDetails?.image}
+                className='img-fluid nftimg'
+                alt=''
+              />
             </div>
             <div className='col-lg-6 nft_details'>
               <p className='mb-0'>
                 {collection?.name} Collection{" "}
-                <img src={"../img/check.png"} class='img-fluid' alt='' />
+                <img src={"../img/check.png"} className='img-fluid' alt='' />
               </p>
               <h1 className='mb-3'>{NFTDetails?.name}</h1>
               <div className='owner_by mb-4'>
                 <p>
                   Owned by{" "}
-                  <span style={textColor}>
-                    {collection?.createdBy}
-                  </span>
+                  <span style={textColor}>{collection?.createdBy}</span>
                 </p>
                 <span className='add_wishlist'>
                   <svg
@@ -92,10 +330,13 @@ function NFTDetails() {
                   {NFTDetails?.like} favourites
                 </span>
               </div>
-              <ul class='nav nav-pills mb-4' id='pills-tab' role='tablist'>
-                <li class='nav-item' role='presentation'>
+              <ul
+                className='nav nav-pills mb-4 w-100'
+                id='pills-tab'
+                role='tablist'>
+                <li className='nav-item w-100' role='presentation'>
                   <button
-                    class='nav-link active'
+                    className='nav-link active details-btn '
                     id='pills-home-tab'
                     data-bs-toggle='pill'
                     data-bs-target='#pills-home'
@@ -107,193 +348,110 @@ function NFTDetails() {
                   </button>
                 </li>
               </ul>
-              <div class='tab-content' id='pills-tabContent'>
+              <div className='tab-content' id='pills-tabContent'>
                 <div
-                  class='tab-pane fade show active'
+                  className='tab-pane fade show active'
                   id='pills-home'
                   role='tabpanel'
                   aria-labelledby='pills-home-tab'>
                   <div className='row'>
-                    <div className='col-md-6 mb-4'>
-                      <div className='tab_label'>
-                        <p>
-                          Background <span className='big_text'>Bunker</span>
-                        </p>
-                        <p>
-                          85% <span>have this traits</span>
-                        </p>
-                      </div>
-                      <div class='progress'>
-                        <div
-                          class='progress-bar w-75'
-                          role='progressbar'
-                          aria-valuenow='75'
-                          aria-valuemin='0'
-                          aria-valuemax='100'></div>
-                      </div>
-                    </div>
-                    <div className='col-md-6 mb-4'>
-                      <div className='tab_label'>
-                        <p>
-                          Eyes <span>Alert</span>
-                        </p>
-                        <p>
-                          14% <span>have this traits</span>
-                        </p>
-                      </div>
-                      <div class='progress'>
-                        <div
-                          class='progress-bar w-25'
-                          role='progressbar'
-                          aria-valuenow='25'
-                          aria-valuemin='0'
-                          aria-valuemax='100'></div>
-                      </div>
-                    </div>
-                    <div className='col-md-6 mb-4'>
-                      <div className='tab_label'>
-                        <p>
-                          Camouflage <span className='big_text'>Jungle</span>
-                        </p>
-                        <p>
-                          45% <span>have this traits</span>
-                        </p>
-                      </div>
-                      <div class='progress'>
-                        <div
-                          class='progress-bar w-50'
-                          role='progressbar'
-                          aria-valuenow='50'
-                          aria-valuemin='0'
-                          aria-valuemax='100'></div>
-                      </div>
-                    </div>
-                    <div className='col-md-6 mb-4'>
-                      <div className='tab_label'>
-                        <p>
-                          Mouth <span>Neutral</span>
-                        </p>
-                        <p>
-                          61% <span>have this traits</span>
-                        </p>
-                      </div>
-                      <div class='progress'>
-                        <div
-                          class='progress-bar w-50'
-                          role='progressbar'
-                          aria-valuenow='50'
-                          aria-valuemin='0'
-                          aria-valuemax='100'></div>
-                      </div>
-                    </div>
-                    <div className='col-md-6 mb-4'>
-                      <div className='tab_label'>
-                        <p>
-                          Weapon <span className='big_text'>Pistol</span>
-                        </p>
-                        <p>
-                          27% <span>have this traits</span>
-                        </p>
-                      </div>
-                      <div class='progress'>
-                        <div
-                          class='progress-bar w-25'
-                          role='progressbar'
-                          aria-valuenow='25'
-                          aria-valuemin='0'
-                          aria-valuemax='100'></div>
-                      </div>
-                    </div>
-                    <div className='col-md-6 mb-4'>
-                      <div className='tab_label'>
-                        <p>
-                          Hair <span>Short</span>
-                        </p>
-                        <p>
-                          35% <span>have this traits</span>
-                        </p>
-                      </div>
-                      <div class='progress'>
-                        <div
-                          class='progress-bar w-50'
-                          role='progressbar'
-                          aria-valuenow='50'
-                          aria-valuemin='0'
-                          aria-valuemax='100'></div>
-                      </div>
-                    </div>
-                    <div className='col-md-6 mb-4'>
-                      <div className='tab_label'>
-                        <p>
-                          Accessories <span className='big_text'>Grenade</span>
-                        </p>
-                        <p>
-                          33% <span>have this traits</span>
-                        </p>
-                      </div>
-                      <div class='progress'>
-                        <div
-                          class='progress-bar w-25'
-                          role='progressbar'
-                          aria-valuenow='25'
-                          aria-valuemin='0'
-                          aria-valuemax='100'></div>
-                      </div>
-                    </div>
-                    <div className='col-md-6 mb-4'>
-                      <div className='tab_label'>
-                        <p>
-                          Hat <span>None</span>
-                        </p>
-                        <p>
-                          63% <span>have this traits</span>
-                        </p>
-                      </div>
-                      <div class='progress'>
-                        <div
-                          class='progress-bar w-50'
-                          role='progressbar'
-                          aria-valuenow='50'
-                          aria-valuemin='0'
-                          aria-valuemax='100'></div>
-                      </div>
-                    </div>
-                    <div className='col-md-6 mb-4'>
-                      <div className='tab_label'>
-                        <p>
-                          Accessories{" "}
-                          <span className='big_text'>Ammo mags</span>
-                        </p>
-                        <p>
-                          95% <span>have this traits</span>
-                        </p>
-                      </div>
-                      <div class='progress'>
-                        <div
-                          class='progress-bar w-75'
-                          role='progressbar'
-                          aria-valuenow='75'
-                          aria-valuemin='0'
-                          aria-valuemax='100'></div>
-                      </div>
-                    </div>
+                    {NFTDetails
+                      ? NFTDetails?.attributes?.map((attr, key) => {
+                          const rarity = parseInt(attr?.rarity);
+                          return (
+                            <div className='col-md-6 mb-4' key={key}>
+                              <div className='tab_label'>
+                                <div className='d-flex align-items-start flex-column'>
+                                  <p>{attr.trait_type}</p>
+                                  <span className='big_text'>{attr.value}</span>
+                                </div>
+                                {rarity ? (
+                                  <p>
+                                    {rarity}% <span>have this traits</span>
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+                              {rarity ? (
+                                <div className='progress mt-2'>
+                                  <div
+                                    className={`progress-bar w-${rarity}`}
+                                    role='progressbar'
+                                    aria-valuenow={rarity}
+                                    aria-valuemin='0'
+                                    aria-valuemax='100'></div>
+                                </div>
+                              ) : (
+                                ""
+                              )}
+                              {/* <div className='progress'>
+                          <div
+                            className='progress-bar w-75'
+                            role='progressbar'
+                            aria-valuenow='75'
+                            aria-valuemin='0'
+                            aria-valuemax='100'></div>
+                        </div> */}
+                            </div>
+                          );
+                        })
+                      : ""}
                   </div>
                 </div>
               </div>
               <div className='price_box'>
                 <h4>Price</h4>
-                <div className='price_div'>
-                  <img src={"../img/favicon.png"} class='img-fluid' alt='' />
-                  {Number(
-                    convertToEth(collection?.price)
-                  ).toFixed(4)}{" "}
-                  HNTR
-                </div>
-                <button type='button' className='yellow_btn mr-3 mb-3'>
-                  Buy Now
-                </button>
-                <button type='button' className='border_btn title_color'>
-                  Bid / Offer
+                {orders.length > 0 ? (
+                  <div className="price_div">
+                    <img
+                      src={Tokens[orders[0].paymentToken]}
+                      className="img-fluid hunter_fav"
+                      alt=""
+                    />
+                    {Number(
+                      convertToEth(orders[0].price.$numberDecimal)
+                    ).toFixed(4)}{" "}
+                  </div>
+                ) : (
+                  ""
+                )}
+
+                {orders.length <= 0 ? (
+                  owned ? (
+                    <button
+                      type="button"
+                      className="title_color buy_now"
+                      data-bs-toggle="modal"
+                      data-bs-target="#detailPop"
+                    >
+                      Put On Marketplace
+                    </button>
+                  ) : (
+                    ""
+                  )
+                ) : !owned && orders.length > 0 ? (
+                  orders[0].salesType === 0 ? (
+                    <button type="button" className="title_color buy_now">
+                      Buy Now
+                    </button>
+                  ) : (
+                    <button type="button" className="title_color buy_now">
+                      Place A Bid
+                    </button>
+                  )
+                ) : (
+                  ""
+                )}
+
+                <button
+                  type="button"
+                  className="border_btn title_color"
+                  data-bs-toggle="modal"
+                  data-bs-target="#brandModal"
+                  onClick={() => setModal("active")}
+                >
+                  Make Offers
                 </button>
               </div>
             </div>
@@ -309,16 +467,10 @@ function NFTDetails() {
               </h3>
               <div className='row'>
                 <div className='col-md-4 nftDetails_img_con'>
-                  <img
-                    src={collection?.logoImg}
-                    alt=''
-                    class='img-fluid'
-                  />
+                  <img src={collection?.logoImg} alt='' className='img-fluid' />
                 </div>
                 <div className='col-md-8'>
-                  <p className='textdes'>
-                    {collection?.description}{" "}
-                  </p>
+                  <p className='textdes'>{collection?.description} </p>
                 </div>
               </div>
             </div>
@@ -399,19 +551,26 @@ function NFTDetails() {
               <img
                 src={"../img/nftdetails/graf.png"}
                 alt=''
-                class='img-fluid box_shadow'
+                className='img-fluid box_shadow'
               />
             </div>
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>Listings</h3>
               <div className='table-responsive'>
-                <NFTlisting />
+                <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
+              </div>
+            </div>
+
+            <div className="col-md-12 mb-5">
+              <h3 className="title_36 mb-4">Bids</h3>
+              <div className="table-responsive">
+                <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>Offers</h3>
               <div className='table-responsive'>
-                <NFToffer />
+                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
             <div className='col-md-12 mb-5'>
@@ -432,14 +591,17 @@ function NFTDetails() {
                     collectionName={collection?.name}
                   />
                 </div>
-                {
-                  allNFTs.length > 4 ?    <div class='col-md-12 text-center mt-5'>
-                  <a class='view_all_bdr' href={`/marketplacecollection/${collection?.name}`}>
-                    View All
-                  </a>
-                </div> : ""
-                }
-             
+                {allNFTs.length > 4 ? (
+                  <div className='col-md-12 text-center mt-5'>
+                    <a
+                      className='view_all_bdr'
+                      href={`/collection/${collection?._id}`}>
+                      View All
+                    </a>
+                  </div>
+                ) : (
+                  ""
+                )}
               </>
             ) : (
               ""
@@ -447,6 +609,361 @@ function NFTDetails() {
           </div>
         </div>
       </section>
+
+      {/* <!-- The Modal --> */}
+      <div className={`modal marketplace putOnMarketplace ${isPutOnMarketplace}`} id='detailPop'>
+        <div className='modal-dialog modal-lg modal-dialog-centered'>
+          <div className='modal-content'>
+            {/* <!-- Modal Header --> */}
+            <div className='modal-header p-4'>
+              <h4 className='text-light title_20 mb-0'>Put on Marketplace</h4>
+              <button
+                type='button'
+                className='btn-close text-light'
+                data-bs-dismiss='modal'></button>
+            </div>
+
+            {/* <!-- Modal body --> */}
+            <div className='modal-body'>
+              <h3 className='text-light text_16'>Select method</h3>
+
+              <ul
+                className='d-flex mb-4 justify-content-around g-3'
+                id='pills-tab'
+                role='tablist'>
+                <li className='list-unstyled'>
+                  <button
+                    id='btn1'
+                    className='navbtn active'
+                    type='button'
+                    onClick={handleMpShow}>
+                    <i className='fa fa-tag'></i>
+                    <span className='title_20 d-block'>Fixed price</span>
+                  </button>
+                </li>
+                <li className='list-unstyled'>
+                  <button
+                    id='btn2'
+                    className='navbtn'
+                    type='button'
+                    onClick={handleMpShow1}>
+                    <i className='fa fa-hourglass-1'></i>
+                    <span className='title_20 d-block'>Timed auction</span>
+                  </button>
+                </li>
+                <li className='list-unstyled'>
+                  <button
+                    id='btn3'
+                    className='navbtn'
+                    type='button'
+                    onClick={handleMpShow2}>
+                    <i className='fa fa-users'></i>
+                    <span className='title_20 d-block'>Open for bids</span>
+                  </button>
+                </li>
+              </ul>
+
+              <div className='tab-content'>
+                <div className='mb-3' id='tab_opt_1'>
+                  <label htmlfor='item_price' className='form-label'>
+                    Price
+                  </label>
+                  <input
+                    type='text'
+                    name='item_price'
+                    id='item_price'
+                    min='0'
+                    max='18'
+                    className='form-control input_design'
+                    placeholder='Please Enter Price (MATIC)'
+                    value={itemprice}
+                    onChange={(event) => setItemprice(event.target.value)}
+                  />
+                </div>
+                <div className='mb-3' id='tab_opt_2'>
+                  <label htmlfor='item_qt' className='form-label'>
+                    Quantity
+                  </label>
+                  <input
+                    type='text'
+                    name='item_qt'
+                    id='item_qt'
+                    min='1'
+                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
+                    className='form-control input_design'
+                    placeholder='Please Enter Quantity'
+                    value={item_qt}
+                    onChange={(event) => {
+                      if (
+                        NFTDetails.type !== 1 &&
+                        event.target.value > NFTDetails?.totalQuantity
+                      ) {
+                        NotificationManager.error(
+                          "Quantity must be less than or equal to total quantity.",
+                          "",
+                          800
+                        );
+                        return;
+                      }
+                      setItem_qt(event.target.value);
+                    }}
+                  />
+                </div>
+                <div id='tab_opt_3' className='mb-3 put_hide'>
+                  <label htmlfor='item_bid' className='form-label'>
+                    Minimum bid
+                  </label>
+                  <input
+                    type='text'
+                    name='item_bid'
+                    id='item_bid'
+                    min='0'
+                    max='18'
+                    className='form-control input_design'
+                    placeholder='Enter Minimum Bid'
+                    value={item_bid}
+                    onChange={(event) => setItem_bid(event.target.value)}
+                  />
+                </div>
+
+                <div id='tab_opt_4' className='mb-3'>
+                  <label htmlfor='Payment' className='form-label'>
+                    Payment Token
+                  </label>
+
+                  {marketplaceSaleType === 0 ? (
+                    <>
+                      <select
+                        className='form-select input_design select_bg'
+                        name='BNB'
+                        value={selectedTokenFS}
+                        onChange={(event) => {
+                          event.preventDefault();
+                          event.persist();
+                          console.log("selected token", selectedTokenFS);
+                          setSelectedTokenFS(event.target.value);
+                        }}>
+                        {" "}
+                        <option value={"BNB"} selected>
+                          BNB
+                        </option>
+                        <option value={"HNTR"}>HNTR</option>
+                        <option value={"USDT"}>USDT</option>
+                      </select>
+                    </>
+                  ) : marketplaceSaleType == 1 ? (
+                    <>
+                      <select
+                        className='form-select input_design select_bg'
+                        name='USDT'
+                        value={selectedToken}
+                        onChange={(event) =>
+                          setSelectedToken(event.target.value)
+                        }>
+                        {" "}
+                        <option value={"USDT"} selected>
+                          USDT
+                        </option>
+                      </select>
+                    </>
+                  ) : (
+                    <>
+                      <select
+                        className='form-select input_design select_bg'
+                        name='USDT'
+                        value={selectedToken}
+                        onChange={(event) =>
+                          setSelectedToken(event.target.value)
+                        }>
+                        <option value={"USDT"} selected>
+                          USDT
+                        </option>
+                      </select>
+                    </>
+                  )}
+                </div>
+                <div id='tab_opt_5' className='mb-3 put_hide'>
+                  <label for='item_ex_date' className='form-label'>
+                    Expiration date
+                  </label>
+                  {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
+                  <input
+                    type='datetime-local'
+                    value={datetime.toString().substring(0, 16)}
+                    onChange={handleChange}
+                    className='input_design'
+                  />
+                </div>
+                <div className='mt-5 mb-3 text-center'>
+                  <button
+                    type='button'
+                    className='square_yello'
+                    href='/mintcollectionlive'
+                    onClick={PutMarketplace}>
+                    Put On Marketplace
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/*Bid/Offer Modal*/}
+
+      <div className='modal marketplace' id='brandModal'>
+        <div className='modal-dialog modal-lg modal-dialog-centered'>
+          <div className='modal-content'>
+            {/* <!-- Modal Header --> */}
+            <div className='modal-header p-4'>
+              <h4 className='text-light title_20 mb-0'>Offer</h4>
+              <button
+                type='button'
+                className='btn-close text-light'
+                data-bs-dismiss='modal'></button>
+            </div>
+
+            {/* <!-- Modal body --> */}
+            <div className="modal-body">
+              <div className="tab-content">
+                <div className="mb-3" id="tab_opt_1">
+                  <label htmlfor="item_price" className="form-label">
+                    Price
+                  </label>
+                  <input
+                    type='text'
+                    name='item_price'
+                    id='item_price'
+                    min='0'
+                    max='18'
+                    className='form-control input_design'
+                    placeholder='Please Enter Price (MATIC)'
+                    value={offerPrice}
+                    onChange={(event) => setOfferPrice(event.target.value)}
+                  />
+                </div>
+                <div className='mb-3' id='tab_opt_2'>
+                  <label htmlfor='item_qt' className='form-label'>
+                    Quantity
+                  </label>
+                  <input
+                    type="text"
+                    name="item_qt"
+                    id="item_qt"
+                    min="1"
+                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
+                    className="form-control input_design"
+                    placeholder="Please Enter Quantity"
+                    value={offerQuantity}
+                    onChange={(event) => {
+                      if (NFTDetails.type == 1 && event.target.value > 1) {
+                        setOfferQuantity(1);
+                        NotificationManager.error(
+                          "Quantity must be 1.",
+                          "",
+                          800
+                        );
+                      }
+                      if (
+                        NFTDetails.type !== 1 &&
+                        event.target.value > NFTDetails?.totalQuantity
+                      ) {
+                        NotificationManager.error(
+                          "Quantity must be less than or equal to total quantity.",
+                          "",
+                          800
+                        );
+                        return;
+                      }
+                    }}
+                  />
+                </div>
+                <div id="tab_opt_4" className="mb-3">
+                  <label htmlfor="Payment" className="form-label">
+                    Payment Token
+                  </label>
+
+                  {marketplaceSaleType === 0 ? (
+                    <>
+                      <select
+                        className='form-select input_design select_bg'
+                        name='BNB'
+                        value={selectedTokenFS}
+                        onChange={(event) => {
+                          event.preventDefault();
+                          event.persist();
+                          console.log("selected token", selectedTokenFS);
+                          setSelectedTokenFS(event.target.value);
+                        }}>
+                        {" "}
+                        <option value={"BNB"} selected>
+                          BNB
+                        </option>
+                        <option value={"HNTR"}>HNTR</option>
+                        <option value={"USDT"}>USDT</option>
+                      </select>
+                    </>
+                  ) : marketplaceSaleType == 1 ? (
+                    <>
+                      <select
+                        className='form-select input_design select_bg'
+                        name='USDT'
+                        value={selectedToken}
+                        onChange={(event) =>
+                          setSelectedToken(event.target.value)
+                        }>
+                        {" "}
+                        <option value={"USDT"} selected>
+                          USDT
+                        </option>
+                      </select>
+                    </>
+                  ) : (
+                    <>
+                      <select
+                        className='form-select input_design select_bg'
+                        name='USDT'
+                        value={selectedToken}
+                        onChange={(event) =>
+                          setSelectedToken(event.target.value)
+                        }>
+                        <option value={"USDT"} selected>
+                          USDT
+                        </option>
+                      </select>
+                    </>
+                  )}
+                </div>
+
+                <div id='tab_opt_5' className='mb-3 '>
+                  <label for='item_ex_date' className='form-label'>
+                    Expiration date
+                  </label>
+                  {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
+                  <input
+                    type="datetime-local"
+                    value={(datetime || "").toString().substring(0, 16)}
+                    //value={datetime}
+                    onChange={handleChange}
+                    className='input_design'
+                  />
+                </div>
+                <div className='mt-5 mb-3 text-center'>
+                  <button
+                    type='button'
+                    className='square_yello'
+                    href='/mintcollectionlive'
+                    onClick={PlaceOffer}>
+                    Place Offer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/*Bid/Offer Modal Ends*/}
       <Footer />
     </div>
   );

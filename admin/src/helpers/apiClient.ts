@@ -1,11 +1,11 @@
 class api
 {
   private response =  new Promise(()=>{});  
-
+  private headers  = {'Content-Type':""};
 
   ajax(url:string,method:'GET'|'POST'|'PUT'|'DELETE',data:any,header:string='json')
   {
-    let headers={'Content-Type':""};
+    let headers=this.headers;
     let body;
     
     // let formData = new FormData();
@@ -28,6 +28,11 @@ class api
       'headers': headers,
       body
     });
+  }
+  addHeaders(headers)
+  {
+    this.headers = headers;
+    return this;
   }
   get(url:string)
   {

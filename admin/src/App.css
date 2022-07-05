@@ -881,3 +881,39 @@ tbody td {
   width: 100%;
   object-fit: contain;
 }
+
+
+.btn_container{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: max-content;
+}
+
+.logo{
+  color: #fff;
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.logo:hover{
+  color: #fff;
+}
+
+
+
+.exclusive-btn, .hot-btn{
+  background: transparent;
+    border: 1px solid #ef981d !important;
+    color: #ef981d !important;
+}
+
+.exclusive-btn.active, .hot-btn.active{
+  background:  linear-gradient(180deg, #ef981d, #f9bf50) !important;
+  color: #fff !important;
+}
+
+.exclusive-btn:focus, .hot-btn:focus{
+  box-shadow:  none !important;
+}
