@@ -280,7 +280,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message, "", 800);
-            slowRefresh(1000);
+            // slowRefresh(1000);
             return;
           }
         } catch (e) {

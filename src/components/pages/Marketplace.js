@@ -317,14 +317,14 @@ function Marketplace() {
                     </ul>
                   </div>
 
-                  <button
+                  {/* <button
                     type='button'
                     class='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
-                  </button>
-                  <div id='demo2' class='collapse show'>
+                  </button> */}
+                  {/* <div id='demo2' class='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
@@ -359,7 +359,7 @@ function Marketplace() {
                         </button>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                 </form>
               </div>
               <div className='filtercol'>

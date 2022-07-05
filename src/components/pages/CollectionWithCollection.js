@@ -85,6 +85,7 @@ function CollectionWithCollection() {
     document.getElementById("gridtwo").classList.add("active");
     document.getElementById("gridthree").classList.remove("active");
   };
+
   const gridthree = () => {
     setgrid("col-md-4 mb-4");
     document.getElementById("gridthree").classList.add("active");
@@ -174,6 +175,7 @@ function CollectionWithCollection() {
               alt=''
               src={brandDetails?.logoImage}
               class='img-fluid collection_profile'
+              onError={(e) => e.target.src = "../img/collections/list4.png"}
             />
             <img
               alt=''
@@ -270,27 +272,53 @@ function CollectionWithCollection() {
           </div>
           <Relatedcollection collections={collections} />
 
-          <div className='row mb-5'>
+          <div className='row'>
             <div className='col-md-12 text-center item_active'>
-              <NavLink
-                activeclassname='active-link'
-                to={"/collection"}
-                className='mr-3 active'>
+            <ul className="author_cart nav" role="tablist">
+            <li classname="item_active">
+              <a
+                data-bs-toggle="pill"
+                data-bs-target="#pills-Items"
+                role="tab"
+                aria-controls="pills-Items"
+                aria-selected="true"
+                className="active"
+              >
                 <span className='mr-3'>
                   <ItemSVG />
                 </span>{" "}
                 Items
-              </NavLink>
-              <NavLink to={"/collectionActivity"}>
-                <span className='mr-3'>
+              </a>
+            </li>
+            <li classname="item_active">
+              <a
+                data-bs-toggle="pill"
+                data-bs-target="#pills-Activity"
+                role="tab"
+                aria-controls="pills-Activity"
+                aria-selected="true"
+              >
+               <span className='mr-3'>
                   <ActivitySVG />
                 </span>{" "}
                 Activity
-              </NavLink>
+              </a>
+            </li>
+            </ul>
             </div>
           </div>
-
-          <div className='row'>
+        </div>
+      </section>
+      <section className='collection_list mb-5 pb-5'>
+        <div className='container'>
+          <div className="tab-content" id="pills-tabContent">
+            <div
+              className="tab-pane fade show active"
+              id="pills-Items"
+              role="tabpanel"
+              aria-labelledby="pills-Items-tab"
+            >
+                <div className='row'>
             <div className='col-lg-12  mb-5'>
               <div className='market_search_form'>
                 <form class='d-flex marketplace_form'>
@@ -388,14 +416,14 @@ function CollectionWithCollection() {
                     </ul>
                   </div>
 
-                  <button
+                  {/* <button
                     type='button'
                     class='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
-                  </button>
-                  <div id='demo2' class='collapse show'>
+                  </button> */}
+                  {/* <div id='demo2' class='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
@@ -430,7 +458,7 @@ function CollectionWithCollection() {
                         </button>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                 </form>
               </div>
               <div className='filtercol'>
@@ -520,10 +548,6 @@ function CollectionWithCollection() {
               </div> */}
             </div>
           </div>
-        </div>
-      </section>
-      <section className='collection_list mb-5 pb-5'>
-        <div className='container'>
           <div className='row'>
             {loader ? (
               <CollectionsNFT cards={cardCount} grid={grid} />
@@ -548,6 +572,212 @@ function CollectionWithCollection() {
                 </button>
               </div>
             )}
+          </div>
+          </div>
+          <div
+              className="tab-pane fade"
+              id="pills-Activity"
+              role="tabpanel"
+              aria-labelledby="pills-Activity-tab"
+            >
+              <div className="row">
+              <div className="col-md-6 d-md-inline-flex">
+                <select class="action_select_form form-select mr-3" aria-label="Default select example" style={bgImgarrow}>
+                  <option selected>Listings</option>
+                  <option value="1">Listings Items 1</option>
+                  <option value="2">Listings Items 2</option>
+                  <option value="3">Listings Items 3</option> 
+                </select>
+                <select class="action_select_form form-select" aria-label="Default select example" style={bgImgarrow}>
+                  <option selected>Hunter Token</option>
+                  <option value="1">Hunter Token 1</option>
+                  <option value="2">Hunter Token 2</option>
+                  <option value="3">Hunter Token 3</option>
+                </select>
+              </div>
+              <div className="col-md-6 d-flex justify-content-end">
+                <select class="action_select_form form-select" aria-label="Default select example" style={bgImgarrow}>
+                  <option selected>Last 90 Days</option>
+                  <option value="1">Last 40 Days</option>
+                  <option value="2">Last 30 Days</option>
+                  <option value="3">Last 10 Days</option> 
+                </select>
+              </div>
+          </div>
+          <section className="collectionAction mb-5 pb-5 mt-5">
+        <div className="container">
+            <div className="row">
+                <div className="col-md-12">
+                    <img alt='' src={'../img/collections/graph.png'} class="img-fluid" />
+                </div> 
+            </div>
+            <div className="row mt-5">
+              <div className='col-md-12'>
+                <div class="table-responsive">
+                  <table className=" Action_table text-center">
+                  <tr className="">
+                      <th><div className="tb_title">List</div></th>
+                      <th><div className="tb_title">Item</div></th>
+                      <th><div className="tb_title">Price</div></th>
+                      <th><div className="tb_title">Quantity</div></th>
+                      <th><div className="tb_title">From</div></th>
+                      <th><div className="tb_title">To</div></th>
+                      <th><div className="tb_title">Time</div></th>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  <tr>
+                      <td><img alt='' src={'../img/collections/bxs_purchase-tag.png'} class="img-fluid" /> List</td>
+                      <td><img alt='' src={'../img/collections/item1.png'} class="img-fluid" /> Firearms #5234</td>
+                      <td>
+                          <p className="table_p"><img alt='' src={'../img/collections/hhh.png'} class="img-fluid" /> 99.95</p>
+                          <span className='special_text'>$591,623.15</span>
+                      </td>
+                      <td>1</td>
+                      <td>UserName</td>
+                      <td>UserName</td>
+                      <td>an hour ago</td>
+                  </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div className="row mt-5">
+                <div class="col-md-12 text-center "><a class="view_all_bdr" href="/">Load More</a></div>
+            </div>
+        </div>
+      </section>
+            </div>
           </div>
         </div>
       </section>

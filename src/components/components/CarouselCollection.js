@@ -80,13 +80,14 @@ function CarouselCollection() {
                   key={key}
                 >
                   <a href={`/collection/${card._id}`}>
-                    <img src={card.logoImg} class='img-fluid w-100' alt='' />
+                    <img src={card.coverImg} class='img-fluid w-100' alt='' onError={(e) => e.target.src = "../img/collections/list4.png"}/>
                     <div className='collection_text'>
                       <div className='coll_profileimg'>
                         <img
                           alt=''
                           className='profile_img'
-                          src={card.coverImg}
+                          src={card.logoImg}
+                          onError={(e) => e.target.src = "../img/collections/list4.png"}
                         />
                         <img
                           alt=''
