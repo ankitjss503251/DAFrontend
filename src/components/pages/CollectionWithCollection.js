@@ -12,26 +12,28 @@ import {
   getBrandDetailsById,
   getCollections,
   getNFTs,
-  getOrderByNftID,
+  getCategory,
   getPrice,
   getUserById,
+  getOrderByNftID,
 } from "../../helpers/getterFunctions";
-import AllNFTs from "../SVG/AllNFTs";
-import Firearmsvg from "../SVG/Firearmsvg";
-import Soldierssvg from "../SVG/Soldierssvg";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-
-const bgImgStyle = {
-  backgroundImage: "url(./../../assets/images/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
+// import { CopyToClipboard } from "react-copy-to-clipboard";
+import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
+import BGImg from "../../assets/images/background.jpg";
+import { convertToEth } from "../../helpers/numberFormatter";
+import NotificationManager from "react-notifications/lib/NotificationManager";
 
 function CollectionWithCollection() {
+  const bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
+  };
+
   const { brandID } = useParams();
   const [brandDetails, setBrandDetails] = useState([]);
   const [user, setUser] = useState([]);
@@ -39,6 +41,13 @@ function CollectionWithCollection() {
   const [togglemode, setTogglemode] = useState("filterhide");
   const [nfts, setNfts] = useState([]);
   const [isCopied, setIsCopied] = useState(false);
+  const [category, setCategory] = useState([]);
+  const [currPage, setCurrPage] = useState(1);
+  const [loader, setLoader] = useState(false);
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
+  const [cardCount, setCardCount] = useState(0);
+  const [searchFor, setSearchFor] = useState("");
+  const [ERCType, setERCType] = useState()
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -52,6 +61,15 @@ function CollectionWithCollection() {
         .classList.remove("active");
     }
   };
+
+  useEffect(async () => {
+    try {
+      const c = await getCategory();
+      setCategory(c);
+    } catch (e) {
+      console.log("Error", e);
+    }
+  }, []);
 
   var bgImgarrow = {
     backgroundImage: `url(${arrow})`,
@@ -76,52 +94,66 @@ function CollectionWithCollection() {
   const [grid, setgrid] = useState("col-md-3 mb-4");
 
   useEffect(async () => {
+    setLoader(true);
     try {
       const brand = await getBrandDetailsById(brandID);
       setBrandDetails(brand);
       const user = await getUserById({
         page: 1,
-        limit: 3,
-        userID: brand.createdBy,
+        limit: 4,
+        userID: brand?.createdBy,
       });
       setUser(user);
       const cols = await getCollections({
         brandID: brandID,
       });
       setCollections(cols);
-      console.log("collections with brand id", brandID, cols);
       let temp = [];
       let cnt = 0;
       for (let i = 0; i < cols.length; i++) {
         const nft = await getNFTs({
-          page: 1,
-          limit: 3,
-          collectionID: cols[i]._id,
+          page: currPage,
+          limit: 12,
+          collectionID: cols[i]?._id,
+          searchText: searchFor,
+          ERCType: ERCType,
         });
-        nft.map((n) => {
-          temp[cnt] = {
-            ...n,
-            collectionName: cols[i].name,
-          };
-          cnt++;
-        });
+        setCardCount(cardCount + nft.length);
+        if (nft.length > 0) {
+          for (let j = 0; j < nft.length; j++) {
+            const order = await getPrice({
+              nftID: nft[j].id,
+            });
+            nft[j] = {
+              ...nft[j],
+              price:
+                order?.price?.$numberDecimal === undefined
+                  ? "--"
+                  : Number(convertToEth(order?.price?.$numberDecimal))
+                      .toFixed(6)
+                      .slice(0, -2),
+              saleType: order?.salesType,
+            };
+            temp[cnt] = {
+              ...nft[j],
+              collectionName: cols[i]?.name,
+            };
+            console.log("nft", temp[cnt]);
+            cnt++;
+          }
+        }
+        if (nfts && nft.length <= 0) {
+          setLoader(false);
+          setLoadMoreDisabled("disabled");
+          return;
+        }
       }
-
-      for (let i = 0; i < temp.length; i++) {
-        const order = await getPrice({
-          nftID: temp[i].id,
-        });
-        temp[i] = {
-          ...temp[i],
-          price: order.price.$numberDecimal,
-        };
-      }
-      console.log("harvey", temp);
       setNfts(temp);
+      setLoader(false);
     } catch (e) {
       console.log("error in get brandbyID", e);
     }
-  }, []);
+  }, [currPage, searchFor, ERCType]);
 
   const bgImage = {
     backgroundImage: `url(${brandDetails?.coverImage})`,
@@ -131,6 +163,9 @@ function CollectionWithCollection() {
 
   return (
     <div style={bgImgStyle}>
+      {loadMoreDisabled && nfts.length > 0
+        ? NotificationManager.info("No more items to load", "", 800)
+        : ""}
       <section className='collection_banner pdd_8' style={bgImage}></section>
       <section className='collection_info'>
         <div className='container'>
@@ -169,7 +204,7 @@ function CollectionWithCollection() {
               </a>
             </li>
           </ul>
-          <div className='coppycode text-center'>
+          {/* <div className='coppycode text-center'>
             <span className='ctc'>
               <img alt='' src={"../img/favicon.png"} class='img-fluid' />
               <div className=''>
@@ -201,7 +236,7 @@ function CollectionWithCollection() {
               </CopyToClipboard>
               {isCopied ? <p className='copied'>Copied!</p> : ""}
             </span>
-          </div>
+          </div> */}
 
           <ul className='collection_status mt-5 mb-5'>
             <li>
@@ -209,15 +244,15 @@ function CollectionWithCollection() {
               <p>items</p>
             </li>
             <li>
-              <h4>1.2k</h4>
+              <h4>-</h4>
               <p>owners</p>
             </li>
             <li>
-              <h4>498</h4>
+              <h4>-</h4>
               <p>floor price</p>
             </li>
             <li>
-              <h4>1.3M</h4>
+              <h4>-</h4>
               <p>volume traded</p>
             </li>
           </ul>
@@ -264,6 +299,14 @@ function CollectionWithCollection() {
                     type='search'
                     placeholder='Search item here...'
                     aria-label='Search'
+                    value={searchFor}
+                    onChange={(e) => {
+                      setNfts([]);
+                      setCurrPage(1);
+                      setCardCount(0);
+                      setSearchFor(e.target.value);
+                      setLoadMoreDisabled("");
+                    }}
                   />
                   <button class='market_btn' type='submit'>
                     <img src='../img/search.svg' alt='' />
@@ -272,12 +315,22 @@ function CollectionWithCollection() {
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
-                  style={bgImgarrow}>
-                  <option value='1' selected>
-                    Single Items
+                  style={bgImgarrow}
+                  value={ERCType}
+                  onChange={(e) => {
+                    setNfts([]);
+                    setCurrPage(1);
+                    setCardCount(0);
+                    setERCType(parseInt(e.target.value));
+                    setLoadMoreDisabled("");
+                  }}>
+                  <option value='0' selected>
+                    All Items
                   </option>
+                  <option value='1'>Single Items</option>
                   <option value='2'>Multiple Items</option>
                 </select>
+               
                 <select
                   class='market_select_form form-select'
                   aria-label='Default select example'
@@ -408,34 +461,32 @@ function CollectionWithCollection() {
                 </button>
                 <div id='demo4' class='collapse show'>
                   <ul>
-                    <li>
-                      <Link to={"/marketplace"} className='sub-items'>
-                        <AllNFTs />
-                        All NFTs
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/marketplaceCollection"} className='sub-items'>
-                        <Firearmsvg />
-                        Firearms
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Soldiers"} className='sub-items'>
-                        <Soldierssvg />
-                        Soldiers
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to={"/Accesories"} className='sub-items'>
-                        <Soldierssvg />
-                        Accesories
-                      </Link>
+                    <li className='sub-items'>
+                      <form action='#' className='checked_form'>
+                        <div class='form-check form-check-inline'>
+                          <input type='radio' id='allnfts' name='radio-group' />
+                          <label for='allnfts'>All NFTs</label>
+                        </div>
+                        {category
+                          ? category.map((c) => {
+                              return (
+                                <div class='form-check form-check-inline'>
+                                  <input
+                                    type='radio'
+                                    id={c.name}
+                                    name='radio-group'
+                                  />
+                                  <label for={c.name}>{c.name}</label>
+                                </div>
+                              );
+                            })
+                          : ""}
+                      </form>
                     </li>
                   </ul>
                 </div>
               </div>
-              <div className='filtercol'>
+              {/* <div className='filtercol'>
                 <button
                   type='button'
                   class='drop_down_tlt mb-4'
@@ -466,7 +517,7 @@ function CollectionWithCollection() {
                     </li>
                   </ul>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -474,18 +525,27 @@ function CollectionWithCollection() {
       <section className='collection_list mb-5 pb-5'>
         <div className='container'>
           <div className='row'>
-            {nfts?.map((card) => {
-              return (
-                <div className={grid} key={card.id}>
-                  <CollectionList nft={card} />
-                </div>
-              );
-            })}
+            {loader ? (
+              <CollectionsNFT cards={cardCount} grid={grid} />
+            ) : ( nfts?.length > 0 ? (
+              nfts?.map((card) => {
+                return (
+                  <div className={grid} key={card.id}>
+                    <CollectionList nft={card} />
+                  </div>
+                );
+              }) ) :   <h2 className='text-white text-center'>No NFT Found</h2>
+            )}
             {nfts.length > 6 && (
               <div class='col-md-12 text-center mt-5'>
-                <a class='view_all_bdr' href='/'>
+                <button
+                  type='button'
+                  className={`btn view_all_bdr ${loadMoreDisabled}`}
+                  onClick={() => {
+                    setCurrPage(currPage + 1);
+                  }}>
                   Load More
-                </a>
+                </button>
               </div>
             )}
           </div>

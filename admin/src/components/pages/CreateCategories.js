@@ -3,7 +3,7 @@ import { NotificationManager } from "react-notifications";
 import Sidebar from "../components/Sidebar";
 import { Link } from "react-router-dom";
 import Deletesvg from "../SVG/deletesvg";
-import { addCategory, getAllCategory } from "../../apiServices";
+import { addCategory, getCategory } from "../../apiServices";
 import Loader from "../components/loader";
 import { useCookies } from "react-cookie";
 
@@ -18,7 +18,7 @@ function CreateCategories() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    else NotificationManager.error("Connect Yout Metamask", "", 800);
+    // else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
@@ -26,7 +26,7 @@ function CreateCategories() {
   useEffect(() => {
     if (currentUser) {
       const fetch = async () => {
-        let _myBrand = await getAllCategory();
+        let _myBrand = await getCategory();
         setMyCategory(_myBrand);
         console.log("my collection-fgasdf->", myCategory);
       };

@@ -1,60 +1,199 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React,{useEffect,useState} from "react";
+import {Link} from "react-router-dom";
+import {useCookies} from "react-cookie";
+import {fetchOfferNft} from "../../apiServices";
+import NotificationManager from "react-notifications/lib/NotificationManager";
+import {convertToEth} from "../../helpers/numberFormatter";
+import moment from "moment";
+import {
 
-function NFToffer() {
+  handleUpdateBidStatus,handleAcceptOffers
+} from "../../helpers/sendFunctions";
+import NFTDetails from "../pages/NFTDetails";
+import Clock from "./Clock";
+
+function NFToffer(props) {
+  const [currentUser,setCurrentUser]=useState("");
+  const [cookies]=useCookies([]);
+  const [offer,setOffer]=useState([]);
+
+  useEffect(() => {
+    console.log("cookies.selected_account",cookies.selected_account);
+    if(cookies.selected_account) setCurrentUser(cookies.selected_account);
+    // else NotificationManager.error("Connect Yout Wallet", "", 800);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[cookies.selected_account]);
+
+  useEffect(() => {
+    const fetch=async () => {
+      let searchParams={
+        nftID: props.id,
+        buyerID: "All",
+        bidStatus: "All",
+        //orderID: "All",
+      };
+      console.log("fetch NFT is Called",searchParams);
+
+      let _data=await fetchOfferNft(searchParams);
+      console.log("offer data123",_data.data);
+      if(_data&&_data.data.length>0) {
+     
+        let a=_data.data;
+        
+        setOffer(a);
+        console.log("bid data",_data.data[0]);
+       
+      }
+    };
+    fetch();
+  },[props.id]);
+
   return (
-    <div className='row'>
-      <div className='col-md-12'>
-        <div className='nft_list'>
-          <table className="table text-light">
-              <thead>
+    <div className="row">
+      <div className="col-md-12">
+        <div className="nft_list">
+          <table className="table text-light fixed_header">
+            <thead>
               <tr>
-                  <th>FROM</th>
-                  <th>PRICE</th>
-                  <th>DATE</th>
-                  <th>STATUS</th>
-                  <th className='text-center'>ACTION</th>
+                <th>FROM</th>
+                <th>PRICE</th>
+                <th>DATE</th>
+                <th>ENDS IN</th>
+                <th>STATUS</th>
+                <th className="text-center">ACTION</th>
               </tr>
-              </thead>
-              <tbody>
-              <tr>
-                  <td><span className="yellow_dot circle_dot"></span>0xc8b...6d74</td>
-                  <td><img alt='' src={'../img/favicon.png'} className="img-fluid hunter_fav" /> 5.02</td>
-                  <td>15/03/2022  <span className="nft_time">23:13</span></td>
-                  <td className='blue_text'>Active</td>
-                  <td>
-                  <div className='text-center'>
-                  </div>
-                  </td>
-              </tr>
-              <tr>
-                  <td><span className="lightblue_dot circle_dot"></span>0xc8b...6d74</td>
-                  <td><img alt='' src={'../img/favicon.png'} className="img-fluid hunter_fav" /> 5.02</td>
-                  <td>15/03/2022  <span className="nft_time">23:13</span></td>
-                  <td className='green_text'>Filled</td>
-                  <td>
-                  <div className='text-center'>
-                  </div>
-                  </td>
-              </tr>
-              <tr>
-                  <td><span className="blue_dot circle_dot"></span>0xc8b...6d74</td>
-                  <td><img alt='' src={'../img/favicon.png'} className="img-fluid hunter_fav" /> 5.02</td>
-                  <td>15/03/2022  <span className="nft_time">23:13</span></td>
-                  <td className='red_text'>Cancelled</td>
-                  <td>
-                  <div className='text-center'>
-                    <Link to={'/'} className="small_yellow_btn small_btn mr-3">Accept</Link>
-                    <Link to={'/'} className="small_border_btn small_btn">Reject</Link>
-                  </div>
-                  </td>
-              </tr>
-              </tbody>
+            </thead>
+            <tbody>
+
+              {offer&&offer.length>0
+                ? offer.map((b,i) => {
+                  const bidOwner=b?.owner?.walletAddress?.toLowerCase();
+                  const bidder=b?.bidderID?.walletAddress?.toLowerCase();
+
+
+                  return (
+                    <tr>
+                      <td className="d-flex justify-content-start align-items-center mb-0">
+                        <span className="blue_dot circle_dot"></span>
+                        <span>
+                          {b?.bidderID?.walletAddress
+                            ? b?.bidderID?.walletAddress?.slice(0,3)+
+                            "..."+
+                            b?.bidderID?.walletAddress?.slice(39,41)
+                            :""}
+                        </span>
+                      </td>
+                      <td>
+                        <img
+                          alt=""
+                          src={"../img/favicon.png"}
+                          className="img-fluid hunter_fav"
+                        />{" "}
+                        {Number(
+                          convertToEth(b?.bidPrice?.$numberDecimal)
+                        ).toFixed(4)}
+                      </td>
+                      <td>
+                        {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
+                        <span className="nft_time">
+                          {moment(b.createdOn).format("HH:MM:SS")}
+                        </span>
+                      </td>
+                      <td className="red_text">
+                        {" "}
+                        {console.log(
+                          "b.deadline",
+                          new Date(b.bidDeadline*1000)<new Date()
+                        )}
+                        <Clock
+                          deadline={moment(new Date(b.bidDeadline*1000))
+                            .subtract({
+                              hours: 5,
+                              minutes: 30,
+                            })
+                            .toISOString()}
+                        ></Clock>
+                      </td>
+                      <td className="red_text">
+                        {" "}
+                        {b.bidStatus=="MakeOffer"
+                          ? "Active"
+                          :b.bidStatus}
+                      </td>
+                      <td className="text-center">
+                        {bidOwner===currentUser.toLowerCase()&&b.bidStatus==="MakeOffer"? (
+                          <div className="d-flex justify-content-center align-items-center">
+                            <button
+                              to={"/"}
+                              className="small_yellow_btn small_btn mr-3"
+
+                              onClick={async () => {
+                                await handleAcceptOffers(
+                                  b,
+                                  props,currentUser.toLowerCase()
+                                );
+                              }}
+                            >
+                              Accept
+                            </button>
+                            <button
+                              to={"/"}
+                              className="small_border_btn small_btn"
+                              onClick={async() => {
+                                await handleUpdateBidStatus(b._id,"Rejected")
+                              }}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        ):bidOwner!==currentUser.toLowerCase()&&
+                          bidder===currentUser.toLowerCase()? (
+                          <div className="d-flex justify-content-center align-items-center">
+                            <button
+                              disabled={
+                                new Date(b.bidDeadline*1000)<new Date()
+                              }
+                              className="small_yellow_btn small_btn mr-3"
+                            >
+                              Update Offer
+                            </button>
+                            <button
+                              disabled={
+                                new Date(b.bidDeadline*1000)<new Date()
+                              }
+                              className="small_border_btn small_btn"
+                              onClick={async () => {
+                                await handleUpdateBidStatus(
+                                  b._id,
+                                  "Cancelled"
+                                );
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ):bidder===currentUser.toLowerCase()? (
+                          <button
+                            to={"/"}
+                            className="small_yellow_btn small_btn mr-3"
+                          >
+                            Update Offer
+                          </button>
+                        ):(
+                          ""
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+                :""}
+            </tbody>
           </table>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default NFToffer
+export default NFToffer;

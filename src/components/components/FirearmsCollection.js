@@ -51,6 +51,9 @@ function FirearmsCollection(props) {
                         alt=''
                         src={card.image}
                         class='img-fluid mb-3 nftslide_img'
+                        onError={(e) =>
+                          (e.target.src = "../img/collections/list4.png")
+                        }
                       />
 
                       <div className='nft_info'>
@@ -63,13 +66,13 @@ function FirearmsCollection(props) {
                           />
                         </span>
                         <h3 className=''>{card.name}</h3>
-                        <p className='justify-content-start'>
+                        <p>
                           <img
                             alt=''
                             src={"../img/favicon.png"}
                             class='img-fluid'
                           />
-                          {props.price} HNTR
+                          {card.price} HNTR
                         </p>
                       </div>
                     </a>
