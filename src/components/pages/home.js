@@ -493,7 +493,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className='container no-bottom pdd_8'>
+      <section className='container no-bottom pdd_8 pb-0'>
         <div className='row'>
           <div className='col-lg-12'>
             <div className='text-center'>

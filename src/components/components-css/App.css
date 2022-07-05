@@ -1224,8 +1224,10 @@ header#myHeader {
   border: 3px solid #394956;
   border-radius: 10px;
   background-color: #222e38;
-  height: 100%;
+  /* height: 100%; */
+  
 }
+
 
 
 .coll_profileimg {
@@ -5009,3 +5011,9 @@ body.overflow_hidden {
   height: 260px !important;
   object-fit: cover !important;
 }
+
+
+.nft.hc .slick-list .slick-slide{
+  /* height: 201px !important; */
+      width: 450px !important;
+      }

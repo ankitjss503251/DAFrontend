@@ -520,7 +520,7 @@ function CollectionWithCollection() {
                   class='drop_down_tlt mb-4'
                   data-bs-toggle='collapse'
                   data-bs-target='#demo5'>
-                  On Sale In <UpArrow />
+                  Brands <UpArrow />
                 </button>
                 <div id='demo5' class='collapse show'>
                   <ul>

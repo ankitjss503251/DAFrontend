@@ -508,7 +508,7 @@ function Author() {
                   data-bs-toggle="collapse"
                   data-bs-target="#demo5"
                 >
-                  On Sale In <UpArrow />
+                  Brands <UpArrow />
                 </button>
                 <div id="demo5" class="collapse show">
                   <ul>
