@@ -29,7 +29,7 @@ setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
 
-const onboard = Onboard({
+export const onboard = Onboard({
   wallets: [walletConnect, injected],
   chains: [
     {

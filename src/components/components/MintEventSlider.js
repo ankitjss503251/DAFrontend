@@ -5,16 +5,19 @@ import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
 import Wallet from "../SVG/wallet";
 import { convertToEth } from "../../helpers/numberFormatter";
+import "../components-css/App.css"
+import evt from "../../events/events"
+import { onboard } from "../menu/header";
 
-import {  fetchInfo,
-         testMint,
-         mintTokens } from "../../helpers/Contract-Calls/rockstarCall";
+// import {  fetchInfo,
+//          testMint,
+//          mintTokens } from "../../helpers/Contract-Calls/rockstarCall";
 import BigNumber from "bignumber.js";
 import { useCookies } from "react-cookie";
-export const msgTrigger = async (str) => {
-console.log(str);
-};
+import Spinner from "../components/Spinner";
+const contract =  import (0? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyiCalls");
 
+evt.setMaxListeners(1)
 function MintEventSlider(props) {
  
   var settings = {
@@ -47,36 +50,61 @@ function MintEventSlider(props) {
       },
     ],
   };
+  const [createdItemId, setCreatedItemId] = useState();
+  const [isPutOnMarketplace, setIsPutOnMarketPlace] = useState(true);
+  const [hideClosePopup, sethideClosePopup] = useState(true);
+  const [hideRedirectPopup, sethideRedirectPopup] = useState(false);
+  const [ClosePopupDisabled, setClosePopupDisabled] = useState(true);
+  const [RedirectPopupDisabled, setRedirectPopupDisabled] = useState(true);
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [currQty, setCurrQty] = useState(1);
   const [price, setPrice] = useState();
+  const [loading, setLoading] = useState(false);
 
+  
+  useEffect(() => {
+   console.log("changed");
+  }, [cookies]);
 
 
   useEffect(() => {
     const fetchData = async () => {
+      let { fetchInfo }= await contract
       let getcateg = await fetchInfo();
-      console.log("priccccccccccccce",convertToEth(new BigNumber(getcateg[0].toString())));
       setPrice( convertToEth(new BigNumber(getcateg[0].toString())));
     }
     fetchData();
+   
   }, []);
   const mintFunction = async (qty,price,user) => {
+    evt.emit('txn-status',"initiate loader");
+    let { testMint,mintTokens}= await contract
      let result = await testMint(qty,price,user)
-     if(result){
-      console.log("in  mint section");
+     if(result[1]){
+      evt.emit('txn-status',"approval completed ");
       let txn = await mintTokens(qty,user)
       console.log(txn);
+     
       
      }
-      
+     
   }
+  useEffect(() => {
+    var body = document.body;
+    if (loading ) {
+      body.classList.add("overflow_hidden");
+    } else {
+      body.classList.remove("overflow_hidden");
+    }
+  }, [loading]);
+
 
   return (
     <Slider {...settings}>
 
       <div className='mintevent text-center'>
-        <div className='start_btn'>
+      {loading ? <Spinner /> : ""}
+        <div className='stamintFunctionbtn'>
           Start
           <span>Live</span>
         </div>
@@ -87,10 +115,12 @@ function MintEventSlider(props) {
         <div className='da_img mb-3'>
           <img src={"../img/mint/da.png"} alt='' />
         </div>
-        <Link to={"#"} className='connect_wallet_btn mb-4'>
+        {!cookies.selected_account?(<button className='connect_wallet_btn mb-4'onClick={() => {
+          onboard();
+        }}>
           {" "}
           <Wallet /> Connect Wallet
-        </Link>
+        </button>):("")}
         <div className='mintprice'>Mint Price {price} HNTR</div>
         <div className='amount'>
           <h5>Select Amount</h5>
@@ -141,7 +171,9 @@ function MintEventSlider(props) {
           </div>
         </div>
       </div>
+   
     </Slider>
+   
   );
 }
 
