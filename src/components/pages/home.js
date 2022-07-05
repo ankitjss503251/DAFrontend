@@ -239,7 +239,7 @@ const Home = () => {
                             </li>
                             <li>
                               <img alt='' src={"../img/mint/items.svg"} />{" "}
-                              {`${card.items} items`}
+                              {`${card.totalSupply} items`}
                             </li>
                           </ul>
                           {ct < st ? (
@@ -478,7 +478,7 @@ const Home = () => {
                   );
                 })
               : ""}
-            {upcomingMints.length > 0 ? (
+            {upcomingMints.length > 3 ? (
               <div class='col-md-12 text-center mt-5'>
                 <Link to={"/mintcollectionlive"} className='view_all_bdr'>
                   View All
@@ -568,11 +568,14 @@ const Home = () => {
           <div className='col-lg-12'>
             <CarouselNew />
           </div>
+          {
+            upcomingMints.length > 0 ?
           <div class='col-md-12 text-center mt-5'>
             <Link to={"/marketplace"} className='view_all_bdr'>
               View All
             </Link>
-          </div>
+          </div> : ""
+          }
         </div>
       </section>
 

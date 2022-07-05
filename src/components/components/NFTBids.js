@@ -18,8 +18,6 @@ import { ethers } from "ethers";
 import Spinner from "./Spinner";
 
 function NFTBids(props) {
-  console.log("Props in NFT offer", props);
-
   const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);
   const [bids, setBids] = useState([]);
@@ -216,35 +214,46 @@ function NFTBids(props) {
           ) : Number(willPay) > Number(userBalance) ? (
             <p className='disabled_text'>Insufficient Balance in MATIC</p>
           ) : ( */}
-          <button className='btn-main mt-2 btn-placeABid' onClick={async () => {
-            setIsUpdateBidModal(false);
-            setLoading(true);
-          if (
-            Number(price) <
-            Number(convertToEth(currentBid.price?.$numberDecimal))
-          ) {
-            NotificationManager.error(
-              "Bid Price must be greater than minimum bid",
-              "",
-              800
-            );
-            setLoading(false);
-            return;
-          }
-          await createBid(
-            currentBid.nftID,
-            currentBid.orderID[0]._id,
-            currentBid.orderID[0].sellerID,
-            currentUser,
-            props?.NftDetails?.type,
-            currentBid.total_quantity,
-            ethers.utils.parseEther(price.toString()),
-            false,
-            // new Date(bidDeadline).valueOf() / 1000
-          );
-          setLoading(false);
-          setReloadContent(!reloadContent);
-          }}>
+          <button
+            className='btn-main mt-2 btn-placeABid'
+            onClick={async () => {
+              setIsUpdateBidModal(false);
+              setLoading(true);
+              if (
+                Number(price) <
+                Number(convertToEth(currentBid.price?.$numberDecimal))
+              ) {
+                NotificationManager.error(
+                  "Bid Price must be greater than minimum bid",
+                  "",
+                  800
+                );
+                setLoading(false);
+                return;
+              }
+              try {
+                await createBid(
+                  currentBid.nftID,
+                  currentBid.orderID[0]._id,
+                  currentBid.orderID[0].sellerID,
+                  currentUser,
+                  props?.NftDetails?.type,
+                  currentBid.total_quantity,
+                  ethers.utils.parseEther(price.toString()),
+                  false
+                  // new Date(bidDeadline).valueOf() / 1000
+                );
+                NotificationManager.success(
+                  "Bid Updated Successfully",
+                  "",
+                  800
+                );
+                setLoading(false);
+                setReloadContent(!reloadContent);
+              } catch (e) {
+                NotificationManager.error("Something went wrong", "", 800);
+              }
+            }}>
             {"Update Bid"}
           </button>
           {/* )} */}
@@ -260,7 +269,7 @@ function NFTBids(props) {
 
   return (
     <div className='row'>
-       {loading ? <Spinner /> : ""}
+      {loading ? <Spinner /> : ""}
       {isUpdateBidModal ? updateBidModal : ""}
       <div className='col-md-12'>
         <div className='nft_list'>
@@ -347,7 +356,7 @@ function NFTBids(props) {
                                     props.NftDetails.type
                                   );
                                   setLoading(false);
-                                  setReloadContent(!reloadContent)
+                                  setReloadContent(!reloadContent);
                                 }}>
                                 Accept
                               </button>
@@ -359,6 +368,7 @@ function NFTBids(props) {
                                     b._id,
                                     "Rejected"
                                   );
+                                  setReloadContent(!reloadContent)
                                 }}>
                                 Reject
                               </button>
@@ -381,7 +391,7 @@ function NFTBids(props) {
                                   setPrice(
                                     Number(
                                       convertToEth(b?.bidPrice?.$numberDecimal)
-                                    ).toFixed(4)
+                                    )
                                   );
                                   setIsUpdateBidModal(true);
                                   console.log(
@@ -404,7 +414,7 @@ function NFTBids(props) {
                                     b._id,
                                     "Cancelled"
                                   );
-                                 
+                                  setReloadContent(!reloadContent);
                                 }}>
                                 Cancel
                               </button>
@@ -413,7 +423,7 @@ function NFTBids(props) {
                             <button
                               to={"/"}
                               className='small_border_btn small_btn'>
-                              Place a Bid
+                              Place Bid
                             </button>
                           ) : (
                             ""

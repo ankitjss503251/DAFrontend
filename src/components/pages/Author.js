@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Footer from "../components/footer";
-// import Relatedcollection from '../components/Relatedcollection';
 import AuthorListing from "../components/AuthorListing";
 import DownloadSVG from "../SVG/DownloadSVG";
 import OffermadeSVG from "../SVG/OffermadeSVG";
@@ -13,21 +12,12 @@ import { GetIndividualAuthorDetail, GetOwnedNftList } from "../../apiServices";
 import moment from "moment";
 import coverImg from "./../../assets/images/authorbg.jpg";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
-import { arrayify } from "ethers/lib/utils";
-import AllNFTs from "../SVG/AllNFTs";
-import Firearmsvg from "../SVG/Firearmsvg";
-import Soldierssvg from "../SVG/Soldierssvg";
 import UpArrow from "../SVG/dropdown";
 import { getCategory } from "../../helpers/getterFunctions";
+import BGImg from "../../assets/images/background.jpg";
+import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 
-const bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
+
 
 function Author() {
   const { id } = useParams();
@@ -36,6 +26,8 @@ function Author() {
   const [totalOwned, setTotalOwned] = useState(0);
   const [category, setCategory] = useState([]);
   const [togglemode, setTogglemode] = useState("filterhide");
+  const [loader, setLoader] = useState(false);
+  const [cardCount, setCardCount] = useState(1);
 
   const bgImage = {
     backgroundImage: `url(${coverImg})`,
@@ -46,6 +38,15 @@ function Author() {
   var bgImgarrow = {
     backgroundImage: `url(${arrow})`,
     backgroundRepeat: "no-repeat",
+  };
+
+  const bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
   };
 
   const filterToggle = () => {
@@ -72,19 +73,20 @@ function Author() {
 
   useEffect(() => {
     const fetch = async () => {
+      setLoader(true);
       let _profile = await GetIndividualAuthorDetail({ userID: id });
       setProfile(_profile);
       let reqBody = {
         page: 1,
         limit: 12,
-        userWalletAddress: _profile.walletAddress.toLowerCase(),
+        userWalletAddress: _profile?.walletAddress?.toLowerCase(),
         searchType: "owned",
       };
       let _owned = await GetOwnedNftList(reqBody);
+      setCardCount(cardCount + _owned.count);
       setTotalOwned(_owned.count);
       if (_owned && _owned.results.length > 0) setOwnedNFTs(_owned.results[0]);
-      console.log("owned nfts", _owned.results[0]);
-      console.log("in user profile api", _profile);
+      setLoader(false);
     };
     fetch();
   }, [id]);
@@ -110,10 +112,10 @@ function Author() {
     <div style={bgImgStyle}>
       <section
         className="collection_banner pdd_8 d-flex align-items-center justify-content-center"
-        style={bgImage}
-      ></section>
-      <section className="collection_info">
-        <div className="container">
+        style={bgImage}>
+        </section>
+        <section className="collection_info">
+         <div className="container">
           <div className="row align-items-end martop-100">
             <div className="col-md-4"></div>
             <div className="col-md-4 d-flex justify-content-center">
@@ -313,14 +315,14 @@ function Author() {
                   </button>
                 </form>
                 <select
-                  className="market_select_form form-select"
-                  aria-label="Default select example"
-                  style={bgImgarrow}
-                >
-                  <option value="1" selected>
-                    Single Items
+                  class='market_select_form form-select'
+                  aria-label='Default select example'
+                  style={bgImgarrow}>
+                  <option value='0' selected>
+                    All Items
                   </option>
-                  <option value="2">Multiple Items</option>
+                  <option value='1'>Single Items</option>
+                  <option value='2'>Multiple Items</option>
                 </select>
                 <select
                   className="market_select_form form-select"
@@ -530,7 +532,9 @@ function Author() {
               aria-labelledby="pills-Owned-tab"
             >
               <div className="row">
-                {ownedNFTs?.map((card, key) => (
+              {loader ? (
+              <CollectionsNFT cards={cardCount} grid={grid} />
+            ) : ownedNFTs?.map((card, key) => (
                   <div className={grid} key={key}>
                     <AuthorListing
                       image={card.image}
@@ -548,8 +552,8 @@ function Author() {
               aria-labelledby="pills-Sale-tab"
             >
               <div className="row">
-                {AuthorCard?.map((card) => (
-                  <div className={grid} key={card.id}>
+                {AuthorCard?.map((card, key) => (
+                  <div className={grid} key={key}>
                     <AuthorListing
                       image={card.img}
                       submenu={card.Subheading}
@@ -570,8 +574,8 @@ function Author() {
               aria-labelledby="pills-Favourited-tab"
             >
               <div className="row">
-                {AuthorCard.map((card) => (
-                  <div className={grid} key={card.id}>
+                {AuthorCard.map((card, key) => (
+                  <div className={grid} key={key}>
                     <AuthorListing
                       image={card.img}
                       submenu={card.Subheading}
@@ -592,8 +596,8 @@ function Author() {
               aria-labelledby="pills-Activity-tab"
             >
               <div className="row">
-                {AuthorCard.map((card) => (
-                  <div className={grid} key={card.id}>
+                {AuthorCard.map((card, key) => (
+                  <div className={grid} key={key}>
                     <AuthorListing
                       image={card.img}
                       submenu={card.Subheading}

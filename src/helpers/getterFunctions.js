@@ -278,6 +278,7 @@ export const getCollections=async (req) => {
         brand: coll.brandID,
         createdBy: coll.createdBy,
         link: coll.link,
+        volumeTraded: coll.volumeTraded
       };
     })
     :(formattedData[0]={});
@@ -378,10 +379,10 @@ export const getOrderByNftID=async (reqBody) => {
   return data;
 };
 
-export const getBrandDetailsById=async (reqBody) => {
+export const getBrandDetailsById=async (brandID) => {
   let brand=[];
   try {
-    brand=await getBrandById(reqBody);
+    brand=await getBrandById(brandID);
   } catch(e) {
     console.log("Error in getBrandByID API",e);
   }

@@ -4,24 +4,22 @@ import CollectionList from "../components/CollectionList";
 import ItemSVG from "../SVG/ItemSVG";
 import ActivitySVG from "../SVG/ActivitySVG";
 import { Link, NavLink } from "react-router-dom";
-import { CollectionCard } from "../../Data/dummyJSON";
-import UpArrow from "../SVG/dropdown";
 import { useCookies } from "react-cookie";
 import { NotificationManager } from "react-notifications";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
-import AllNFTs from "../SVG/AllNFTs";
-import Firearmsvg from "../SVG/Firearmsvg";
-import Soldierssvg from "../SVG/Soldierssvg";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   getCollections,
   getNFTs,
   getCategory,
+  getPrice,
 } from "../../helpers/getterFunctions";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
-import BGImg from "../../assets/images/background.jpg"
+import BGImg from "../../assets/images/background.jpg";
+import { convertToEth } from "../../helpers/numberFormatter";
+import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 
 
 const options = [
@@ -67,7 +65,14 @@ function Collection() {
   const [isCopied, setIsCopied] = useState(false);
   const [nftList, setNftList] = useState([]);
   const [category, setCategory] = useState([]);
-  const { id } = useParams();
+  const [togglemode, setTogglemode] = useState("filterhide");
+  const [currPage, setCurrPage] = useState(1);
+  const [loadMore, setLoadMore] = useState(false);
+  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
+  const [cardCount, setCardCount] = useState(0);
+  const [loader, setLoader] = useState(false);
+  const [searchFor, setSearchFor] = useState("");
+  const { id, searchedText } = useParams();
 
   useEffect(async () => {
     try {
@@ -83,12 +88,6 @@ function Collection() {
     // else NotificationManager.error("Connect Yout Wallet", "", 800);
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
-
-  const [togglemode, setTogglemode] = useState("filterhide");
-  const [currPage, setCurrPage] = useState(1);
-  const [loadMore, setLoadMore] = useState(false);
-  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
-  const { searchedText } = useParams();
 
   const filterToggle = () => {
     console.log("filter", togglemode);
@@ -113,48 +112,55 @@ function Collection() {
   }, []);
 
   useEffect(async () => {
+    setLoader(true);
     let temp = nftList;
     try {
       const reqData = {
         page: 1,
         limit: 1,
         collectionID: id,
-        searchText: searchedText ? searchedText : "",
+        searchText: searchedText ? searchedText : ""
       };
       const res = await getCollections(reqData);
-      console.log("collll", res[0]);
       setCollectionDetails(res[0]);
       const data = {
         page: currPage,
         limit: 12,
         collectionID: id,
+        searchText: searchFor
       };
       const nfts = await getNFTs(data);
+      setCardCount(cardCount + nfts.length);
       if (nfts.length > 0) {
         setLoadMoreDisabled("");
-        temp = [...temp, nfts];
-        setCurrPage(currPage + 1);
-        setNftList(temp[0]);
-        for(let i = 0; i < temp[0].length; i++){
-          temp[0][i] = {
-            ...temp[0][i],
-            price: res[0]?.price
-          }
+        for (let i = 0; i < nfts.length; i++) {
+          const order = await getPrice({ nftID: nfts[i].id });
+          nfts[i] = {
+            ...nfts[i],
+            price:  order?.price?.$numberDecimal === undefined ? "--" : Number(
+              convertToEth(order?.price?.$numberDecimal)
+            ).toFixed(6).slice(0, -2),
+            saleType: order?.salesType,
+            collectionName: res[0].name
+          };
         }
+        temp = [...temp, ...nfts];
+        setNftList(temp);
       }
-      if (!nftList && nfts.length <= 0) {
+      if (nftList && nfts.length <= 0) {
+        setLoader(false);
         setLoadMoreDisabled("disabled");
+        return;
       }
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
-  }, [loadMore]);
-
-
+    setLoader(false);
+  }, [loadMore, searchFor]);
 
   return (
     <div style={bgImgStyle}>
-       {loadMoreDisabled
+      {loadMoreDisabled && nftList
         ? NotificationManager.info("No more items to load")
         : ""}
       <section
@@ -239,19 +245,33 @@ function Collection() {
           </div>
           <ul className='collection_status mt-5 mb-5'>
             <li>
-              <h4>10.0k</h4>
+              <h4>
+                {collectionDetails?.totalSupply
+                  ? collectionDetails.totalSupply
+                  : "-"}
+              </h4>
               <p>items</p>
             </li>
             <li>
-              <h4>1.2k</h4>
+              <h4>
+                {collectionDetails?.owners ? collectionDetails.owners : "-"}
+              </h4>
               <p>owners</p>
             </li>
             <li>
-              <h4>498</h4>
+              <h4>
+                {collectionDetails?.price
+                  ? Number(convertToEth(collectionDetails.price))
+                  : "-"}
+              </h4>
               <p>floor price</p>
             </li>
             <li>
-              <h4>1.3M</h4>
+              <h4>
+                {collectionDetails?.volumeTraded
+                  ? collectionDetails.volumeTraded
+                  : "-"}
+              </h4>
               <p>volume traded</p>
             </li>
           </ul>
@@ -264,7 +284,10 @@ function Collection() {
 
           <div className='row mb-5'>
             <div className='col-md-12 text-center item_active'>
-              <NavLink activeclassname='active-link' to={-1} className='mr-3'>
+              <NavLink
+                to={`/collections/{$collectionDetails?.collection}`}
+                activeclassname='active-link'
+                className='mr-3'>
                 <span className='mr-3'>
                   <ItemSVG />
                 </span>{" "}
@@ -288,6 +311,14 @@ function Collection() {
                     type='search'
                     placeholder='Search item here...'
                     aria-label='Search'
+                    value={searchFor}
+                    onChange={(e) => {
+                      setNftList([]);
+                      setCurrPage(1);
+                      setCardCount(0);
+                      setSearchFor(e.target.value);
+                      setLoadMoreDisabled("");
+                    }}
                   />
                   <button class='market_btn' type='submit'>
                     <img src='../img/search.svg' alt='' />
@@ -298,7 +329,7 @@ function Collection() {
                   aria-label='Default select example'
                   style={bgImgarrow}>
                   <option value='all' selected>
-                    All NFTs
+                    Sales Type
                   </option>
                   <option value='buyNow'>Buy Now</option>
                   <option value='onAuction'>On Auction</option>
@@ -336,22 +367,30 @@ function Collection() {
       <section className='collection_list mb-5 pb-5'>
         <div className='container'>
           <div className='row'>
-            {
-            nftList.length > 0 ? nftList?.map((n, k) =>{
-              return (
-                <div className={grid} key={k}>
-                  <CollectionList
-                    nft={n}
-                    collectionName={collectionDetails?.name}
-                  />
-                </div>
-              )
-            }) : ""
-            }
+            {loader ? (
+              <CollectionsNFT cards={cardCount} grid={grid} />
+            ) : nftList.length > 0 ? (
+              nftList?.map((n, k) => {
+                return (
+                  <div className={grid} key={k}>
+                    <CollectionList
+                      nft={n}
+                    />
+                  </div>
+                );
+              })
+            ) : (
+              ""
+            )}
 
-            {nftList ? (
+            {nftList.length > 12 ? (
               <div class='col-md-12 text-center mt-5'>
-                <button class={`btn view_all_bdr ${loadMoreDisabled}`} onClick={() => setLoadMore(!loadMore)}>
+                <button
+                  class={`btn view_all_bdr ${loadMoreDisabled}`}
+                  onClick={() => {
+                    setCurrPage(currPage + 1);
+                    setLoadMore(!loadMore);
+                  }}>
                   Load More
                 </button>
               </div>

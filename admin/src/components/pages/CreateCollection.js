@@ -26,6 +26,7 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
+import {slowRefresh} from "../../helpers/NotifyStatus";
 
 
 function CreateCollection() {
@@ -61,7 +62,7 @@ function CreateCollection() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Your Metamask", "", 800);
+    else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
 
@@ -327,64 +328,54 @@ function CreateCollection() {
         }
 
         console.log("contract address is--->", contractAddress);
-        if (res1.status === 1) {
-          let type;
-          if (nftType === "1") {
-            type = 1;
-          } else {
-            type = 2;
-          }
 
-          fd = new FormData();
-          fd.append("name", title);
-          fd.append("symbol", symbol);
-          fd.append("description", description);
-          fd.append("logoImage", logoImg);
-          fd.append("coverImage", coverImg);
-          fd.append("categoryID", category);
-          fd.append("brandID", brand);
-          fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
-          fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
-          //fd.append("chainID", chain);
-          fd.append("link", importedCollectionLink);
-          fd.append("contractAddress", contractAddress);
-          fd.append("preSaleStartTime", preSaleStartTime);
-          fd.append("preSaleEndTime", datetime2);
-          fd.append("preSaleTokenAddress", contracts.USDT);
-          fd.append("totalSupply", maxSupply);
-          fd.append("type", type);
-          fd.append("price", ethers.utils.parseEther(price.toString()));
-          fd.append("royality", royalty * 1000);
-
-          console.log("form data is---->", fd.value);
-
-          try {
-            let collection = await createCollection(fd);
-            console.log("create Collection response is--->", collection);
-            setLoading(false);
-            if (collection === "Collection created") {
-              NotificationManager.success(
-                "collection created successfully",
-                "",
-                1800
-              );
-              setLoading(false);
-              setTimeout(() => {
-                window.location.href = "/createcollection";
-              }, 1000);
-            } else {
-              NotificationManager.error(collection, "", 1800);
-              console.log("category message", collection);
-              setLoading(false);
-            }
-          } catch (e) {
-            NotificationManager.error(e.message, "", 1800);
-            setLoading(false);
-          }
+        let type;
+        if (nftType === "1") {
+          type = 1;
         } else {
-          NotificationManager.error("Something went wrong", "", 1800);
+          type = 2;
+        }
+
+        fd = new FormData();
+        fd.append("name", title);
+        fd.append("symbol", symbol);
+        fd.append("description", description);
+        fd.append("logoImage", logoImg);
+        fd.append("coverImage", coverImg);
+        fd.append("categoryID", category);
+        fd.append("brandID", brand);
+        fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
+        fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
+        //fd.append("chainID", chain);
+        fd.append("link", importedCollectionLink);
+        fd.append("contractAddress", contractAddress);
+        fd.append("preSaleStartTime", preSaleStartTime);
+        fd.append("preSaleEndTime", datetime2);
+        fd.append("preSaleTokenAddress", contracts.USDT);
+        fd.append("totalSupply", maxSupply);
+        fd.append("type", type);
+        fd.append("price", ethers.utils.parseEther(price.toString()));
+        fd.append("royality", royalty * 1000);
+
+
+        try {
+          await createCollection(fd);
+        } catch (e) {
+          NotificationManager.error(e.message, "", 1800);
           setLoading(false);
         }
+        setLoading(false);
+
+        NotificationManager.success(
+          "collection created successfully",
+          "",
+          1800
+        );
+        setLoading(false);
+
+        setTimeout(() => {
+          window.location.href = "/createcollection";
+        }, 1000);
       }
     }
   };
@@ -512,6 +503,7 @@ function CreateCollection() {
         let nftCount = _nfts.length;
         dbSupply = parseInt(nftCount);
         console.log("coll update", res._id);
+        slowRefresh(1000);
       }
 
       for (let i = dbSupply; i < parseInt(originalSupply); i++) {
@@ -549,25 +541,16 @@ function CreateCollection() {
   };
 
   const setShowOnMarketplace = async (id, show) => {
-    setLoading(true);
     try {
       let fd = new FormData();
-
       fd.append("id", id);
       fd.append("isOnMarketplace", show);
-
       await UpdateCollection(fd);
-
-      // setTimeout(() => {
-      //   window.location.href = "/createcollection";
-      // }, 1000);
+      NotificationManager.success("Collection Updated Successfully", "", 800);
+      setReloadContent(!reloadContent);
     } catch (e) {
       console.log(e);
       NotificationManager.error(e.message, "", 1500);
-      setLoading(false);
-      // setTimeout(() => {
-      //   window.location.href = "/createcollection";
-      // }, 1000);
     }
   };
 
@@ -580,12 +563,14 @@ function CreateCollection() {
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
+      setLogoImg(res2.logoImage);
+      setCoverImg(res2.coverImage);
       setTitle(res2.name);
       setRoyalty(res2.royalityPercentage);
       setPreSaleStartTime(res2.preSaleStartTime);
       setDatetime2(res2.preSaleEndTime);
       setMaxSupply(res2.totalSupply);
-      setPrice(res2.price?.$numberDecimal);
+      setPrice(Number(convertToEth(res2.price?.$numberDecimal)));
       setCategory(res2.categoryID?.name);
       setBrand(res2.brandID?.name);
       setDescription(res2.description);
@@ -601,7 +586,7 @@ function CreateCollection() {
       fd.append("id", collectionID);
       fd.append(field, value);
       await UpdateCollection(fd);
-      NotificationManager.success("Collection updated", "", 1000);
+      NotificationManager.success("Collection updated Successfully", "", 800);
       setReloadContent(!reloadContent);
     } catch (e) {
       console.log("Error", e);
@@ -629,7 +614,10 @@ function CreateCollection() {
             type="button"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
-            onClick={() => setModal("active")}
+            onClick={() => {
+              
+              
+              setModal("active")}}
           >
             + Add Collection
           </button>
@@ -645,14 +633,14 @@ function CreateCollection() {
             + Import Collection
           </button>
         </div>
-        <div className="adminbody table-widget text-light box-background">
+        <div className="adminbody table-widget text-light box-background table-responsive">
           <h5 className="admintitle font-600 font-24 text-yellow">Example</h5>
-          <p className="admindescription">
+          {/* <p className="admindescription">
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry's standard dummy text
             ever since the 1500s, when an unknown printer took a galley of type
             and scrambled it to make a type specimen book.
-          </p>
+          </p> */}
           <table className="table table-hover text-light">
             <thead>
               <br></br>
@@ -747,7 +735,9 @@ function CreateCollection() {
                           ""
                         )}
                         <button
-                          className="btn btn-admin m-1 p-1 text-light "
+                          className={`btn btn-admin m-1 p-1 showHide-btn ${
+                            item.isOnMarketplace ? "active" : ""
+                          }`}
                           type="button"
                           onClick={async () => {
                             item.isOnMarketplace === 0
@@ -757,7 +747,15 @@ function CreateCollection() {
                         >
                           {item.isOnMarketplace === 0 ? "Show" : "Hide"}
                         </button>
-
+                        <button
+                          className="btn btn-admin m-1 p-1 text-light"
+                          type="button"
+                          onClick={async () => {
+                            window.location.href = `/importedNfts/${item.contractAddress}`;
+                          }}
+                        >
+                          View NFTs
+                        </button>
                         <button
                           className="btn btn-admin m-1 p-1 text-light"
                           type="button"
@@ -772,9 +770,7 @@ function CreateCollection() {
                           Edit
                         </button>
                         <button
-                          className={`btn btn-admin m-1 p-1 exclusive-btn ${
-                            item.isExclusive ? "active" : ""
-                          }`}
+                          className={`btn btn-admin m-1 p-1 exclusive-btn ${item.isExclusive ? "active" : ""}`}
                           type="button"
                           onClick={() =>
                             handleCollection(
@@ -867,6 +863,7 @@ function CreateCollection() {
                       onClick={() => imageUploader.current.click()}
                     >
                       <p className="text-center">Click or Drop here</p>
+
                       <img
                         alt=""
                         ref={uploadedImage}
@@ -913,6 +910,8 @@ function CreateCollection() {
                       onClick={() => imageUploader2.current.click()}
                     >
                       <h4 className="text-center">Click or Drop here</h4>
+
+                      {console.log("coverImg", coverImg.name)}
                       <img
                         alt=""
                         ref={uploadedImage2}
@@ -1382,7 +1381,7 @@ function CreateCollection() {
                       <img
                         alt=""
                         ref={uploadedImage}
-                        src={"../images/upload.png"}
+                        src={logoImg ? logoImg : "../images/upload.png"}
                         style={{
                           width: "110px",
                           height: "110px",
@@ -1428,7 +1427,7 @@ function CreateCollection() {
                       <img
                         alt=""
                         ref={uploadedImage2}
-                        src={"../images/upload.png"}
+                        src={coverImg ? coverImg : "../images/upload.png"}
                         style={{
                           width: "110px",
                           height: "110px",

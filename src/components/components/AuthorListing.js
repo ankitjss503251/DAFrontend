@@ -5,7 +5,9 @@ function AuthorListing(props) {
   return (
     <Link to={props.link}>
     <div className="collection_items">
-        <img alt='' src={props.image} class="img-fluid width-100" />
+        <img alt='' src={props.image} className="img-fluid width-100"  style={{ borderTopLeftRadius : "inherit", borderTopRightRadius: "inherit" }} onError={(e) => {
+            e.target.src = "../img/collections/list4.png"
+        }}/>
         <div className="coll_itemstext">
             <div className="collection_row mb-3">
                 <div className="collection_col">
