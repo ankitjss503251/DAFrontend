@@ -105,6 +105,7 @@ function NFTDetails() {
         console.table("nft detail------>>>",res[0]);
         const c=await getCollections({collectionID: res[0].collection});
         setCollection(c[0]);
+        
         const reqData1={
           page: 1,
           limit: 12,
@@ -567,6 +568,9 @@ function NFTDetails() {
                 src={NFTDetails?.image}
                 className='img-fluid nftimg'
                 alt=''
+                onError={(e) => {
+                  e.target.src = "../img/collections/list4.png"
+                }}
               />
             </div>
             <div className='col-lg-6 nft_details'>
@@ -666,8 +670,10 @@ function NFTDetails() {
                 </div>
               </div>
               <div className='price_box'>
-                <h4>Price</h4>
+              
                 {orders.length > 0 ? (
+                  <>
+                    <h4>Price</h4>
                   <div className='price_div'>
                     <img
                       src={Tokens[orders[0].paymentToken]}
@@ -678,6 +684,7 @@ function NFTDetails() {
                       convertToEth(orders[0].price.$numberDecimal)
                     ).toFixed(6).slice(0,-2)}{" "}
                   </div>
+                  </>
                 ):(
                   ""
                 )}
@@ -747,7 +754,7 @@ function NFTDetails() {
                   <img src={collection?.logoImg} alt='' className='img-fluid' />
                 </div>
                 <div className='col-md-8'>
-                  <p className='textdes'>{collection?.description} </p>
+                  <p className='textdes'>{collection?.desc} </p>
                 </div>
               </div>
             </div>
@@ -851,7 +858,7 @@ function NFTDetails() {
               </div>
             </div>
             <div className='col-md-12 mb-5'>
-              <h3 className='title_36 mb-4'>Histoy</h3>
+              <h3 className='title_36 mb-4'>History</h3>
               <div className='table-responsive'>
                 <NFThistory />
               </div>
