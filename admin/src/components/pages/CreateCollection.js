@@ -608,6 +608,7 @@ function CreateCollection() {
       {loading ? <Loader /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
+        {isSuperAdmin()?null:<>
         <div className="add_btn mb-4 d-flex justify-content-end">
           <button
             className="btn btn-admin text-light"
@@ -633,6 +634,8 @@ function CreateCollection() {
             + Import Collection
           </button>
         </div>
+        </>}
+        <div className="adminbody table-widget text-light box-background">
         <div className="adminbody table-widget text-light box-background table-responsive">
           <h5 className="admintitle font-600 font-24 text-yellow">Example</h5>
           {/* <p className="admindescription">
