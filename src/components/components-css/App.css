@@ -1226,6 +1226,8 @@ header#myHeader {
   background-color: #222e38;
   height: 100%;
 }
+
+
 .coll_profileimg {
   position: relative;
   left: 50%;
@@ -1414,7 +1416,6 @@ button.slick-arrow.slick-next {
   box-shadow: 2px 2px 5px rgb(0 0 0 / 25%);
   border-radius: 10px;
   padding: 20px 15px;
-  
 }
 .items_info {
   display: flex;
@@ -2149,6 +2150,7 @@ button.filter_btn.active {
   padding: 0px;
   margin: 0;
   list-style: none;
+  max-height: 178px;
 }
 .nft_list th,
 .nft_list h6 {
@@ -2205,15 +2207,14 @@ button.filter_btn.active {
   margin-right: 10px;
 }
 
-.profile_pic{
+.profile_pic {
   display: block;
   width: 50px;
   height: 50px;
   border-radius: 100%;
 }
 
-
-.profile_pic img{
+.profile_pic img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2707,11 +2708,11 @@ span.special_text {
   width: 100%;
   border-radius: 100%;
 }
-.profile_me img{
+.profile_me img {
   width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: inherit;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 .profile_images li h4 {
@@ -4706,11 +4707,11 @@ a:hover {
   background: rgba(0, 0, 0, 0.6);
 }
 
-.putOnMarketplace{
+.putOnMarketplace {
   display: none;
 }
 
-.putOnMarketplace.active{
+.putOnMarketplace.active {
   display: block;
 }
 .input_design option {
@@ -4930,84 +4931,81 @@ a:hover {
   margin: 10px 0px;
 }
 
-
-.checkout_input:focus{
+.checkout_input:focus {
   color: #000 !important;
   background: transparent !important;
 }
 
-.navbar_form input, .navbar_form input:focus{
+.navbar_form input,
+.navbar_form input:focus {
   color: #fff !important;
 }
 
-#item_price:focus, #item_bid:focus{
+#item_price:focus,
+#item_bid:focus {
   color: #fff !important;
 }
 
-.nft .slick-list .slick-slide{
+.nft .slick-list .slick-slide {
   width: 322px !important;
-     height: 484px !important;
+  height: 484px !important;
   border-radius: 10px;
-  }
-  
-  .nft-cont {
-     display: block;
-     position: relative;
-     top: -50px;
-     border-radius: 5px;
-  }
-  
-  .nft-cont img{
-  
-     border-radius: inherit;
-     width: 100% !important;
-     height: 100% !important;
-     object-fit: contain !important;
-  }
-  
+}
 
-  .nft-info-div{
-    position: relative;
-    bottom: 32px;
-  }
+.nft-cont {
+  display: block;
+  position: relative;
+  top: -50px;
+  border-radius: 5px;
+}
 
-  .nft-logo-img{
-    width: 82.56px;
-    height: 80px;
-    border-radius: 100%;
-  }
+.nft-cont img {
+  border-radius: inherit;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
 
-  .profile_left .profile_img.creatorImg{
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    border: none;
-  }
+.nft-info-div {
+  position: relative;
+  bottom: 32px;
+}
 
+.nft-logo-img {
+  width: 82.56px;
+  height: 80px;
+  border-radius: 100%;
+}
 
-  .spinner-container{
-    
-    background: rgba(0,0,0,.6);
-    z-index: 9999;
-  }
+.profile_left .profile_img.creatorImg {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  border: none;
+}
 
-  .spinner-container div{
-    display: flex;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    /* background: #fff; */
-    padding: 10px;
-    border-radius: 10px;
-  }
+.spinner-container {
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+}
 
-  body.overflow_hidden{
-    overflow: hidden;
-  }
+.spinner-container div {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* background: #fff; */
+  padding: 10px;
+  border-radius: 10px;
+}
 
-  .items_img.my-3{
-    background-color: #c1bdbd2e;
-    height: 260px !important;
-    object-fit: cover !important;
-  }
+body.overflow_hidden {
+  overflow: hidden;
+}
+
+.items_img.my-3 {
+  background-color: #c1bdbd2e;
+  height: 260px !important;
+  object-fit: cover !important;
+}

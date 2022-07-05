@@ -116,19 +116,27 @@ function Marketplace() {
         salesType: activeSaleType !== -1 ? activeSaleType : "",
       };
       const res = await getNFTs(reqData);
-      console.log("length of res--->", cardCount + res.length );
       setCardCount(cardCount + res.length);
       if (res.length > 0) {
         setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
           const ownedBy = await getUserById({ userID: res[i].createdBy });
-          const orderDet = await getOrderByNftID({ nftId: res[i].id });
+          const orderDet = await getOrderByNftID({
+            page: 1,
+            limit: 1,
+            nftID: res[i].id,
+          });
           res[i] = {
             ...res[i],
             salesType: orderDet?.results[0]?.salesType,
-            price: Number(
-              convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
-            ).toFixed(4),
+            price:
+              orderDet?.results[0]?.price?.$numberDecimal === undefined
+                ? "--"
+                : Number(
+                    convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
+                  )
+                    .toFixed(6)
+                    .slice(0, -2),
             creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
           };
           if (orderDet?.results?.length > 0) {
@@ -514,6 +522,9 @@ function Marketplace() {
                         <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
                           <img
                             alt=''
+                            onError={(e) => {
+                              e.target.src = "../img/collections/list4.png";
+                            }}
                             src={card.image}
                             class='img-fluid items_img w-100 my-3'
                           />
@@ -522,10 +533,7 @@ function Marketplace() {
                           <div className='items_info '>
                             <div className='items_left'>
                               <h3 className=''>{card.name}</h3>
-                              <p>
-                                {card.price !== "NaN" ? card.price : "0.0000"}{" "}
-                                HNTR
-                              </p>
+                              <p>{card.price} HNTR</p>
                             </div>
                             <div className='items_right justify-content-end d-flex'>
                               <span>
@@ -560,7 +568,7 @@ function Marketplace() {
                 });
               })
             ) : (
-              <h2 className='text-white'>No NFT Found</h2>
+              <h2 className='text-white text-center'>No NFT Found</h2>
             )}
           </div>
           {allNFTs?.length > 0 ? (

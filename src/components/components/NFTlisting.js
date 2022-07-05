@@ -26,11 +26,9 @@ function NFTlisting(props) {
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(0);
   const [willPay, setWillPay] = useState(0);
-  const [userBalance, setUserBalance] = useState(0);
   const [isBuyNowModal, setIsBuyNowModal] = useState(false);
   const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState([]);
-  const [bidDeadline, setBidDeadline] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -217,7 +215,7 @@ function NFTlisting(props) {
                 NotificationManager.error("Something went wrong", "", 800);
               }
             }}>
-            {"Place A Bid"}
+            {"Place Bid"}
           </button>
         </div>
       }
@@ -330,12 +328,12 @@ function NFTlisting(props) {
           <table className='table text-light'>
             <thead>
               <tr>
-                <th>FROM</th>
-                <th>PRICE</th>
-                <th>DATE</th>
-                <th>SALE TYPE</th>
-                <th>ENDS IN</th>
-                <th>STATUS</th>
+                <th scope="col">FROM</th>
+                <th scope="col">PRICE</th>
+                <th scope="col">DATE</th>
+                <th scope="col">SALE TYPE</th>
+                <th scope="col">ENDS IN</th>
+                <th scope="col">STATUS</th>
                 <th className='text-center'>ACTION</th>
               </tr>
             </thead>
@@ -460,7 +458,7 @@ function NFTlisting(props) {
                                     return;
                                   }
                                 }}>
-                                {o.salesType === 0 ? "Buy Now" : "Place A Bid"}
+                                {o.salesType === 0 ? "Buy Now" : "Place Bid"}
                               </button>
                             )}
                           </div>
@@ -469,6 +467,7 @@ function NFTlisting(props) {
                     );
                   })
                 : ""}
+             
             </tbody>
           </table>
         </div>
