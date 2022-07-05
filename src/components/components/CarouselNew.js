@@ -130,6 +130,9 @@ function ItemsList() {
                       alt=''
                       src={card.image}
                       class='img-fluid items_img my-3'
+                      onError={(e) => {
+                        e.target.src = "../img/collections/list4.png"
+                      }}
                     />
                   </a>
                   <div className='items_text nft-info-div'>

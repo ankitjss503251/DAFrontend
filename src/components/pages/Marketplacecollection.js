@@ -69,7 +69,7 @@ function Marketplacecollection() {
         setLoader(true);
         try {
           setShowTab("show active");
-        
+
           document.getElementById(searchedText).classList.add("active");
           const res1 = await getCategory({
             name: searchedText,
@@ -84,7 +84,7 @@ function Marketplacecollection() {
       console.log("Error in fetching all collections list", e);
     }
     setLoader(false);
-  }, [loadMore, searchedText,showTab]);
+  }, [loadMore, searchedText, showTab]);
 
   const handleCategoryChange = async (category) => {
     setLoader(true);
@@ -190,9 +190,9 @@ function Marketplacecollection() {
               role='tabpanel'
               aria-labelledby='all'>
               <div className='row'>
-                {loader  ? (
+                {loader ? (
                   <CollectionSkeletonCard cards={cardCount} />
-                ) :  allCollections?.length > 0 ? (
+                ) : allCollections?.length > 0 ? (
                   allCollections.map((oIndex) => {
                     return oIndex.map((card) => (
                       <div className='col-lg-4 col-md-6 mb-5'>
@@ -200,9 +200,9 @@ function Marketplacecollection() {
                           <a href={`/collection/${card?._id}`}>
                             <img
                               className='img-fluid w-100'
-                              src={card?.logoImg}
+                              src={ card?.logoImg }
                               onError={(e) => {
-                                e.target.src = ""
+                                e.target.src = "../img/collections/list4.png";
                               }}
                               alt=''
                             />
@@ -215,6 +215,9 @@ function Marketplacecollection() {
                                   alt=''
                                   className='profile_img'
                                   src={card.brand?.logoImage}
+                                  onError={(e) => {
+                                    e.target.src = "../img/collections/list4.png";
+                                  }}
                                 />
                                 <img
                                   alt=''
@@ -233,7 +236,9 @@ function Marketplacecollection() {
                     ));
                   })
                 ) : (
-                  <h2 className='text-white text-center'>No Collection Found</h2>
+                  <h2 className='text-white text-center'>
+                    No Collection Found
+                  </h2>
                 )}
                 {allCollections.length > 3 ? (
                   <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
@@ -252,72 +257,78 @@ function Marketplacecollection() {
                 )}
               </div>
             </div>
-
-           
-              <div
-                class={`tab-pane fade ${showTab}`}
-                id={`#${activeCat.name}`}
-                role='tabpanel'
-                aria-labelledby={activeCat.name}>
-                <div className='row'>
-                  {loader ? (
-                    <CollectionSkeletonCard cards={cardCount} />
-                  ) : activeCat.length > 0 ? (
-                    activeCat.map((card, key) => (
-                      <div className='col-lg-4 col-md-6 mb-5' key={key}>
-                        <div className='collection_slide'>
-                          <a href={`/collection/${card._id}`}>
-                            <img
-                              className='img-fluid w-100'
-                              src={card.logoImg}
-                              alt=''
-                            />
+            <div
+              class={`tab-pane fade ${showTab}`}
+              id={`#${activeCat.name}`}
+              role='tabpanel'
+              aria-labelledby={activeCat.name}>
+              <div className='row'>
+                {loader ? (
+                  <CollectionSkeletonCard cards={cardCount} />
+                ) : activeCat.length > 0 ? (
+                  activeCat.map((card, key) => (
+                    <div className='col-lg-4 col-md-6 mb-5' key={key}>
+                      <div className='collection_slide'>
+                        <a href={`/collection/${card._id}`}>
+                          <img
+                            className='img-fluid w-100'
+                            src={card.logoImg}
+                            alt=''
+                            onError={(e) => {
+                              e.target.src = "../img/collections/list4.png";
+                            }}
+                          />
+                        </a>
+                        <div className='collection_text'>
+                          <a
+                            href={`/collectionwithcollection/${card.brand._id}`}>
+                            <div className='coll_profileimg'>
+                              <img
+                                alt=''
+                                className='profile_img'
+                                src={card.brand.logoImage}
+                                onError={(e) => {
+                                  e.target.src = "../img/collections/list4.png";
+                                }}
+                              />
+                              <img
+                                alt=''
+                                className='check_img'
+                                src={"../img/collections/check.png"}
+                              />
+                            </div>
                           </a>
-                          <div className='collection_text'>
-                            <a
-                              href={`/collectionwithcollection/${card.brand._id}`}>
-                              <div className='coll_profileimg'>
-                                <img
-                                  alt=''
-                                  className='profile_img'
-                                  src={card.brand.logoImage}
-                                />
-                                <img
-                                  alt=''
-                                  className='check_img'
-                                  src={"../img/collections/check.png"}
-                                />
-                              </div>
-                            </a>
-                            <a href={`/collection/${card._id}`}>
-                              <h4 className='collname'>{card.name}</h4>
-                              <p>{card.desc}</p>
-                            </a>
-                          </div>
+                          <a href={`/collection/${card._id}`}>
+                            <h4 className='collname'>{card.name}</h4>
+                            <p>{card.desc}</p>
+                          </a>
                         </div>
                       </div>
-                    ))
-                  ) : (
-                    <h2 className='text-white text-center'>No Collection Found</h2>
-                  )}
-                  {activeCat?.length > 3 ? (
-                    <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
-                      <button
-                        type='button'
-                        className={`btn view_all_bdr ${loadMoreDisabled}`}
-                        onClick={() => {
-                          setCurrPage(currPage + 1);
-                          setLoadMore(!loadMore);
-                        }}>
-                        Load More
-                      </button>
                     </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
+                  ))
+                ) : (
+                  <h2 className='text-white text-center'>
+                    No Collection Found
+                  </h2>
+                )}
+                {activeCat?.length > 3 ? (
+                  <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                    <button
+                      type='button'
+                      className={`btn view_all_bdr ${loadMoreDisabled}`}
+                      onClick={() => {
+                        setCurrPage(currPage + 1);
+                        setLoadMore(!loadMore);
+                      }}>
+                      Load More
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
-            ) 
+            </div>
+            )
           </div>
         </div>
       </section>

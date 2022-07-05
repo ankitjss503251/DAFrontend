@@ -112,10 +112,10 @@ function Author() {
     <div style={bgImgStyle}>
       <section
         className="collection_banner pdd_8 d-flex align-items-center justify-content-center"
-        style={bgImage}
-      ></section>
-      <section className="collection_info">
-        <div className="container">
+        style={bgImage}>
+        </section>
+        <section className="collection_info">
+         <div className="container">
           <div className="row align-items-end martop-100">
             <div className="col-md-4"></div>
             <div className="col-md-4 d-flex justify-content-center">
