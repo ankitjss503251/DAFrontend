@@ -2383,7 +2383,7 @@ button.filter_btn.active {
   font-family: "Montserrat";
   font-weight: 600;
   font-size: 18px;
-  color: #ffffff;
+  color: #ffffff !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;

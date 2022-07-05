@@ -80,8 +80,8 @@ function CarouselCollection() {
                   className='collection_slide'
                   key={key}
                 >
-                  <a href={`/collection/${card._id}`} style={{borderRadius: "inherit"}}>
-                    <img src={card.coverImg} class='img-fluid w-100' alt='' onError={(e) => e.target.src = "../img/collections/list4.png"}/>
+                  <a href={`/collection/${card._id}`}>
+                    <img style={{borderTopLeftRadius: "10px", borderTopRightRadius:"10px"}} src={card.coverImg} class='img-fluid w-100' alt='' onError={(e) => e.target.src = "../img/collections/list4.png"}/>
                     </a>
                     <div className='collection_text'>
                     <a href={`/collectionwithcollection/${card?.brand?._id}`}>

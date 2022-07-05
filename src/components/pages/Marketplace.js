@@ -484,12 +484,6 @@ function Marketplace() {
               </div>
             </div>
           </div>
-
-          {/* <div className="row">
-             
-              <Marketplacecart />
-            </div> */}
-
           <div className='row'>
             {loader ? (
               <SkeletonCard cards={cardCount} grid={grid} />
@@ -510,11 +504,13 @@ function Marketplace() {
                                     ? card.creatorImg
                                     : "../img/collections/profile1.png"
                                 }
+                                onError={(e) => e.target.src = "../img/marketplace/list4.png"}
                               />
                               <img
                                 alt=''
                                 className='icheck_img'
                                 src={"../img/collections/check.png"}
+                                
                               />
                             </div>
                           </a>
