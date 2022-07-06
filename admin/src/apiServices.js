@@ -32,8 +32,7 @@ export const adminRegister = async (account) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      walletAddress: account,
-      // role: "admin",
+      walletAddress: account
     }),
   };
   try {
@@ -388,7 +387,6 @@ export const GetBrand = async (id) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("brand data is---->", datas);
     if (datas.data) return datas.data;
     return [];
   } catch (err) {
@@ -471,7 +469,6 @@ export const getCategory = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("category data is---->", datas);
     if (datas.data) return datas.data;
     return [];
   } catch (err) {
@@ -687,7 +684,6 @@ export const getOrderDetails = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("get order data is--->", datas);
     return datas.data;
   } catch (err) {
     return err;
@@ -1360,7 +1356,7 @@ export const getNFTList = async (data) => {
 // };
 
 // export const createBidNft = async (data) => {
-//   console.log("place a bid");
+//   console.log("Place Bid");
 
 //   const requestOptions = {
 //     method: "POST",

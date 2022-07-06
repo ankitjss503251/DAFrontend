@@ -4,8 +4,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { getCollections } from "../../helpers/getterFunctions";
 
-
-
 function CarouselCollection() {
   const [hotCollections, setHotCollections] = useState([]);
   useEffect(async () => {
@@ -16,6 +14,7 @@ function CarouselCollection() {
         isHotCollection: 1,
       });
       setHotCollections(res);
+     console.log("hot collections", res)
     } catch (e) {
       console.log("Error in fetching all hot collections list", e);
     }
@@ -72,32 +71,45 @@ function CarouselCollection() {
   };
 
   return (
-    <div className='nft'>
+    <div className='nft hc'>
       <Slider {...settings}>
         {hotCollections
-          ? hotCollections.map((card, key ) => {
+          ? hotCollections.map((card, key) => {
               return (
-                
-                <div className='collection_slide' key={key}>
-                  <a href={`/multimintingpage/${card._id}`}>
-                  <img src={card.logoImg} class='img-fluid w-100' alt='' />
-                  <div className='collection_text'>
-                    <div className='coll_profileimg'>
-                      <img alt='' className='profile_img' src={card.coverImg} />
-                      <img
-                        alt=''
-                        className='check_img'
-                        src={"../img/collections/check.png"}
-                      />
+                <div
+                  className='collection_slide'
+                  key={key}
+                >
+                  <a href={`/collection/${card._id}`}>
+                    <img style={{borderTopLeftRadius: "10px", borderTopRightRadius:"10px"}} src={card.coverImg} class='img-fluid w-100' alt='' onError={(e) => e.target.src = "../img/collections/list4.png"}/>
+                    </a>
+                    <div className='collection_text'>
+                    <a href={`/collectionwithcollection/${card?.brand?._id}`}>
+                      <div className='coll_profileimg'>
+                        <img
+                          alt=''
+                          className='profile_img'
+                          src={card?.brand?.logoImage}
+                          onError={(e) => e.target.src = "../img/collections/list4.png"}
+                        />
+                        <img
+                          alt=''
+                          className='check_img'
+                          src={"../img/collections/check.png"}
+                        />
+                      </div>
+                      </a>
+                      <a href={`/collection/${card._id}`} >
+                      <h3 className='collname'>{card.name}</h3>
+                      <p>{card.desc}</p>
+                      </a>
                     </div>
-                    <h3 className='collname'>{card.name}</h3>
-                    <p>{card.desc}</p>
-                  </div>
-                  </a>
+               
                 </div>
               );
             })
           : ""}
+          
       </Slider>
     </div>
   );

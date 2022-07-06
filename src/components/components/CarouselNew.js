@@ -5,7 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
 import {
   getNFTs,
-  getOrderByNftID,
+  getPrice,
   getUserById,
 } from "./../../helpers/getterFunctions";
 import "./../components-css/App.css";
@@ -23,25 +23,20 @@ function ItemsList() {
       const res = await getNFTs(reqData);
       for (let i = 0; i < res.length; i++) {
         const ownedBy = await getUserById({ userID: res[i].createdBy });
-        const orderDet = await getOrderByNftID({ nftId: res[i].id });
-
-        if (orderDet?.results?.length > 0) {
-          res[i] = {
-            ...res[i],
-            isNftOnSale: true,
-            creatorImg: ownedBy ? ownedBy?.profileIcon : "",
-            creatorID: ownedBy ? ownedBy._id : "",
-            price: orderDet?.results[0]?.price?.$numberDecimal,
-          };
-        } else {
-          res[i] = {
-            ...res[i],
-            isNftOnSale: false,
-            creatorImg: ownedBy ? ownedBy.profileIcon : "",
-            creatorID: ownedBy ? ownedBy._id : "",
-            price: orderDet?.results[0]?.price?.$numberDecimal,
-          };
-        }
+        const orderDet = await getPrice({ nftID: res[i].id });
+        console.log("orderDet", orderDet);
+        res[i] = {
+          ...res[i],
+          creatorImg: ownedBy ? ownedBy?.profileIcon : "",
+          creatorID: ownedBy ? ownedBy._id : "",
+          price:
+            !orderDet?.price?.$numberDecimal 
+              ? "--"
+              : Number(convertToEth(orderDet?.price?.$numberDecimal))
+                  .toFixed(6)
+                  .slice(0, -2),
+          saleType: orderDet?.salesType,
+        };
       }
 
       setPutOnSaleItems(res);
@@ -106,7 +101,7 @@ function ItemsList() {
         {putOnSaleItems
           ? putOnSaleItems.map((card, key) => {
               return (
-                <div className='items_slide h-100'  key={key}>
+                <div className='items_slide h-100' key={key}>
                   <div className='items_profileimg'>
                     <a href={`/author/${card.creatorID}`}>
                       <div className='profile_left nft-logo-img'>
@@ -130,23 +125,22 @@ function ItemsList() {
                   <span>514d 18h 42m 39s</span>
                 </div> */}
                   </div>
-                  <a href={`/NFTdetails/${card.id}`} className="nft-cont">
-                    
-                      <img
-                        alt=''
-                        src={card.image}
-                        class='img-fluid items_img my-3'
-                      />
-                    
+                  <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
+                    <img
+                      alt=''
+                      src={card.image}
+                      class='img-fluid items_img my-3'
+                      onError={(e) => {
+                        e.target.src = "../img/collections/list4.png"
+                      }}
+                    />
                   </a>
                   <div className='items_text nft-info-div'>
                     <div className='items_info'>
                       <div className='items_left'>
                         <h3 className=''>{card.name}</h3>
                         <p>
-                          {card.price
-                            ? Number(convertToEth(card.price)).toFixed(4)
-                            : "0.0000"}{" "}
+                          {card.price}{" "}
                           HNTR
                         </p>
                       </div>
@@ -170,7 +164,11 @@ function ItemsList() {
                     <Link
                       to={`/NFTdetails/${card.id}`}
                       className='border_btn  title_color w-100'>
-                      {card.isNftOnSale ? "Buy" : "View"}
+                      {card.saleType === 0
+                        ? "Buy Now"
+                        : card.saleType === 1 || card.saleType === 2
+                        ? "Place Bid"
+                        : "View"}
                     </Link>
                   </div>
                 </div>

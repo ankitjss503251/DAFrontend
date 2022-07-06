@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Footer from "../components/footer";
-// import Relatedcollection from '../components/Relatedcollection';
 import AuthorListing from "../components/AuthorListing";
 import DownloadSVG from "../SVG/DownloadSVG";
 import OffermadeSVG from "../SVG/OffermadeSVG";
@@ -16,7 +15,8 @@ import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 import UpArrow from "../SVG/dropdown";
 import { getCategory } from "../../helpers/getterFunctions";
 import BGImg from "../../assets/images/background.jpg";
-
+import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
+import { useCookies } from "react-cookie";
 
 
 function Author() {
@@ -26,6 +26,11 @@ function Author() {
   const [totalOwned, setTotalOwned] = useState(0);
   const [category, setCategory] = useState([]);
   const [togglemode, setTogglemode] = useState("filterhide");
+  const [loader, setLoader] = useState(false);
+  const [cardCount, setCardCount] = useState(1);
+  const [searchFor, setSearchFor] = useState("")
+ 
+
 
   const bgImage = {
     backgroundImage: `url(${coverImg})`,
@@ -60,6 +65,8 @@ function Author() {
     }
   };
 
+
+
   useEffect(async () => {
     try {
       const c = await getCategory();
@@ -71,22 +78,24 @@ function Author() {
 
   useEffect(() => {
     const fetch = async () => {
+      setLoader(true);
       let _profile = await GetIndividualAuthorDetail({ userID: id });
       setProfile(_profile);
       let reqBody = {
         page: 1,
         limit: 12,
-        userWalletAddress: _profile.walletAddress.toLowerCase(),
+        userWalletAddress: _profile?.walletAddress?.toLowerCase(),
         searchType: "owned",
+        searchText: searchFor
       };
       let _owned = await GetOwnedNftList(reqBody);
+      setCardCount(cardCount + _owned.count);
       setTotalOwned(_owned.count);
       if (_owned && _owned.results.length > 0) setOwnedNFTs(_owned.results[0]);
-      console.log("owned nfts", _owned.results[0]);
-      console.log("in user profile api", _profile);
+      setLoader(false);
     };
     fetch();
-  }, [id]);
+  }, [id, searchFor]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -102,17 +111,19 @@ function Author() {
     document.getElementById("gridthree").classList.add("active");
     document.getElementById("gridtwo").classList.remove("active");
   };
+  
 
   const [grid, setgrid] = useState("col-md-3 mb-4");
 
   return (
     <div style={bgImgStyle}>
+     
       <section
         className="collection_banner pdd_8 d-flex align-items-center justify-content-center"
-        style={bgImage}
-      ></section>
-      <section className="collection_info">
-        <div className="container">
+        style={bgImage}>
+        </section>
+        <section className="collection_info">
+         <div className="container">
           <div className="row align-items-end martop-100">
             <div className="col-md-4"></div>
             <div className="col-md-4 d-flex justify-content-center">
@@ -201,7 +212,7 @@ function Author() {
             <h6>Joined {moment(profile?.createdOn).format("MMMM YYYY")}</h6>
           </div>
 
-          <ul className="auther_cart nav" role="tablist">
+          <ul className="author_cart nav" role="tablist">
             <li>
               <button
                 data-bs-toggle="pill"
@@ -306,20 +317,28 @@ function Author() {
                     type="search"
                     placeholder="Search item here..."
                     aria-label="Search"
+                    value={searchFor}
+                    onChange={(e) => 
+                      {setOwnedNFTs([])
+                      setSearchFor(e.target.value)
+                     setCardCount(1)
+                    }
+
+                    }
                   />
                   <button className="market_btn" type="submit">
                     <img src="../img/search.svg" alt="" />
                   </button>
                 </form>
                 <select
-                  className="market_select_form form-select"
-                  aria-label="Default select example"
-                  style={bgImgarrow}
-                >
-                  <option value="1" selected>
-                    Single Items
+                  class='market_select_form form-select'
+                  aria-label='Default select example'
+                  style={bgImgarrow}>
+                  <option value='0' selected>
+                    All Items
                   </option>
-                  <option value="2">Multiple Items</option>
+                  <option value='1'>Single Items</option>
+                  <option value='2'>Multiple Items</option>
                 </select>
                 <select
                   className="market_select_form form-select"
@@ -339,13 +358,13 @@ function Author() {
                   <Threegrid />
                 </div>
                 {/* </div> */}
-                <button
+                {/* <button
                   type="button"
                   className="filter_btn"
                   onClick={filterToggle}
                 >
                   Adv.Filter
-                </button>
+                </button> */}
               </div>
             </div>
             <div className={`filter mb-5 ${togglemode}`}>
@@ -380,15 +399,15 @@ function Author() {
                     </ul>
                   </div>
 
-                  <button
+                  {/* <button
                     type="button"
                     class="drop_down_tlt"
                     data-bs-toggle="collapse"
                     data-bs-target="#demo2"
                   >
                     Price <UpArrow />
-                  </button>
-                  <div id="demo2" class="collapse show">
+                  </button> */}
+                  {/* <div id="demo2" class="collapse show">
                     <ul className="status_ul">
                       <li>
                         <select
@@ -424,7 +443,7 @@ function Author() {
                         </button>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                 </form>
               </div>
               <div className="filtercol">
@@ -489,7 +508,7 @@ function Author() {
                   data-bs-toggle="collapse"
                   data-bs-target="#demo5"
                 >
-                  On Sale In <UpArrow />
+                  Brands <UpArrow />
                 </button>
                 <div id="demo5" class="collapse show">
                   <ul>
@@ -529,7 +548,9 @@ function Author() {
               aria-labelledby="pills-Owned-tab"
             >
               <div className="row">
-                {ownedNFTs?.map((card, key) => (
+              {loader ? (
+              <CollectionsNFT cards={cardCount} grid={grid} />
+            ) : ownedNFTs?.map((card, key) => (
                   <div className={grid} key={key}>
                     <AuthorListing
                       image={card.image}
@@ -547,8 +568,8 @@ function Author() {
               aria-labelledby="pills-Sale-tab"
             >
               <div className="row">
-                {AuthorCard?.map((card) => (
-                  <div className={grid} key={card.id}>
+                {AuthorCard?.map((card, key) => (
+                  <div className={grid} key={key}>
                     <AuthorListing
                       image={card.img}
                       submenu={card.Subheading}
@@ -569,8 +590,8 @@ function Author() {
               aria-labelledby="pills-Favourited-tab"
             >
               <div className="row">
-                {AuthorCard.map((card) => (
-                  <div className={grid} key={card.id}>
+                {AuthorCard.map((card, key) => (
+                  <div className={grid} key={key}>
                     <AuthorListing
                       image={card.img}
                       submenu={card.Subheading}
@@ -591,8 +612,8 @@ function Author() {
               aria-labelledby="pills-Activity-tab"
             >
               <div className="row">
-                {AuthorCard.map((card) => (
-                  <div className={grid} key={card.id}>
+                {AuthorCard.map((card, key) => (
+                  <div className={grid} key={key}>
                     <AuthorListing
                       image={card.img}
                       submenu={card.Subheading}

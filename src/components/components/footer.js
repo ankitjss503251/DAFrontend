@@ -49,7 +49,7 @@ const footer= () => (
                                 <li><Link to={'/contact'}>Contact</Link></li>
                                 <li><Link to={"/userprofile"}>Profile</Link></li>
                                 <li><Link to={"/collection"}>Collection</Link></li>
-                                <li><Link to={"/collectionwithcollection"}>Collection With Collection</Link></li>
+                                <li><Link to={"/brand"}>Collection With Collection</Link></li>
                                 <li><Link to={"/collectionActivity"}>Collection Activity</Link></li>
                                 <li><Link to={"/blog"}>Blog</Link></li>
                                 <li><Link to={"/blogtagged"}>BlogTagged</Link></li>
