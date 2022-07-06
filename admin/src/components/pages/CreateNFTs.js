@@ -174,7 +174,6 @@ function CreateNFTs() {
             setLoading(false);
             return;
           }
-
           NotificationManager.success("Approved", "", 800);
         }
       } catch (e) {
