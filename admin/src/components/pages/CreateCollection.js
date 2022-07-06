@@ -608,6 +608,7 @@ function CreateCollection() {
       {loading ? <Loader /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
+
         {isSuperAdmin()
           ? null
           : currentUser && (
@@ -640,6 +641,7 @@ function CreateCollection() {
             )}
         <div className="adminbody table-widget text-light box-background ">
           <h5 className="admintitle font-600 font-24 text-yellow text-center">
+
             My Collections
           </h5>
           <br />
@@ -660,97 +662,79 @@ function CreateCollection() {
               </thead>
 
               <tbody>
-                {myCollections &&
-                myCollections != undefined &&
-                myCollections != "" &&
-                myCollections.length > 0
-                  ? myCollections.map((item, index) => {
-                      return (
-                        <>
-                          <tr>
-                            <td>
-                              {" "}
-                              <div className="first-col">
-                                <img
-                                  src={item.logoImage}
-                                  className="profile_i m-2"
-                                  alt=""
-                                />
-                                <div className="dates-col">
-                                  <span>
-                                    {" "}
-                                    Start Date:&nbsp;{" "}
-                                    {item.preSaleStartTime
-                                      ? moment(item.preSaleStartTime).format(
-                                          "MMMM Do YYYY"
-                                        )
-                                      : "-"}
-                                  </span>
-                                  <span>
-                                    End Date: &nbsp;{" "}
-                                    {item.preSaleEndTime
-                                      ? moment(item.preSaleEndTime).format(
-                                          "MMMM Do YYYY"
-                                        )
-                                      : "-"}
-                                  </span>
-                                </div>
-                              </div>
-                              {isSuperAdmin() ? (
-                                <div className="btn_container">
-                                  <button
-                                    className="btn p-1   text-light "
-                                    type="button"
-                                    onClick={() => {
-                                      blockUnblockColl(
-                                        item._id,
-                                        item.status ? 0 : 1
-                                      );
-                                    }}
-                                  >
-                                    {item.status === 0 ? "Unblock" : "Block"}
-                                  </button>
-                                </div>
-                              ) : (
-                                <div className="btn_container">
-                                  {item.isImported === 0 ? (
-                                    <button
-                                      className="btn p-1  text-light"
-                                      data-bs-toggle="modal"
-                                      data-bs-target="#exampleModal1"
-                                      type="button"
-                                      onClick={async () => {
-                                        setSelectedCollectionId(item._id);
-                                        setImportModal(true);
-                                      }}
-                                    >
-                                      Import
-                                    </button>
-                                  ) : (
-                                    ""
-                                  )}
-                                  <button
-                                    className={`btn p-1 showHide-btn ${
-                                      !item.isOnMarketplace ? "active" : ""
-                                    }`}
-                                    type="button"
-                                    onClick={async () => {
-                                      item.isOnMarketplace === 0
-                                        ? await setShowOnMarketplace(
-                                            item._id,
-                                            1
-                                          )
-                                        : await setShowOnMarketplace(
-                                            item._id,
-                                            0
-                                          );
-                                    }}
-                                  >
-                                    {item.isOnMarketplace === 0
-                                      ? "Show"
-                                      : "Hide"}
-                                  </button>
-                                  {/* <button
+
+              {myCollections &&
+              myCollections != undefined &&
+              myCollections != "" &&
+              myCollections.length > 0
+                ? myCollections.map((item, index) => {
+                    return (
+                    <>
+                        <tr>
+                          <td>
+                            {" "}
+                            <div className="first-col">
+                            <img
+                              src={item.logoImage}
+                              className='profile_i m-2'
+                              alt=''
+                              onError={(e) => e.target.src = "../images/login.jpg"}
+                            />
+                            <div className="dates-col">
+                              <span> Start Date:&nbsp; {item.preSaleStartTime
+                              ? moment(item.preSaleStartTime).format(
+                                  "MMMM Do YYYY"
+                                )
+                              : "-"}</span>
+                               <span>End Date: &nbsp; {item.preSaleEndTime
+                              ? moment(item.preSaleEndTime).format(
+                                  "MMMM Do YYYY"
+                                )
+                              : "-"}</span>
+                            </div>
+                            </div>
+                            {isSuperAdmin() ? (
+                          <div className='btn_container'>
+                            <button
+                              className='btn p-1   text-light '
+                              type='button'
+                              onClick={() => {
+                                blockUnblockColl(item._id, item.status ? 0 : 1);
+                              }}>
+                              {item.status === 0 ? "Unblock" : "Block"}
+                            </button>
+                          </div>
+                        ) : (
+                          <div className='btn_container'>
+                            {item.isImported === 0 ? (
+                              <button
+                                className='btn p-1  text-light'
+                                data-bs-toggle='modal'
+                                data-bs-target='#exampleModal1'
+                                type='button'
+                                onClick={async () => {
+                                  setSelectedCollectionId(item._id);
+                                  setImportModal(true);
+                                }}>
+                                Import
+                              </button>
+                            ) : (
+                              ""
+                            )}
+                            <button
+                              className={`btn p-1 showHide-btn ${
+                                !item.isOnMarketplace ? "active" : ""
+                              }`}
+                              type='button'
+                              onClick={async () => {
+                                item.isOnMarketplace === 0
+                                  ? await setShowOnMarketplace(item._id, 1)
+                                  : await setShowOnMarketplace(item._id, 0);
+                              }}>
+                              {item.isOnMarketplace === 0 ? "Show" : "Hide"}
+                            </button>
+                            {/* <button
+
                               className='btn  p-1 text-light'
                               type='button'
                               onClick={async () => {
