@@ -397,6 +397,7 @@ export const GetBrand = async (id) => {
 };
 
 export const createNft = async (data) => {
+  console.log("data is----------->",data)
   const requestOptions = {
     method: "POST",
     headers: {
@@ -404,6 +405,9 @@ export const createNft = async (data) => {
     },
     body: data,
   };
+  
+  console.log("requestOptions are -------->",requestOptions)
+  
   try {
     console.log("create nft");
     // for (var value of data.values()) {
