@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import Web3 from "web3";
-import API from './helpers/apiClient.ts';
-import {setCookie,isSuperAdmin,deleteIsAdmin} from './helpers/utils.ts';
+import API from './helpers/apiClient';
+import {setCookie,isSuperAdmin,deleteIsAdmin} from './helpers/utils';
 const web3 = new Web3(
   "https://polygon-mumbai.g.alchemy.com/v2/8RAii8kDi0Fwe47iF1_WLjpcSfp3q3R6"
 );
@@ -33,8 +33,7 @@ export const adminRegister = async (account) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      walletAddress: account,
-      // role: "admin",
+      walletAddress: account
     }),
   };
   try {

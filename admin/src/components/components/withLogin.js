@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Login from "../pages/Login";
-import { isSuperAdmin,deleteIsAdmin } from '../../helpers/utils.ts';
+import { isSuperAdmin,deleteIsAdmin } from '../../helpers/utils';
 import Navbar from "../Navbar";
 export default function withLogin(Component,callback=()=>{})
 {
