@@ -62,7 +62,7 @@ function CreateCollection() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    else NotificationManager.error("Connect Your Metamask", "", 800);
+    // else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
 
@@ -617,7 +617,12 @@ function CreateCollection() {
                 data-bs-toggle="modal"
                 data-bs-target="#exampleModal"
                 onClick={() => {
+                  if(currentUser)
                   setModal("active");
+                  else 
+                {  NotificationManager.error("Connect Your Metamask", "", 800);
+                  return;
+              }
                 }}
               >
                 + Add Collection
@@ -674,6 +679,7 @@ function CreateCollection() {
                               src={item.logoImage}
                               className='profile_i m-2'
                               alt=''
+                              onError={(e) => e.target.src = "../images/login.jpg"}
                             />
                             <div className="dates-col">
                               <span> Start Date:&nbsp; {item.preSaleStartTime

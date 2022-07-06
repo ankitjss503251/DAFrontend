@@ -340,29 +340,24 @@ function CreateNFTs() {
         </div>
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">NFTs</h5>
-          <p className="admindescription">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book.
-          </p>
+        <br />
           <table class="table table-hover text-light">
             <thead>
               <tr>
-                <th>NFT Image</th>
+                <th className="w-50">NFT Image</th>
                 <th>Title</th>
                 <th>Description</th>
               </tr>
             </thead>
             <tbody>
-              <br></br>
-              {console.log("nfts", nfts)}
+             
+             
               {nfts && nfts.length > 0
                 ? nfts.map((n, i) => {
                     return (
                       <tr>
                         <td>
-                          <img src={n.image} className="profile_i" alt="" />
+                          <img src={n.image} className="profile_i" alt="" onError={(e) => e.target.src = "../images/login.jpg"}/>
                         </td>
                         <td>{n.name}</td>
                         <td>{n.description}</td>
