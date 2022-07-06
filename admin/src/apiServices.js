@@ -401,7 +401,7 @@ export const createNft = async (data) => {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem("Authorization"),
     },
-    body: JSON.stringify(data),
+    body: data,
   };
   try {
     console.log("create nft");
