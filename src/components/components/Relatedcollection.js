@@ -22,11 +22,11 @@ function Relatedcollection(props) {
                         className='profile_img'
                         src={card.logoImg}
                       />
-                      <img
+                      {/* <img
                         alt=''
                         className='check_img'
                         src={"../img/collections/check.png"}
-                      />
+                      /> */}
                     </div>
                     <h3 className='collname'>{card.name}</h3>
                     <p>ERC-721</p>

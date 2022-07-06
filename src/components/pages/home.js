@@ -231,7 +231,7 @@ const Home = () => {
                               />
                             </a>
                           </div>
-                          <h4>{card.name}</h4>
+                          <a href={`/multimintingpage/${card?._id}`} > <h4 className="mb-2">{card.name}</h4></a>
                           <ul className='m-0 p-0'>
                             <li>
                               <img alt='' src={"../img/mint/hntr.svg"} />{" "}
