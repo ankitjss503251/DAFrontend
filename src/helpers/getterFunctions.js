@@ -302,6 +302,7 @@ export const getNFTs=async (req) => {
       searchText: req.searchText,
       isMinted: req.isMinted,
       isOnMarketplace: req.isOnMarketplace,
+   
     };
 
     data=await getNFTList(reqBody);
@@ -333,6 +334,7 @@ export const getNFTs=async (req) => {
         type: nft.type,
         attributes: nft.attributes,
         totalQuantity: nft.totalQuantity,
+        fileType:nft.fileType,
         collectionData: nft.CollectionData
       };
     })
