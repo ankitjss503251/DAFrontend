@@ -13,6 +13,8 @@ import {
   importCollection,
   UpdateCollection,
   createNft,
+  blockUnBlockCollection,
+  isSuperAdmin,
 } from "../../apiServices";
 import contracts from "../../config/contracts";
 import degnrABI from "./../../config/abis/dgnr8.json";
@@ -25,6 +27,7 @@ import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 import {slowRefresh} from "../../helpers/NotifyStatus";
+
 
 function CreateCollection() {
   const [logoImg, setLogoImg] = useState("");
@@ -589,6 +592,14 @@ function CreateCollection() {
       console.log("Error", e);
     }
   };
+  const blockUnblockColl =(id,status)=>
+  {
+    blockUnBlockCollection(id,status).then(res=>{
+      setReloadContent(Math.random());
+    }).catch(e=>{
+
+    });;
+  }
 
   return (
     <div className="wrapper">
@@ -597,6 +608,8 @@ function CreateCollection() {
       {loading ? <Loader /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
+        {isSuperAdmin()?null
+        :<>
         <div className="add_btn mb-4 d-flex justify-content-end">
           <button
             className="btn btn-admin text-light"
@@ -622,6 +635,9 @@ function CreateCollection() {
             + Import Collection
           </button>
         </div>
+        </>
+        }
+        <div className="adminbody table-widget text-light box-background">
         <div className="adminbody table-widget text-light box-background table-responsive">
           <h5 className="admintitle font-600 font-24 text-yellow">Example</h5>
           {/* <p className="admindescription">
@@ -689,8 +705,24 @@ function CreateCollection() {
                         <td>{item.categoryID?.name}</td>
                         <td>{item.brandID?.name}</td>
                       </tr>
+                      {isSuperAdmin()?
+                       <div className="btn_container">
+                      
+                      <button
+                          className="btn btn-admin m-1 p-1 text-light "
+                          type="button"
+                          onClick={() => {
+                            blockUnblockColl(item._id,item.status?0:1);
+                          }}
+                        >
+                          {item.status === 0 ? "Unblock" : "Block"}
+                        </button>
+                     
+                      
 
-                      <div className="btn_container">
+                       
+                     </div> 
+                      :<div className="btn_container">
                         {item.isImported === 0 ? (
                           <button
                             className="btn btn-admin m-1 p-1 text-light"
@@ -771,6 +803,7 @@ function CreateCollection() {
                           Hot Collection
                         </button>
                       </div>
+                     }
                     </tbody>
                   );
                 })
@@ -1603,6 +1636,7 @@ function CreateCollection() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
