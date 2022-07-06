@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import {
   getNFTs,
   getPrice,
-  getUserById,
+  getBrandDetailsById,
 } from "./../../helpers/getterFunctions";
 import "./../components-css/App.css";
 import { convertToEth } from "../../helpers/numberFormatter";
@@ -22,20 +22,19 @@ function ItemsList() {
       };
       const res = await getNFTs(reqData);
       for (let i = 0; i < res.length; i++) {
-        const ownedBy = await getUserById({ userID: res[i].createdBy });
         const orderDet = await getPrice({ nftID: res[i].id });
-        console.log("orderDet", orderDet);
+        const brandDet = await getBrandDetailsById(
+          res[i].collectionData[0].brandID
+        );
         res[i] = {
           ...res[i],
-          creatorImg: ownedBy ? ownedBy?.profileIcon : "",
-          creatorID: ownedBy ? ownedBy._id : "",
-          price:
-            !orderDet?.price?.$numberDecimal 
-              ? "--"
-              : Number(convertToEth(orderDet?.price?.$numberDecimal))
-                  .toFixed(6)
-                  .slice(0, -2),
+          price: !orderDet?.price?.$numberDecimal
+            ? "--"
+            : Number(convertToEth(orderDet?.price?.$numberDecimal))
+                .toFixed(6)
+                .slice(0, -2),
           saleType: orderDet?.salesType,
+          brand: brandDet,
         };
       }
 
@@ -103,15 +102,14 @@ function ItemsList() {
               return (
                 <div className='items_slide h-100' key={key}>
                   <div className='items_profileimg'>
-                    <a href={`/author/${card.creatorID}`}>
+                    <a href={`/collectionwithcollection/${card.brand?._id}`}>
                       <div className='profile_left nft-logo-img'>
                         <img
                           alt=''
-                          className='profile_img creatorImg'
-                          src={
-                            card.creatorImg
-                              ? card.creatorImg
-                              : "../img/collections/profile1.png"
+                          className='profile_img '
+                          src={card.brand?.logoImage}
+                          onError={(e) =>
+                            (e.target.src = "../img/collections/list4.png")
                           }
                         />
                         <img
@@ -131,7 +129,7 @@ function ItemsList() {
                       src={card.image}
                       class='img-fluid items_img my-3'
                       onError={(e) => {
-                        e.target.src = "../img/collections/list4.png"
+                        e.target.src = "../img/collections/list4.png";
                       }}
                     />
                   </a>
@@ -139,10 +137,7 @@ function ItemsList() {
                     <div className='items_info'>
                       <div className='items_left'>
                         <h3 className=''>{card.name}</h3>
-                        <p>
-                          {card.price}{" "}
-                          HNTR
-                        </p>
+                        <p>{card.price} HNTR</p>
                       </div>
                       <div className='items_right justify-content-end d-flex'>
                         <span>
