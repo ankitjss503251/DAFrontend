@@ -379,7 +379,7 @@ function NFTlisting(props) {
                         </td>
                         <td>
                           {o.deadline === GENERAL_TIMESTAMP ? (
-                            "INFINITE"
+                            "--:--:--"
                           ) : (
                             <Clock
                               deadline={moment(new Date(o.deadline * 1000))

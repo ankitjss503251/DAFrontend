@@ -100,7 +100,7 @@ function NFToffer(props) {
                           {moment(b.createdOn).format("HH:MM:SS")}
                         </span>
                       </td>
-                      <td className="red_text">
+                      <td>
                         {" "}
                         {console.log(
                           "b.deadline",
@@ -115,7 +115,7 @@ function NFToffer(props) {
                             .toISOString()}
                         ></Clock>
                       </td>
-                      <td className="red_text">
+                      <td>
                         {" "}
                         {b.bidStatus=="MakeOffer"
                           ? "Active"

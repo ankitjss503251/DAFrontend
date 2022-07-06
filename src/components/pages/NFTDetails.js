@@ -199,7 +199,7 @@ function NFTDetails() {
       setLoading(false);
       return;
     } else {
-      NotificationManager.success("Imported successfully");
+      // NotificationManager.success("Imported successfully");
       setLoading(false);
       return;
     }
@@ -620,6 +620,7 @@ function NFTDetails() {
                   {NFTDetails?.like} favourites
                 </span>
               </div>
+              {NFTDetails?.attributes?.length > 0 ? 
               <ul
                 className="nav nav-pills mb-4 w-100"
                 id="pills-tab"
@@ -639,7 +640,7 @@ function NFTDetails() {
                     Details
                   </button>
                 </li>
-              </ul>
+              </ul> : ""}
               <div className="tab-content" id="pills-tabContent">
                 <div
                   className="tab-pane fade show active"
@@ -1222,10 +1223,10 @@ function NFTDetails() {
                         }}
                       >
                         {" "}
-                        <option value={"BNB"} selected>
+                        {/* <option value={"BNB"} selected>
                           BNB
-                        </option>
-                        <option value={"HNTR"}>HNTR</option>
+                        </option> */}
+                        {/* <option value={"HNTR"}>HNTR</option> */}
                         <option value={"USDT"}>USDT</option>
                       </select>
                     </>
