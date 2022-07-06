@@ -9,6 +9,7 @@ import {
   GetMyCollectionsList,
   GetMyNftList,
   getNFTList,
+  isSuperAdmin,
 } from "../../apiServices";
 import { useCookies } from "react-cookie";
 import extendedERC721Abi from "./../../config/abis/extendedERC721.json";
@@ -140,22 +141,6 @@ function CreateNFTs() {
           setLoading(false);
           return;
         }
-        fd.append("attributes", JSON.stringify(attributes));
-        fd.append("levels", JSON.stringify([]));
-        fd.append("creatorAddress", currentUser.toLowerCase());
-        fd.append("name", title);
-        fd.append("nftFile", nftImg);
-        fd.append("quantity", quantity);
-        fd.append("collectionID", JSON.parse(collection)._id);
-        fd.append("collectionAddress", collectionDetail.contractAddress);
-        fd.append("description", description);
-        fd.append("tokenID", collectionDetail.nextID);
-        fd.append("type", collectionDetail.type);
-        fd.append("isMinted", 0);
-        fd.append("imageSize", "0");
-        fd.append("imageType", "0");
-        fd.append("imageDimension", "0");
-        console.log("field values--->", fd.values);
       } catch (e) {
         console.log("e", e);
         NotificationManager.error("Something went wrong", "", 800);
@@ -197,7 +182,22 @@ function CreateNFTs() {
         setLoading(false);
         return;
       }
-
+      fd.append("attributes", JSON.stringify(attributes));
+      fd.append("levels", JSON.stringify([]));
+      fd.append("creatorAddress", currentUser.toLowerCase());
+      fd.append("name", title);
+      fd.append("nftFile", nftImg);
+      fd.append("quantity", quantity);
+      fd.append("collectionID", JSON.parse(collection)._id);
+      fd.append("collectionAddress", collectionDetail.contractAddress);
+      fd.append("description", description);
+      fd.append("tokenID", collectionDetail.nextID);
+      fd.append("type", collectionDetail.type);
+      fd.append("isMinted", 0);
+      fd.append("imageSize", "0");
+      fd.append("imageType", "0");
+      fd.append("imageDimension", "0");
+      console.log("field values--->", fd.get("collectionAddress"));
       try {
         createRes = await createNft(fd);
         console.log("createRes", createRes);
@@ -324,8 +324,9 @@ function CreateNFTs() {
       <Sidebar />
 
       {/* <!-- Page Content  --> */}
-      <div id="content">
-        <div className="add_btn mb-4 d-flex justify-content-end">
+      <div id='content'>
+        <div className='add_btn mb-4 d-flex justify-content-end'>
+          {isSuperAdmin()?null:
           <button
             className="btn btn-admin text-light"
             type="button"
@@ -335,6 +336,7 @@ function CreateNFTs() {
           >
             + Add NFTs
           </button>
+          }
         </div>
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">NFTs</h5>
