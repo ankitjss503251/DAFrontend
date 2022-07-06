@@ -4,8 +4,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { getCollections } from "../../helpers/getterFunctions";
 
-
-
 function CarouselCollection() {
   const [hotCollections, setHotCollections] = useState([]);
   useEffect(async () => {
@@ -75,24 +73,30 @@ function CarouselCollection() {
     <div className='nft'>
       <Slider {...settings}>
         {hotCollections
-          ? hotCollections.map((card, key ) => {
+          ? hotCollections.map((card, key) => {
               return (
-                
-                <div className='collection_slide' key={key}>
-                  <a href={`/multimintingpage/${card._id}`}>
-                  <img src={card.logoImg} class='img-fluid w-100' alt='' />
-                  <div className='collection_text'>
-                    <div className='coll_profileimg'>
-                      <img alt='' className='profile_img' src={card.coverImg} />
-                      <img
-                        alt=''
-                        className='check_img'
-                        src={"../img/collections/check.png"}
-                      />
+                <div
+                  className='collection_slide hc'
+                  key={key}
+                >
+                  <a href={`/collection/${card._id}`}>
+                    <img src={card.logoImg} class='img-fluid w-100' alt='' />
+                    <div className='collection_text'>
+                      <div className='coll_profileimg'>
+                        <img
+                          alt=''
+                          className='profile_img'
+                          src={card.coverImg}
+                        />
+                        <img
+                          alt=''
+                          className='check_img'
+                          src={"../img/collections/check.png"}
+                        />
+                      </div>
+                      <h3 className='collname'>{card.name}</h3>
+                      <p>{card.desc}</p>
                     </div>
-                    <h3 className='collname'>{card.name}</h3>
-                    <p>{card.desc}</p>
-                  </div>
                   </a>
                 </div>
               );

@@ -13,6 +13,7 @@ import {
   importCollection,
   UpdateCollection,
   createNft,
+  isSuperAdmin,
 } from "../../apiServices";
 import contracts from "../../config/contracts";
 import degnrABI from "./../../config/abis/dgnr8.json";
@@ -24,6 +25,7 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
+import {slowRefresh} from "../../helpers/NotifyStatus";
 
 function CreateCollection() {
   const [logoImg, setLogoImg] = useState("");
@@ -58,7 +60,7 @@ function CreateCollection() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Your Metamask", "", 800);
+    else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
 
@@ -353,7 +355,6 @@ function CreateCollection() {
         fd.append("price", ethers.utils.parseEther(price.toString()));
         fd.append("royality", royalty * 1000);
 
-        console.log("form data is---->", fd.value);
 
         try {
           await createCollection(fd);
@@ -500,6 +501,7 @@ function CreateCollection() {
         let nftCount = _nfts.length;
         dbSupply = parseInt(nftCount);
         console.log("coll update", res._id);
+        slowRefresh(1000);
       }
 
       for (let i = dbSupply; i < parseInt(originalSupply); i++) {
@@ -596,13 +598,17 @@ function CreateCollection() {
       {loading ? <Loader /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
+        {isSuperAdmin()?null:<>
         <div className="add_btn mb-4 d-flex justify-content-end">
           <button
             className="btn btn-admin text-light"
             type="button"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
-            onClick={() => setModal("active")}
+            onClick={() => {
+              
+              
+              setModal("active")}}
           >
             + Add Collection
           </button>
@@ -618,14 +624,19 @@ function CreateCollection() {
             + Import Collection
           </button>
         </div>
+<<<<<<< HEAD
+        </>}
         <div className="adminbody table-widget text-light box-background">
+=======
+        <div className="adminbody table-widget text-light box-background table-responsive">
+>>>>>>> aad1cd0adb2a288e039289f281f2a276f9441cb3
           <h5 className="admintitle font-600 font-24 text-yellow">Example</h5>
-          <p className="admindescription">
+          {/* <p className="admindescription">
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry's standard dummy text
             ever since the 1500s, when an unknown printer took a galley of type
             and scrambled it to make a type specimen book.
-          </p>
+          </p> */}
           <table className="table table-hover text-light">
             <thead>
               <br></br>
@@ -739,9 +750,7 @@ function CreateCollection() {
                           Edit
                         </button>
                         <button
-                          className={`btn btn-admin m-1 p-1 exclusive-btn ${
-                            item.isExclusive ? "active" : ""
-                          }`}
+                          className={`btn btn-admin m-1 p-1 exclusive-btn ${item.isExclusive ? "active" : ""}`}
                           type="button"
                           onClick={() =>
                             handleCollection(

@@ -113,7 +113,6 @@ export const getProfile = async () => {
     .get("content-type")
     ?.includes("application/json");
   const data = isJson && (await response.json());
-  console.log("data is----->", data);
   return data;
 };
 
@@ -158,7 +157,6 @@ export const updateProfile = async (data) => {
   //formData.append("sWalletAddress", account);
   formData.append("userProfile", data.profilePic ? data.profilePic : "");
 
-  // console.log("form data is---->", formData);
   const requestOptions = {
     method: "PUT",
     headers: {
@@ -379,7 +377,6 @@ export const getOrderDetails = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("get order data is--->", datas);
     return datas.data;
   } catch (err) {
     return err;
@@ -390,7 +387,8 @@ export const GetOrdersByNftId = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+    
+      "Content-Type": "application/json"
     },
     body: JSON.stringify(data),
   };
@@ -484,16 +482,16 @@ export const GetOwnedNftList = async (data) => {
   }
 };
 
-export const getBrandById = async (data) => {
+export const getBrandById = async (brandID) => {
   const requestOptions = {
-    method: "POST",
+    method: "GET",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     },
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + `/utils/getBrandByID/${data}`,
+      process.env.REACT_APP_API_BASE_URL + `/utils/showBrandByID/${brandID}`,
       requestOptions
     );
     const isJson = response.headers

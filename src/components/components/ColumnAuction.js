@@ -272,7 +272,7 @@ export default class Responsive extends Component {
                       (() => (window.location.href = nft.bidLink), "_self")
                     }
                   >
-                    Place a bid
+                    Place Bid
                   </span>
                 </div>
                 <div className="nft__item_like">

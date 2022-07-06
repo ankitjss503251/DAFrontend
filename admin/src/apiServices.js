@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import Web3 from "web3";
-
+import API from './helpers/apiClient.ts';
+import {getCookie,setCookie} from './helpers/utils.ts';
 const web3 = new Web3(
   "https://polygon-mumbai.g.alchemy.com/v2/8RAii8kDi0Fwe47iF1_WLjpcSfp3q3R6"
 );
@@ -388,7 +389,6 @@ export const GetBrand = async (id) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("brand data is---->", datas);
     if (datas.data) return datas.data;
     return [];
   } catch (err) {
@@ -471,7 +471,6 @@ export const getCategory = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("category data is---->", datas);
     if (datas.data) return datas.data;
     return [];
   } catch (err) {
@@ -687,7 +686,6 @@ export const getOrderDetails = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("get order data is--->", datas);
     return datas.data;
   } catch (err) {
     return err;
@@ -752,6 +750,14 @@ export const GetOrdersByNftId = async (data) => {
   }
 };
 
+export const adminLogin = ({username,password})=>{
+     return API.post('/auth/superAdminLogin',{username,password})
+               .then(res=>{
+                 let {token} = res?.data;
+                setCookie('connect.auth',token,100);
+                return res;
+               });
+}
 export const getNFTList = async (data) => {
   const requestOptions = {
     method: "POST",
@@ -1360,7 +1366,7 @@ export const getNFTList = async (data) => {
 // };
 
 // export const createBidNft = async (data) => {
-//   console.log("place a bid");
+//   console.log("Place Bid");
 
 //   const requestOptions = {
 //     method: "POST",
