@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 import { BigNumber } from "bignumber.js";
 import evt from "../../events/events"
 import "../components-css/App.css"
-const contract =  import (0? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyiCalls");
+const contract =  import (1? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyiCalls");
 
 
 
@@ -83,10 +83,11 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
     evt.on("txn-status", txnStatus);
 
   function txnError(msg){
-    if(msg.includes("user-denied-mint")){
+          if(msg.includes("user-denied-mint")){
             setisMintPopupClass("errorIcon")
             setClosePopupDisabled(false)
             NotificationManager.error("User denied mint TXN");
+            return true;
           } else if (msg.includes("user-denied-approval")){
             setisApprovePopupClass("errorIcon")
             setClosePopupDisabled(false)
@@ -97,6 +98,12 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
             setisApprovePopupClass("errorIcon")
             setClosePopupDisabled(false)
             NotificationManager.error("not enough token");
+            return true;
+          }
+          else{
+            setisApprovePopupClass("errorIcon")
+            setClosePopupDisabled(false)
+            NotificationManager.error(msg);
             return true;
           }
           return false;

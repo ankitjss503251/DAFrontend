@@ -22,14 +22,15 @@ export const fetchInfo = async () => {
   
   };
   export const testMint = async ( qty,price,from) => {
-
+    evt.emit('txn-status',"initiate loader");
     price = parseFloat(price) * parseInt(qty);
     let gooContract = await exportInstance(contracts.gachyiland, gooAbi.abi);
     
     try {
       let result  = await gooContract.estimateGas.mintTokens(cID, qty, { from: from})
-      console.log("test mint result",result);
-      return [result,true];
+      if(result){
+        return mintTokens(qty,from)
+      }
     } catch (e) {
       if(JSON.stringify(e).includes("insufficient allowance")){
         let getcateg = await fetchInfo(0);
@@ -62,11 +63,11 @@ export const fetchInfo = async () => {
       }
     }
   }
-  export const mintTokens = async ( qty, from) => {
+ const mintTokens = async ( qty, from) => {
+  evt.emit('txn-status',"mint-initiated");
     let gooContract = await exportInstance(contracts.gachyiland, gooAbi.abi);
     try {
       let txn  = await gooContract.mintTokens(cID, qty, { from: from})
-      evt.emit('txn-status',"mint-initiated");
       txn = await txn.wait()
       evt.emit('txn-status',"mint-succeed");
       return txn;

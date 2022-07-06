@@ -23,13 +23,14 @@ import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
 import defaultProfile from "../../assets/images/favicon.png";
+import evt from "../../events/events"
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
 
-export const onboard = Onboard({
+ const onboard = Onboard({
   wallets: [walletConnect, injected],
   chains: [
     {
@@ -121,8 +122,11 @@ const Header = function () {
   const [searchedText, setShowSearchedText] = useState("");
   const [catg, setCatg] = useState([]);
   const [label, setLabel] = useState("");
-
-
+  evt.removeAllListeners("wallet-connect")
+  evt.on("wallet-connect", ()=>{
+    console.log("walletConnect Called");
+    connectWallet();
+  })
   useEffect(async () => {
     const cat = await getCategory();
     setCatg(cat);

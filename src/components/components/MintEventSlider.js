@@ -15,7 +15,7 @@ import { onboard } from "../menu/header";
 import BigNumber from "bignumber.js";
 import { useCookies } from "react-cookie";
 import Spinner from "../components/Spinner";
-const contract =  import (0? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyiCalls");
+const contract =  import (1? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyiCalls");
 
 evt.setMaxListeners(1)
 function MintEventSlider(props) {
@@ -62,9 +62,6 @@ function MintEventSlider(props) {
   const [loading, setLoading] = useState(false);
 
   
-  useEffect(() => {
-   console.log("changed");
-  }, [cookies]);
 
 
   useEffect(() => {
@@ -76,17 +73,13 @@ function MintEventSlider(props) {
     fetchData();
    
   }, []);
+  const connectWalletEvent =()=>{
+    evt.emit("wallet-connect")
+  }
   const mintFunction = async (qty,price,user) => {
-    evt.emit('txn-status',"initiate loader");
-    let { testMint,mintTokens}= await contract
+    let { testMint}= await contract
      let result = await testMint(qty,price,user)
-     if(result[1]){
-      evt.emit('txn-status',"approval completed ");
-      let txn = await mintTokens(qty,user)
-      console.log(txn);
-     
-      
-     }
+      console.log(result);
      
   }
   useEffect(() => {
@@ -116,7 +109,7 @@ function MintEventSlider(props) {
           <img src={"../img/mint/da.png"} alt='' />
         </div>
         {!cookies.selected_account?(<button className='connect_wallet_btn mb-4'onClick={() => {
-          onboard();
+          connectWalletEvent();
         }}>
           {" "}
           <Wallet /> Connect Wallet
@@ -164,7 +157,7 @@ function MintEventSlider(props) {
                 // console.log("index", i);
                 await mintFunction(currQty,price,cookies.selected_account);
               }}
-            // disabled={!isMintEnabled}
+             disabled={!cookies.selected_account}
             >
               Mint
             </button>
