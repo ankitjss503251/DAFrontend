@@ -131,17 +131,19 @@ function CreateBrands() {
       {loading ? <Loader /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
-        <div className="add_btn mb-4 d-flex justify-content-end">
-          <button
-            className="btn btn-admin text-light"
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#brandModal"
-            onClick={() => setModal("active")}
-          >
-            + Add Brand
-          </button>
-        </div>
+        {currentUser && (
+          <div className="add_btn mb-4 d-flex justify-content-end">
+            <button
+              className="btn btn-admin text-light"
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#brandModal"
+              onClick={() => setModal("active")}
+            >
+              + Add Brand
+            </button>
+          </div>
+        )}
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">Example</h5>
           <p className="admindescription">
