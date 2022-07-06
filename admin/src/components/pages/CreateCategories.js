@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useMemo } from "react";
 import { NotificationManager } from "react-notifications";
 import Sidebar from "../components/Sidebar";
 import { Link } from "react-router-dom";
@@ -23,7 +23,7 @@ function CreateCategories() {
     console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (currentUser) {
       const fetch = async () => {
         let _myBrand = await getCategory();
@@ -139,7 +139,7 @@ function CreateCategories() {
             myCategory != "" &&
             myCategory.length > 0
               ? myCategory.map((data, index) => (
-                  <tbody>
+                  <tbody key={index}>
                     <tr>
                       <td>{data.name}</td>
                       <td>

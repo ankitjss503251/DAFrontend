@@ -204,6 +204,7 @@ const Home = () => {
                               alt=''
                               src={card?.coverImg}
                               class='img-fluid'
+                              onError={(e) => e.target.src = "../img/collections/list4.png"}
                             />
                             {ct >= st && ct < et ? (
                               ""
@@ -226,6 +227,7 @@ const Home = () => {
                                 alt=''
                                 src={card.brand?.logoImage}
                                 className='mc_img'
+                                onError={(e) => e.target.src = "../img/collections/list4.png"}
                               />
                             </a>
                           </div>
@@ -491,7 +493,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className='container no-bottom pdd_8'>
+      <section className='container no-bottom pdd_8 pb-0'>
         <div className='row'>
           <div className='col-lg-12'>
             <div className='text-center'>
