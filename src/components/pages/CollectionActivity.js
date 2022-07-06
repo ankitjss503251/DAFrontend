@@ -34,7 +34,7 @@ function CollectionActivity() {
         <div className="container">
           <div className="collection_pick">
             <img alt='' src={'../img/collections/barrett.png'} class="img-fluid collection_profile" />
-            <img alt='' src={'../img/collections/check.png'} class="img-fluid check_img" />
+            {/* <img alt='' src={'../img/collections/check.png'} class="img-fluid check_img" /> */}
           </div>
           <h1 className="collection_title text-center">Barrett Firarms</h1>
           <ul class="collection_social mb-4">

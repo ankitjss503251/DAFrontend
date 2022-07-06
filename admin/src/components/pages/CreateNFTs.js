@@ -9,6 +9,7 @@ import {
   GetMyCollectionsList,
   GetMyNftList,
   getNFTList,
+  isSuperAdmin,
 } from "../../apiServices";
 
 import {useCookies} from "react-cookie";
@@ -211,9 +212,9 @@ function CreateNFTs() {
         //}
         
         console.log("field values--->",formdata);
-      } catch(e) {
-        console.log("e",e);
-        NotificationManager.error("Something went wrong","",800);
+      }  catch (e) {
+        console.log("e", e);
+        NotificationManager.error("Something went wrong", "", 800);
         setLoading(false);
         return;
       }
@@ -244,8 +245,7 @@ function CreateNFTs() {
             setLoading(false);
             return;
           }
-
-          NotificationManager.success("Approved","",800);
+          NotificationManager.success("Approved", "", 800);
         }
       } catch(e) {
         console.log("e",e);
@@ -253,7 +253,22 @@ function CreateNFTs() {
         setLoading(false);
         return;
       }
-
+      //fd.append("attributes", JSON.stringify(attributes));
+      //fd.append("levels", JSON.stringify([]));
+      //fd.append("creatorAddress", currentUser.toLowerCase());
+      //fd.append("name", title);
+      //fd.append("nftFile", nftImg);
+      //fd.append("quantity", quantity);
+      //fd.append("collectionID", JSON.parse(collection)._id);
+      //fd.append("collectionAddress", collectionDetail.contractAddress);
+      //fd.append("description", description);
+      //fd.append("tokenID", collectionDetail.nextID);
+      //fd.append("type", collectionDetail.type);
+      //fd.append("isMinted", 0);
+      //fd.append("imageSize", "0");
+      //fd.append("imageType", "0");
+      //fd.append("imageDimension", "0");
+     
       try {
         console.log("FormData before Call",formdata);
         createRes=await createNft(formdata);
@@ -382,48 +397,47 @@ function CreateNFTs() {
       {/* <!-- Page Content  --> */}
       <div id="content">
         <div className="add_btn mb-4 d-flex justify-content-end">
-          <button
-            className="btn btn-admin text-light"
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#NftModal"
-            onClick={() => setModal("active")}
-          >
-            + Add NFTs
-          </button>
+          {isSuperAdmin()
+            ? null
+            : currentUser && (
+                <button
+                  className="btn btn-admin text-light"
+                  type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#NftModal"
+                  onClick={() => setModal("active")}
+                >
+                  + Add NFTs
+                </button>
+              )}
         </div>
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">NFTs</h5>
-          <p className="admindescription">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book.
-          </p>
+        <br />
           <table class="table table-hover text-light">
             <thead>
               <tr>
-                <th>NFT Image</th>
+                <th className="w-50">NFT Image</th>
                 <th>Title</th>
                 <th>Description</th>
               </tr>
             </thead>
             <tbody>
-              <br></br>
-              {console.log("nfts",nfts)}
-              {nfts&&nfts.length>0
-                ? nfts.map((n,i) => {
-                  return (
-                    <tr>
-                      <td>
-                        <img src={n.image} className="profile_i" alt="" />
-                      </td>
-                      <td>{n.name}</td>
-                      <td>{n.description}</td>
-                    </tr>
-                  );
-                })
-                :"No NFTs Found"}
+             
+             
+              {nfts && nfts.length > 0
+                ? nfts.map((n, i) => {
+                    return (
+                      <tr>
+                        <td>
+                          <img src={n.image} className="profile_i" alt="" onError={(e) => e.target.src = "../images/login.jpg"}/>
+                        </td>
+                        <td>{n.name}</td>
+                        <td>{n.description}</td>
+                      </tr>
+                    );
+                  })
+                : "No NFTs Found"}
             </tbody>
           </table>
         </div>
@@ -561,18 +575,18 @@ function CreateNFTs() {
                     }}
                   >
                     <option value="">Select</option>
-                    {collections.length>0
-                      ? collections.map((c,i) => {
-                        console.log("c",c._id);
-                        return (
-                          <option value={JSON.stringify(c)}>{c.name}</option>
-                        );
-                      })
-                      :""}
+                    {collections.length > 0
+                      ? collections.map((c, i) => {
+                          console.log("c", c._id);
+                          return (
+                            <option value={JSON.stringify(c)}>{c.name}</option>
+                          );
+                        })
+                      : ""}
                   </select>
                 </div>
-                {console.log("collection?.type == 2",collection)}
-                {collection&&JSON.parse(collection)?.type==2? (
+                {console.log("collection?.type == 2", collection)}
+                {collection && JSON.parse(collection)?.type == 2 ? (
                   <div className="col-md-12 mb-1">
                     <label for="recipient-name" className="col-form-label">
                       Quantity *
@@ -708,14 +722,23 @@ function CreateNFTs() {
                 </button>
               </form>
               <div className="row mt-3 attributeAdded_con">
-                {attrKeys&&attrValues
-                  ? attrKeys.map((attrKey,key) => {
-                    return attrKey!==""? (
-                      <div className="col-lg-6 col-md-6 col-sm-6">
-                        <div className="createProperty">
-                          <div className="nft_attr">
-                            <h5>{attrKey}</h5>
-                            <h4>{attrValues[key]}</h4>
+                {attrKeys && attrValues
+                  ? attrKeys.map((attrKey, key) => {
+                      return attrKey !== "" ? (
+                        <div className="col-lg-6 col-md-6 col-sm-6">
+                          <div className="createProperty">
+                            <div className="nft_attr">
+                              <h5>{attrKey}</h5>
+                              <h4>{attrValues[key]}</h4>
+                            </div>
+                            <button
+                              className="remove-btn btn-main"
+                              onClick={() => {
+                                handlePropertyRemoved(key);
+                              }}
+                            >
+                              <i className="fa fa-trash" aria-hidden="true"></i>
+                            </button>
                           </div>
                           <button
                             className="remove-btn btn-main"
@@ -726,7 +749,7 @@ function CreateNFTs() {
                             <i className="fa fa-trash" aria-hidden="true"></i>
                           </button>
                         </div>
-                      </div>
+                      
                     ):(
                       ""
                     );
@@ -766,14 +789,4 @@ function CreateNFTs() {
 
 export default CreateNFTs;
 
-{/*<img
-                        alt=""
-                        ref={uploadedImage}
-                        src={"../images/upload.png"}
-                        style={{
-                          width: "110px",
-                          height: "110px",
-                          margin: "auto",
-                        }}
-                        className="img-fluid profile_circle_img"
-                      />*/}
+
