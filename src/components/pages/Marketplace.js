@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-// import { Card } from 'react-bootstrap';
 import Footer from "../components/footer";
-// import Marketplacecart from "../components/Marketplacecart";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
-// import { Marketplacecartj } from "../../Data/dummyJSON";
 import {
+  getBrandDetailsById,
   getCategory,
   getCollections,
   getNFTs,
+  getPrice,
 } from "../../helpers/getterFunctions";
 import { Link, useParams } from "react-router-dom";
-import { getOrderByNftID, getUserById } from "./../../helpers/getterFunctions";
 import { convertToEth } from "../../helpers/numberFormatter";
 import UpArrow from "../SVG/dropdown";
 import bgImg from "./../../assets/marketplace-bg.jpg";
@@ -120,38 +118,27 @@ function Marketplace() {
       if (res.length > 0) {
         setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
-          const ownedBy = await getUserById({ userID: res[i].createdBy });
-          const orderDet = await getOrderByNftID({
-            page: 1,
-            limit: 1,
+          const orderDet = await getPrice({
             nftID: res[i].id,
           });
+
+          const brandDet = await getBrandDetailsById(
+            res[i].collectionData[0].brandID
+          );
+          console.log("brandDetail", brandDet);
           res[i] = {
             ...res[i],
-            salesType: orderDet?.results[0]?.salesType,
+            salesType: orderDet?.salesType,
             price:
-              orderDet?.results[0]?.price?.$numberDecimal === undefined
+              orderDet?.price?.$numberDecimal === undefined
                 ? "--"
-                : Number(
-                    convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
-                  )
+                : Number(convertToEth(orderDet?.price?.$numberDecimal))
                     .toFixed(6)
                     .slice(0, -2),
-            creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
+            brand: brandDet,
           };
-          if (orderDet?.results?.length > 0) {
-            res[i] = {
-              ...res[i],
-              isNftOnSale: true,
-            };
-          } else {
-            res[i] = {
-              ...res[i],
-              isNftOnSale: false,
-            };
-          }
         }
-
+        console.log("res", res);
         temp = [...temp, res];
         setAllNFTs(temp);
         setLoader(false);
@@ -317,14 +304,14 @@ function Marketplace() {
                     </ul>
                   </div>
 
-                  <button
+                  {/* <button
                     type='button'
                     class='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
-                  </button>
-                  <div id='demo2' class='collapse show'>
+                  </button> */}
+                  {/* <div id='demo2' class='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
@@ -359,7 +346,7 @@ function Marketplace() {
                         </button>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                 </form>
               </div>
               <div className='filtercol'>
@@ -450,7 +437,7 @@ function Marketplace() {
                   class='drop_down_tlt mb-4'
                   data-bs-toggle='collapse'
                   data-bs-target='#demo5'>
-                  On Sale In <UpArrow />
+                  Brands <UpArrow />
                 </button>
                 <div id='demo5' class='collapse show'>
                   <ul>
@@ -484,12 +471,6 @@ function Marketplace() {
               </div>
             </div>
           </div>
-
-          {/* <div className="row">
-             
-              <Marketplacecart />
-            </div> */}
-
           <div className='row'>
             {loader ? (
               <SkeletonCard cards={cardCount} grid={grid} />
@@ -500,22 +481,22 @@ function Marketplace() {
                     <div className={grid}>
                       <div className='items_slide h-100' key={key}>
                         <div className='items_profileimg'>
-                          <a href={`/author/${card.createdBy}`}>
+                          <a href={`/collectionwithcollection/${card?.brand?._id}`}>
                             <div className='profile_left nft-logo-img'>
                               <img
                                 alt=''
                                 className='profile_img creatorImg'
-                                src={
-                                  card.creatorImg
-                                    ? card.creatorImg
-                                    : "../img/collections/profile1.png"
+                                src={card.brand?.logoImage}
+                                onError={(e) =>
+                                  (e.target.src =
+                                    "../img/collections/list4.png")
                                 }
                               />
-                              <img
+                              {/* <img
                                 alt=''
                                 className='icheck_img'
                                 src={"../img/collections/check.png"}
-                              />
+                              /> */}
                             </div>
                           </a>
                         </div>
@@ -555,10 +536,10 @@ function Marketplace() {
                           <Link
                             to={`/NFTdetails/${card.id}`}
                             className='border_btn width-100 title_color'>
-                            {card.isNftOnSale
-                              ? card.salesType === 0
-                                ? "Buy Now"
-                                : "Place Bid"
+                            {card.salesType === 0
+                              ? "Buy Now"
+                              : card.salesType === 1 || card.salesType === 2
+                              ? "Place Bid"
                               : "View"}
                           </Link>
                         </div>

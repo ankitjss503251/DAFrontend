@@ -171,11 +171,11 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
               src={collectionDetails?.logoImage}
               class="img-fluid collection_profile"
             />
-            <img
+            {/* <img
               alt=""
               src={"../img/mint/blue_check.png"}
               class="img-fluid check_img"
-            />
+            /> */}
           </div>
           <h1 className="collection_title text-center">
             {collectionDetails?.name}

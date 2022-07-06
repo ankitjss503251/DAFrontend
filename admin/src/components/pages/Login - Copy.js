@@ -1,48 +1,15 @@
-import React,{useState,useEffect} from 'react';
-import { Link,useNavigate,useSearchParams } from 'react-router-dom';
-import {adminLogin} from '../../apiServices';
+import React from 'react';
+import { Link } from 'react-router-dom'
 
-function Login(props) {
-  const [state,setState] = useState({});
-  const navigate         = useNavigate();
-  const [searchParams]   = useSearchParams();
-  const nextUrl          = props.next || (searchParams.get('next')=='/sadmin'?'/':searchParams.get('next')) || '/';
-  
-
-  function hasError()
-  {
-    return !(state.username?.trim() && state.password?.trim());
-  }
-  function checkLogin(e)
-  { 
-      e.preventDefault();
-      setState(state=>({...state,error:''}));
-      if(!hasError())
-      {
-        adminLogin(state).then(success=>{
-            navigate(nextUrl);
-             //window.location.reload();
-        })
-        .catch((error)=>{
-          console.log(error.status);
-          error.getBody().then(res=>{
-
-            setState(state=>({...state,error:'Wrong Username or Password'}));
-          })
-        })
-      }
-      // else setState(state=>({...state,errors:{username:"Please Enter Username",password:"Please Enter Password"}}))  
-  }
-
-
+function Login() {
   return (
     <div className='bg_img'>
       <div className='container'>
           <div className='row'>
               <div className='col-md-12'>
                 <div className='login_form'>
-                  <form onSubmit={checkLogin}>
-                  <span className="login100-form-logo">
+                  <form>
+                  <span class="login100-form-logo">
                     <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                       width="64.000000pt" height="64.000000pt" viewBox="0 0 64.000000 64.000000"
                       preserveAspectRatio="xMidYMid meet">
@@ -72,24 +39,18 @@ function Login(props) {
                   <h4 className='text-light text-center font-24 text-uppercase font-700 my-4'>Log in</h4>
                       <div className="mb-3">
                           <label forhtml="exampleInputEmail1" className="form-label text-light font-600">Email address</label>
-                          <input type="text" required onInput={e=>setState(state=>({...state,'username':e.target.value}))} defaultValue={state.username}  className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
+                          <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
                       </div>
                       <div className="mb-3">
                           <label forhtml="exampleInputPassword1" className="form-label text-light font-600">Password</label>
-                          <input type="password" required onInput={e=>setState(state=>({...state,'password':e.target.value}))} defaultValue={state.password}  className="form-control" id="exampleInputPassword1" />
+                          <input type="password" className="form-control" id="exampleInputPassword1" />
                       </div>
                       <div className="mb-3 form-check">
                           <input type="checkbox" className="form-check-input" id="exampleCheck1" />
                           <label className="form-check-label text-light font-600" forhtml="exampleCheck1">Check me out</label>
                       </div>
-                      {state?.error
-                        ?<div className="alert alert-danger" role="alert">
-                          {state?.error}
-                        </div>
-                        :null
-                      }
                       <div className='text-center'>
-                        <button type="submit"  className="round-btn montserrat text-light text-decoration-none login_btn" >Login</button>
+                        <button type="submit" className="round-btn montserrat text-light text-decoration-none login_btn" >Login</button>
                       </div>
                       <div className="text-center pt-5">
                         <Link className="txt1 text-light" to={"/"}>Forgot Password?</Link>

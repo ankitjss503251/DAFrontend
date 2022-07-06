@@ -15,7 +15,7 @@
     "@tim-soft/react-spring-web": "^9.0.0-beta.36",
     "@toruslabs/torus-embed": "^1.20.4",
     "@walletconnect/web3-provider": "^1.7.1",
-    "@web3-onboard/core": "2.2.5",
+    "@web3-onboard/core": "^2.2.8",
     "@web3-onboard/injected-wallets": "^2.0.6",
     "@web3-onboard/walletconnect": "^2.0.1",
     "apexcharts": "^3.35.2",
@@ -34,7 +34,6 @@
     "fortmatic": "^2.2.1",
     "ipfs-api": "^26.1.2",
     "jquery": "^3.6.0",
-    "moment": "^2.29.3",
     "react": "^17.0.2",
     "react-apexcharts": "^1.4.0",
     "react-awesome-reveal": "^3.8.1",
@@ -73,8 +72,6 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build:testing": "env-cmd -f .env.testing react-scripts build",
-    "build:staging": "env-cmd -f .env.staging react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

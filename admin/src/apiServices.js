@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import Web3 from "web3";
-
+import API from "./helpers/apiClient";
+import { setCookie, isSuperAdmin, deleteIsAdmin } from "./helpers/utils";
 const web3 = new Web3(
   "https://polygon-mumbai.g.alchemy.com/v2/8RAii8kDi0Fwe47iF1_WLjpcSfp3q3R6"
 );
@@ -33,7 +34,6 @@ export const adminRegister = async (account) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       walletAddress: account,
-      // role: "admin",
     }),
   };
   try {
@@ -271,14 +271,15 @@ export const GetMyCollectionsList = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getAuthorization(),
     },
     body: JSON.stringify(data),
   };
 
   try {
+    let url = isSuperAdmin() ? "allCollections" : "myCollections";
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/nft/myCollections",
+      process.env.REACT_APP_API_BASE_URL + `/nft/${url}`,
       requestOptions
     );
     const isJson = response.headers
@@ -399,10 +400,9 @@ export const createNft = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Authorization: localStorage.getItem("Authorization"),
     },
-    body: JSON.stringify(data),
+    body: data,
   };
   try {
     console.log("create nft");
@@ -429,7 +429,7 @@ export const addCategory = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getAuthorization(),
     },
     body: data,
   };
@@ -457,7 +457,7 @@ export const getCategory = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getAuthorization(),
     },
     body: JSON.stringify(data),
   };
@@ -546,7 +546,7 @@ export const importNft = async (data) => {
 
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/nft/createNft",
+      process.env.REACT_APP_API_BASE_URL + "/nft/importNFT",
       requestOptions
     );
 
@@ -748,7 +748,52 @@ export const GetOrdersByNftId = async (data) => {
     return err;
   }
 };
+function getAuthorization() {
+  return getHeaders() || isSuperAdmin();
+}
+export { isSuperAdmin };
 
+export const adminLogin = ({ username, password }) => {
+  return API.post("/auth/superAdminLogin", { username, password }).then(
+    (res) => {
+      let { token } = res?.data;
+      setCookie("connect.auth", token, 100);
+      setCookie("selected_account", "superadmin", 100);
+
+      return res;
+    }
+  );
+};
+export function logoutSuperAdmin() {
+  deleteIsAdmin();
+}
+export const adminUsers = (page) => {
+  let limit = 12;
+  return API.addHeaders({ Authorization: getAuthorization() }).post(
+    "/auth/allAdmin",
+    { page, limit }
+  );
+};
+export const blockUnBlockAdmin = (adminID, blockStatus) => {
+  return API.addHeaders({ Authorization: getAuthorization() }).post(
+    "/auth/blockUnblockAdmin",
+    { adminID, blockStatus }
+  );
+};
+export const saveAdminUser = (form, id) => {
+  let url = id ? "updateAdmin" : "addAdmin";
+  return API.addHeaders({ Authorization: getAuthorization() }).post(
+    `/auth/${url}`,
+    form,
+    true
+  );
+};
+export const blockUnBlockCollection = (collectionID, blockStatus) => {
+  return API.addHeaders({ Authorization: getAuthorization() }).post(
+    "/nft/blockUnblockCollection",
+    { collectionID, blockStatus }
+  );
+};
 export const getNFTList = async (data) => {
   const requestOptions = {
     method: "POST",
