@@ -30,7 +30,6 @@ function NFToffer(props) {
   const [marketplaceSaleType,setmarketplaceSaleType]=useState(0);
 
   useEffect(() => {
-    console.log("Props in nft offer issssssssss----->",props.NFTDetails)
     console.log("cookies.selected_account",cookies.selected_account);
     if(cookies.selected_account) setCurrentUser(cookies.selected_account);
     // else NotificationManager.error("Connect Yout Wallet", "", 800);

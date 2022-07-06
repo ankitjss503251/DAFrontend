@@ -45,7 +45,8 @@ function CreateNFTs() {
   const [attrKeys,setAttrKeys]=useState([]);
   const [attrValues,setAttrValues]=useState([]);
   const [attributes,setAttributes]=useState([]);
-  const [fileType,setFileType]=useState("Image")
+  const [fileType,setFileType]=useState("Image");
+  const [img,setImg]=useState()
 
  
   const handleImageUpload=(e) => {
@@ -77,7 +78,8 @@ function CreateNFTs() {
           setFileType("Video")
           let blobURL=URL.createObjectURL(e.target.files[0]);
           console.log(blobURL);
-          setNftImg(blobURL);
+          setNftImg(e.target.files[0]);
+          setImg(blobURL);
         } else if(url=="gif"||url=="jpeg"||url=="jpg"||url=="png") {
           setFileType("Image")
 
@@ -87,7 +89,8 @@ function CreateNFTs() {
           console.log("in 3d")
           let blobURL=URL.createObjectURL(e.target.files[0]);
           console.log(blobURL);
-          setNftImg(blobURL);
+          setImg(blobURL);
+          setNftImg(e.target.files[0]);
           setFileType("3D")
         }
 
@@ -466,7 +469,7 @@ function CreateNFTs() {
                   >
                     <input
                       type="file"
-                      accept=".gltf,.glb,.mp4,image/*"
+                      accept=".glTF,.gltf,.glb,.mp4,image/*"
                       onChange={handleImageUpload}
                       ref={imageUploader}
                       style={{
@@ -502,7 +505,7 @@ function CreateNFTs() {
                         margin: "auto",
                       }}
                         className="img-fluid profile_circle_img" controls>
-                        <source ref={uploadedImage} src={nftImg} type="video/mp4" />
+                        <source ref={uploadedImage} src={img} type="video/mp4" />
                       </video> :""}
 
 
@@ -513,7 +516,7 @@ function CreateNFTs() {
                       anitialias={false}
                       //enableZoom={false}
                       ref={uploadedImage}
-                        className="img-fluid profile_circle_img" src={nftImg}>
+                        className="img-fluid profile_circle_img" src={img}>
                         <AmbientLight color={0xffffff} />
                         <DirectionLight
                           color={0xffffff}

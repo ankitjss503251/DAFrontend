@@ -255,7 +255,7 @@ const Header = function () {
           const res = await Login(address);
           console.log("Login API response", res);
           if (res.message === "Wallet Address required") {
-            NotificationManager.info(res.message);
+            NotificationManager.info(res?.message);
             refreshState();
             return;
           } else if (
@@ -280,7 +280,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message, "", 800);
-            slowRefresh(1000);
+            // slowRefresh(1000);
             return;
           }
         } catch (e) {

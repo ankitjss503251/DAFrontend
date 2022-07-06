@@ -1034,7 +1034,6 @@ export const handleAcceptOffers=async (
   props,account,
 
 ) => {
-  console.log("bid data is--->",bidData)
 
 
   let buyerOrder=[];

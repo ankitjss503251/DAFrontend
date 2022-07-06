@@ -4,7 +4,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 function FirearmsCollection(props) {
-  console.log("props", props);
   var settings = {
     infinite: false,
     speed: 500,
@@ -52,6 +51,9 @@ function FirearmsCollection(props) {
                         alt=''
                         src={card.image}
                         class='img-fluid mb-3 nftslide_img'
+                        onError={(e) =>
+                          (e.target.src = "../img/collections/list4.png")
+                        }
                       />
 
                       <div className='nft_info'>

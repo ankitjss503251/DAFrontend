@@ -121,13 +121,22 @@ function Marketplace() {
         setLoadMoreDisabled("");
         for (let i = 0; i < res.length; i++) {
           const ownedBy = await getUserById({ userID: res[i].createdBy });
-          const orderDet = await getOrderByNftID({ page:1, limit:1, nftID: res[i].id });
+          const orderDet = await getOrderByNftID({
+            page: 1,
+            limit: 1,
+            nftID: res[i].id,
+          });
           res[i] = {
             ...res[i],
             salesType: orderDet?.results[0]?.salesType,
-            price: orderDet?.results[0]?.price?.$numberDecimal === undefined ? "--" : Number(
-              convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
-            ).toFixed(6).slice(0,-2),
+            price:
+              orderDet?.results[0]?.price?.$numberDecimal === undefined
+                ? "--"
+                : Number(
+                    convertToEth(orderDet?.results[0]?.price?.$numberDecimal)
+                  )
+                    .toFixed(6)
+                    .slice(0, -2),
             creatorImg: ownedBy.profileIcon ? ownedBy.profileIcon : "",
           };
           if (orderDet?.results?.length > 0) {
@@ -150,7 +159,6 @@ function Marketplace() {
       if (allNFTs && res.length <= 0) {
         setLoader(false);
         setLoadMoreDisabled("disabled");
-        
       }
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
@@ -309,14 +317,14 @@ function Marketplace() {
                     </ul>
                   </div>
 
-                  <button
+                  {/* <button
                     type='button'
                     class='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
-                  </button>
-                  <div id='demo2' class='collapse show'>
+                  </button> */}
+                  {/* <div id='demo2' class='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
@@ -351,7 +359,7 @@ function Marketplace() {
                         </button>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                 </form>
               </div>
               <div className='filtercol'>
@@ -442,7 +450,7 @@ function Marketplace() {
                   class='drop_down_tlt mb-4'
                   data-bs-toggle='collapse'
                   data-bs-target='#demo5'>
-                  On Sale In <UpArrow />
+                  Brands <UpArrow />
                 </button>
                 <div id='demo5' class='collapse show'>
                   <ul>
@@ -476,12 +484,6 @@ function Marketplace() {
               </div>
             </div>
           </div>
-
-          {/* <div className="row">
-             
-              <Marketplacecart />
-            </div> */}
-
           <div className='row'>
             {loader ? (
               <SkeletonCard cards={cardCount} grid={grid} />
@@ -502,11 +504,13 @@ function Marketplace() {
                                     ? card.creatorImg
                                     : "../img/collections/profile1.png"
                                 }
+                                onError={(e) => e.target.src = "../img/marketplace/list4.png"}
                               />
                               <img
                                 alt=''
                                 className='icheck_img'
                                 src={"../img/collections/check.png"}
+                                
                               />
                             </div>
                           </a>
@@ -514,6 +518,9 @@ function Marketplace() {
                         <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
                           <img
                             alt=''
+                            onError={(e) => {
+                              e.target.src = "../img/collections/list4.png";
+                            }}
                             src={card.image}
                             class='img-fluid items_img w-100 my-3'
                           />
@@ -522,10 +529,7 @@ function Marketplace() {
                           <div className='items_info '>
                             <div className='items_left'>
                               <h3 className=''>{card.name}</h3>
-                              <p>
-                                {card.price}{" "}
-                                HNTR
-                              </p>
+                              <p>{card.price} HNTR</p>
                             </div>
                             <div className='items_right justify-content-end d-flex'>
                               <span>

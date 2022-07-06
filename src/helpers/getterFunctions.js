@@ -302,6 +302,7 @@ export const getNFTs=async (req) => {
       searchText: req.searchText,
       isMinted: req.isMinted,
       isOnMarketplace: req.isOnMarketplace,
+   
     };
 
     data=await getNFTList(reqBody);
@@ -333,6 +334,7 @@ export const getNFTs=async (req) => {
         type: nft.type,
         attributes: nft.attributes,
         totalQuantity: nft.totalQuantity,
+        fileType:nft.fileType
       };
     })
     :(formattedData[0]={});
@@ -419,7 +421,6 @@ export const getPrice=async (reqBody) => {
     data=data.results;
     if(data) {
       data.map((i) => {
-        console.log("comp--->",min<i.price.$numberDecimal);
         if(min<i.price.$numberDecimal) {
           min=i.price.$numberDecimal;
           order=i;
