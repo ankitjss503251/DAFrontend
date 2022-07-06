@@ -178,11 +178,11 @@ function Collection() {
               src={collectionDetails?.logoImg}
               class='img-fluid collection_profile'
             />
-            <img
+            {/* <img
               alt=''
               src={"../img/collections/check.png"}
               class='img-fluid check_img'
-            />
+            /> */}
           </div>
           <h1 className='collection_title text-center'>
             {collectionDetails?.name}
