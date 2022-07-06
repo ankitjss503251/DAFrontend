@@ -419,7 +419,6 @@ export const getPrice=async (reqBody) => {
     data=data.results;
     if(data) {
       data.map((i) => {
-        console.log("comp--->",min<i.price.$numberDecimal);
         if(min<i.price.$numberDecimal) {
           min=i.price.$numberDecimal;
           order=i;
