@@ -1635,6 +1635,7 @@ function CreateCollection() {
         </div>
       </div>
     </div>
+    </div>
   );
 }
 
