@@ -333,6 +333,7 @@ export const getNFTs=async (req) => {
         type: nft.type,
         attributes: nft.attributes,
         totalQuantity: nft.totalQuantity,
+        collectionData: nft.CollectionData
       };
     })
     :(formattedData[0]={});

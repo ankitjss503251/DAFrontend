@@ -185,11 +185,11 @@ function CollectionWithCollection() {
               class='img-fluid collection_profile'
               onError={(e) => (e.target.src = "../img/collections/list4.png")}
             />
-            <img
+            {/* <img
               alt=''
               src={"../img/collections/check.png"}
               class='img-fluid check_img'
-            />
+            /> */}
           </div>
           <h1 className='collection_title text-center'>{brandDetails?.name}</h1>
           <ul class='collection_social mb-4'>

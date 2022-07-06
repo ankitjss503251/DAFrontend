@@ -150,7 +150,7 @@ function Author() {
                   5.2k Followers
                 </button>
                 <button type="button" className="yellow_btn">
-                  Follow
+                5.2k Following
                 </button>
               </div>
             </div>
