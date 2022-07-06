@@ -21,6 +21,7 @@ import {
   createBid,
 } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
+import {GLTFModel,AmbientLight,DirectionLight} from "react-3d-viewer";
 
 import contracts from "../../config/contracts";
 import {
@@ -322,15 +323,11 @@ function NFTDetails() {
     if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
-
         "",
-
         800
       );
-
       return;
     }
-
     setDatetime(dt);
   }
 
@@ -580,18 +577,41 @@ function NFTDetails() {
       {loading ? <Spinner /> : ""}
       {isPlaceBidModal ? placeBidModal : ""}
       {isBuyNowModal ? buyNowModal : ""}
-      <section style={bgImgStyle} className="pdd_8">
-        <div className="container">
-          <div className="row mb-5">
-            <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5">
-              <img
+      <section style={bgImgStyle} className='pdd_8'>
+        <div className='container'>
+          <div className='row mb-5'>
+            <div className='col-lg-6 mb-xl-5 mb-lg-5 mb-5'>
+              {NFTDetails && NFTDetails.fileType=="Image"?<img
                 src={NFTDetails?.image}
                 className="img-fluid nftimg"
                 alt=""
                 onError={(e) => {
-                  e.target.src = "../img/collections/list4.png";
+                  console.log("image error is--->",e)
+                  e.target.src = "../img/collections/list4.png"
                 }}
-              />
+              />:""}
+              {NFTDetails && NFTDetails.fileType=="Video"?<video 
+                        className="img-fluid nftimg" controls>
+                        <source src={NFTDetails?.image} type="video/mp4" />
+                      </video>:""}
+                      {NFTDetails && NFTDetails.fileType=="3D"? <GLTFModel
+                      height="280"
+                      width="220"
+                      position={{x:0,y:0,z:0}}
+                      anitialias={false}
+                      //enableZoom={false}
+                      //bd4972d8-3441-439e-b669-c8553190f1c6
+                        className="img-fluid nftimg" src={NFTDetails?.image}>
+                        <AmbientLight color={0xffffff} />
+                        <DirectionLight
+                          color={0xffffff}
+                          position={{x: 100,y: 200,z: 100}}
+                        />
+                        <DirectionLight
+                          color={0xff00ff}
+                          position={{x: -100,y: 200,z: -100}}
+                        />
+                      </GLTFModel>:""}
             </div>
             <div className="col-lg-6 nft_details">
               <p className="mb-0">
@@ -879,10 +899,10 @@ function NFTDetails() {
                 <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Offers</h3>
-              <div className="table-responsive">
-                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails} />
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Offers</h3>
+              <div className='table-responsive'>
+                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails} collectionAddress={collection?.contractAddress} />
               </div>
             </div>
             <div className="col-md-12 mb-5">
