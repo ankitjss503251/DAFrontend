@@ -8,11 +8,16 @@ import "../node_modules/bootstrap/dist/js/bootstrap.js";
 import { CookiesProvider } from "react-cookie";
 import { NotificationContainer } from "react-notifications";
 
+
+
 ReactDOM.render(
-  <CookiesProvider>
+  <React.StrictMode>
+     <CookiesProvider>
     <NotificationContainer />
     <App />
-  </CookiesProvider>,
+  </CookiesProvider>
+  </React.StrictMode>,
+ 
   document.getElementById("root")
 );
 

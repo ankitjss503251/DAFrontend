@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { NotificationManager } from "react-notifications";
+import React,{useEffect,useState,Suspense} from "react";
+import {NotificationManager} from "react-notifications";
 import Sidebar from "../components/Sidebar";
 import {
   createNft,
@@ -10,66 +10,109 @@ import {
   GetMyNftList,
   getNFTList,
 } from "../../apiServices";
-import { useCookies } from "react-cookie";
+
+import {useCookies} from "react-cookie";
 import extendedERC721Abi from "./../../config/abis/extendedERC721.json";
-import { exportInstance } from "../../apiServices";
+import {exportInstance} from "../../apiServices";
 import contracts from "./../../config/contracts";
-import { getSignature } from "./../../helpers/getterFunctions";
-import { GENERAL_DATE, GENERAL_TIMESTAMP } from "../../helpers/constants";
+import {getSignature} from "./../../helpers/getterFunctions";
+import {GENERAL_DATE,GENERAL_TIMESTAMP} from "../../helpers/constants";
 import Loader from "../components/loader";
 import "../../App.css";
+import {useGLTF} from "@react-three/drei";
+import {Canvas} from "@react-three/fiber"
+import {GLTFModel,AmbientLight,DirectionLight} from "react-3d-viewer";
+
+
+
 
 function CreateNFTs() {
-  const [nftImg, setNftImg] = useState();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [collection, setCollection] = useState();
-  const [currentUser, setCurrentUser] = useState();
-  const uploadedImage = React.useRef(null);
-  const imageUploader = React.useRef(null);
-  const [cookies] = useCookies([]);
-  const [collections, setCollections] = useState([]);
-  const [nfts, setNfts] = useState([]);
-  const [quantity, setQuantity] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [isModal, setModal] = useState("");
-  const [currAttrKey, setCurrAttrKey] = useState("");
-  const [currAttrValue, setCurrAttrValue] = useState("");
-  const [attrKeys, setAttrKeys] = useState([]);
-  const [attrValues, setAttrValues] = useState([]);
-  const [attributes, setAttributes] = useState([]);
+  const [nftImg,setNftImg]=useState();
+  const [title,setTitle]=useState("");
+  const [description,setDescription]=useState("");
+  const [collection,setCollection]=useState();
+  const [currentUser,setCurrentUser]=useState();
+  const uploadedImage=React.useRef(null);
+  const imageUploader=React.useRef(null);
+  const [cookies]=useCookies([]);
+  const [collections,setCollections]=useState([]);
+  const [nfts,setNfts]=useState([]);
+  const [quantity,setQuantity]=useState(1);
+  const [loading,setLoading]=useState(false);
+  const [isModal,setModal]=useState("");
+  const [currAttrKey,setCurrAttrKey]=useState("");
+  const [currAttrValue,setCurrAttrValue]=useState("");
+  const [attrKeys,setAttrKeys]=useState([]);
+  const [attrValues,setAttrValues]=useState([]);
+  const [attributes,setAttributes]=useState([]);
+  const [fileType,setFileType]=useState("Image")
 
-  const handleImageUpload = (e) => {
-    const [file] = e.target.files;
-    if (file) {
-      const reader = new FileReader();
-      const { current } = uploadedImage;
-      current.file = file;
-      reader.onload = (e) => {
-        current.src = e.target.result;
+ 
+  const handleImageUpload=(e) => {
+    const [file]=e.target.files;
+    console.log("file ttypee  isssss",e.target.files[0])
+    
+ 
+
+
+
+
+    if(file) {
+      console.log("file ldskjflakdjfl---->",file)
+      let url=e.target.files[0].name.split(/[#?]/)[0].split('.').pop().trim()
+      console.log("url is----->",url)
+      const reader=new FileReader();
+      const {current}=uploadedImage;
+
+      console.log("current is----->",current)
+      current.file=file;
+      reader.onload=(e) => {
+        current.src=e.target.result;
       };
       reader.readAsDataURL(file);
-      if (e.target.files && e.target.files[0]) {
-        setNftImg(e.target.files[0]);
+      if(e.target.files&&e.target.files[0]) {
+
+        if(url=="mp4") {
+          console.log("nft file is---->",e.target.files[0])
+          setFileType("Video")
+          let blobURL=URL.createObjectURL(e.target.files[0]);
+          console.log(blobURL);
+          setNftImg(blobURL);
+        } else if(url=="gif"||url=="jpeg"||url=="jpg"||url=="png") {
+          setFileType("Image")
+
+          console.log("nft file else is---->",e.target.files[0])
+          setNftImg(e.target.files[0]);
+        } else {
+          console.log("in 3d")
+          let blobURL=URL.createObjectURL(e.target.files[0]);
+          console.log(blobURL);
+          setNftImg(blobURL);
+          setFileType("3D")
+        }
+
+
+
+
       }
     }
   };
 
-  const handleValidationCheck = async () => {
-    if (nftImg === "" || nftImg === undefined) {
-      NotificationManager.error("Please Upload Image", "", 800);
+  const handleValidationCheck=async () => {
+    if(nftImg===""||nftImg===undefined) {
+      NotificationManager.error("Please Upload Image","",800);
       return false;
     }
-    if (title.trim() === "" || title === undefined) {
-      NotificationManager.error("Please Enter Title", "", 800);
+    if(title.trim()===""||title===undefined) {
+      NotificationManager.error("Please Enter Title","",800);
       return false;
     }
-    if (description.trim() === "" || description === undefined) {
-      NotificationManager.error("Please Enter Description", "", 800);
+    if(description.trim()===""||description===undefined) {
+      NotificationManager.error("Please Enter Description","",800);
       return false;
     }
-    if (collection === "" || collection === undefined) {
-      NotificationManager.error("Please Choose Collection", "", 800);
+    if(collection===""||collection===undefined) {
+      NotificationManager.error("Please Choose Collection","",800);
       return false;
     }
 
@@ -77,39 +120,42 @@ function CreateNFTs() {
   };
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-  }, [cookies.selected_account]);
+    if(cookies.selected_account) setCurrentUser(cookies.selected_account);
+  },[cookies.selected_account]);
 
   useEffect(() => {
-    const fetch = async () => {
-      let reqBody = {
+    const fetch=async () => {
+      let reqBody={
         page: 1,
         limit: 12,
       };
-      let res = await GetMyNftList(reqBody);
-      if (res && res.results && res.results.length > 0) {
+      let res=await GetMyNftList(reqBody);
+      if(res&&res.results&&res.results.length>0) {
         setNfts(res.results[0]);
       }
-      console.log("Ress", res);
+      console.log("Ress",res);
     };
     fetch();
-  }, []);
+  },[]);
 
   const handleCreateNFT = async () => {
-    console.log("ATTRIBUTES", attributes);
+    console.log("ATTRIBUTES",attributes);
     setLoading(true);
     setModal("");
-    if (!handleValidationCheck()) {
-      NotificationManager.error("Validation error", "", 800);
+    if(!handleValidationCheck()) {
+      NotificationManager.error("Validation error","",800);
       setLoading(false);
       return;
     } else {
-      let salt = Math.round(Math.random() * 10000000);
-      var fd = new FormData();
+      let salt=Math.round(Math.random()*10000000);
+      
+      
+    
+      var formdata = new FormData();
       let createRes;
       let collectionDetail;
       let NFTcontract;
-      let reqBody = {
+      let reqBody={
         page: 1,
         limit: 12,
         collectionID: JSON.parse(collection)._id,
@@ -123,14 +169,14 @@ function CreateNFTs() {
         isMinted: "",
       };
       try {
-        collectionDetail = await getAllCollections(reqBody);
-        console.log("collectionDetail", collectionDetail);
-        collectionDetail = collectionDetail?.results[0][0];
-        console.log("collectionDetail11", collectionDetail);
-        if (collectionDetail.totalSupply < collectionDetail.nftCount + 1) {
+        collectionDetail=await getAllCollections(reqBody);
+        console.log("collectionDetail",collectionDetail);
+        collectionDetail=collectionDetail?.results[0][0];
+        console.log("collectionDetail11",collectionDetail);
+        if(collectionDetail.totalSupply<collectionDetail.nftCount+1) {
           console.log(
             "collection.totalSupply",
-            collectionDetail.totalSupply < collectionDetail.nftCount + 1
+            collectionDetail.totalSupply<collectionDetail.nftCount+1
           );
           NotificationManager.error(
             "Total Supply exceeded max supply",
@@ -140,75 +186,82 @@ function CreateNFTs() {
           setLoading(false);
           return;
         }
-        fd.append("attributes", JSON.stringify(attributes));
-        fd.append("levels", JSON.stringify([]));
-        fd.append("creatorAddress", currentUser.toLowerCase());
-        fd.append("name", title);
-        fd.append("nftFile", nftImg);
-        fd.append("quantity", quantity);
-        fd.append("collectionID", JSON.parse(collection)._id);
-        fd.append("collectionAddress", collectionDetail.contractAddress);
-        fd.append("description", description);
-        fd.append("tokenID", collectionDetail.nextID);
-        fd.append("type", collectionDetail.type);
-        fd.append("isMinted", 0);
-        fd.append("imageSize", "0");
-        fd.append("imageType", "0");
-        fd.append("imageDimension", "0");
-        console.log("field values--->", fd.values);
-      } catch (e) {
-        console.log("e", e);
-        NotificationManager.error("Something went wrong", "", 800);
+        formdata.append('attributes',JSON.stringify(attributes));
+        formdata.append("levels",JSON.stringify([]));
+        formdata.append("creatorAddress",currentUser.toLowerCase());
+        formdata.append("name",title);
+        formdata.append("nftFile",nftImg);
+        formdata.append("quantity",quantity);
+        formdata.append("collectionID",JSON.parse(collection)._id);
+        formdata.append("collectionAddress",collectionDetail.contractAddress);
+        formdata.append("description",description);
+        formdata.append("tokenID",collectionDetail.nextID);
+        formdata.append("type",collectionDetail.type);
+        formdata.append("isMinted",0);
+        formdata.append("imageSize","0");
+        formdata.append("imageType","0");
+        formdata.append("imageDimension","0");
+        formdata.append("fileType",fileType)
+        
+        //for (var key of formdata.entries()) {
+        //  console.log(key[0] + ', ' + key[1]);
+        //}
+        
+        console.log("field values--->",formdata);
+      } catch(e) {
+        console.log("e",e);
+        NotificationManager.error("Something went wrong","",800);
         setLoading(false);
         return;
       }
       try {
-        NFTcontract = await exportInstance(
+        NFTcontract=await exportInstance(
           collectionDetail.contractAddress,
           extendedERC721Abi.abi
         );
-        let approval = await NFTcontract.isApprovedForAll(
+        let approval=await NFTcontract.isApprovedForAll(
           currentUser,
           contracts.MARKETPLACE
         );
         let approvalRes;
-        let options = {
+        let options={
           from: currentUser,
           gasLimit: 9000000,
           value: 0,
         };
-        if (!approval) {
-          approvalRes = await NFTcontract.setApprovalForAll(
+        if(!approval) {
+          approvalRes=await NFTcontract.setApprovalForAll(
             contracts.MARKETPLACE,
             true,
             options
           );
-          approvalRes = await approvalRes.wait();
-          if (approvalRes.status === 0) {
-            NotificationManager.error("Transaction failed", "", 800);
+          approvalRes=await approvalRes.wait();
+          if(approvalRes.status===0) {
+            NotificationManager.error("Transaction failed","",800);
             setLoading(false);
             return;
           }
 
-          NotificationManager.success("Approved", "", 800);
+          NotificationManager.success("Approved","",800);
         }
-      } catch (e) {
-        console.log("e", e);
-        NotificationManager.error("Something went wrong", "", 800);
+      } catch(e) {
+        console.log("e",e);
+        NotificationManager.error("Something went wrong","",800);
         setLoading(false);
         return;
       }
 
       try {
-        createRes = await createNft(fd);
-      } catch (e) {
-        console.log("err", e);
-        NotificationManager.error("Something went wrong", "", 800);
+        console.log("FormData before Call",formdata);
+        createRes=await createNft(formdata);
+      } catch(e) {
+        console.log("err",e);
+        NotificationManager.error("Something went wrong","",800);
         setLoading(false);
         return;
       }
 
-      let sellerOrder = [
+      let sellerOrder=[
         currentUser.toLowerCase(),
         "0x8A23fe04CdDF650A6A73287Dd62c207F2F0C190A",
         collectionDetail.nextID,
@@ -222,16 +275,16 @@ function CreateNFTs() {
         salt,
       ];
 
-      console.log("sellerOrder", sellerOrder);
+      console.log("sellerOrder",sellerOrder);
       try {
-        let signature = await getSignature(currentUser, ...sellerOrder);
-        if (signature === false) {
-          NotificationManager.error("signature not found", "", 800);
+        let signature=await getSignature(currentUser,...sellerOrder);
+        if(signature===false) {
+          NotificationManager.error("signature not found","",800);
           setLoading(false);
           return;
         }
-        console.log("signature", signature);
-        let reqParams = {
+        console.log("signature",signature);
+        let reqParams={
           nftId: createRes.data._id,
           tokenAddress: contracts.USDT,
           collection: "0x8A23fe04CdDF650A6A73287Dd62c207F2F0C190A",
@@ -248,18 +301,18 @@ function CreateNFTs() {
 
         await createOrder(reqParams);
 
-        NotificationManager.success("NFT created successfully", "", 800);
+        NotificationManager.success("NFT created successfully","",800);
         setLoading(false);
-        console.log("NFTcontract", NFTcontract);
+        console.log("NFTcontract",NFTcontract);
         setTimeout(() => {
-          window.location.href = "/createnfts";
-        }, 1000);
-      } catch (e) {
-        console.log("e", e);
+          window.location.href="/createnfts";
+        },1000);
+      } catch(e) {
+        console.log("e",e);
         setLoading(false);
         setTimeout(() => {
-          window.location.href = "/createnfts";
-        }, 1000);
+          window.location.href="/createnfts";
+        },1000);
         return;
       }
     }
@@ -267,39 +320,39 @@ function CreateNFTs() {
 
   useEffect(() => {
     setCurrentUser(cookies.selected_account);
-  }, [cookies.selected_account]);
+  },[cookies.selected_account]);
 
   useEffect(() => {
-    const fetch = async () => {
-      let reqBody = {
+    const fetch=async () => {
+      let reqBody={
         page: 1,
         limit: 20,
       };
-      let data = await GetMyCollectionsList(reqBody);
-      if (data && data.results && data.results.length > 0)
+      let data=await GetMyCollectionsList(reqBody);
+      if(data&&data.results&&data.results.length>0)
         setCollections(data?.results[0]);
 
       // console.log("data", data);
     };
     fetch();
-  }, []);
+  },[]);
 
-  const handlePropertyAdded = () => {
-    if (currAttrKey === "" || currAttrValue === "") {
-      NotificationManager.info("Please Enter Both the Fields", "", 800);
+  const handlePropertyAdded=() => {
+    if(currAttrKey===""||currAttrValue==="") {
+      NotificationManager.info("Please Enter Both the Fields","",800);
       return;
     }
 
-    if (attrKeys.includes(currAttrKey)) {
-      NotificationManager.error("Cannot Add Same Property Twice", "", 800);
+    if(attrKeys.includes(currAttrKey)) {
+      NotificationManager.error("Cannot Add Same Property Twice","",800);
       return;
     }
 
-    let tempArr1 = [];
-    let tempArr2 = [];
-    if (currAttrKey) {
-      tempArr1.push(...attrKeys, currAttrKey);
-      tempArr2.push(...attrValues, currAttrValue);
+    let tempArr1=[];
+    let tempArr2=[];
+    if(currAttrKey) {
+      tempArr1.push(...attrKeys,currAttrKey);
+      tempArr2.push(...attrValues,currAttrValue);
     }
 
     setAttrKeys(tempArr1);
@@ -308,19 +361,19 @@ function CreateNFTs() {
     setCurrAttrValue("");
   };
 
-  const handlePropertyRemoved = async (index) => {
-    let tempArr1 = [...attrKeys];
-    tempArr1[index] = "";
+  const handlePropertyRemoved=async (index) => {
+    let tempArr1=[...attrKeys];
+    tempArr1[index]="";
     setAttrKeys(tempArr1);
-    let tempArr2 = [...attrValues];
-    tempArr2[index] = "";
+    let tempArr2=[...attrValues];
+    tempArr2[index]="";
     setAttrValues(tempArr2);
   };
 
   return (
     <div className="wrapper">
       {/* <!-- Sidebar  --> */}
-      {loading ? <Loader /> : ""}
+      {loading? <Loader />:""}
       <Sidebar />
 
       {/* <!-- Page Content  --> */}
@@ -354,20 +407,20 @@ function CreateNFTs() {
             </thead>
             <tbody>
               <br></br>
-              {console.log("nfts", nfts)}
-              {nfts && nfts.length > 0
-                ? nfts.map((n, i) => {
-                    return (
-                      <tr>
-                        <td>
-                          <img src={n.image} className="profile_i" alt="" />
-                        </td>
-                        <td>{n.name}</td>
-                        <td>{n.description}</td>
-                      </tr>
-                    );
-                  })
-                : "No NFTs Found"}
+              {console.log("nfts",nfts)}
+              {nfts&&nfts.length>0
+                ? nfts.map((n,i) => {
+                  return (
+                    <tr>
+                      <td>
+                        <img src={n.image} className="profile_i" alt="" />
+                      </td>
+                      <td>{n.name}</td>
+                      <td>{n.description}</td>
+                    </tr>
+                  );
+                })
+                :"No NFTs Found"}
             </tbody>
           </table>
         </div>
@@ -413,7 +466,7 @@ function CreateNFTs() {
                   >
                     <input
                       type="file"
-                      accept="image/*"
+                      accept=".gltf,.glb,.mp4,image/*"
                       onChange={handleImageUpload}
                       ref={imageUploader}
                       style={{
@@ -430,7 +483,8 @@ function CreateNFTs() {
                       onClick={() => imageUploader.current.click()}
                     >
                       <p className="text-center">Click or Drop here</p>
-                      <img
+
+                      {fileType=="Image"? <img
                         alt=""
                         ref={uploadedImage}
                         src={"../images/upload.png"}
@@ -440,7 +494,38 @@ function CreateNFTs() {
                           margin: "auto",
                         }}
                         className="img-fluid profile_circle_img"
-                      />
+                      />:""}
+                      
+                      {fileType=="Video"?<video style={{
+                        width: "110px",
+                        height: "110px",
+                        margin: "auto",
+                      }}
+                        className="img-fluid profile_circle_img" controls>
+                        <source ref={uploadedImage} src={nftImg} type="video/mp4" />
+                      </video> :""}
+
+
+                      {fileType=="3D"? <GLTFModel
+                      height="280"
+                      width="220"
+                      position={{x:0,y:0,z:0}}
+                      anitialias={false}
+                      //enableZoom={false}
+                      ref={uploadedImage}
+                        className="img-fluid profile_circle_img" src={nftImg}>
+                        <AmbientLight color={0xffffff} />
+                        <DirectionLight
+                          color={0xffffff}
+                          position={{x: 100,y: 200,z: 100}}
+                        />
+                        <DirectionLight
+                          color={0xff00ff}
+                          position={{x: -100,y: 200,z: -100}}
+                        />
+                      </GLTFModel>:""}
+
+
                     </div>
                   </div>
                 </div>
@@ -467,24 +552,24 @@ function CreateNFTs() {
                     aria-label="Default select example"
                     value={collection}
                     onChange={(e) => {
-                      console.log("e.target.value", e.target.value);
+                      console.log("e.target.value",e.target.value);
                       setCollection(e.target.value);
                       setQuantity(1);
                     }}
                   >
                     <option value="">Select</option>
-                    {collections.length > 0
-                      ? collections.map((c, i) => {
-                          console.log("c", c._id);
-                          return (
-                            <option value={JSON.stringify(c)}>{c.name}</option>
-                          );
-                        })
-                      : ""}
+                    {collections.length>0
+                      ? collections.map((c,i) => {
+                        console.log("c",c._id);
+                        return (
+                          <option value={JSON.stringify(c)}>{c.name}</option>
+                        );
+                      })
+                      :""}
                   </select>
                 </div>
-                {console.log("collection?.type == 2", collection)}
-                {collection && JSON.parse(collection)?.type == 2 ? (
+                {console.log("collection?.type == 2",collection)}
+                {collection&&JSON.parse(collection)?.type==2? (
                   <div className="col-md-12 mb-1">
                     <label for="recipient-name" className="col-form-label">
                       Quantity *
@@ -496,12 +581,12 @@ function CreateNFTs() {
                       value={quantity}
                       // disabled={collection.type == 1 ? true : false}
                       onKeyPress={(e) => {
-                        if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
+                        if(!/^\d*?\d*$/.test(e.key)) e.preventDefault();
                       }}
                       onChange={(e) => setQuantity(e.target.value)}
                     />
                   </div>
-                ) : (
+                ):(
                   ""
                 )}
 
@@ -620,30 +705,30 @@ function CreateNFTs() {
                 </button>
               </form>
               <div className="row mt-3 attributeAdded_con">
-                {attrKeys && attrValues
-                  ? attrKeys.map((attrKey, key) => {
-                      return attrKey !== "" ? (
-                        <div className="col-lg-6 col-md-6 col-sm-6">
-                          <div className="createProperty">
-                            <div className="nft_attr">
-                              <h5>{attrKey}</h5>
-                              <h4>{attrValues[key]}</h4>
-                            </div>
-                            <button
-                              className="remove-btn btn-main"
-                              onClick={() => {
-                                handlePropertyRemoved(key);
-                              }}
-                            >
-                              <i className="fa fa-trash" aria-hidden="true"></i>
-                            </button>
+                {attrKeys&&attrValues
+                  ? attrKeys.map((attrKey,key) => {
+                    return attrKey!==""? (
+                      <div className="col-lg-6 col-md-6 col-sm-6">
+                        <div className="createProperty">
+                          <div className="nft_attr">
+                            <h5>{attrKey}</h5>
+                            <h4>{attrValues[key]}</h4>
                           </div>
+                          <button
+                            className="remove-btn btn-main"
+                            onClick={() => {
+                              handlePropertyRemoved(key);
+                            }}
+                          >
+                            <i className="fa fa-trash" aria-hidden="true"></i>
+                          </button>
                         </div>
-                      ) : (
-                        ""
-                      );
-                    })
-                  : ""}
+                      </div>
+                    ):(
+                      ""
+                    );
+                  })
+                  :""}
               </div>
             </div>
             <div className="modal-footer justify-content-center">
@@ -653,16 +738,16 @@ function CreateNFTs() {
                 data-bs-target="#NftModal"
                 className="btn btn-admin text-light"
                 onClick={() => {
-                  if (attrKeys.length > 0) {
-                    let metaData = [];
-                    for (let i = 0; i < attrKeys.length; i++) {
+                  if(attrKeys.length>0) {
+                    let metaData=[];
+                    for(let i=0;i<attrKeys.length;i++) {
                       metaData.push({
                         trait_type: attrKeys[i],
                         value: attrValues[i],
                       });
                     }
                     setAttributes(metaData);
-                    console.log("ATTRIBUTES", attributes);
+                    console.log("ATTRIBUTES",attributes);
                   }
                 }}
               >
@@ -677,3 +762,15 @@ function CreateNFTs() {
 }
 
 export default CreateNFTs;
+
+{/*<img
+                        alt=""
+                        ref={uploadedImage}
+                        src={"../images/upload.png"}
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          margin: "auto",
+                        }}
+                        className="img-fluid profile_circle_img"
+                      />*/}
