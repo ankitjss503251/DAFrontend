@@ -504,7 +504,7 @@ function CreateCollection() {
         let nftCount = _nfts.length;
         dbSupply = parseInt(nftCount);
         console.log("coll update", res._id);
-        slowRefresh(1000);
+        // slowRefresh(1000);
       }
 
       for (let i = dbSupply; i < parseInt(originalSupply); i++) {
@@ -602,54 +602,52 @@ function CreateCollection() {
   };
 
   return (
-    <div className='wrapper'>
+    <div className="wrapper">
       {/* <!-- Sidebar  --> */}
       <Sidebar />
       {loading ? <Loader /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
-        {isSuperAdmin() ? null : (
-          <>
-            <div className="add_btn mb-4 d-flex justify-content-end">
-              <button
-                className="btn btn-admin text-light"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
-                onClick={() => {
-                  if(currentUser)
-                  setModal("active");
-                  else 
-                {  NotificationManager.error("Connect Your Metamask", "", 800);
-                  return;
-              }
-                }}
-              >
-                + Add Collection
-              </button>
-            </div>
-            <div className="add_btn mb-4 d-flex justify-content-end">
-              <button
-                className="btn btn-admin text-light"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal2"
-                onClick={() => setNewImportModal("active")}
-              >
-                + Import Collection
-              </button>
-            </div>
-          </>
-        )}
-        <div className='adminbody table-widget text-light box-background '>
-          <h5 className='admintitle font-600 font-24 text-yellow text-center'>
+
+        {isSuperAdmin()
+          ? null
+          : currentUser && (
+              <>
+                <div className="add_btn mb-4 d-flex justify-content-end">
+                  <button
+                    className="btn btn-admin text-light"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                    onClick={() => {
+                      setModal("active");
+                    }}
+                  >
+                    + Add Collection
+                  </button>
+                </div>
+                <div className="add_btn mb-4 d-flex justify-content-end">
+                  <button
+                    className="btn btn-admin text-light"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal2"
+                    onClick={() => setNewImportModal("active")}
+                  >
+                    + Import Collection
+                  </button>
+                </div>
+              </>
+            )}
+        <div className="adminbody table-widget text-light box-background ">
+          <h5 className="admintitle font-600 font-24 text-yellow text-center">
+
             My Collections
           </h5>
           <br />
-          <div className='table-responsive'>
-            <table className='table table-hover text-light'>
+          <div className="table-responsive">
+            <table className="table table-hover text-light">
               <thead>
-               
                 <tr>
                   <th>Collection</th>
                   <th>Title</th>
@@ -662,8 +660,9 @@ function CreateCollection() {
                   <th>Brand</th>
                 </tr>
               </thead>
-             
+
               <tbody>
+
               {myCollections &&
               myCollections != undefined &&
               myCollections != "" &&
@@ -735,6 +734,7 @@ function CreateCollection() {
                               {item.isOnMarketplace === 0 ? "Show" : "Hide"}
                             </button>
                             {/* <button
+
                               className='btn  p-1 text-light'
                               type='button'
                               onClick={async () => {
@@ -742,68 +742,83 @@ function CreateCollection() {
                               }}>
                               View NFTs
                             </button> */}
-                            <button
-                              className='btn p-1  text-light'
-                              type='button'
-                              data-bs-toggle='modal'
-                              data-bs-target='#editModal'
-                              onClick={async () => {
-                                setSelectedCollectionId(item._id);
-                                setIsEditModal("active");
-                                handleEditCollection();
-                              }}>
-                              Edit
-                            </button>
-                            <button
-                              className={`btn p-1 exclusive-btn ${
-                                item.isExclusive ? "active" : ""
-                              }`}
-                              type='button'
-                              onClick={() =>
-                                handleCollection(
-                                  item._id,
-                                  "isExclusive",
-                                  !item.isExclusive ? 1 : 0
-                                )
-                              }>
-                              Exclusive Collection
-                            </button>
-                            <button
-                              className={`btn p-1  hot-btn ${
-                                item.isHotCollection ? "active" : ""
-                              }`}
-                              type='button'
-                              onClick={() =>
-                                handleCollection(
-                                  item._id,
-                                  "isHotCollection",
-                                  !item.isHotCollection ? 1 : 0
-                                )
-                              }>
-                              Hot Collection
-                            </button>
-                          </div>
-                        )}
-                          </td>
-                          <td>{item.name ? item.name : "-"}</td>
-                          <td>{item.symbol? item.symbol : "-"}</td>
-                          <td>{item.description? item.description : "-"}</td>
-                          <td>{item.royalityPercentage? item.royalityPercentage : "-"}</td>
-                          <td>{item.totalSupply? item.totalSupply : "-"}</td>
-                          <td>
-                            {item.price.$numberDecimal ? Number(
-                              convertToEth(item.price.$numberDecimal)
-                            ).toFixed(4) : "-"}
-                          </td>
-                          <td>{item.categoryID?.name ? item.categoryID?.name : "-"}</td>
-                          <td>{item.brandID?.name ? item.brandID?.name : "-"}</td>
-                        </tr>
+                                  <button
+                                    className="btn p-1  text-light"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editModal"
+                                    onClick={async () => {
+                                      setSelectedCollectionId(item._id);
+                                      setIsEditModal("active");
+                                      handleEditCollection();
+                                    }}
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    className={`btn p-1 exclusive-btn ${
+                                      item.isExclusive ? "active" : ""
+                                    }`}
+                                    type="button"
+                                    onClick={() =>
+                                      handleCollection(
+                                        item._id,
+                                        "isExclusive",
+                                        !item.isExclusive ? 1 : 0
+                                      )
+                                    }
+                                  >
+                                    Exclusive Collection
+                                  </button>
+                                  <button
+                                    className={`btn p-1  hot-btn ${
+                                      item.isHotCollection ? "active" : ""
+                                    }`}
+                                    type="button"
+                                    onClick={() =>
+                                      handleCollection(
+                                        item._id,
+                                        "isHotCollection",
+                                        !item.isHotCollection ? 1 : 0
+                                      )
+                                    }
+                                  >
+                                    Hot Collection
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                            <td>{item.name ? item.name : "-"}</td>
+                            <td>{item.symbol ? item.symbol : "-"}</td>
+                            <td>{item.description ? item.description : "-"}</td>
+                            <td>
+                              {item.royalityPercentage
+                                ? item.royalityPercentage
+                                : "-"}
+                            </td>
+                            <td>{item.totalSupply ? item.totalSupply : "-"}</td>
+                            <td>
+                              {item.price.$numberDecimal
+                                ? Number(
+                                    convertToEth(item.price.$numberDecimal)
+                                  ).toFixed(4)
+                                : "-"}
+                            </td>
+                            <td>
+                              {item.categoryID?.name
+                                ? item.categoryID?.name
+                                : "-"}
+                            </td>
+                            <td>
+                              {item.brandID?.name ? item.brandID?.name : "-"}
+                            </td>
+                          </tr>
                           <br></br>
-                          </>
-                    );
-                  })
-                : "No Collections Found"}
-                 </tbody>
+                        </>
+                      );
+                    })
+                  : "No Collections Found"}
+              </tbody>
             </table>
           </div>
         </div>
@@ -1311,8 +1326,7 @@ function CreateCollection() {
                 </form>
               </div>
 
-              <div className='modal-footer justify-content-center'>
-             
+              <div className="modal-footer justify-content-center">
                 <button
                   type="button"
                   className="btn btn-admin text-light"
@@ -1320,7 +1334,6 @@ function CreateCollection() {
                     await handleImportNFT(true);
                   }}
                 >
-
                   Import Collection
                 </button>
               </div>
