@@ -36,7 +36,7 @@ function Marketplacecart() {
                 <div className="items_profileimg" key={key}>
                   <div className="profile_left">
                     <img alt="" className="profile_img" src={card.logoImage} />
-                    <img alt="" className="icheck_img" src={card.logoImage} />
+                    {/* <img alt="" className="icheck_img" src={card.logoImage} /> */}
                   </div>
                   {/* <div className="profile_right">
                     <span>sfs</span>

@@ -92,11 +92,11 @@ function CarouselCollection() {
                           src={card?.brand?.logoImage}
                           onError={(e) => e.target.src = "../img/collections/list4.png"}
                         />
-                        <img
+                        {/* <img
                           alt=''
                           className='check_img'
                           src={"../img/collections/check.png"}
-                        />
+                        /> */}
                       </div>
                       </a>
                       <a href={`/collection/${card._id}`} >
