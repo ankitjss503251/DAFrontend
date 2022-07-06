@@ -485,7 +485,7 @@ function Marketplace() {
                             <div className='profile_left nft-logo-img'>
                               <img
                                 alt=''
-                                className='profile_img '
+                                className='profile_img creatorImg'
                                 src={card.brand?.logoImage}
                                 onError={(e) =>
                                   (e.target.src =

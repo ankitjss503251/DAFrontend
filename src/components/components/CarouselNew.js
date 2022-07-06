@@ -106,17 +106,17 @@ function ItemsList() {
                       <div className='profile_left nft-logo-img'>
                         <img
                           alt=''
-                          className='profile_img '
+                          className='profile_img creatorImg'
                           src={card.brand?.logoImage}
                           onError={(e) =>
                             (e.target.src = "../img/collections/list4.png")
                           }
                         />
-                        <img
+                        {/* <img
                           alt=''
                           className='icheck_img'
                           src={"../img/collections/check.png"}
-                        />
+                        /> */}
                       </div>
                     </a>
                     {/* <div className='profile_right'>
