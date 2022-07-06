@@ -1224,8 +1224,10 @@ header#myHeader {
   border: 3px solid #394956;
   border-radius: 10px;
   background-color: #222e38;
-  height: 100%;
+  /* height: 100%; */
+  
 }
+
 
 
 .coll_profileimg {
@@ -2381,7 +2383,7 @@ button.filter_btn.active {
   font-family: "Montserrat";
   font-weight: 600;
   font-size: 18px;
-  color: #ffffff;
+  color: #ffffff !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2406,6 +2408,7 @@ button.filter_btn.active {
   justify-content: center;
   padding: 12px 35px;
   min-width: 185px;
+  cursor: pointer;
 }
 .item_active .active svg,
 .item_active .active path,
@@ -2553,15 +2556,15 @@ button.img_edit_btn {
   text-align: center;
   color: #ffffff;
 }
-.auther_cart {
+.author_cart {
   padding: 0px;
   list-style: none;
   text-align: center;
   margin-bottom: 50px;
   justify-content: center;
 }
-.auther_cart li,
-.auther_cart li button {
+.author_cart li,
+.author_cart li button {
   font-family: "Montserrat";
   font-weight: 600;
   font-size: 24px;
@@ -2571,13 +2574,13 @@ button.img_edit_btn {
   background: transparent;
   border: 0px;
 }
-.auther_cart li button.active {
+.author_cart li button.active {
   border-bottom: 2px solid #ef981d;
 }
-.auther_cart .dropdown-menu li {
+.author_cart .dropdown-menu li {
   display: block;
 }
-.auther_cart .dropdown-menu {
+.author_cart .dropdown-menu {
   background: #0d171e;
   box-shadow: 0px 4px 4px rgb(0 0 0 / 50%);
   border-radius: 0px 0px 10px 10px;
@@ -2600,7 +2603,7 @@ button.img_edit_btn {
 .auther_pick:hover .overlat_btn {
   display: flex;
 }
-.auther_cart .dropdown-toggle::after {
+.author_cart .dropdown-toggle::after {
   position: relative;
 }
 /* Collection Action page */
@@ -3865,18 +3868,18 @@ a:hover {
   display: inline-block;
   width: max-content;
 }
-.auther_cart .dropdown-menu li {
+.author_cart .dropdown-menu li {
   padding: 0px;
 }
-.auther_cart .dropdown-menu li .dropdown-item {
+.author_cart .dropdown-menu li .dropdown-item {
   font-weight: 600 !important;
   font-size: 18px !important;
   text-align: center;
   padding: 10px 20px;
   color: #fff;
 }
-.auther_cart .dropdown-menu li .dropdown-item:hover,
-.auther_cart .dropdown-menu li .dropdown-item.active {
+.author_cart .dropdown-menu li .dropdown-item:hover,
+.author_cart .dropdown-menu li .dropdown-item.active {
   background: #ef981d;
   border-radius: 50px;
   color: #fff !important;
@@ -3886,11 +3889,11 @@ a:hover {
   text-align: center;
   padding: 10px 20px;
 }
-.auther_cart .dropdown-menu li .dropdown-item.active svg,
-.auther_cart .dropdown-menu li .dropdown-item:hover svg {
+.author_cart .dropdown-menu li .dropdown-item.active svg,
+.author_cart .dropdown-menu li .dropdown-item:hover svg {
   fill: #fff;
 }
-.auther_cart .dropdown-menu li .dropdown-item svg {
+.author_cart .dropdown-menu li .dropdown-item svg {
   fill: #ef981d;
 }
 .filter {
@@ -5008,3 +5011,9 @@ body.overflow_hidden {
   height: 260px !important;
   object-fit: cover !important;
 }
+
+
+.nft.hc .slick-list .slick-slide{
+  /* height: 201px !important; */
+      width: 450px !important;
+      }

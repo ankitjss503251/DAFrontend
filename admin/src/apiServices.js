@@ -33,8 +33,7 @@ export const adminRegister = async (account) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      walletAddress: account,
-      // role: "admin",
+      walletAddress: account
     }),
   };
   try {

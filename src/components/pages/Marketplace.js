@@ -317,14 +317,14 @@ function Marketplace() {
                     </ul>
                   </div>
 
-                  <button
+                  {/* <button
                     type='button'
                     class='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
-                  </button>
-                  <div id='demo2' class='collapse show'>
+                  </button> */}
+                  {/* <div id='demo2' class='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
@@ -359,7 +359,7 @@ function Marketplace() {
                         </button>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                 </form>
               </div>
               <div className='filtercol'>
@@ -450,7 +450,7 @@ function Marketplace() {
                   class='drop_down_tlt mb-4'
                   data-bs-toggle='collapse'
                   data-bs-target='#demo5'>
-                  On Sale In <UpArrow />
+                  Brands <UpArrow />
                 </button>
                 <div id='demo5' class='collapse show'>
                   <ul>
@@ -484,12 +484,6 @@ function Marketplace() {
               </div>
             </div>
           </div>
-
-          {/* <div className="row">
-             
-              <Marketplacecart />
-            </div> */}
-
           <div className='row'>
             {loader ? (
               <SkeletonCard cards={cardCount} grid={grid} />
@@ -510,11 +504,13 @@ function Marketplace() {
                                     ? card.creatorImg
                                     : "../img/collections/profile1.png"
                                 }
+                                onError={(e) => e.target.src = "../img/marketplace/list4.png"}
                               />
                               <img
                                 alt=''
                                 className='icheck_img'
                                 src={"../img/collections/check.png"}
+                                
                               />
                             </div>
                           </a>
