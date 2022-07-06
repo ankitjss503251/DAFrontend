@@ -12,6 +12,7 @@ import {
   Login,
   Logout,
   adminRegister,
+  logoutSuperAdmin,
 } from "./../apiServices";
 import { NotificationManager } from "react-notifications";
 import "react-notifications/lib/notifications.css";
@@ -19,7 +20,6 @@ import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
 import Logo from "./../logo.svg";
 import PopupModal from "./components/popupModal";
-
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
 
@@ -141,7 +141,6 @@ const Navbar = (props) => {
   };
 
   useEffect(() => {
-    console.log("provider in useEffect", provider);
     if (provider) {
       provider.on("accountsChanged", (accounts) => {
         const wallets = onboard.state.get().wallets;
@@ -319,18 +318,25 @@ const Navbar = (props) => {
           </div>
         </li>
         <li>
+          {props.isAdmin?
           <button
-            className='round-btn montserrat text-light text-decoration-none'
-            onClick={!account ? connectWallet : disconnectWallet}>
-            {!account ? (
-              "Connect Wallet"
-            ) : (
-              <>
-                <Wallet />
-                {account.slice(0, 4) + "..." + account.slice(38, 42)}
-              </>
-            )}
-          </button>
+              className='round-btn montserrat text-light text-decoration-none'
+              onClick={logoutSuperAdmin}>
+              {"Logout" }
+            </button>:
+            <button
+              className='round-btn montserrat text-light text-decoration-none'
+              onClick={!account ? connectWallet : disconnectWallet}>
+              {!account ? (
+                "Connect Wallet"
+              ) : (
+                <>
+                  <Wallet />
+                  {account.slice(0, 4) + "..." + account.slice(38, 42)}
+                </>
+              )}
+            </button>
+          }
         </li>
       </ul>
     </div>

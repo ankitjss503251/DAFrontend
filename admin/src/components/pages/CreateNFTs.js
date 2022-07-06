@@ -9,6 +9,7 @@ import {
   GetMyCollectionsList,
   GetMyNftList,
   getNFTList,
+  isSuperAdmin,
 } from "../../apiServices";
 import { useCookies } from "react-cookie";
 import extendedERC721Abi from "./../../config/abis/extendedERC721.json";
@@ -324,8 +325,9 @@ function CreateNFTs() {
       <Sidebar />
 
       {/* <!-- Page Content  --> */}
-      <div id="content">
-        <div className="add_btn mb-4 d-flex justify-content-end">
+      <div id='content'>
+        <div className='add_btn mb-4 d-flex justify-content-end'>
+          {isSuperAdmin()?null:
           <button
             className="btn btn-admin text-light"
             type="button"
@@ -335,6 +337,7 @@ function CreateNFTs() {
           >
             + Add NFTs
           </button>
+          }
         </div>
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">NFTs</h5>
