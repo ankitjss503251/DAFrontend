@@ -64,32 +64,32 @@ function NFTlisting(props) {
   const placeBidModal = (
     <PopupModal
       content={
-        <div className='popup-content1'>
-          <h3 className='modal_heading '>Complete Checkout</h3>
-          <div className='bid_user_details my-4'>
-            <img src={Logo} alt='' />
+        <div className="popup-content1">
+          <h3 className="modal_heading ">Complete Checkout</h3>
+          <div className="bid_user_details my-4">
+            <img src={Logo} alt="" />
 
-            <div className='bid_user_address'>
+            <div className="bid_user_address">
               <div>
-                <span className='adr'>
+                <span className="adr">
                   {currentUser?.slice(0, 8) +
                     "..." +
                     currentUser?.slice(34, 42)}
                 </span>
-                <span class='badge badge-success'>Connected</span>
+                <span class="badge badge-success">Connected</span>
               </div>
-              <span className='pgn'>Polygon</span>
+              <span className="pgn">Polygon</span>
             </div>
           </div>
-          <h6 className='enter_quantity_heading required'>
+          <h6 className="enter_quantity_heading required">
             Please Enter the Bid Quantity
           </h6>
           <input
-            className='form-control checkout_input'
-            type='text'
-            min='1'
-            step='1'
-            placeholder='Quantity e.g. 1,2,3...'
+            className="form-control checkout_input"
+            type="text"
+            min="1"
+            step="1"
+            placeholder="Quantity e.g. 1,2,3..."
             disabled={props ? props.NftDetails.type === 1 : false}
             value={qty}
             onKeyPress={(e) => {
@@ -106,16 +106,17 @@ function NFTlisting(props) {
               }
               setQty(e.target.value);
               setWillPay((e.target.value * price).toFixed(4));
-            }}></input>
-          <h6 className='enter_price_heading required'>
+            }}
+          ></input>
+          <h6 className="enter_price_heading required">
             Please Enter the Bid Price
           </h6>
 
           <input
-            className='form-control checkout_input'
-            type='text'
-            min='1'
-            placeholder='Price e.g. 0.001,1...'
+            className="form-control checkout_input"
+            type="text"
+            min="1"
+            placeholder="Price e.g. 0.001,1..."
             value={price}
             onKeyPress={(e) => {
               if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -146,7 +147,8 @@ function NFTlisting(props) {
                 }
                 setPrice(val);
               }
-            }}></input>
+            }}
+          ></input>
 
           {/* <div className='form-control checkout_input'>
             <h6 className='enter_price_heading required'>
@@ -175,7 +177,7 @@ function NFTlisting(props) {
           </div> */}
 
           <button
-            className='btn-main mt-2 btn-placeABid'
+            className="btn-main mt-2 btn-placeABid"
             onClick={async () => {
               // console.log(
               //   " ethers.utils.parseEther(price)",
@@ -214,7 +216,8 @@ function NFTlisting(props) {
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
               }
-            }}>
+            }}
+          >
             {"Place Bid"}
           </button>
         </div>
@@ -233,31 +236,31 @@ function NFTlisting(props) {
   const buyNowModal = (
     <PopupModal
       content={
-        <div className='popup-content1'>
-          <h3 className='modal_heading '>Complete Checkout</h3>
-          <div className='bid_user_details my-4'>
-            <img src={Logo} alt='' />
-            <div className='bid_user_address'>
+        <div className="popup-content1">
+          <h3 className="modal_heading ">Complete Checkout</h3>
+          <div className="bid_user_details my-4">
+            <img src={Logo} alt="" />
+            <div className="bid_user_address">
               <div>
-                <span className='adr'>
+                <span className="adr">
                   {currentUser?.slice(0, 8) +
                     "..." +
                     currentUser?.slice(34, 42)}
                 </span>
-                <span class='badge badge-success'>Connected</span>
+                <span class="badge badge-success">Connected</span>
               </div>
-              <span className='pgn'>Polygon</span>
+              <span className="pgn">Polygon</span>
             </div>
           </div>
-          <h6 className='enter_quantity_heading required'>
+          <h6 className="enter_quantity_heading required">
             Please Enter the Quantity
           </h6>
           <input
-            className='form-control checkout_input'
-            type='text'
-            min='1'
-            step='1'
-            placeholder='Quantity e.g. 1,2,3...'
+            className="form-control checkout_input"
+            type="text"
+            min="1"
+            step="1"
+            placeholder="Quantity e.g. 1,2,3..."
             disabled={props ? props.NftDetails.type === 1 : false}
             value={qty}
             onKeyPress={(e) => {
@@ -276,21 +279,20 @@ function NFTlisting(props) {
               }
               setQty(e.target.value);
               setWillPay((e.target.value * price).toFixed(4));
-            }}></input>
-          <h6 className='enter_price_heading required'>
-            Price
-          </h6>
+            }}
+          ></input>
+          <h6 className="enter_price_heading required">Price</h6>
           <input
-            className='form-control checkout_input'
-            type='text'
-            min='1'
-            placeholder='Price e.g. 0.001,1...'
+            className="form-control checkout_input"
+            type="text"
+            min="1"
+            placeholder="Price e.g. 0.001,1..."
             disabled={true}
             value={price}
-           ></input>
+          ></input>
 
           <button
-            className='btn-main mt-2 btn-placeABid'
+            className="btn-main mt-2 btn-placeABid"
             onClick={async () => {
               setIsBuyNowModal(false);
               setLoading(true);
@@ -304,7 +306,8 @@ function NFTlisting(props) {
                 props?.NftDetails?.collectionAddress?.toLowerCase()
               );
               setLoading(false);
-            }}>
+            }}
+          >
             {"Buy Now"}
           </button>
         </div>
@@ -319,13 +322,13 @@ function NFTlisting(props) {
   );
 
   return (
-    <div className='row'>
+    <div className="row">
       {loading ? <Spinner /> : ""}
       {isPlaceBidModal ? placeBidModal : ""}
       {isBuyNowModal ? buyNowModal : ""}
-      <div className='col-md-12'>
-        <div className='nft_list'>
-          <table className='table text-light'>
+      <div className="col-md-12">
+        <div className="nft_list">
+          <table className="table text-light">
             <thead>
               <tr>
                 <th scope="col">FROM</th>
@@ -334,7 +337,7 @@ function NFTlisting(props) {
                 <th scope="col">SALE TYPE</th>
                 <th scope="col">ENDS IN</th>
                 <th scope="col">STATUS</th>
-                <th className='text-center'>ACTION</th>
+                <th className="text-center">ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -342,8 +345,8 @@ function NFTlisting(props) {
                 ? orders.map((o, i) => {
                     return (
                       <tr>
-                        <td className='d-flex justify-content-start align-items-center mb-0'>
-                          <span className='yellow_dot circle_dot'></span>
+                        <td className="d-flex justify-content-start align-items-center mb-0">
+                          <span className="yellow_dot circle_dot"></span>
                           <span>
                             {o.sellerID && o.sellerID.walletAddress
                               ? o.sellerID.walletAddress.slice(0, 3) +
@@ -354,9 +357,9 @@ function NFTlisting(props) {
                         </td>
                         <td>
                           <img
-                            alt=''
+                            alt=""
                             src={Tokens[o.paymentToken.toLowerCase()]}
-                            className='img-fluid hunter_fav'
+                            className="img-fluid hunter_fav"
                           />{" "}
                           {o.price && o.price.$numberDecimal
                             ? Number(
@@ -366,7 +369,7 @@ function NFTlisting(props) {
                         </td>
                         <td>
                           {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
-                          <span className='nft_time'>
+                          <span className="nft_time">
                             {moment(o.createdOn).format("LT")}
                           </span>
                         </td>
@@ -387,27 +390,38 @@ function NFTlisting(props) {
                                   hours: 5,
                                   minutes: 30,
                                 })
-                                .toISOString()}></Clock>
+                                .toISOString()}
+                            ></Clock>
                           )}
                         </td>
 
-                        <td className='blue_text'>
+                        <td className="blue_text">
                           {new Date(o.deadline * 1000) < new Date()
                             ? "Ended"
                             : "Active"}
                         </td>
                         <td>
-                          <div className='text-center'>
+                          {console.log(
+                            "new Date(o.deadline*1000) < new Date()",
+                            new Date(o.deadline * 1000) < new Date(),
+                            new Date(o.deadline * 1000),
+                            new Date()
+                          )}
+                          <div className="text-center">
                             {o.sellerID?.walletAddress?.toLowerCase() ===
                             currentUser?.toLowerCase() ? (
                               <button
                                 to={"/"}
-                                className='small_yellow_btn small_btn mr-3'
-                                onClick={async() => {
+                                className="small_yellow_btn small_btn mr-3"
+                                onClick={async () => {
                                   setLoading(true);
-                                 await handleRemoveFromSale(o._id, currentUser);
+                                  await handleRemoveFromSale(
+                                    o._id,
+                                    currentUser
+                                  );
                                   setLoading(false);
-                                }}>
+                                }}
+                              >
                                 Remove From Sale
                               </button>
                             ) : (
@@ -416,7 +430,7 @@ function NFTlisting(props) {
                                 disabled={
                                   new Date(o.deadline * 1000) < new Date()
                                 }
-                                className='small_border_btn small_btn'
+                                className="small_border_btn small_btn"
                                 onClick={async () => {
                                   console.log("current order", o);
                                   if (
@@ -438,14 +452,7 @@ function NFTlisting(props) {
                                         )
                                       : setPrice("");
                                     props.NftDetails.type === 1 &&
-                                    // o.salesType === 0
-                                    //   ? setWillPay(
-                                    //       Number(
-                                    //         convertToEth(o.price.$numberDecimal)
-                                    //       ).toFixed(4) * qty
-                                    //     )
-                                    //   : setWillPay(0);
-                                    setCurrentOrder(o);
+                                      setCurrentOrder(o);
                                     o.salesType === 0
                                       ? setIsBuyNowModal(true)
                                       : setIsPlaceBidModal(true);
@@ -457,7 +464,8 @@ function NFTlisting(props) {
                                     );
                                     return;
                                   }
-                                }}>
+                                }}
+                              >
                                 {o.salesType === 0 ? "Buy Now" : "Place Bid"}
                               </button>
                             )}
@@ -467,7 +475,6 @@ function NFTlisting(props) {
                     );
                   })
                 : ""}
-             
             </tbody>
           </table>
         </div>

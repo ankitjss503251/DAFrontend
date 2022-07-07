@@ -777,6 +777,9 @@ function NFTDetails() {
                   ) : (
                     <button
                       type="button"
+                      disabled={
+                        new Date(orders[0].deadline * 1000) < new Date()
+                      }
                       className="title_color buy_now"
                       onClick={() => {
                         setIsPlaceBidModal(true);
