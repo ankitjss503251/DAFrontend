@@ -1,33 +1,31 @@
 import { useParams } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
 // import React, { useEffect, useState,lazy } from "react";
-import { React, useEffect, useState, lazy} from "react";
+import { React, useEffect, useState, lazy } from "react";
 
 import Footer from "../components/footer";
 import MintEventSlider from "../components/MintEventSlider";
 import { useCookies } from "react-cookie";
 import { convertToEth } from "../../helpers/numberFormatter";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { BigNumber } from "bignumber.js";
-import evt from "../../events/events"
+import evt from "../../events/events";
 import "../components-css/App.css";
 import { getContractAddress } from "ethers/lib/utils";
 
-let  contractFunctionality={
+let contractFunctionality = {
+  "0xEecd2Ba92f87E332320ce5cFe62afD2B989cb5e9": "rockstarCall",
+  "0x40ef57815E2a44518d5c82Fb6c322B613044d6B4": "rockstarCall",
+};
 
- "0xEecd2Ba92f87E332320ce5cFe62afD2B989cb5e9":"rockstarCall"
-
-}
-
-function lazyImport(addr){
-  let fileName=contractFunctionality[addr]
-  if(!fileName){
+function lazyImport(addr) {
+  let fileName = contractFunctionality[addr];
+  if (!fileName) {
     throw new Error("file not found");
   }
-  const calles =  import (`../../helpers/Contract-Calls/${fileName}`)
+  const calles = import(`../../helpers/Contract-Calls/${fileName}`);
   return calles;
 }
-
 
 const bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -40,15 +38,14 @@ const bgImgStyle = {
 
 function MultiMintingPage(props) {
   const params = useParams();
-  
-  const contractCalls=lazyImport(params.id)
-  console.log("params",params.id);
+
+  const contractCalls = lazyImport(params.id);
+  console.log("params", params.id);
   const [currentUser, setCurrentUser] = useState();
   const [collectionDetails, setCollectionDetails] = useState();
-  const [categories,setcategories] = useState();
+  const [categories, setcategories] = useState();
   const [totalSupply, setTotalSupply] = useState();
   const { id } = useParams();
-
 
   const [createdItemId, setCreatedItemId] = useState();
   const [isPutOnMarketplace, setIsPutOnMarketPlace] = useState(true);
@@ -62,72 +59,68 @@ function MultiMintingPage(props) {
   const [loading, setLoading] = useState(false);
   const [isShowPopup, setisShowPopup] = useState(false);
   const [isUploadPopupClass, setisUploadPopupClass] =
-  useState("checkiconDefault");
-const [isApprovePopupClass, setisApprovePopupClass] =
-  useState("checkiconDefault");
-const [isMintPopupClass, setisMintPopupClass] = useState("checkiconDefault");
-const [isRoyaltyPopupClass, setisRoyaltyPopupClass] =
-  useState("checkiconDefault");
-const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDefault");
-  
-  function txnStatus(msg){
-    if(msg.includes("initiate loader")){
-      setisShowPopup(true)
-      setisApprovePopupClass("clockloader")
+    useState("checkiconDefault");
+  const [isApprovePopupClass, setisApprovePopupClass] =
+    useState("checkiconDefault");
+  const [isMintPopupClass, setisMintPopupClass] = useState("checkiconDefault");
+  const [isRoyaltyPopupClass, setisRoyaltyPopupClass] =
+    useState("checkiconDefault");
+  const [isPutOnSalePopupClass, setisPutOnSalePopupClass] =
+    useState("checkiconDefault");
+
+  function txnStatus(msg) {
+    if (msg.includes("initiate loader")) {
+      setisShowPopup(true);
+      setisApprovePopupClass("clockloader");
     }
-    if(msg.includes("approval completed")){
-      setisApprovePopupClass("checkiconCompleted")
-      setisMintPopupClass("clockloader")
+    if (msg.includes("approval completed")) {
+      setisApprovePopupClass("checkiconCompleted");
+      setisMintPopupClass("clockloader");
     }
-    if(msg.includes("mint-initiated")){
-      setisApprovePopupClass("checkiconCompleted")
-      setisMintPopupClass("clockloader")
+    if (msg.includes("mint-initiated")) {
+      setisApprovePopupClass("checkiconCompleted");
+      setisMintPopupClass("clockloader");
     }
-    if(msg.includes("mint-succeed")){
-      setisApprovePopupClass("checkiconCompleted")
-      setisMintPopupClass("checkiconCompleted")
-      setClosePopupDisabled(false)
+    if (msg.includes("mint-succeed")) {
+      setisApprovePopupClass("checkiconCompleted");
+      setisMintPopupClass("checkiconCompleted");
+      setClosePopupDisabled(false);
       NotificationManager.success("mint Succeed");
-     
-      
     }
-  };
-  evt.removeAllListeners('txn-status', txnStatus);
-    evt.on("txn-status", txnStatus);
+  }
+  evt.removeAllListeners("txn-status", txnStatus);
+  evt.on("txn-status", txnStatus);
 
-  function txnError(msg){
-          if(msg.includes("user-denied-mint")){
-            setisMintPopupClass("errorIcon")
-            setClosePopupDisabled(false)
-            NotificationManager.error("User denied mint TXN");
-            return true;
-          } else if (msg.includes("user-denied-approval")){
-            setisApprovePopupClass("errorIcon")
-            setClosePopupDisabled(false)
-            NotificationManager.error("User denied approval TXN");
+  function txnError(msg) {
+    if (msg.includes("user-denied-mint")) {
+      setisMintPopupClass("errorIcon");
+      setClosePopupDisabled(false);
+      NotificationManager.error("User denied mint TXN");
+      return true;
+    } else if (msg.includes("user-denied-approval")) {
+      setisApprovePopupClass("errorIcon");
+      setClosePopupDisabled(false);
+      NotificationManager.error("User denied approval TXN");
 
-            return true;
-          } else if(msg.includes("not enough balance")){
-            setisApprovePopupClass("errorIcon")
-            setClosePopupDisabled(false)
-            NotificationManager.error("not enough token");
-            return true;
-          }
-          else{
-            setisApprovePopupClass("errorIcon")
-            setClosePopupDisabled(false)
-            NotificationManager.error(msg);
-            return true;
-          }
-          return false;
+      return true;
+    } else if (msg.includes("not enough balance")) {
+      setisApprovePopupClass("errorIcon");
+      setClosePopupDisabled(false);
+      NotificationManager.error("not enough token");
+      return true;
+    } else {
+      setisApprovePopupClass("errorIcon");
+      setClosePopupDisabled(false);
+      NotificationManager.error(msg);
+      return true;
     }
-    evt.removeAllListeners('txn-error', txnError);
-    evt.on("txn-error", txnError);
-    
-    
+    return false;
+  }
+  evt.removeAllListeners("txn-error", txnError);
+  evt.on("txn-error", txnError);
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    
   }, []);
 
   const bgImage = {
@@ -147,13 +140,13 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
 
   useEffect(() => {
     const fetchData = async () => {
-    let { fetchInfo }= await contractCalls
+      let { fetchInfo } = await contractCalls;
       let getcateg = await fetchInfo(params.id);
       setTotalSupply(getcateg[2].toString());
-      setPrice( convertToEth(new BigNumber(getcateg[0].toString())));
-    }
-    setInterval(fetchData, 10000)
-    fetchData()
+      setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
+    };
+    setInterval(fetchData, 10000);
+    fetchData();
   }, []);
   function closePopup() {
     setisShowPopup(false);
@@ -171,7 +164,6 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
     if (createdItemId) window.location.href = `/itemDetail/${createdItemId}`;
     else window.location.href = `/profile`;
   }
-  
 
   return (
     <div style={bgImgStyle}>
@@ -226,9 +218,7 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
               <p>items</p>
             </li>
             <li>
-              <h4>
-                {price}
-              </h4>
+              <h4>{price}</h4>
               <p>HNTR</p>
             </li>
             <li>
@@ -247,12 +237,7 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
       <section className="collection_list mb-5 pb-5">
         <div className="container">
           <div className="event_slider">
-            <MintEventSlider
-              id={id}
-              price={price}
-              calls={contractCalls}
-              
-            />
+            <MintEventSlider id={id} price={price} calls={contractCalls} />
           </div>
         </div>
       </section>
@@ -265,7 +250,7 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
                 Follow Steps
               </h2>
             </div>
-    
+
             <div className="row customDisplayPopup">
               <div className="col-3 icontxtDisplayPopup">
                 <div className={isApprovePopupClass}></div>
@@ -288,7 +273,7 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
                 </span>
               </div>
             </div>
-          
+
             <div className="row customDisplayPopup">
               {hideClosePopup ? (
                 <button
@@ -315,11 +300,10 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
             </div>
           </div>
         </div>
-       ) : (
+      ) : (
         ""
-      )} 
+      )}
     </div>
-     
   );
 }
 
