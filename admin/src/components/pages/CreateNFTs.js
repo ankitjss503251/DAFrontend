@@ -124,6 +124,7 @@ function CreateNFTs() {
   };
 
   useEffect(() => {
+    
     if(cookies.selected_account) setCurrentUser(cookies.selected_account);
   },[cookies.selected_account]);
 

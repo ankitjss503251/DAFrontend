@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React,{useState,useEffect,Suspense} from "react";
 import Footer from "../components/footer";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
@@ -9,22 +9,24 @@ import {
   getNFTs,
   getPrice,
 } from "../../helpers/getterFunctions";
-import { Link, useParams } from "react-router-dom";
-import { convertToEth } from "../../helpers/numberFormatter";
+import {Link,useParams} from "react-router-dom";
+import {convertToEth} from "../../helpers/numberFormatter";
 import UpArrow from "../SVG/dropdown";
 import bgImg from "./../../assets/marketplace-bg.jpg";
-import { NotificationManager } from "react-notifications";
-import { getAllBrands } from "../../apiServices";
+import {NotificationManager} from "react-notifications";
+import {getAllBrands} from "../../apiServices";
 import BGImg from "./../../assets/images/background.jpg";
 import SkeletonCard from "../components/Skeleton/NFTSkeletonCard";
+import {useGLTF,OrbitControls} from "@react-three/drei";
+import {Canvas} from "@react-three/fiber"
 
-var bgImgarrow = {
+var bgImgarrow={
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
   backgroundRepeat: "no-repeat",
 };
 
 function Marketplace() {
-  var bgImgStyle = {
+  var bgImgStyle={
     backgroundImage: `url(${BGImg})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
@@ -33,21 +35,32 @@ function Marketplace() {
     backgroundColor: "#000",
   };
 
+
+  function Model(props) {
+    console.log("props--->",props)
+    const {scene}=useGLTF(props.image)
+    return <primitive object={scene} />;
+  }
+
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-  const gridtwo = () => {
+    async function windowScroll() {
+      window.scrollTo(0,0);
+    }
+    windowScroll();
+  },[]);
+
+  const gridtwo=() => {
     setgrid("col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4");
     document.getElementById("gridtwo").classList.add("active");
     document.getElementById("gridthree").classList.remove("active");
   };
-  const gridthree = () => {
+  const gridthree=() => {
     setgrid("col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4");
     document.getElementById("gridthree").classList.add("active");
     document.getElementById("gridtwo").classList.remove("active");
   };
 
-  var register_bg = {
+  var register_bg={
     backgroundImage: `url(${bgImg})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
@@ -55,27 +68,27 @@ function Marketplace() {
     backgroundPositionY: "center",
   };
 
-  const [grid, setgrid] = useState("col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4");
+  const [grid,setgrid]=useState("col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4");
 
-  const [allNFTs, setAllNFTs] = useState([]);
-  const [currPage, setCurrPage] = useState(1);
-  const { searchedText } = useParams();
-  const [loadMore, setLoadMore] = useState(false);
-  const [togglemode, setTogglemode] = useState("filterhide");
-  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
-  const [category, setCategory] = useState([]);
-  const [sText, setSText] = useState("");
-  const [brands, setBrands] = useState([]);
-  const [cols, setCols] = useState([]);
-  const [colsAdv, setColsAdv] = useState("");
-  const [ERCType, setERCType] = useState();
-  const [activeSaleType, setActiveSaleType] = useState(-1);
-  const [loader, setLoader] = useState(false);
-  const [cardCount, setCardCount] = useState(0);
+  const [allNFTs,setAllNFTs]=useState([]);
+  const [currPage,setCurrPage]=useState(1);
+  const {searchedText}=useParams();
+  const [loadMore,setLoadMore]=useState(false);
+  const [togglemode,setTogglemode]=useState("filterhide");
+  const [loadMoreDisabled,setLoadMoreDisabled]=useState("");
+  const [category,setCategory]=useState([]);
+  const [sText,setSText]=useState("");
+  const [brands,setBrands]=useState([]);
+  const [cols,setCols]=useState([]);
+  const [colsAdv,setColsAdv]=useState("");
+  const [ERCType,setERCType]=useState();
+  const [activeSaleType,setActiveSaleType]=useState(-1);
+  const [loader,setLoader]=useState(false);
+  const [cardCount,setCardCount]=useState(0);
 
-  const filterToggle = () => {
-    console.log("filter", togglemode);
-    if (togglemode === "filterhide") {
+  const filterToggle=() => {
+    console.log("filter",togglemode);
+    if(togglemode==="filterhide") {
       setTogglemode("filtershow");
       document.getElementsByClassName("filter_btn")[0].classList.add("active");
     } else {
@@ -86,77 +99,84 @@ function Marketplace() {
     }
   };
 
-  useEffect(async () => {
-    try {
-      const b = await getAllBrands();
-      setBrands(b);
-    } catch (e) {
-      console.log("Error", e);
+  useEffect(() => {
+    async function getInfo() {
+      try {
+        const b=await getAllBrands();
+        setBrands(b);
+      } catch(e) {
+        console.log("Error",e);
+      }
+      try {
+        const c=await getCategory();
+        setCategory(c);
+      } catch(e) {
+        console.log("Error",e);
+      }
     }
-    try {
-      const c = await getCategory();
-      setCategory(c);
-    } catch (e) {
-      console.log("Error", e);
-    }
-  }, []);
+    getInfo();
+  },[]);
 
-  useEffect(async () => {
-    setLoader(true);
-    let temp = allNFTs;
-    try {
-      const reqData = {
-        page: currPage,
-        limit: 12,
-        searchText: sText ? sText : searchedText ? searchedText : "",
-        isOnMarketplace: 1,
-        ERCType: ERCType,
-        salesType: activeSaleType !== -1 ? activeSaleType : "",
-      };
-      const res = await getNFTs(reqData);
-      setCardCount(cardCount + res.length);
-      if (res.length > 0) {
-        setLoadMoreDisabled("");
-        for (let i = 0; i < res.length; i++) {
-          const orderDet = await getPrice({
-            nftID: res[i].id,
-          });
 
-          const brandDet = await getBrandDetailsById(
-            res[i].collectionData[0].brandID
-          );
-          console.log("brandDetail", brandDet);
-          res[i] = {
-            ...res[i],
-            salesType: orderDet?.salesType,
-            price:
-              orderDet?.price?.$numberDecimal === undefined
-                ? "--"
-                : Number(convertToEth(orderDet?.price?.$numberDecimal))
+  useEffect(() => {
+    async function searchInfo() {
+      setLoader(true);
+      let temp=allNFTs;
+      try {
+        const reqData={
+          page: currPage,
+          limit: 12,
+          searchText: sText? sText:searchedText? searchedText:"",
+          isOnMarketplace: 1,
+          ERCType: ERCType,
+          salesType: activeSaleType!==-1? activeSaleType:"",
+        };
+        const res=await getNFTs(reqData);
+        setCardCount(cardCount+res.length);
+        if(res.length>0) {
+          setLoadMoreDisabled("");
+          for(let i=0;i<res.length;i++) {
+            const orderDet=await getPrice({
+              nftID: res[i].id,
+            });
+
+            const brandDet=await getBrandDetailsById(
+              res[i].collectionData[0].brandID
+            );
+            console.log("brandDetail",brandDet);
+            res[i]={
+              ...res[i],
+              salesType: orderDet?.salesType,
+              price:
+                orderDet?.price?.$numberDecimal===undefined
+                  ? "--"
+                  :Number(convertToEth(orderDet?.price?.$numberDecimal))
                     .toFixed(6)
-                    .slice(0, -2),
-            brand: brandDet,
-          };
+                    .slice(0,-2),
+              brand: brandDet,
+            };
+          }
+          console.log("res",res);
+          temp=[...temp,res];
+          setAllNFTs(temp);
+          setLoader(false);
         }
-        console.log("res", res);
-        temp = [...temp, res];
-        setAllNFTs(temp);
-        setLoader(false);
+        if(allNFTs&&res.length<=0) {
+          setLoader(false);
+          setLoadMoreDisabled("disabled");
+        }
+      } catch(e) {
+        console.log("Error in fetching all NFTs list",e);
       }
-      if (allNFTs && res.length <= 0) {
-        setLoader(false);
-        setLoadMoreDisabled("disabled");
-      }
-    } catch (e) {
-      console.log("Error in fetching all NFTs list", e);
     }
-  }, [loadMore, ERCType, sText, activeSaleType]);
+    searchInfo();
+  },[loadMore,ERCType,sText,activeSaleType]);
 
   return (
     <div>
-      {loadMoreDisabled && allNFTs.length > 0
-        ? NotificationManager.info("No more items to load", "", 800)
-        : ""}
+      {loadMoreDisabled&&allNFTs.length>0
+        ? NotificationManager.info("No more items to load","",800)
+        :""}
       <section className='register_hd pdd_12' style={register_bg}>
         <div className='container'>
           <div className='row'>
@@ -246,9 +266,8 @@ function Marketplace() {
                   <div id='demo' class='collapse show'>
                     <ul className='status_ul d-flex flex-wrap'>
                       <li
-                        className={`filter_border mr-2 ${
-                          activeSaleType === 3 ? "active" : ""
-                        }`}
+                        className={`filter_border mr-2 ${activeSaleType===3? "active":""
+                          }`}
                         value='3'
                         onClick={(e) => {
                           setAllNFTs([]);
@@ -260,9 +279,8 @@ function Marketplace() {
                         All NFTs
                       </li>
                       <li
-                        className={`filter_border mr-2 ${
-                          activeSaleType === 4 ? "active" : ""
-                        }`}
+                        className={`filter_border mr-2 ${activeSaleType===4? "active":""
+                          }`}
                         value='4'
                         onClick={(e) => {
                           setAllNFTs([]);
@@ -274,9 +292,8 @@ function Marketplace() {
                         Not For Sale
                       </li>
                       <li
-                        className={`filter_border mr-2 ${
-                          activeSaleType === 0 ? "active" : ""
-                        }`}
+                        className={`filter_border mr-2 ${activeSaleType===0? "active":""
+                          }`}
                         value='0'
                         onClick={(e) => {
                           setAllNFTs([]);
@@ -288,9 +305,8 @@ function Marketplace() {
                         Buy Now
                       </li>
                       <li
-                        className={`filter_border mr-2 ${
-                          activeSaleType === 1 ? "active" : ""
-                        }`}
+                        className={`filter_border mr-2 ${activeSaleType===1? "active":""
+                          }`}
                         value='1'
                         onClick={(e) => {
                           setAllNFTs([]);
@@ -366,33 +382,33 @@ function Marketplace() {
                       value={colsAdv}
                       onChange={async (e) => {
                         setColsAdv(e.target.value);
-                        const reqData = {
+                        const reqData={
                           page: 1,
                           limit: 12,
                           searchText: e.target.value,
                         };
                         try {
-                          const col = await getCollections(reqData);
+                          const col=await getCollections(reqData);
                           setCols(col);
-                        } catch (e) {
-                          console.log("Error", e);
+                        } catch(e) {
+                          console.log("Error",e);
                         }
                       }}
                     />
-                    {cols && cols.length > 0 && colsAdv !== ""
+                    {cols&&cols.length>0&&colsAdv!==""
                       ? cols.map((i) => {
-                          return (
-                            <div class='form-check form-check-inline'>
-                              <input
-                                type='radio'
-                                id={i.name}
-                                name='radio-group'
-                              />
-                              <label for={i.name}>{i.name}</label>
-                            </div>
-                          );
-                        })
-                      : ""}
+                        return (
+                          <div class='form-check form-check-inline'>
+                            <input
+                              type='radio'
+                              id={i.name}
+                              name='radio-group'
+                            />
+                            <label for={i.name}>{i.name}</label>
+                          </div>
+                        );
+                      })
+                      :""}
                   </div>
                 </form>
               </div>
@@ -414,18 +430,18 @@ function Marketplace() {
                         </div>
                         {category
                           ? category.map((c) => {
-                              return (
-                                <div class='form-check form-check-inline'>
-                                  <input
-                                    type='radio'
-                                    id={c.name}
-                                    name='radio-group'
-                                  />
-                                  <label for={c.name}>{c.name}</label>
-                                </div>
-                              );
-                            })
-                          : ""}
+                            return (
+                              <div class='form-check form-check-inline'>
+                                <input
+                                  type='radio'
+                                  id={c.name}
+                                  name='radio-group'
+                                />
+                                <label for={c.name}>{c.name}</label>
+                              </div>
+                            );
+                          })
+                          :""}
                       </form>
                     </li>
                   </ul>
@@ -452,18 +468,18 @@ function Marketplace() {
                       <form action='#' className='checked_form'>
                         {brands
                           ? brands.map((b) => {
-                              return (
-                                <div class='form-check form-check-inline'>
-                                  <input
-                                    type='radio'
-                                    id={b.name}
-                                    name='radio-group'
-                                  />
-                                  <label for={b.name}>{b.name}</label>
-                                </div>
-                              );
-                            })
-                          : ""}
+                            return (
+                              <div class='form-check form-check-inline'>
+                                <input
+                                  type='radio'
+                                  id={b.name}
+                                  name='radio-group'
+                                />
+                                <label for={b.name}>{b.name}</label>
+                              </div>
+                            );
+                          })
+                          :""}
                       </form>
                     </li>
                   </ul>
@@ -472,11 +488,11 @@ function Marketplace() {
             </div>
           </div>
           <div className='row'>
-            {loader ? (
+            {loader? (
               <SkeletonCard cards={cardCount} grid={grid} />
-            ) : allNFTs?.length > 0 ? (
+            ):allNFTs?.length>0? (
               allNFTs.map((oIndex) => {
-                return oIndex.map((card, key) => {
+                return oIndex.map((card,key) => {
                   return (
                     <div className={grid}>
                       <div className='items_slide h-100' key={key}>
@@ -488,27 +504,35 @@ function Marketplace() {
                                 className='profile_img creatorImg'
                                 src={card.brand?.logoImage}
                                 onError={(e) =>
-                                  (e.target.src =
-                                    "../img/collections/list4.png")
+                                (e.target.src=
+                                  "../img/collections/list4.png")
                                 }
                               />
-                              {/* <img
-                                alt=''
-                                className='icheck_img'
-                                src={"../img/collections/check.png"}
-                              /> */}
                             </div>
                           </a>
                         </div>
                         <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
-                          <img
-                            alt=''
-                            onError={(e) => {
-                              e.target.src = "../img/collections/list4.png";
-                            }}
-                            src={card.image}
+                          {card&&card.fileType=="Image"? <img
+                            src={card?.image}
                             class='img-fluid items_img w-100 my-3'
-                          />
+                            alt=""
+                            onError={(e) => {
+                              console.log("image error is--->",e)
+                              e.target.src="../img/collections/list4.png"
+                            }}
+                          />:""}
+                          {card&&card.fileType=="Video"? <video
+                             class='img-fluid items_img w-100 my-3' controls>
+                            <source src={card?.image} type="video/mp4" />
+                          </video>:""}
+                          {card&&card.fileType=="3D"?
+                            <Canvas  class='img-fluid items_img w-100 my-3' camera={{position: [10,100,100],fov: 1}}>
+                              <pointLight position={[10,10,10]} intensity={1.3} />
+                              <Suspense fallback={null}>
+                                <Model image={card.image} />
+                              </Suspense>
+                              <OrbitControls />
+                            </Canvas>:""}
                         </a>
                         <div className='items_text nft-info-div'>
                           <div className='items_info '>
@@ -536,11 +560,11 @@ function Marketplace() {
                           <Link
                             to={`/NFTdetails/${card.id}`}
                             className='border_btn width-100 title_color'>
-                            {card.salesType === 0
+                            {card.salesType===0
                               ? "Buy Now"
-                              : card.salesType === 1 || card.salesType === 2
-                              ? "Place Bid"
-                              : "View"}
+                              :card.salesType===1||card.salesType===2
+                                ? "Place Bid"
+                                :"View"}
                           </Link>
                         </div>
                       </div>
@@ -548,25 +572,25 @@ function Marketplace() {
                   );
                 });
               })
-            ) : (
+            ):(
               <h2 className='text-white text-center'>No NFT Found</h2>
             )}
           </div>
-          {allNFTs?.length > 0 ? (
+          {allNFTs?.length>0? (
             <div className='row'>
               <div class='col-md-12 text-center mt-5'>
                 <button
                   type='button'
                   className={`btn view_all_bdr ${loadMoreDisabled}`}
                   onClick={() => {
-                    setCurrPage(currPage + 1);
+                    setCurrPage(currPage+1);
                     setLoadMore(!loadMore);
                   }}>
                   Load More
                 </button>
               </div>
             </div>
-          ) : (
+          ):(
             ""
           )}
         </div>

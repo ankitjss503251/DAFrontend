@@ -66,18 +66,21 @@ var mint_bg = {
 
 const Home = () => {
   const [upcomingMints, setUpcomingMints] = useState([]);
-  useEffect(async () => {
-    try {
-      const res = await getCollections({
-        page: 1,
-        limit: 12,
-        isExclusive: 1,
-      });
-      console.log("heree--->", res);
-      setUpcomingMints(res);
-    } catch (e) {
-      console.log("Error in fetching all upcoming mints list", e);
+  useEffect(() => {
+    async function getCollectionData(){
+      try {
+        const res = await getCollections({
+          page: 1,
+          limit: 12,
+          isExclusive: 1,
+        });
+        console.log("heree--->", res);
+        setUpcomingMints(res);
+      } catch (e) {
+        console.log("Error in fetching all upcoming mints list", e);
+      }
     }
+    getCollectionData()
   }, []);
 
   return (
