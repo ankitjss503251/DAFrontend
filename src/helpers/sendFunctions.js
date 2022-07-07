@@ -925,7 +925,10 @@ export const handleAcceptBids = async (
     NotificationManager.error("Seller didn't approved marketplace");
     return;
   }
-
+if(buyerOrder[5] === ZERO_ADDRESS){
+   
+}
+else{
   let paymentTokenData = await getPaymentTokenInfo(
     buyerOrder[0],
     buyerOrder[5]
@@ -942,6 +945,7 @@ export const handleAcceptBids = async (
     return;
   }
 
+}
   try {
     let marketplace = await exportInstance(
       contracts.MARKETPLACE,
