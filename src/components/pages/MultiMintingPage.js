@@ -10,13 +10,23 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import Cookies from 'js-cookie';
 import { BigNumber } from "bignumber.js";
 import evt from "../../events/events"
-import "../components-css/App.css"
-const contract =  import (1? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyiCalls");
+import "../components-css/App.css";
+import { getContractAddress } from "ethers/lib/utils";
 
+let  contractFunctionality={
 
+ "0xEecd2Ba92f87E332320ce5cFe62afD2B989cb5e9":"rockstarCall"
 
+}
 
-
+function lazyImport(addr){
+  let fileName=contractFunctionality[addr]
+  if(!fileName){
+    throw new Error("file not found");
+  }
+  const calles =  import (`../../helpers/Contract-Calls/${fileName}`)
+  return calles;
+}
 
 
 const bgImgStyle = {
@@ -29,7 +39,10 @@ const bgImgStyle = {
 };
 
 function MultiMintingPage(props) {
+  const params = useParams();
   
+  const contractCalls=lazyImport(params.id)
+  console.log("params",params.id);
   const [currentUser, setCurrentUser] = useState();
   const [collectionDetails, setCollectionDetails] = useState();
   const [categories,setcategories] = useState();
@@ -134,13 +147,13 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
 
   useEffect(() => {
     const fetchData = async () => {
-    let { fetchInfo }= await contract
-      let getcateg = await fetchInfo();
+    let { fetchInfo }= await contractCalls
+      let getcateg = await fetchInfo(params.id);
       setTotalSupply(getcateg[2].toString());
       setPrice( convertToEth(new BigNumber(getcateg[0].toString())));
     }
     setInterval(fetchData, 10000)
-  
+    fetchData()
   }, []);
   function closePopup() {
     setisShowPopup(false);
@@ -236,9 +249,8 @@ const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDef
           <div className="event_slider">
             <MintEventSlider
               id={id}
-              price={Number(
-                convertToEth(collectionDetails?.price.$numberDecimal)
-              ).toFixed(4)}
+              price={price}
+              calls={contractCalls}
               
             />
           </div>

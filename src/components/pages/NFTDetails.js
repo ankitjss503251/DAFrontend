@@ -38,6 +38,7 @@ import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { getNFTList } from "../../apiServices";
+import { fetchOfferNft } from "../../apiServices";
 
 var textColor = {
   textColor: "#EF981D",
@@ -777,6 +778,9 @@ function NFTDetails() {
                   ) : (
                     <button
                       type="button"
+                      disabled={
+                        new Date(orders[0].deadline * 1000) < new Date()
+                      }
                       className="title_color buy_now"
                       onClick={() => {
                         setIsPlaceBidModal(true);
@@ -1207,7 +1211,7 @@ function NFTDetails() {
                     min="0"
                     max="18"
                     className="form-control input_design"
-                    placeholder="Please Enter Price (MATIC)"
+                    placeholder="Please Enter Price"
                     value={offerPrice}
                     onChange={(event) => setOfferPrice(event.target.value)}
                   />

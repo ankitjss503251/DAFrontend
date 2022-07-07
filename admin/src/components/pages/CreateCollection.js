@@ -93,7 +93,7 @@ function CreateCollection() {
       console.log("_cat", _cat);
     };
     fetch();
-  }, [categories, brands]);
+  }, []);
 
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
@@ -566,12 +566,12 @@ function CreateCollection() {
     }
   };
 
-  const handleEditCollection = async () => {
+  const handleEditCollection = async (_selectedCollectionId) => {
     try {
       const reqData = {
         page: 1,
         limit: 1,
-        collectionID: selectedCollectionId,
+        collectionID: _selectedCollectionId,
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
@@ -776,8 +776,9 @@ function CreateCollection() {
                                     onClick={async () => {
                                       setSelectedCollectionId(item._id);
                                       setIsEditModal("active");
-                                      handleEditCollection();
-                                    }}>
+                                      handleEditCollection(item._id);
+                                    }}
+                                  >
                                     Edit
                                   </button>
                                   <button
