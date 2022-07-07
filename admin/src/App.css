@@ -972,3 +972,9 @@ tbody td {
     align-items: start;
     justify-content: center;
 }
+
+.attr_header{
+  font-size: 18px;
+    font-weight: 600;
+    margin: 10px;
+}

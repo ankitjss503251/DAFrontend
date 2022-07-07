@@ -209,11 +209,13 @@ function NFToffer(props) {
                                 to={"/"}
                                 className='small_yellow_btn small_btn mr-3'
                                 onClick={async () => {
+                                  setLoading(true);
                                   await handleAcceptOffers(
                                     b,
                                     props,
                                     currentUser.toLowerCase()
                                   );
+                                  setLoading(false);
                                 }}>
                                 Accept
                               </button>
@@ -236,7 +238,7 @@ function NFToffer(props) {
                                 disabled={
                                   new Date(b.bidDeadline * 1000) < new Date()
                                 }
-                                className='small_border_btn small_btn'
+                                className='small_yellow_btn small_btn mr-3'
                                 data-bs-toggle='modal'
                                 data-bs-target='#brandModal'
                                 onClick={() => setModal("active")}>

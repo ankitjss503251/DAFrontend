@@ -135,7 +135,7 @@ function ItemsList() {
                   </a>
                   <div className='items_text nft-info-div'>
                     <div className='items_info'>
-                      <div className='items_left'>
+                      <div className='items_left '>
                         <h3 className=''>{card.name}</h3>
                         <p>{card.price} HNTR</p>
                       </div>

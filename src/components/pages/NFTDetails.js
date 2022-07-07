@@ -254,7 +254,7 @@ function NFTDetails() {
     );
     setLoading(false);
 
-    slowRefresh(1000);
+    // slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
     return;
