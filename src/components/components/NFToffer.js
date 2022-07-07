@@ -22,7 +22,7 @@ function NFToffer(props) {
   const [cookies] = useCookies([]);
   const [offer, setOffer] = useState([]);
   const [selectedToken, setSelectedToken] = useState("USDT");
-  const [selectedTokenFS, setSelectedTokenFS] = useState("BNB");
+  const [selectedTokenFS, setSelectedTokenFS] = useState("USDT");
   const [datetime, setDatetime] = useState("");
   const [loading, setLoading] = useState(false);
   const [offerPrice, setOfferPrice] = useState();
@@ -352,7 +352,7 @@ function NFToffer(props) {
                     <>
                       <select
                         className='form-select input_design select_bg'
-                        name='BNB'
+                        name='USDT'
                         value={selectedTokenFS}
                         onChange={(event) => {
                           event.preventDefault();
@@ -361,10 +361,10 @@ function NFToffer(props) {
                           setSelectedTokenFS(event.target.value);
                         }}>
                         {" "}
-                        <option value={"BNB"} selected>
+                        {/* <option value={"BNB"} selected>
                           BNB
                         </option>
-                        <option value={"HNTR"}>HNTR</option>
+                        <option value={"HNTR"}>HNTR</option> */}
                         <option value={"USDT"}>USDT</option>
                       </select>
                     </>

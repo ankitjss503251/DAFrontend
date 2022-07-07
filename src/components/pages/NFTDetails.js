@@ -1093,7 +1093,7 @@ function NFTDetails() {
                         <option value={"USDT"}>USDT</option>
                       </select>
                     </>
-                  ) : marketplaceSaleType == 1 ? (
+                  ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"

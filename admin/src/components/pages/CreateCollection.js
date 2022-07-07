@@ -93,7 +93,7 @@ function CreateCollection() {
       console.log("_cat", _cat);
     };
     fetch();
-  }, []);
+  }, [categories, brands]);
 
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
@@ -898,7 +898,7 @@ function CreateCollection() {
                         <img
                           alt=''
                           ref={uploadedImage}
-                          src={"../images/upload.png"}
+                          src={logoImg ? logoImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
@@ -943,7 +943,7 @@ function CreateCollection() {
                         <img
                           alt=''
                           ref={uploadedImage2}
-                          src={"../images/upload.png"}
+                          src={coverImg ? coverImg :"../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
@@ -1562,10 +1562,11 @@ function CreateCollection() {
                       aria-label='Default select example'
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}>
-                      <option selected>Open this select menu</option>
+                      <option selected={category ? false : true}>Open this select menu</option>
                       {categories && categories.length > 0
                         ? categories.map((c, i) => {
-                            return <option value={c._id}>{c.name}</option>;
+                          console.log("category auto fill", category,  c.name )
+                            return <option value={c._id} selected={(category === c.name) ? true : false}>{c.name}</option>;
                           })
                         : ""}
                     </select>
