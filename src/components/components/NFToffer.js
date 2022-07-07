@@ -16,6 +16,7 @@ import NFTDetails from "../pages/NFTDetails";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import Clock from "./Clock";
 import Spinner from "../components/Spinner";
+import { Tokens } from "../../helpers/tokensToSymbol";
 
 function NFToffer(props) {
   const [currentUser, setCurrentUser] = useState("");
@@ -107,7 +108,8 @@ function NFToffer(props) {
       ethers.utils.parseEther(offerPrice),
       deadline,
       props.NftDetails.id,
-      tokenAddress
+      tokenAddress,
+      contracts[selectedTokenFS]
     );
 
     setLoading(false);
@@ -134,11 +136,11 @@ function NFToffer(props) {
   }
 
   return (
-    <div className='row'>
+    <div className="row">
       {loading ? <Spinner /> : ""}
-      <div className='col-md-12'>
-        <div className='nft_list'>
-          <table className='table text-light fixed_header'>
+      <div className="col-md-12">
+        <div className="nft_list">
+          <table className="table text-light fixed_header">
             <thead>
               <tr>
                 <th>FROM</th>
@@ -146,7 +148,7 @@ function NFToffer(props) {
                 <th>DATE</th>
                 <th>ENDS IN</th>
                 <th>STATUS</th>
-                <th className='text-center'>ACTION</th>
+                <th className="text-center">ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -157,8 +159,8 @@ function NFToffer(props) {
 
                     return (
                       <tr>
-                        <td className='d-flex justify-content-start align-items-center mb-0'>
-                          <span className='blue_dot circle_dot'></span>
+                        <td className="d-flex justify-content-start align-items-center mb-0">
+                          <span className="blue_dot circle_dot"></span>
                           <span>
                             {b?.bidderID?.walletAddress
                               ? b?.bidderID?.walletAddress?.slice(0, 3) +
@@ -169,9 +171,9 @@ function NFToffer(props) {
                         </td>
                         <td>
                           <img
-                            alt=''
-                            src={"../img/favicon.png"}
-                            className='img-fluid hunter_fav'
+                            alt=""
+                            src={Tokens(b?.paymentToken)}
+                            className="img-fluid hunter_fav"
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
@@ -179,7 +181,7 @@ function NFToffer(props) {
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
-                          <span className='nft_time'>
+                          <span className="nft_time">
                             {moment(b.createdOn).format("HH:MM:SS")}
                           </span>
                         </td>
@@ -195,71 +197,79 @@ function NFToffer(props) {
                                 hours: 5,
                                 minutes: 30,
                               })
-                              .toISOString()}></Clock>
+                              .toISOString()}
+                          ></Clock>
                         </td>
-                        <td className='white_text'>
+                        <td className="white_text">
                           {" "}
                           {b.bidStatus == "MakeOffer" ? "Active" : b.bidStatus}
                         </td>
-                        <td className='text-center'>
+                        <td className="text-center">
                           {bidOwner === currentUser.toLowerCase() &&
                           b.bidStatus === "MakeOffer" ? (
-                            <div className='d-flex justify-content-center align-items-center'>
+                            <div className="d-flex justify-content-center align-items-center">
                               <button
                                 to={"/"}
-                                className='small_yellow_btn small_btn mr-3'
+                                className="small_yellow_btn small_btn mr-3"
                                 onClick={async () => {
+                                  setLoading(true);
                                   await handleAcceptOffers(
                                     b,
                                     props,
                                     currentUser.toLowerCase()
                                   );
-                                }}>
+                                  setLoading(false);
+                                }}
+                              >
                                 Accept
                               </button>
                               <button
                                 to={"/"}
-                                className='small_border_btn small_btn'
+                                className="small_border_btn small_btn"
                                 onClick={async () => {
                                   await handleUpdateBidStatus(
                                     b._id,
                                     "Rejected"
                                   );
-                                }}>
+                                }}
+                              >
                                 Reject
                               </button>
                             </div>
                           ) : bidOwner !== currentUser.toLowerCase() &&
                             bidder === currentUser.toLowerCase() ? (
-                            <div className='d-flex justify-content-center align-items-center'>
+                            <div className="d-flex justify-content-center align-items-center">
                               <button
                                 disabled={
                                   new Date(b.bidDeadline * 1000) < new Date()
                                 }
-                                className='small_border_btn small_btn'
-                                data-bs-toggle='modal'
-                                data-bs-target='#brandModal'
-                                onClick={() => setModal("active")}>
+                                className="small_border_btn small_btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#brandModal"
+                                onClick={() => setModal("active")}
+                              >
                                 Update Offer
                               </button>
                               <button
                                 disabled={
                                   new Date(b.bidDeadline * 1000) < new Date()
                                 }
-                                className='small_border_btn small_btn'
+                                className="small_border_btn small_btn"
                                 onClick={async () => {
                                   await handleUpdateBidStatus(
                                     b._id,
                                     "Cancelled"
                                   );
-                                }}>
+                                }}
+                              >
                                 Cancel
                               </button>
                             </div>
                           ) : bidder === currentUser.toLowerCase() ? (
                             <button
                               to={"/"}
-                              className='small_yellow_btn small_btn mr-3'>
+                              className="small_yellow_btn small_btn mr-3"
+                            >
                               Update Offer
                             </button>
                           ) : (
@@ -276,49 +286,50 @@ function NFToffer(props) {
       </div>
 
       {/*update offer modal*/}
-      <div className='modal marketplace' id='brandModal'>
-        <div className='modal-dialog modal-lg modal-dialog-centered'>
-          <div className='modal-content'>
+      <div className="modal marketplace" id="brandModal">
+        <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div className="modal-content">
             {/* <!-- Modal Header --> */}
-            <div className='modal-header p-4'>
-              <h4 className='text-light title_20 mb-0'>Offer</h4>
+            <div className="modal-header p-4">
+              <h4 className="text-light title_20 mb-0">Offer</h4>
               <button
-                type='button'
-                className='btn-close text-light'
-                data-bs-dismiss='modal'></button>
+                type="button"
+                className="btn-close text-light"
+                data-bs-dismiss="modal"
+              ></button>
             </div>
 
             {/* <!-- Modal body --> */}
-            <div className='modal-body'>
-              <div className='tab-content'>
-                <div className='mb-3' id='tab_opt_1'>
-                  <label htmlfor='item_price' className='form-label'>
+            <div className="modal-body">
+              <div className="tab-content">
+                <div className="mb-3" id="tab_opt_1">
+                  <label htmlfor="item_price" className="form-label">
                     Price
                   </label>
                   <input
-                    type='text'
-                    name='item_price'
-                    id='item_price'
-                    min='0'
-                    max='18'
-                    className='form-control input_design'
-                    placeholder='Please Enter Price (MATIC)'
+                    type="text"
+                    name="item_price"
+                    id="item_price"
+                    min="0"
+                    max="18"
+                    className="form-control input_design"
+                    placeholder="Please Enter Price (MATIC)"
                     value={offerPrice}
                     onChange={(event) => setOfferPrice(event.target.value)}
                   />
                 </div>
-                <div className='mb-3' id='tab_opt_2'>
-                  <label htmlfor='item_qt' className='form-label'>
+                <div className="mb-3" id="tab_opt_2">
+                  <label htmlfor="item_qt" className="form-label">
                     Quantity
                   </label>
                   <input
-                    type='text'
-                    name='item_qt'
-                    id='item_qt'
-                    min='1'
+                    type="text"
+                    name="item_qt"
+                    id="item_qt"
+                    min="1"
                     disabled={NFTDetails.type === 1 ? "disabled" : ""}
-                    className='form-control input_design'
-                    placeholder='Please Enter Quantity'
+                    className="form-control input_design"
+                    placeholder="Please Enter Quantity"
                     value={offerQuantity}
                     onChange={(event) => {
                       if (NFTDetails.type == 1 && event.target.value > 1) {
@@ -343,23 +354,24 @@ function NFToffer(props) {
                     }}
                   />
                 </div>
-                <div id='tab_opt_4' className='mb-3'>
-                  <label htmlfor='Payment' className='form-label'>
+                <div id="tab_opt_4" className="mb-3">
+                  <label htmlfor="Payment" className="form-label">
                     Payment Token
                   </label>
 
                   {marketplaceSaleType === 0 ? (
                     <>
                       <select
-                        className='form-select input_design select_bg'
-                        name='USDT'
+                        className="form-select input_design select_bg"
+                        name="USDT"
                         value={selectedTokenFS}
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
                           console.log("selected token", selectedTokenFS);
                           setSelectedTokenFS(event.target.value);
-                        }}>
+                        }}
+                      >
                         {" "}
                         {/* <option value={"BNB"} selected>
                           BNB
@@ -371,12 +383,13 @@ function NFToffer(props) {
                   ) : marketplaceSaleType == 1 ? (
                     <>
                       <select
-                        className='form-select input_design select_bg'
-                        name='USDT'
+                        className="form-select input_design select_bg"
+                        name="USDT"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }>
+                        }
+                      >
                         {" "}
                         <option value={"USDT"} selected>
                           USDT
@@ -386,12 +399,13 @@ function NFToffer(props) {
                   ) : (
                     <>
                       <select
-                        className='form-select input_design select_bg'
-                        name='USDT'
+                        className="form-select input_design select_bg"
+                        name="USDT"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }>
+                        }
+                      >
                         <option value={"USDT"} selected>
                           USDT
                         </option>
@@ -400,25 +414,26 @@ function NFToffer(props) {
                   )}
                 </div>
 
-                <div id='tab_opt_5' className='mb-3 '>
-                  <label for='item_ex_date' className='form-label'>
+                <div id="tab_opt_5" className="mb-3 ">
+                  <label for="item_ex_date" className="form-label">
                     Expiration date
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
                   <input
-                    type='datetime-local'
+                    type="datetime-local"
                     value={(datetime || "").toString().substring(0, 16)}
                     //value={datetime}
                     onChange={handleChange}
-                    className='input_design'
+                    className="input_design"
                   />
                 </div>
-                <div className='mt-5 mb-3 text-center'>
+                <div className="mt-5 mb-3 text-center">
                   <button
-                    type='button'
-                    className='square_yello'
-                    href='/mintcollectionlive'
-                    onClick={PlaceOffer}>
+                    type="button"
+                    className="square_yello"
+                    href="/mintcollectionlive"
+                    onClick={PlaceOffer}
+                  >
                     Place Offer
                   </button>
                 </div>

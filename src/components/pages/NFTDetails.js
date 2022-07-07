@@ -38,6 +38,7 @@ import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { getNFTList } from "../../apiServices";
+import { fetchOfferNft } from "../../apiServices";
 
 var textColor = {
   textColor: "#EF981D",
@@ -1210,7 +1211,7 @@ function NFTDetails() {
                     min="0"
                     max="18"
                     className="form-control input_design"
-                    placeholder="Please Enter Price (MATIC)"
+                    placeholder="Please Enter Price"
                     value={offerPrice}
                     onChange={(event) => setOfferPrice(event.target.value)}
                   />
