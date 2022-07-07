@@ -137,11 +137,11 @@ function Author() {
                   }
                   className="img-fluid collection_profile"
                 />
-                <div className="overlat_btn">
+                {/* <div className="overlat_btn">
                   <button type="" className="img_edit_btn">
                     <i className="fa fa-edit fa-lg"></i>
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="col-md-4 d-flex justify-content-end">
