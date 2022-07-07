@@ -414,6 +414,7 @@ function CreateNFTs() {
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">NFTs</h5>
         <br />
+        {nfts && nfts.length > 0 ? 
           <table class="table table-hover text-light">
             <thead>
               <tr>
@@ -439,7 +440,7 @@ function CreateNFTs() {
                   })
                 : "No NFTs Found"}
             </tbody>
-          </table>
+          </table> : "No NFT Found"}
         </div>
       </div>
       <div
