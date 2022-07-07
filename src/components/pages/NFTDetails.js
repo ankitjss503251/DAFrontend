@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Footer from "../components/footer";
 import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
@@ -38,6 +38,9 @@ import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { getNFTList } from "../../apiServices";
+
+import { useGLTF } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber"
 
 var textColor = {
   textColor: "#EF981D",
@@ -259,6 +262,11 @@ function NFTDetails() {
     //await putOnMarketplace(currentUser, orderData);
     return;
   };
+
+  function Model() {
+    const { scene } = useGLTF("https://staging-decrypt-nft-io.sgp1.digitaloceanspaces.com/Parrot.glb")
+    return <primitive object={scene} />;
+  }
 
   // Popup
 
@@ -594,25 +602,14 @@ function NFTDetails() {
                         className="img-fluid nftimg" controls>
                         <source src={NFTDetails?.image} type="video/mp4" />
                       </video>:""}
-                      {NFTDetails && NFTDetails.fileType=="3D"? <GLTFModel
-                      height="280"
-                      width="220"
-                      position={{x:0,y:0,z:0}}
-                      anitialias={false}
-                      //enableZoom={false}
-                      //bd4972d8-3441-439e-b669-c8553190f1c6
-                        className="img-fluid nftimg" src={NFTDetails?.image}>
-                        <AmbientLight color={0xffffff} />
-                        <DirectionLight
-                          color={0xffffff}
-                          position={{x: 100,y: 200,z: 100}}
-                        />
-                        <DirectionLight
-                          color={0xff00ff}
-                          position={{x: -100,y: 200,z: -100}}
-                        />
-                      </GLTFModel>:""}
-            </div>
+                      {NFTDetails && NFTDetails.fileType=="3D"? 
+                      <Canvas camera={{position: [10, 18, 23], fov: 0.5 }}>
+                        <pointLight position={[10, 10, 10]} intensity={1.3} />
+                        <Suspense fallback={null}>
+                          <Model/>
+                        </Suspense>
+                      </Canvas>:""}
+              </div>
             <div className="col-lg-6 nft_details">
               <p className="mb-0">
                 {collection?.name} Collection{" "}
