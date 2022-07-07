@@ -9,9 +9,16 @@ import {
 } from "../../../apiServices";
 
 
+let modal;
 function Admins() {
   const [state, setState] = useState({records:[],loading:false,toggleModal:'',category:{},reload:0});
   const {category}        = state;
+
+
+    
+
+
+
   useEffect(() => {
     adminUsers(1).then(({data})=>{
       setState(state=>({...state,records:(data.count>0?data.results:[])}))
@@ -81,6 +88,7 @@ function Admins() {
         let user = await saveAdminUser(fd,category?._id);
         NotificationManager.success(user.message, "", 2000);
         setState(state=>({...state,loading:false,reload:Math.random(),toggleModal:'',category:{}}));
+        document.querySelector('.modal-backdrop')?.classList.toggle('show');
       } catch (e) {
         let error = await e.getBody();
         NotificationManager.error(error.message, "", 2000);
@@ -180,7 +188,7 @@ function Admins() {
                     </tbody>
                   );
                 })
-              : <tfoot><tr><td colSpan={4} align="center">No Record Found</td></tr></tfoot>}
+              : <tfoot><tr><td colSpan={5} align="center">No Record Found</td></tr></tfoot>}
           </table>
         </div>
       </div>
@@ -192,6 +200,7 @@ function Admins() {
         tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
+        
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -289,10 +298,11 @@ function Admins() {
             <div className="modal-footer justify-content-center">
               <button
                 type="button"
+                disabled={state.loading}
                 className="btn btn-admin text-light"
                 onClick={handleSaveAdmin}
               >
-                Submit
+                {state.loading?'Submiting...':'Submit'}
               </button>
             </div>
           </div>

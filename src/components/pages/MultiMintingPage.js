@@ -1,11 +1,23 @@
 import { useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import { NotificationManager } from "react-notifications";
+// import React, { useEffect, useState,lazy } from "react";
+import { React, useEffect, useState, lazy} from "react";
+
 import Footer from "../components/footer";
 import MintEventSlider from "../components/MintEventSlider";
-import { getAllCollections, getNFTList } from "../../apiServices";
 import { useCookies } from "react-cookie";
 import { convertToEth } from "../../helpers/numberFormatter";
-import NotificationManager from "react-notifications/lib/NotificationManager";
+import Cookies from 'js-cookie';
+import { BigNumber } from "bignumber.js";
+import evt from "../../events/events"
+import "../components-css/App.css"
+const contract =  import (1? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyiCalls");
+
+
+
+
+
+
 
 const bgImgStyle = {
   backgroundImage: "url(./img/background.jpg)",
@@ -17,14 +29,92 @@ const bgImgStyle = {
 };
 
 function MultiMintingPage(props) {
+  
   const [currentUser, setCurrentUser] = useState();
-  const [cookies, setCookie, removeCookie] = useCookies([]);
   const [collectionDetails, setCollectionDetails] = useState();
-
+  const [categories,setcategories] = useState();
+  const [totalSupply, setTotalSupply] = useState();
   const { id } = useParams();
 
+
+  const [createdItemId, setCreatedItemId] = useState();
+  const [isPutOnMarketplace, setIsPutOnMarketPlace] = useState(true);
+  const [hideClosePopup, sethideClosePopup] = useState(true);
+  const [hideRedirectPopup, sethideRedirectPopup] = useState(false);
+  const [ClosePopupDisabled, setClosePopupDisabled] = useState(true);
+  const [RedirectPopupDisabled, setRedirectPopupDisabled] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies([]);
+  const [currQty, setCurrQty] = useState(1);
+  const [price, setPrice] = useState();
+  const [loading, setLoading] = useState(false);
+  const [isShowPopup, setisShowPopup] = useState(false);
+  const [isUploadPopupClass, setisUploadPopupClass] =
+  useState("checkiconDefault");
+const [isApprovePopupClass, setisApprovePopupClass] =
+  useState("checkiconDefault");
+const [isMintPopupClass, setisMintPopupClass] = useState("checkiconDefault");
+const [isRoyaltyPopupClass, setisRoyaltyPopupClass] =
+  useState("checkiconDefault");
+const [isPutOnSalePopupClass, setisPutOnSalePopupClass] = useState("checkiconDefault");
+  
+  function txnStatus(msg){
+    if(msg.includes("initiate loader")){
+      setisShowPopup(true)
+      setisApprovePopupClass("clockloader")
+    }
+    if(msg.includes("approval completed")){
+      setisApprovePopupClass("checkiconCompleted")
+      setisMintPopupClass("clockloader")
+    }
+    if(msg.includes("mint-initiated")){
+      setisApprovePopupClass("checkiconCompleted")
+      setisMintPopupClass("clockloader")
+    }
+    if(msg.includes("mint-succeed")){
+      setisApprovePopupClass("checkiconCompleted")
+      setisMintPopupClass("checkiconCompleted")
+      setClosePopupDisabled(false)
+      NotificationManager.success("mint Succeed");
+     
+      
+    }
+  };
+  evt.removeAllListeners('txn-status', txnStatus);
+    evt.on("txn-status", txnStatus);
+
+  function txnError(msg){
+          if(msg.includes("user-denied-mint")){
+            setisMintPopupClass("errorIcon")
+            setClosePopupDisabled(false)
+            NotificationManager.error("User denied mint TXN");
+            return true;
+          } else if (msg.includes("user-denied-approval")){
+            setisApprovePopupClass("errorIcon")
+            setClosePopupDisabled(false)
+            NotificationManager.error("User denied approval TXN");
+
+            return true;
+          } else if(msg.includes("not enough balance")){
+            setisApprovePopupClass("errorIcon")
+            setClosePopupDisabled(false)
+            NotificationManager.error("not enough token");
+            return true;
+          }
+          else{
+            setisApprovePopupClass("errorIcon")
+            setClosePopupDisabled(false)
+            NotificationManager.error(msg);
+            return true;
+          }
+          return false;
+    }
+    evt.removeAllListeners('txn-error', txnError);
+    evt.on("txn-error", txnError);
+    
+    
   useEffect(() => {
     window.scrollTo(0, 0);
+    
   }, []);
 
   const bgImage = {
@@ -39,38 +129,36 @@ function MultiMintingPage(props) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
 
-    console.log("current user is---->", currentUser, cookies.selected_account);
+    // console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
   useEffect(() => {
-    const fetch = async () => {
-      let reqBody = { page: 1, limit: 12, collectionID: id };
-      // let nfts = await getNFTList(reqBody);
-      // if (nfts && nfts.results && nfts.results.length > 0) setNfts(nfts);
-      reqBody = {
-        page: 1,
-        limit: 12,
-        collectionID: id,
-        userID: "",
-        categoryID: "",
-        brandID: "",
-        ERCType: "",
-        searchText: "",
-        filterString: "",
-        isMinted: "",
-        isHotCollection: "",
-        isExclusive: "",
-      };
-
-      let collection = await getAllCollections(reqBody);
-
-      if (collection && collection.results && collection.results.length > 0) {
-        console.log("collections", collection?.results[0][0]);
-        setCollectionDetails(collection.results[0][0]);
-      }
-    };
-    fetch();
+    const fetchData = async () => {
+    let { fetchInfo }= await contract
+      let getcateg = await fetchInfo();
+      setTotalSupply(getcateg[2].toString());
+      setPrice( convertToEth(new BigNumber(getcateg[0].toString())));
+    }
+    setInterval(fetchData, 10000)
+  
   }, []);
+  function closePopup() {
+    setisShowPopup(false);
+    sethideClosePopup(true);
+    sethideRedirectPopup(false);
+    setClosePopupDisabled(true);
+    setRedirectPopupDisabled(true);
+    setisUploadPopupClass("checkiconDefault");
+    setisApprovePopupClass("checkiconDefault");
+    setisMintPopupClass("checkiconDefault");
+    setisRoyaltyPopupClass("checkiconDefault");
+    setisPutOnSalePopupClass("checkiconDefault");
+  }
+  function redirectCreateNFTPopup() {
+    if (createdItemId) window.location.href = `/itemDetail/${createdItemId}`;
+    else window.location.href = `/profile`;
+  }
+  
 
   return (
     <div style={bgImgStyle}>
@@ -121,14 +209,12 @@ function MultiMintingPage(props) {
           </ul>
           <ul className="collection_status mt-5 mb-5">
             <li>
-              <h4>{collectionDetails?.totalSupply}</h4>
+              <h4>{totalSupply}</h4>
               <p>items</p>
             </li>
             <li>
               <h4>
-                {Number(
-                  convertToEth(collectionDetails?.price.$numberDecimal)
-                ).toFixed(4)}
+                {price}
               </h4>
               <p>HNTR</p>
             </li>
@@ -159,7 +245,69 @@ function MultiMintingPage(props) {
         </div>
       </section>
       <Footer />
+      {isShowPopup ? (
+        <div className="popup-bg" id="CreateNftLoader">
+          <div className="loader_popup-box">
+            <div className="row">
+              <h2 className="col-12 d-flex justify-content-center mt-2 mb-3">
+                Follow Steps
+              </h2>
+            </div>
+    
+            <div className="row customDisplayPopup">
+              <div className="col-3 icontxtDisplayPopup">
+                <div className={isApprovePopupClass}></div>
+              </div>
+              <div className="col-8 icontxtDisplayPopup">
+                <h5 className="popupHeading">Approve</h5>
+                <span className="popupText">
+                  This transaction is conducted only once per collection
+                </span>
+              </div>
+            </div>
+            <div className="row customDisplayPopup">
+              <div className="col-3 icontxtDisplayPopup">
+                <div className={isMintPopupClass}></div>
+              </div>
+              <div className="col-8 icontxtDisplayPopup">
+                <h5 className="popupHeading">Mint</h5>
+                <span className="popupText">
+                  Send transaction to create your NFT
+                </span>
+              </div>
+            </div>
+          
+            <div className="row customDisplayPopup">
+              {hideClosePopup ? (
+                <button
+                  className="closeBtn btn-main"
+                  disabled={ClosePopupDisabled}
+                  onClick={closePopup}
+                >
+                  Close
+                </button>
+              ) : (
+                ""
+              )}
+              {hideRedirectPopup ? (
+                <button
+                  className="closeBtn btn-main"
+                  disabled={RedirectPopupDisabled}
+                  onClick={redirectCreateNFTPopup}
+                >
+                  Close
+                </button>
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+        </div>
+       ) : (
+        ""
+      )} 
     </div>
+     
   );
 }
 
