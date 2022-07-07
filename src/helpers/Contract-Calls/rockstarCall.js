@@ -83,7 +83,7 @@ export const fetchInfo = async (addr) => {
       try {
         let result = await contract.estimateGas.mintTokens(qty, { from: from });
         if (result) {
-          return mintTokens(qty, from);
+          return mintTokens(addr ,qty, from);
         }
       } catch (e) {
         if (JSON.stringify(e).includes("insufficient allowance")) {
@@ -193,9 +193,9 @@ export const fetchInfo = async (addr) => {
     }
   }catch (error) {console.log(error);}
 };
-const mintTokens = async (qty, from) => {
+const mintTokens = async (addr,qty, from) => {
   evt.emit("txn-status", "mint-initiated");
-  let contract = await exportInstance(contracts.rrBaby, rrBabyAbi.abi);
+  let contract = await exportInstance(addr, rrBabyAbi.abi);
   try {
     let txn = await contract.mintTokens(qty, { from: from });
     txn = await txn.wait();
@@ -206,9 +206,9 @@ const mintTokens = async (qty, from) => {
     return e;
   }
 };
-const whitelistMint = async (qty, maxQty, sig, from) => {
+const whitelistMint = async (addr,qty, maxQty, sig, from) => {
   evt.emit("txn-status", "mint-initiated");
-  let contract = await exportInstance(contracts.rrBaby, rrBabyAbi.abi);
+  let contract = await exportInstance(addr, rrBabyAbi.abi);
   try {
     let txn = await contract.whitelistedMint(qty, maxQty, sig, { from: from });
     txn = await txn.wait();
