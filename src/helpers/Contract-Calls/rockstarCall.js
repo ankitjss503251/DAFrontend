@@ -2,18 +2,19 @@
 import { MAX_ALLOWANCE_AMOUNT } from "../constants";
 import erc20Abi from "../../config/abis/erc20.json";
 import rrBabyAbi from "../../config/abis/rrbaby.json"
-import { exportInstance } from "../../apiServices";
+import { exportInstance
+  ,isWhitelisted} from "../../apiServices";
 import contracts from "../../config/contracts";
 import { convertToEth } from "../../helpers/numberFormatter";
 import BigNumber from "bignumber.js";
 import evt from "../../events/events";
-import {isWhitelisted} from "../../apiServices"
 
 
 
-export const fetchInfo = async () => {
 
-    let contract = await exportInstance(contracts.rrBaby, rrBabyAbi.abi);
+export const fetchInfo = async (addr) => {
+
+    let contract = await exportInstance(addr, rrBabyAbi.abi);
     try {
       let price = await contract.price();
       let token =await  contract.token();
@@ -26,10 +27,10 @@ export const fetchInfo = async () => {
     }
   
   };
-  export const testMint = async ( qty, price,from) => {
+  export const testMint = async (addr, qty, price,from) => {
     evt.emit('txn-status',"initiate loader");
     price = parseFloat(price) * parseInt(qty);
-    let contract = await exportInstance(contracts.rrBaby, rrBabyAbi.abi);
+    let contract = await exportInstance(addr, rrBabyAbi.abi);
     try {
       let result = await contract.isActive();
       if(result){

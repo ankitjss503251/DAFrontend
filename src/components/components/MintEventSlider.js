@@ -8,18 +8,14 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import "../components-css/App.css"
 import evt from "../../events/events"
 import { onboard } from "../menu/header";
-
-// import {  fetchInfo,
-//          testMint,
-//          mintTokens } from "../../helpers/Contract-Calls/rockstarCall";
 import BigNumber from "bignumber.js";
 import { useCookies } from "react-cookie";
 import Spinner from "../components/Spinner";
-const contract =  import (1? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyiCalls");
+
 
 evt.setMaxListeners(1)
 function MintEventSlider(props) {
- 
+  let contract= props.calls
   var settings = {
     slidesToShow: 3,
     slidesToScroll: 1,
@@ -50,12 +46,6 @@ function MintEventSlider(props) {
       },
     ],
   };
-  const [createdItemId, setCreatedItemId] = useState();
-  const [isPutOnMarketplace, setIsPutOnMarketPlace] = useState(true);
-  const [hideClosePopup, sethideClosePopup] = useState(true);
-  const [hideRedirectPopup, sethideRedirectPopup] = useState(false);
-  const [ClosePopupDisabled, setClosePopupDisabled] = useState(true);
-  const [RedirectPopupDisabled, setRedirectPopupDisabled] = useState(true);
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [currQty, setCurrQty] = useState(1);
   const [price, setPrice] = useState();
@@ -67,7 +57,7 @@ function MintEventSlider(props) {
   useEffect(() => {
     const fetchData = async () => {
       let { fetchInfo }= await contract
-      let getcateg = await fetchInfo();
+      let getcateg = await fetchInfo(props.id);
       setPrice( convertToEth(new BigNumber(getcateg[0].toString())));
     }
     fetchData();
@@ -78,7 +68,7 @@ function MintEventSlider(props) {
   }
   const mintFunction = async (qty,price,user) => {
     let { testMint}= await contract
-     let result = await testMint(qty,price,user)
+     let result = await testMint(props.id,qty,price,user)
       console.log(result);
      
   }
