@@ -21,7 +21,6 @@ import BGImg from "../../assets/images/background.jpg";
 import { convertToEth } from "../../helpers/numberFormatter";
 import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 
-
 const options = [
   { value: "chocolate", label: "Chocolate" },
   { value: "strawberry", label: "Strawberry" },
@@ -119,7 +118,7 @@ function Collection() {
         page: 1,
         limit: 1,
         collectionID: id,
-        searchText: searchedText ? searchedText : ""
+        searchText: searchedText ? searchedText : "",
       };
       const res = await getCollections(reqData);
       setCollectionDetails(res[0]);
@@ -127,7 +126,7 @@ function Collection() {
         page: currPage,
         limit: 12,
         collectionID: id,
-        searchText: searchFor
+        searchText: searchFor,
       };
       const nfts = await getNFTs(data);
       setCardCount(cardCount + nfts.length);
@@ -137,11 +136,14 @@ function Collection() {
           const order = await getPrice({ nftID: nfts[i].id });
           nfts[i] = {
             ...nfts[i],
-            price:  order?.price?.$numberDecimal === undefined ? "--" : Number(
-              convertToEth(order?.price?.$numberDecimal)
-            ).toFixed(6).slice(0, -2),
+            price:
+              order?.price?.$numberDecimal === undefined
+                ? "--"
+                : Number(convertToEth(order?.price?.$numberDecimal))
+                    .toFixed(6)
+                    .slice(0, -2),
             saleType: order?.salesType,
-            collectionName: res[0].name
+            collectionName: res[0].name,
           };
         }
         temp = [...temp, ...nfts];
@@ -284,7 +286,7 @@ function Collection() {
 
           <div className='row '>
             <div className='col-md-12 text-center item_active'>
-            <ul className='author_cart nav' role='tablist'>
+              <ul className='author_cart nav' role='tablist'>
                 <li classname='item_active'>
                   <a
                     data-bs-toggle='pill'
@@ -315,113 +317,120 @@ function Collection() {
               </ul>
             </div>
           </div>
-
-         
         </div>
       </section>
       <section className='collection_list mb-5 pb-5'>
         <div className='container'>
-        <div className='tab-content' id='pills-tabContent'>
+          <div className='tab-content' id='pills-tabContent'>
             <div
               className='tab-pane fade show active'
               id='pills-Items'
               role='tabpanel'
               aria-labelledby='pills-Items-tab'>
-                 <div className='row'>
-            <div className='col-lg-12'>
-              <div className='market_search_form mb-4'>
-                <form class='d-flex marketplace_form'>
-                  <input
-                    class=' me-2'
-                    type='search'
-                    placeholder='Search item here...'
-                    aria-label='Search'
-                    value={searchFor}
-                    onChange={(e) => {
-                      setNftList([]);
-                      setCurrPage(1);
-                      setCardCount(0);
-                      setSearchFor(e.target.value);
-                      setLoadMoreDisabled("");
-                    }}
-                  />
-                  <button class='market_btn' type='submit'>
-                    <img src='../img/search.svg' alt='' />
-                  </button>
-                </form>
-                <select
-                  class='market_select_form form-select'
-                  aria-label='Default select example'
-                  style={bgImgarrow}>
-                  <option value='all' selected>
-                    Sales Type
-                  </option>
-                  <option value='buyNow'>Buy Now</option>
-                  <option value='onAuction'>On Auction</option>
-                  <option value='notForSale'>Not for Sale</option>
-                </select>
-                <select
-                  class='market_select_form form-select'
-                  aria-label='Default select example'
-                  style={bgImgarrow}>
-                  <option value='1' selected>
-                    Price: Low to High
-                  </option>
-                  <option value='2'>Price: High to Low</option>
-                </select>
-                {/* <div className="market_div"> */}
+              {nftList.length > 0 ? (
+                <div className='row'>
+                  <div className='col-lg-12'>
+                    <div className='market_search_form mb-4'>
+                      <form class='d-flex marketplace_form'>
+                        <input
+                          class=' me-2'
+                          type='search'
+                          placeholder='Search item here...'
+                          aria-label='Search'
+                          value={searchFor}
+                          onChange={(e) => {
+                            setNftList([]);
+                            setCurrPage(1);
+                            setCardCount(0);
+                            setSearchFor(e.target.value);
+                            setLoadMoreDisabled("");
+                          }}
+                        />
+                        <button class='market_btn' type='submit'>
+                          <img src='../img/search.svg' alt='' />
+                        </button>
+                      </form>
+                      <select
+                        class='market_select_form form-select'
+                        aria-label='Default select example'
+                        style={bgImgarrow}>
+                        <option value='all' selected>
+                          Sales Type
+                        </option>
+                        <option value='buyNow'>Buy Now</option>
+                        <option value='onAuction'>On Auction</option>
+                        <option value='notForSale'>Not for Sale</option>
+                      </select>
+                      <select
+                        class='market_select_form form-select'
+                        aria-label='Default select example'
+                        style={bgImgarrow}>
+                        <option value='1' selected>
+                          Price: Low to High
+                        </option>
+                        <option value='2'>Price: High to Low</option>
+                      </select>
+                      {/* <div className="market_div"> */}
 
-                <div id='gridtwo' className='market_grid' onClick={gridtwo}>
-                  <Twogrid />
-                </div>
-                <div id='gridthree' className='market_grid' onClick={gridthree}>
-                  <Threegrid />
-                </div>
-                {/* </div> */}
-                {/* <button
+                      <div
+                        id='gridtwo'
+                        className='market_grid'
+                        onClick={gridtwo}>
+                        <Twogrid />
+                      </div>
+                      <div
+                        id='gridthree'
+                        className='market_grid'
+                        onClick={gridthree}>
+                        <Threegrid />
+                      </div>
+                      {/* </div> */}
+                      {/* <button
                   type='button'
                   className='filter_btn'
                   onClick={filterToggle}>
                   Adv.Filter
                 </button> */}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
+              <div className='row'>
+                {loader ? (
+                  <CollectionsNFT cards={cardCount} grid={grid} />
+                ) : nftList.length > 0 ? (
+                  nftList?.map((n, k) => {
+                    return (
+                      <div className={grid} key={k}>
+                        <CollectionList nft={n} />
+                      </div>
+                    );
+                  })
+                ) : (
+                  <h2 className="text-white text-center">
+                    No NFT Found
+                  </h2>
+                )}
+
+                {nftList.length > 12 ? (
+                  <div class='col-md-12 text-center mt-5'>
+                    <button
+                      class={`btn view_all_bdr ${loadMoreDisabled}`}
+                      onClick={() => {
+                        setCurrPage(currPage + 1);
+                        setLoadMore(!loadMore);
+                      }}>
+                      Load More
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
-          </div>
-          <div className='row'>
-            {loader ? (
-              <CollectionsNFT cards={cardCount} grid={grid} />
-            ) : nftList.length > 0 ? (
-              nftList?.map((n, k) => {
-                return (
-                  <div className={grid} key={k}>
-                    <CollectionList
-                      nft={n}
-                    />
-                  </div>
-                );
-              })
-            ) : (
-              ""
-            )}
-
-            {nftList.length > 12 ? (
-              <div class='col-md-12 text-center mt-5'>
-                <button
-                  class={`btn view_all_bdr ${loadMoreDisabled}`}
-                  onClick={() => {
-                    setCurrPage(currPage + 1);
-                    setLoadMore(!loadMore);
-                  }}>
-                  Load More
-                </button>
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
-          
-          </div>
-          <div
+            <div
               className='tab-pane fade'
               id='pills-Activity'
               role='tabpanel'

@@ -38,7 +38,7 @@ export const adminRegister = async (account) => {
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/auth/register",
+      process.env.REACT_APP_API_BASE_URL + "/auth/adminregister",
       requestOptions
     );
 
