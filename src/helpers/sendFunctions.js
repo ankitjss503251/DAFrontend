@@ -304,6 +304,7 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
+  slowRefresh(1000)
   // setTimeout(() => {
   //   window.location.href = `/NFTDetails/${details?.nftID?._id}`;
   // }, 1000);
@@ -501,6 +502,7 @@ export const handleRemoveFromSale = async (orderId, account) => {
       orderID: orderId,
     });
     NotificationManager.success("Removed from sale successfully");
+    slowRefresh(1000)
     // window.location.href = "/profile";
     // window.location.reload();
     // console.log("res", res);

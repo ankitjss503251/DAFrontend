@@ -305,7 +305,7 @@ const Navbar = (props) => {
         <a className="logo" href='/'>Digital Arms</a>
       </div>
       <ul className='p-0 m-0'>
-        <li className='text-light'>
+        {/* <li className='text-light'>
           <div className='position-relative'>
             <Message />
             <span className='badge badge-danger navbar-badge text-dark'>3</span>
@@ -316,7 +316,7 @@ const Navbar = (props) => {
             <Notification />
             <span className='badge badge-danger navbar-badge text-dark'>3</span>
           </div>
-        </li>
+        </li> */}
         <li>
           {props.isAdmin?
           <button
