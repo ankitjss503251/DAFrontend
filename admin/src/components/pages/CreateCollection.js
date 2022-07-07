@@ -93,7 +93,7 @@ function CreateCollection() {
       console.log("_cat", _cat);
     };
     fetch();
-  }, [categories, brands]);
+  }, []);
 
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
