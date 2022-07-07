@@ -9,8 +9,8 @@ import BigNumber from "bignumber.js";
 import evt from "../../events/events"
 
 const cID=0;
-export const fetchInfo = async () => {
-    let gooContract = await exportInstance(contracts.gachyiland, gooAbi.abi);
+export const fetchInfo = async (addr) => {
+    let gooContract = await exportInstance(addr, gooAbi.abi);
     try {
       let categories = await gooContract.categories(cID)
       let totalSupply = await gooContract.totalSupply();
@@ -21,10 +21,10 @@ export const fetchInfo = async () => {
     }
   
   };
-  export const testMint = async ( qty,price,from) => {
+  export const testMint = async ( addr,qty,price,from) => {
     evt.emit('txn-status',"initiate loader");
     price = parseFloat(price) * parseInt(qty);
-    let gooContract = await exportInstance(contracts.gachyiland, gooAbi.abi);
+    let gooContract = await exportInstance(addr, gooAbi.abi);
     
     try {
       let result  = await gooContract.estimateGas.mintTokens(cID, qty, { from: from})
