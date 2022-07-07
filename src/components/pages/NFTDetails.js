@@ -21,7 +21,7 @@ import {
   createBid,
 } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
-import {GLTFModel,AmbientLight,DirectionLight} from "react-3d-viewer";
+import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
 
 import contracts from "../../config/contracts";
 import {
@@ -288,8 +288,8 @@ function NFTDetails() {
     document.getElementById("tab_opt_3").classList.add("put_show");
     document.getElementById("tab_opt_4").classList.remove("put_hide");
     document.getElementById("tab_opt_4").classList.add("put_show");
-    document.getElementById("tab_opt_5").classList.remove("put_hide");
-    document.getElementById("tab_opt_5").classList.add("put_show");
+    // document.getElementById("tab_opt_5").classList.remove("put_hide");
+    // document.getElementById("tab_opt_5").classList.add("put_show");
     document.getElementById("btn1").classList.remove("active");
     document.getElementById("btn2").classList.add("active");
     document.getElementById("btn3").classList.remove("active");
@@ -577,41 +577,54 @@ function NFTDetails() {
       {loading ? <Spinner /> : ""}
       {isPlaceBidModal ? placeBidModal : ""}
       {isBuyNowModal ? buyNowModal : ""}
-      <section style={bgImgStyle} className='pdd_8'>
-        <div className='container'>
-          <div className='row mb-5'>
-            <div className='col-lg-6 mb-xl-5 mb-lg-5 mb-5'>
-              {NFTDetails && NFTDetails.fileType=="Image"?<img
-                src={NFTDetails?.image}
-                className="img-fluid nftimg"
-                alt=""
-                onError={(e) => {
-                  console.log("image error is--->",e)
-                  e.target.src = "../img/collections/list4.png"
-                }}
-              />:""}
-              {NFTDetails && NFTDetails.fileType=="Video"?<video 
-                        className="img-fluid nftimg" controls>
-                        <source src={NFTDetails?.image} type="video/mp4" />
-                      </video>:""}
-                      {NFTDetails && NFTDetails.fileType=="3D"? <GLTFModel
-                      height="280"
-                      width="220"
-                      position={{x:0,y:0,z:0}}
-                      anitialias={false}
-                      //enableZoom={false}
-                      //bd4972d8-3441-439e-b669-c8553190f1c6
-                        className="img-fluid nftimg" src={NFTDetails?.image}>
-                        <AmbientLight color={0xffffff} />
-                        <DirectionLight
-                          color={0xffffff}
-                          position={{x: 100,y: 200,z: 100}}
-                        />
-                        <DirectionLight
-                          color={0xff00ff}
-                          position={{x: -100,y: 200,z: -100}}
-                        />
-                      </GLTFModel>:""}
+      <section style={bgImgStyle} className="pdd_8">
+        <div className="container">
+          <div className="row mb-5">
+            <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5">
+              {NFTDetails && NFTDetails.fileType == "Image" ? (
+                <img
+                  src={NFTDetails?.image}
+                  className="img-fluid nftimg"
+                  alt=""
+                  onError={(e) => {
+                    console.log("image error is--->", e);
+                    e.target.src = "../img/collections/list4.png";
+                  }}
+                />
+              ) : (
+                ""
+              )}
+              {NFTDetails && NFTDetails.fileType == "Video" ? (
+                <video className="img-fluid nftimg" controls>
+                  <source src={NFTDetails?.image} type="video/mp4" />
+                </video>
+              ) : (
+                ""
+              )}
+              {NFTDetails && NFTDetails.fileType == "3D" ? (
+                <GLTFModel
+                  height="280"
+                  width="220"
+                  position={{ x: 0, y: 0, z: 0 }}
+                  anitialias={false}
+                  //enableZoom={false}
+                  //bd4972d8-3441-439e-b669-c8553190f1c6
+                  className="img-fluid nftimg"
+                  src={NFTDetails?.image}
+                >
+                  <AmbientLight color={0xffffff} />
+                  <DirectionLight
+                    color={0xffffff}
+                    position={{ x: 100, y: 200, z: 100 }}
+                  />
+                  <DirectionLight
+                    color={0xff00ff}
+                    position={{ x: -100, y: 200, z: -100 }}
+                  />
+                </GLTFModel>
+              ) : (
+                ""
+              )}
             </div>
             <div className="col-lg-6 nft_details">
               <p className="mb-0">
@@ -640,27 +653,30 @@ function NFTDetails() {
                   {NFTDetails?.like} favourites
                 </span>
               </div>
-              {NFTDetails?.attributes?.length > 0 ? 
-              <ul
-                className="nav nav-pills mb-4 w-100"
-                id="pills-tab"
-                role="tablist"
-              >
-                <li className="nav-item w-100" role="presentation">
-                  <button
-                    className="nav-link active details-btn "
-                    id="pills-home-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-home"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-home"
-                    aria-selected="true"
-                  >
-                    Details
-                  </button>
-                </li>
-              </ul> : ""}
+              {NFTDetails?.attributes?.length > 0 ? (
+                <ul
+                  className="nav nav-pills mb-4 w-100"
+                  id="pills-tab"
+                  role="tablist"
+                >
+                  <li className="nav-item w-100" role="presentation">
+                    <button
+                      className="nav-link active details-btn "
+                      id="pills-home-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#pills-home"
+                      type="button"
+                      role="tab"
+                      aria-controls="pills-home"
+                      aria-selected="true"
+                    >
+                      Details
+                    </button>
+                  </li>
+                </ul>
+              ) : (
+                ""
+              )}
               <div className="tab-content" id="pills-tabContent">
                 <div
                   className="tab-pane fade show active"
@@ -899,10 +915,14 @@ function NFTDetails() {
                 <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
-            <div className='col-md-12 mb-5'>
-              <h3 className='title_36 mb-4'>Offers</h3>
-              <div className='table-responsive'>
-                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails} collectionAddress={collection?.contractAddress} />
+            <div className="col-md-12 mb-5">
+              <h3 className="title_36 mb-4">Offers</h3>
+              <div className="table-responsive">
+                <NFToffer
+                  id={NFTDetails.id}
+                  NftDetails={NFTDetails}
+                  collectionAddress={collection?.contractAddress}
+                />
               </div>
             </div>
             <div className="col-md-12 mb-5">
@@ -1126,18 +1146,22 @@ function NFTDetails() {
                     </>
                   )}
                 </div>
-                <div id="tab_opt_5" className="mb-3 put_hide">
-                  <label for="item_ex_date" className="form-label">
-                    Expiration date
-                  </label>
-                  {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
-                  <input
-                    type="datetime-local"
-                    value={datetime.toString().substring(0, 16)}
-                    onChange={handleChange}
-                    className="input_design"
-                  />
-                </div>
+                {marketplaceSaleType === 1 ? (
+                  <div id="tab_opt_5" className="mb-3">
+                    <label for="item_ex_date" className="form-label">
+                      Expiration date
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={datetime.toString().substring(0, 16)}
+                      onChange={handleChange}
+                      className="input_design"
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
+
                 <div className="mt-5 mb-3 text-center">
                   <button
                     type="button"
@@ -1202,7 +1226,7 @@ function NFTDetails() {
                     placeholder="Please Enter Quantity"
                     value={offerQuantity}
                     onChange={(event) => {
-                      if (NFTDetails.type == 1 && event.target.value > 1) {
+                      if (NFTDetails.type === 1 && event.target.value > 1) {
                         setOfferQuantity(1);
                         NotificationManager.error(
                           "Quantity must be 1.",
@@ -1250,7 +1274,7 @@ function NFTDetails() {
                         <option value={"USDT"}>USDT</option>
                       </select>
                     </>
-                  ) : marketplaceSaleType == 1 ? (
+                  ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"
