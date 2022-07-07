@@ -109,8 +109,12 @@ const Navbar = (props) => {
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
 
-  useEffect(async () => {
-    if (cookies["selected_account"]) {
+  useEffect( () => {
+   init();
+  }, []);
+
+const init = async () => {
+   if (cookies["selected_account"]) {
       setAccount(cookies["selected_account"]);
       const s = await onboard.connectWallet({
         autoSelect: { label: cookies["label"], disableModals: true },
@@ -127,7 +131,7 @@ const Navbar = (props) => {
       });
       setCookie("balance", s[0].accounts[0].balance, { path: "/" });
     }
-  }, []);
+}
 
   const refreshState = () => {
     removeCookie("selected_account", { path: "/" });
