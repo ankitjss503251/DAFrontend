@@ -117,6 +117,7 @@ function NFToffer(props) {
     //await putOnMarketplace(currentUser, orderData);
     return;
   };
+
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
 
@@ -172,7 +173,7 @@ function NFToffer(props) {
                         <td>
                           <img
                             alt=""
-                            src={Tokens(b?.paymentToken)}
+                            src={Tokens[b?.paymentToken]}
                             className="img-fluid hunter_fav"
                           />{" "}
                           {Number(
