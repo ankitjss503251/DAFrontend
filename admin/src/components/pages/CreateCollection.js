@@ -563,12 +563,12 @@ function CreateCollection() {
     }
   };
 
-  const handleEditCollection = async () => {
+  const handleEditCollection = async (_selectedCollectionId) => {
     try {
       const reqData = {
         page: 1,
         limit: 1,
-        collectionID: selectedCollectionId,
+        collectionID: _selectedCollectionId,
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
@@ -778,7 +778,7 @@ function CreateCollection() {
                                     onClick={async () => {
                                       setSelectedCollectionId(item._id);
                                       setIsEditModal("active");
-                                      handleEditCollection();
+                                      handleEditCollection(item._id);
                                     }}
                                   >
                                     Edit
@@ -958,7 +958,7 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage2}
-                          src={coverImg ? coverImg :"../images/upload.png"}
+                          src={coverImg ? coverImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
@@ -1601,8 +1601,15 @@ function CreateCollection() {
                       <option selected>Open this select menu</option>
                       {categories && categories.length > 0
                         ? categories.map((c, i) => {
-                          console.log("category auto fill", category,  c.name )
-                            return <option value={c._id} selected={(category === c.name) ? true : false}>{c.name}</option>;
+                            console.log("category auto fill", category, c.name);
+                            return (
+                              <option
+                                value={c._id}
+                                selected={category === c.name ? true : false}
+                              >
+                                {c.name}
+                              </option>
+                            );
                           })
                         : ""}
                     </select>
