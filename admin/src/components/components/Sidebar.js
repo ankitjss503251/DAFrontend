@@ -22,7 +22,7 @@ function Sidebar() {
             <Dashboardsvg /> Dashboard
           </NavLink>
         </li>
-        <li>
+        {/* <li>
           <NavLink to={"/form"} className="text-decoration-none text-light">
             <Formsvg /> Forms
           </NavLink>
@@ -31,7 +31,7 @@ function Sidebar() {
           <NavLink to={"/table"} className="text-decoration-none text-light">
             <Tablesvg /> Tables
           </NavLink>
-        </li>
+        </li> */}
         {isSuperAdmin && isSuperAdmin() ? (
           <li>
             <NavLink to={"/admins"} className="text-decoration-none text-light">
@@ -71,14 +71,14 @@ function Sidebar() {
             <Performancesvg /> Create Categories
           </NavLink>
         </li>
-        <li>
+        {/* <li>
           <NavLink
             to={"/performance"}
             className="text-decoration-none text-light"
           >
             <Performancesvg /> Performance
           </NavLink>
-        </li>
+        </li> */}
       </ul>
     </nav>
   );

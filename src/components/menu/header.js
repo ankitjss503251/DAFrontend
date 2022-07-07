@@ -23,13 +23,14 @@ import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
 import defaultProfile from "../../assets/images/favicon.png";
+import evt from "../../events/events"
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
 
-const onboard = Onboard({
+ const onboard = Onboard({
   wallets: [walletConnect, injected],
   chains: [
     {
@@ -300,7 +301,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message, "", 800);
-            // slowRefresh(1000);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {

@@ -3369,6 +3369,7 @@ button#btn-submit {
   text-shadow: 0px 0px 4px rgb(0 0 0 / 40%);
   display: inline-block;
   padding: 10px 20px;
+  border: none;
 }
 .connect_wallet_btn:hover {
   color: #fff !important;
@@ -3436,12 +3437,17 @@ button#btn-submit {
   background: linear-gradient(180deg, #ef981d 26.56%, #f9bf50 100%);
   border: 1px solid #394956;
   border-radius: 10px;
-  padding: 10px 120px;
+  padding: 10px;
   font-family: "Roboto";
   font-weight: 700;
   font-size: 24px;
   text-align: center;
   color: #ffffff;
+  width: 100%;
+  max-width: 220px;
+}
+.slick-slide{
+  text-align: center;
 }
 /* .event_slider .slick-slide.slick-center.slick-current {
   transform: scale(1.2);
@@ -4310,9 +4316,16 @@ a:hover {
   margin-right: 4px;
 }
 
-.da_img {
+/* .da_img {
   height: 100px;
   width: 100%;
+} */
+.da_img {
+  max-height: 250px;
+  max-width: 250px;
+  text-align: center;
+  align-items: center;
+  margin: 0 auto;
 }
 
 /****Search*******/
@@ -5011,8 +5024,14 @@ body.overflow_hidden {
   height: 260px !important;
   object-fit: cover !important;
 }
-
-
+button:disabled {
+  opacity: 0.3;
+}
+/* @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation:portrait) {
+  .mintevent.text-center {
+    min-width: 400px !important;
+  }
+} */
 .nft.hc .slick-list .slick-slide{
   /* height: 201px !important; */
       width: 450px !important;

@@ -109,8 +109,12 @@ const Navbar = (props) => {
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
 
-  useEffect(async () => {
-    if (cookies["selected_account"]) {
+  useEffect( () => {
+   init();
+  }, []);
+
+const init = async () => {
+   if (cookies["selected_account"]) {
       setAccount(cookies["selected_account"]);
       const s = await onboard.connectWallet({
         autoSelect: { label: cookies["label"], disableModals: true },
@@ -127,7 +131,7 @@ const Navbar = (props) => {
       });
       setCookie("balance", s[0].accounts[0].balance, { path: "/" });
     }
-  }, []);
+}
 
   const refreshState = () => {
     removeCookie("selected_account", { path: "/" });
@@ -305,7 +309,7 @@ const Navbar = (props) => {
         <a className="logo" href='/'>Digital Arms</a>
       </div>
       <ul className='p-0 m-0'>
-        <li className='text-light'>
+        {/* <li className='text-light'>
           <div className='position-relative'>
             <Message />
             <span className='badge badge-danger navbar-badge text-dark'>3</span>
@@ -316,7 +320,7 @@ const Navbar = (props) => {
             <Notification />
             <span className='badge badge-danger navbar-badge text-dark'>3</span>
           </div>
-        </li>
+        </li> */}
         <li>
           {props.isAdmin?
           <button

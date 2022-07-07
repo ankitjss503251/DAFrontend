@@ -304,6 +304,7 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
+  slowRefresh(1000);
   // setTimeout(() => {
   //   window.location.href = `/NFTDetails/${details?.nftID?._id}`;
   // }, 1000);
@@ -501,6 +502,7 @@ export const handleRemoveFromSale = async (orderId, account) => {
       orderID: orderId,
     });
     NotificationManager.success("Removed from sale successfully");
+    slowRefresh(1000);
     // window.location.href = "/profile";
     // window.location.reload();
     // console.log("res", res);
@@ -688,7 +690,8 @@ export const createOffer = async (
   bidPrice,
   deadline,
   nftID,
-  tokenAddress
+  tokenAddress,
+  paymentToken
 ) => {
   console.log(
     "payload in send function",
@@ -710,7 +713,7 @@ export const createOffer = async (
     buyerOrder.push(tokenId);
     buyerOrder.push(qty);
     buyerOrder.push(1);
-    buyerOrder.push(contracts.USDT);
+    buyerOrder.push(paymentToken);
     buyerOrder.push(bidPrice);
     buyerOrder.push(deadline);
     buyerOrder.push([]);
@@ -720,6 +723,7 @@ export const createOffer = async (
     let allowance = (
       await getPaymentTokenInfo(buyerAccount, buyerOrder[5])
     ).allowance.toString();
+
     console.log(
       "allowance",
       new BigNumber(allowance).isLessThan(
@@ -728,6 +732,7 @@ export const createOffer = async (
           .toString()
       )
     );
+
     let userTokenBal = await getUsersTokenBalance(buyerOrder[0], buyerOrder[5]);
 
     let usrHaveQuantity = await GetOwnerOfToken(
@@ -789,6 +794,7 @@ export const createOffer = async (
           buyerSignature: signature,
           tokenAddress: tokenAddress,
           salt: buyerOrder[10],
+          paymentToken: paymentToken,
         };
         console.log("req params is--->", reqParams);
 
@@ -923,23 +929,24 @@ export const handleAcceptBids = async (
     NotificationManager.error("Seller didn't approved marketplace");
     return;
   }
+  if (buyerOrder[5] === ZERO_ADDRESS) {
+  } else {
+    let paymentTokenData = await getPaymentTokenInfo(
+      buyerOrder[0],
+      buyerOrder[5]
+    );
 
-  let paymentTokenData = await getPaymentTokenInfo(
-    buyerOrder[0],
-    buyerOrder[5]
-  );
-
-  if (
-    new BigNumber(paymentTokenData.balance).isLessThan(
-      new BigNumber(order[6].toString()).multipliedBy(
-        new BigNumber(buyerOrder[3].toString())
+    if (
+      new BigNumber(paymentTokenData.balance).isLessThan(
+        new BigNumber(order[6].toString()).multipliedBy(
+          new BigNumber(buyerOrder[3].toString())
+        )
       )
-    )
-  ) {
-    NotificationManager.error("Buyer don't have enough Tokens");
-    return;
+    ) {
+      NotificationManager.error("Buyer don't have enough Tokens");
+      return;
+    }
   }
-
   try {
     let marketplace = await exportInstance(
       contracts.MARKETPLACE,

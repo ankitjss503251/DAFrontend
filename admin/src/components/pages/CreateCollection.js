@@ -433,10 +433,12 @@ function CreateCollection() {
     window.sessionStorage.setItem("importLink", importedCollectionLink);
     let res;
     try {
+      setLoading(true);
       const token = await exportInstance(importedAddress, abi);
       console.log("token", token);
-      let originalSupply = await token.totalSupply();
-      console.log("totalSupply", originalSupply);
+      let originalSupply = await token.indicatesID();
+
+      console.log("totalSupply", parseInt(originalSupply));
       let dbSupply;
       if (isNew) {
         let collection = await getAllCollections({
@@ -451,7 +453,7 @@ function CreateCollection() {
           fd.append("isOnMarketplace", 1);
           fd.append("name", title);
           fd.append("contractAddress", importedAddress.toLowerCase());
-          fd.append("totalSupply", parseInt(originalSupply));
+          fd.append("totalSupply", parseInt(originalSupply) - 1);
 
           res = await createCollection(fd);
           console.log("coll create", res._id);
@@ -470,17 +472,19 @@ function CreateCollection() {
 
             await importCollection({
               address: importedAddress,
-              totalSupply: parseInt(originalSupply)
-                ? parseInt(originalSupply)
-                : 0,
+              totalSupply:
+                parseInt(originalSupply) - 1 ? parseInt(originalSupply) - 1 : 0,
               name: title,
             });
           } catch (e) {
+            setLoading(false);
             console.log("error", e);
             return;
           }
         } else {
           NotificationManager.error("Collection already imported", "", 800);
+          setLoading(false);
+          return;
         }
       } else {
         let fd = new FormData();
@@ -490,7 +494,7 @@ function CreateCollection() {
         fd.append("id", selectedCollectionId);
         fd.append("isOnMarketplace", 1);
         fd.append("isImported", 1);
-        fd.append("totalSupply", parseInt(originalSupply));
+        fd.append("totalSupply", parseInt(originalSupply) - 1);
         res = await UpdateCollection(fd);
 
         let _nfts = await getNFTList({
@@ -507,8 +511,8 @@ function CreateCollection() {
         // slowRefresh(1000);
       }
 
-      for (let i = dbSupply; i < parseInt(originalSupply); i++) {
-        let tokenId = await token.tokenByIndex(i);
+      for (let i = 1; i < parseInt(originalSupply); i++) {
+        let tokenId = i;
         console.log("tokenId", tokenId);
         try {
           let uri = await token.tokenURI(tokenId);
@@ -535,8 +539,12 @@ function CreateCollection() {
           continue;
         }
       }
+      NotificationManager.success("Imported successfully");
+      setLoading(false);
+      return;
     } catch (e) {
       console.log("error", e);
+      setLoading(false);
       return;
     }
   };
@@ -555,12 +563,12 @@ function CreateCollection() {
     }
   };
 
-  const handleEditCollection = async () => {
+  const handleEditCollection = async (_selectedCollectionId) => {
     try {
       const reqData = {
         page: 1,
         limit: 1,
-        collectionID: selectedCollectionId,
+        collectionID: _selectedCollectionId,
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
@@ -608,7 +616,6 @@ function CreateCollection() {
       {loading ? <Loader /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
-
         {isSuperAdmin()
           ? null
           : currentUser && (
@@ -641,7 +648,6 @@ function CreateCollection() {
             )}
         <div className="adminbody table-widget text-light box-background ">
           <h5 className="admintitle font-600 font-24 text-yellow text-center">
-
             My Collections
           </h5>
           <br />
@@ -653,7 +659,7 @@ function CreateCollection() {
                   <th>Title</th>
                   <th>Symbol</th>
                   <th>Description</th>
-                  <th>Royalty</th>
+                  {/* <th>Royalty</th> */}
                   <th>Max Supply</th>
                   <th>Price</th>
                   <th>Category</th>
@@ -662,78 +668,100 @@ function CreateCollection() {
               </thead>
 
               <tbody>
-
-              {myCollections &&
-              myCollections != undefined &&
-              myCollections != "" &&
-              myCollections.length > 0
-                ? myCollections.map((item, index) => {
-                    return (
-                    <>
-                        <tr>
-                          <td>
-                            {" "}
-                            <div className="first-col">
-                            <img
-                              src={item.logoImage}
-                              className='profile_i m-2'
-                              alt=''
-                              onError={(e) => e.target.src = "../images/login.jpg"}
-                            />
-                            <div className="dates-col">
-                              <span> Start Date:&nbsp; {item.preSaleStartTime
-                              ? moment(item.preSaleStartTime).format(
-                                  "MMMM Do YYYY"
-                                )
-                              : "-"}</span>
-                               <span>End Date: &nbsp; {item.preSaleEndTime
-                              ? moment(item.preSaleEndTime).format(
-                                  "MMMM Do YYYY"
-                                )
-                              : "-"}</span>
-                            </div>
-                            </div>
-                            {isSuperAdmin() ? (
-                          <div className='btn_container'>
-                            <button
-                              className='btn p-1   text-light '
-                              type='button'
-                              onClick={() => {
-                                blockUnblockColl(item._id, item.status ? 0 : 1);
-                              }}>
-                              {item.status === 0 ? "Unblock" : "Block"}
-                            </button>
-                          </div>
-                        ) : (
-                          <div className='btn_container'>
-                            {item.isImported === 0 ? (
-                              <button
-                                className='btn p-1  text-light'
-                                data-bs-toggle='modal'
-                                data-bs-target='#exampleModal1'
-                                type='button'
-                                onClick={async () => {
-                                  setSelectedCollectionId(item._id);
-                                  setImportModal(true);
-                                }}>
-                                Import
-                              </button>
-                            ) : (
-                              ""
-                            )}
-                            <button
-                              className={`btn p-1 showHide-btn ${
-                                !item.isOnMarketplace ? "active" : ""
-                              }`}
-                              type='button'
-                              onClick={async () => {
-                                item.isOnMarketplace === 0
-                                  ? await setShowOnMarketplace(item._id, 1)
-                                  : await setShowOnMarketplace(item._id, 0);
-                              }}>
-                              {item.isOnMarketplace === 0 ? "Show" : "Hide"}
-                            </button>
-                            {/* <button
+                {myCollections &&
+                myCollections != undefined &&
+                myCollections != "" &&
+                myCollections.length > 0
+                  ? myCollections.map((item, index) => {
+                      return (
+                        <>
+                          <tr>
+                            <td>
+                              {" "}
+                              <div className="first-col">
+                                <img
+                                  src={item.logoImage}
+                                  className="profile_i m-2"
+                                  alt=""
+                                  onError={(e) =>
+                                    (e.target.src = "../images/login.jpg")
+                                  }
+                                />
+                                <div className="dates-col">
+                                  <span>
+                                    {" "}
+                                    Start Date:&nbsp;{" "}
+                                    {item.preSaleStartTime
+                                      ? moment(item.preSaleStartTime).format(
+                                          "MMMM Do YYYY"
+                                        )
+                                      : "-"}
+                                  </span>
+                                  <span>
+                                    End Date: &nbsp;{" "}
+                                    {item.preSaleEndTime
+                                      ? moment(item.preSaleEndTime).format(
+                                          "MMMM Do YYYY"
+                                        )
+                                      : "-"}
+                                  </span>
+                                </div>
+                              </div>
+                              {isSuperAdmin() ? (
+                                <div className="btn_container">
+                                  <button
+                                    className="btn p-1   text-light "
+                                    type="button"
+                                    onClick={() => {
+                                      blockUnblockColl(
+                                        item._id,
+                                        item.status ? 0 : 1
+                                      );
+                                    }}
+                                  >
+                                    {item.status === 0 ? "Unblock" : "Block"}
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="btn_container">
+                                  {item.isImported === 0 ? (
+                                    <button
+                                      className="btn p-1  text-light"
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#exampleModal1"
+                                      type="button"
+                                      onClick={async () => {
+                                        setSelectedCollectionId(item._id);
+                                        setImportModal(true);
+                                      }}
+                                    >
+                                      Import
+                                    </button>
+                                  ) : (
+                                    ""
+                                  )}
+                                  <button
+                                    className={`btn p-1 showHide-btn ${
+                                      !item.isOnMarketplace ? "active" : ""
+                                    }`}
+                                    type="button"
+                                    onClick={async () => {
+                                      item.isOnMarketplace === 0
+                                        ? await setShowOnMarketplace(
+                                            item._id,
+                                            1
+                                          )
+                                        : await setShowOnMarketplace(
+                                            item._id,
+                                            0
+                                          );
+                                    }}
+                                  >
+                                    {item.isOnMarketplace === 0
+                                      ? "Show"
+                                      : "Hide"}
+                                  </button>
+                                  {/* <button
 
                               className='btn  p-1 text-light'
                               type='button'
@@ -750,14 +778,14 @@ function CreateCollection() {
                                     onClick={async () => {
                                       setSelectedCollectionId(item._id);
                                       setIsEditModal("active");
-                                      handleEditCollection();
+                                      handleEditCollection(item._id);
                                     }}
                                   >
                                     Edit
                                   </button>
                                   <button
                                     className={`btn p-1 exclusive-btn ${
-                                      item.isExclusive ? "active" : ""
+                                      !item.isExclusive ? "active" : ""
                                     }`}
                                     type="button"
                                     onClick={() =>
@@ -772,7 +800,7 @@ function CreateCollection() {
                                   </button>
                                   <button
                                     className={`btn p-1  hot-btn ${
-                                      item.isHotCollection ? "active" : ""
+                                      !item.isHotCollection ? "active" : ""
                                     }`}
                                     type="button"
                                     onClick={() =>
@@ -791,11 +819,11 @@ function CreateCollection() {
                             <td>{item.name ? item.name : "-"}</td>
                             <td>{item.symbol ? item.symbol : "-"}</td>
                             <td>{item.description ? item.description : "-"}</td>
-                            <td>
+                            {/* <td>
                               {item.royalityPercentage
                                 ? item.royalityPercentage
                                 : "-"}
-                            </td>
+                            </td> */}
                             <td>{item.totalSupply ? item.totalSupply : "-"}</td>
                             <td>
                               {item.price.$numberDecimal
@@ -883,7 +911,7 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage}
-                          src={"../images/upload.png"}
+                          src={logoImg ? logoImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
@@ -927,11 +955,10 @@ function CreateCollection() {
                       >
                         <h4 className="text-center">Click or Drop here</h4>
 
-                        {console.log("coverImg", coverImg.name)}
                         <img
                           alt=""
                           ref={uploadedImage2}
-                          src={"../images/upload.png"}
+                          src={coverImg ? coverImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
@@ -1574,7 +1601,15 @@ function CreateCollection() {
                       <option selected>Open this select menu</option>
                       {categories && categories.length > 0
                         ? categories.map((c, i) => {
-                            return <option value={c._id}>{c.name}</option>;
+                            console.log("category auto fill", category, c.name);
+                            return (
+                              <option
+                                value={c._id}
+                                selected={category === c.name ? true : false}
+                              >
+                                {c.name}
+                              </option>
+                            );
                           })
                         : ""}
                     </select>

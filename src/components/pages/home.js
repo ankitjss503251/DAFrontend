@@ -201,11 +201,11 @@ const Home = () => {
                       className='col-lg-4 col-md-6 col-sm-12 mb-lg-0 mb-xl-0 mb-4'
                       key={key}>
                       <div className='mint_box' style={mint_bg}>
-                        <a href={`/multimintingpage/${card?._id}`}>
+                        <a href={card.link}>
                           <div className='mint_img'>
                             <img
                               alt=''
-                              src={card?.coverImg}
+                              src={card?.logoImg}
                               class='img-fluid'
                               onError={(e) => e.target.src = "../img/collections/list4.png"}
                             />
@@ -234,7 +234,7 @@ const Home = () => {
                               />
                             </a>
                           </div>
-                          <a href={`/multimintingpage/${card?._id}`} > <h4 className="mb-2">{card.name}</h4></a>
+                          <a href={card.link}> <h4 className="mb-2">{card.name}</h4></a>
                           <ul className='m-0 p-0'>
                             <li>
                               <img alt='' src={"../img/mint/hntr.svg"} />{" "}

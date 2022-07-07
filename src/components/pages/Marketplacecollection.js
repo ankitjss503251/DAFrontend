@@ -69,7 +69,6 @@ function Marketplacecollection() {
         setLoader(true);
         try {
           setShowTab("show active");
-
           document.getElementById(searchedText).classList.add("active");
           const res1 = await getCategory({
             name: searchedText,
@@ -91,7 +90,7 @@ function Marketplacecollection() {
     try {
       const reqBody = {
         page: currPage,
-        limit: 3,
+        limit: 12,
         categoryID: category._id,
         isOnMarketplace: 1,
       };
@@ -228,7 +227,7 @@ function Marketplacecollection() {
                             </a>
                             <a href={`/collection/${card?._id}`}>
                               <h4 className='collname'>{card?.name}</h4>
-                              <p>{card?.desc}</p>
+                              <p>{card.desc ? card.desc : "-"}</p>
                             </a>
                           </div>
                         </div>
@@ -240,7 +239,7 @@ function Marketplacecollection() {
                     No Collection Found
                   </h2>
                 )}
-                {allCollections.length > 3 ? (
+                {allCollections.length > 1 ? (
                   <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                     <button
                       type='button'
@@ -300,7 +299,7 @@ function Marketplacecollection() {
                           </a>
                           <a href={`/collection/${card._id}`}>
                             <h4 className='collname'>{card.name}</h4>
-                            <p>{card.desc}</p>
+                            <p>{card.desc ? card.desc : "-"}</p>
                           </a>
                         </div>
                       </div>
@@ -311,7 +310,7 @@ function Marketplacecollection() {
                     No Collection Found
                   </h2>
                 )}
-                {activeCat?.length > 3 ? (
+                {activeCat?.length > 12 ? (
                   <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                     <button
                       type='button'

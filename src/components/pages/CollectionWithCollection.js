@@ -327,7 +327,8 @@ function CollectionWithCollection() {
               id='pills-Items'
               role='tabpanel'
               aria-labelledby='pills-Items-tab'>
-              <div className='row'>
+            {nfts?.length > 0 ? 
+             <div className='row'>
                 <div className='col-lg-12  mb-5'>
                   <div className='market_search_form'>
                     <form class='d-flex marketplace_form'>
@@ -571,6 +572,7 @@ function CollectionWithCollection() {
                   </div>
                 </div>
               </div>
+           :""} 
               <div className='row'>
                 {loader ? (
                   <CollectionsNFT cards={cardCount} grid={grid} />
