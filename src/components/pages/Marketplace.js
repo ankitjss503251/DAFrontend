@@ -126,10 +126,10 @@ function Marketplace() {
               nftID: res[i].id,
             });
 
-            const brandDet = await getBrandDetailsById(
-              res[i].collectionData[0].brandID
-            );
-            console.log("brandDetail", brandDet);
+            // const brandDet = await getBrandDetailsById(
+            //   res[i].collectionData[0].brandID
+            // );
+            // console.log("brandDetail", brandDet);
             res[i] = {
               ...res[i],
               salesType: orderDet?.salesType,
@@ -139,7 +139,7 @@ function Marketplace() {
                   : Number(convertToEth(orderDet?.price?.$numberDecimal))
                       .toFixed(6)
                       .slice(0, -2),
-              brand: brandDet,
+              // brand: brandDet,
             };
           }
           console.log("res", res);
@@ -499,16 +499,17 @@ function Marketplace() {
                       <div className="items_slide h-100" key={key}>
                         <div className="items_profileimg">
                           <a
-                            href={`/collectionwithcollection/${card?.brand?._id}`}
+                            href={card?.brand?._id ? `/collectionwithcollection/${card?.brand?._id}` : ``}
                           >
                             <div className="profile_left nft-logo-img">
                               <img
                                 alt=""
                                 className="profile_img creatorImg"
-                                src={card.brand?.logoImage}
+                                src={card?.brand?.logoImage ? card?.brand?.logoImage : ""}
                                 onError={(e) =>
-                                  (e.target.src =
-                                    "../img/collections/list4.png")
+                                  {
+e.target.src = "../img/collections/list4.png"
+                                  }
                                 }
                               />
                               {/* <img
