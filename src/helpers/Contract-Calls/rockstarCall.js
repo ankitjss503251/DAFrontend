@@ -29,6 +29,7 @@ export const testMint = async (addr, qty, price, from) => {
     let result = await contract.isActive();
     console.log("result1", result);
     if (result) {
+           console.log("in minting section");
       // public mint
       try {
         console.log("in minting section");
@@ -81,16 +82,19 @@ export const testMint = async (addr, qty, price, from) => {
       // public mint ends here
     } else {
       let isEligible = await isWhitelisted({ address: from });
-
+      console.log("it is in whitelisting", isEligible);
       if (isEligible.auth) {
         let maxQty = 2;
 
         try {
-          let result = await contract.estimateGas.mintTokens(qty, {
-            from: from,
-          });
+          let result = await contract.estimateGas.whitelistedMint(
+            qty,
+            maxQty,
+            isEligible.signature,
+            { from: from }
+          );
           if (result) {
-            return mintTokens(addr, qty, from);
+            return whitelistMint(addr, qty, maxQty, isEligible.signature, from);
           }
         } catch (e) {
           if (JSON.stringify(e).includes("insufficient allowance")) {
@@ -112,7 +116,13 @@ export const testMint = async (addr, qty, price, from) => {
                 txn = await txn.wait();
                 evt.emit("txn-status", "approval-succeed");
                 if (txn) {
-                  return mintTokens(addr, qty, from);
+                  return whitelistMint(
+                    addr,
+                    qty,
+                    maxQty,
+                    isEligible.signature,
+                    from
+                  );
                 }
                 return [txn, true];
               } catch (error) {
@@ -212,6 +222,7 @@ export const testMint = async (addr, qty, price, from) => {
   }
 };
 const mintTokens = async (addr, qty, from) => {
+  console.log("it is in minting ");
   evt.emit("txn-status", "mint-initiated");
   let contract = await exportInstance(addr, rrBabyAbi.abi);
   try {
@@ -225,6 +236,7 @@ const mintTokens = async (addr, qty, from) => {
   }
 };
 const whitelistMint = async (addr, qty, maxQty, sig, from) => {
+  console.log("it is in whitelisting section ");
   evt.emit("txn-status", "mint-initiated");
   let contract = await exportInstance(addr, rrBabyAbi.abi);
   try {

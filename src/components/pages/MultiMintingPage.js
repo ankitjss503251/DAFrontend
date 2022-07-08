@@ -16,6 +16,7 @@ import { getContractAddress } from "ethers/lib/utils";
 let contractFunctionality = {
   "0xEecd2Ba92f87E332320ce5cFe62afD2B989cb5e9": "rockstarCall",
   "0x40ef57815E2a44518d5c82Fb6c322B613044d6B4": "rockstarCall",
+  "0xBf3Bd3E4c3Bf465AA8dBAc067D33c7Ba428c39f2": "rockstarCall",
 };
 
 function lazyImport(addr) {
