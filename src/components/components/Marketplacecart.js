@@ -5,26 +5,30 @@ import { getNFTs } from "../../helpers/getterFunctions";
 function Marketplacecart() {
   const [allNFTs, setAllNFTs] = useState([]);
   const { id } = useParams();
-  useEffect(async () => {
-    try {
-      const reqData = {
-        page: 1,
-        limit: 12,
-        nftID: "",
-        collectionID: "",
-        isLazyMinted: false,
-        userID: "",
-        categoryID: "",
-        brandID: "",
-        ERCType: "",
-        searchText: "",
-        isMinted: "",
-      };
-      const res = await getNFTs(reqData);
-      setAllNFTs(res);
-    } catch (e) {
-      console.log("Error in fetching all NFTs list", e);
-    }
+  useEffect( () => {
+const fetch = async () => {
+  try {
+    const reqData = {
+      page: 1,
+      limit: 12,
+      nftID: "",
+      collectionID: "",
+      isLazyMinted: false,
+      userID: "",
+      categoryID: "",
+      brandID: "",
+      ERCType: "",
+      searchText: "",
+      isMinted: "",
+    };
+    const res = await getNFTs(reqData);
+
+    setAllNFTs(res);
+  } catch (e) {
+    console.log("Error in fetching all NFTs list", e);
+  }
+};
+    fetch();
   }, []);
   return (
     <div className="items_slide">

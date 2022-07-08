@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Footer from "../components/footer";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
@@ -17,6 +17,8 @@ import { NotificationManager } from "react-notifications";
 import { getAllBrands } from "../../apiServices";
 import BGImg from "./../../assets/images/background.jpg";
 import SkeletonCard from "../components/Skeleton/NFTSkeletonCard";
+import { useGLTF, OrbitControls } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
 
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
@@ -33,9 +35,19 @@ function Marketplace() {
     backgroundColor: "#000",
   };
 
+  function Model(props) {
+    console.log("props--->", props);
+    const { scene } = useGLTF(props.image);
+    return <primitive object={scene} />;
+  }
+
   useEffect(() => {
-    window.scrollTo(0, 0);
+    async function windowScroll() {
+      window.scrollTo(0, 0);
+    }
+    windowScroll();
   }, []);
+
   const gridtwo = () => {
     setgrid("col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4");
     document.getElementById("gridtwo").classList.add("active");
@@ -499,36 +511,70 @@ function Marketplace() {
                       <div className="items_slide h-100" key={key}>
                         <div className="items_profileimg">
                           <a
-                            href={card?.brand?._id ? `/collectionwithcollection/${card?.brand?._id}` : ``}
+                            href={
+                              card?.brand?._id
+                                ? `/collectionwithcollection/${card?.brand?._id}`
+                                : ``
+                            }
                           >
                             <div className="profile_left nft-logo-img">
                               <img
                                 alt=""
                                 className="profile_img creatorImg"
-                                src={card?.brand?.logoImage ? card?.brand?.logoImage : ""}
+                                src={
+                                  card?.brand?.logoImage
+                                    ? card?.brand?.logoImage
+                                    : ""
+                                }
                                 onError={(e) =>
-                                  {
-e.target.src = "../img/collections/list4.png"
-                                  }
+                                  (e.target.src =
+                                    "../img/collections/list4.png")
                                 }
                               />
-                              {/* <img
-                                alt=''
-                                className='icheck_img'
-                                src={"../img/collections/check.png"}
-                              /> */}
                             </div>
                           </a>
                         </div>
                         <a href={`/NFTdetails/${card.id}`} className="nft-cont">
-                          <img
-                            alt=""
-                            onError={(e) => {
-                              e.target.src = "../img/collections/list4.png";
-                            }}
-                            src={card.image}
-                            class="img-fluid items_img w-100 my-3"
-                          />
+                          {card && card.fileType === "Image" ? (
+                            <img
+                              src={card?.image}
+                              class="img-fluid items_img w-100 my-3"
+                              alt=""
+                              onError={(e) => {
+                                console.log("image error is--->", e);
+                                e.target.src = "../img/collections/list4.png";
+                              }}
+                            />
+                          ) : (
+                            ""
+                          )}
+                          {card && card.fileType === "Video" ? (
+                            <video
+                              class="img-fluid items_img w-100 my-3"
+                              controls
+                            >
+                              <source src={card?.image} type="video/mp4" />
+                            </video>
+                          ) : (
+                            ""
+                          )}
+                          {card && card.fileType === "3D" ? (
+                            <Canvas
+                              class="img-fluid items_img w-100 my-3"
+                              camera={{ position: [10, 100, 100], fov: 1 }}
+                            >
+                              <pointLight
+                                position={[10, 10, 10]}
+                                intensity={1.3}
+                              />
+                              <Suspense fallback={null}>
+                                <Model image={card.image} />
+                              </Suspense>
+                              <OrbitControls />
+                            </Canvas>
+                          ) : (
+                            ""
+                          )}
                         </a>
                         <div className="items_text nft-info-div">
                           <div className="items_info ">
