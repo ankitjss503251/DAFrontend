@@ -93,7 +93,7 @@ function CreateNFTs() {
     }
   };
 
-  const handleValidationCheck = async () => {
+  const handleValidationCheck =  () => {
     if (nftImg === "" || nftImg === undefined) {
       NotificationManager.error("Please Upload Image", "", 800);
       return false;
@@ -135,13 +135,10 @@ function CreateNFTs() {
 
   const handleCreateNFT = async () => {
     console.log("ATTRIBUTES", attributes);
-    setLoading(true);
-    setModal("");
-    if (!handleValidationCheck()) {
-      NotificationManager.error("Validation error", "", 800);
-      setLoading(false);
-      return;
-    } else {
+   
+    if (handleValidationCheck()) {
+      setLoading(true);
+      setModal("");
       let salt = Math.round(Math.random() * 10000000);
 
       var formdata = new FormData();
@@ -408,7 +405,7 @@ function CreateNFTs() {
             <table class='table table-hover text-light'>
               <thead>
                 <tr>
-                  <th className='w-50'>NFT Image</th>
+                  <th >NFT Image</th>
                   <th>Title</th>
                   <th>Description</th>
                 </tr>
