@@ -53,7 +53,7 @@ function Minttab(props) {
               ? props.upcoming.map((card, key) => {
                   return (
                     <div className="col-lg-4 col-md-6 mb-4" key={key}>
-                      <a href={`/multimintingpage/${card._id}`}>
+                      <a href={card.link}>
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
                             <img alt="" src={card.coverImg} class="img-fluid" />
@@ -151,7 +151,7 @@ function Minttab(props) {
               ? props.past.map((card, key) => {
                   return (
                     <div className="col-lg-4 col-md-6 mb-4" key={key}>
-                      <a href={`/multimintingpage/${card._id}`}>
+                      <a href={card.link}>
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
                             <img alt="" src={card.coverImg} class="img-fluid" />
