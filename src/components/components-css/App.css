@@ -1225,10 +1225,7 @@ header#myHeader {
   border-radius: 10px;
   background-color: #222e38;
   /* height: 100%; */
-  
 }
-
-
 
 .coll_profileimg {
   position: relative;
@@ -1425,6 +1422,7 @@ button.slick-arrow.slick-next {
 }
 .items_info .items_left {
   flex: 2;
+  text-align: left;
 }
 .items_info .items_right {
   flex: 1;
@@ -3446,7 +3444,7 @@ button#btn-submit {
   width: 100%;
   max-width: 220px;
 }
-.slick-slide{
+.slick-slide {
   text-align: center;
 }
 /* .event_slider .slick-slide.slick-center.slick-current {
@@ -5032,7 +5030,7 @@ button:disabled {
     min-width: 400px !important;
   }
 } */
-.nft.hc .slick-list .slick-slide{
+.nft.hc .slick-list .slick-slide {
   /* height: 201px !important; */
-      width: 450px !important;
-      }
+  width: 450px !important;
+}

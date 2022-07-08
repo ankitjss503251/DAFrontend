@@ -244,11 +244,10 @@ function NFToffer(props) {
                                 disabled={
                                   new Date(b.bidDeadline * 1000) < new Date()
                                 }
-                                className="small_border_btn small_btn"
-                                data-bs-toggle="modal"
-                                data-bs-target="#brandModal"
-                                onClick={() => setModal("active")}
-                              >
+                                className='small_yellow_btn small_btn mr-3'
+                                data-bs-toggle='modal'
+                                data-bs-target='#brandModal'
+                                onClick={() => setModal("active")}>
                                 Update Offer
                               </button>
                               <button
