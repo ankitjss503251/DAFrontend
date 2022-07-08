@@ -4,13 +4,17 @@ import { getAuthors } from "./../../helpers/getterFunctions";
 
 const AuthorList = () => {
   const [authors, setAuthors] = useState([]);
-  useEffect(async () => {
-    try {
-      const res = await getAuthors({ page: 1, limit: 12 });
-      setAuthors(res);
-    } catch (e) {
-      console.log("Error in fetching all authors list", e);
+  useEffect( () => {
+    async function getAuthorsData(){
+      try {
+        const res = await getAuthors({ page: 1, limit: 12 });
+        setAuthors(res);
+      } catch (e) {
+        console.log("Error in fetching all authors list", e);
+      }
     }
+    getAuthorsData()
+   
   }, []);
   return (
     <div>

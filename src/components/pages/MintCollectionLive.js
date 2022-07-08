@@ -31,7 +31,9 @@ function MintCollectionLive() {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(async () => {
+  useEffect(() => {
+
+    const fetch = async () => {
     try {
       const reqData = {
         page: 1,
@@ -43,6 +45,8 @@ function MintCollectionLive() {
     } catch (e) {
       console.log("Error in fetching all collections list", e);
     }
+  }
+  fetch();
   }, []);
 
 
@@ -84,7 +88,7 @@ function MintCollectionLive() {
         </div>
       </section>
       {ongoing && ongoing.length > 0 ?   <section className='pdd_8 pb-0'>
-        {console.log("ongoing", ongoing)}
+        
         <Mintlivetab ongoing={ongoing} />
       </section> : "" }
     

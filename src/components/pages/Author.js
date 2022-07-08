@@ -67,13 +67,17 @@ function Author() {
 
 
 
-  useEffect(async () => {
-    try {
-      const c = await getCategory();
-      setCategory(c);
-    } catch (e) {
-      console.log("Error", e);
-    }
+  useEffect(() => {
+ const fetch = async () => {
+   try {
+     const c = await getCategory();
+     setCategory(c);
+   } catch (e) {
+     console.log("Error", e);
+   }
+ };
+ fetch();
+   
   }, []);
 
   useEffect(() => {

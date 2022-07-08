@@ -73,13 +73,17 @@ function Collection() {
   const [searchFor, setSearchFor] = useState("");
   const { id, searchedText } = useParams();
 
-  useEffect(async () => {
+  useEffect(() => {
+
+    const fetch = async () => {
     try {
       const c = await getCategory();
       setCategory(c);
     } catch (e) {
       console.log("Error", e);
     }
+  }
+  fetch();
   }, []);
 
   useEffect(() => {
@@ -101,16 +105,22 @@ function Collection() {
     }
   };
 
-  useEffect(async () => {
+  useEffect(() => {
+
+    const fetch = async () => {
     try {
       const c = await getCategory();
       setCategory(c);
     } catch (e) {
       console.log("Error", e);
     }
+  }
+  fetch();
   }, []);
 
-  useEffect(async () => {
+  useEffect(() => {
+
+    const fetch = async () => {
     setLoader(true);
     let temp = nftList;
     try {
@@ -158,6 +168,8 @@ function Collection() {
       console.log("Error in fetching all collections list", e);
     }
     setLoader(false);
+  }
+  fetch();
   }, [loadMore, searchFor]);
 
   return (
