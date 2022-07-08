@@ -414,7 +414,7 @@ function Collection() {
                   </h2>
                 )}
 
-                {nftList.length > 12 ? (
+                {nftList.length > 8 ? (
                   <div class='col-md-12 text-center mt-5'>
                     <button
                       class={`btn view_all_bdr ${loadMoreDisabled}`}

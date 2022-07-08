@@ -23,14 +23,15 @@ import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
 import defaultProfile from "../../assets/images/favicon.png";
-import evt from "../../events/events"
+import evt from "../../events/events";
+import menuIcon from "../../assets/menu.png";
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
 
- const onboard = Onboard({
+const onboard = Onboard({
   wallets: [walletConnect, injected],
   chains: [
     {
@@ -122,11 +123,11 @@ const Header = function () {
   const [searchedText, setShowSearchedText] = useState("");
   const [catg, setCatg] = useState([]);
   const [label, setLabel] = useState("");
-  evt.removeAllListeners("wallet-connect")
-  evt.on("wallet-connect", ()=>{
+  evt.removeAllListeners("wallet-connect");
+  evt.on("wallet-connect", () => {
     console.log("walletConnect Called");
     connectWallet();
-  })
+  });
   useEffect(async () => {
     const cat = await getCategory();
     setCatg(cat);
@@ -184,7 +185,6 @@ const Header = function () {
           });
         }
       });
-
     }
   }, [provider, account, chainId]);
 
@@ -209,7 +209,7 @@ const Header = function () {
       console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
-      
+
       try {
         userAuth(primaryWallet, address);
       } catch (e) {
@@ -298,7 +298,6 @@ const Header = function () {
   };
 
   const disconnectWallet = async () => {
-  
     await onboard.disconnectWallet({ label: label });
     await Logout(cookies["selected_account"]);
     refreshState();
@@ -406,7 +405,8 @@ const Header = function () {
             aria-controls='navbarSupportedContent'
             aria-expanded='false'
             aria-label='Toggle navigation'>
-            <span className='navbar-toggler-icon'></span>
+            {/* <span className='navbar-toggler-icon'></span> */}
+            <img src={menuIcon} alt='' />
           </button>
           <div className='collapse navbar-collapse' id='navbarSupportedContent'>
             <form className='d-flex navbar_form'>

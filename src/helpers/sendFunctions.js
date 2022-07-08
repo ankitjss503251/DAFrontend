@@ -266,7 +266,6 @@ export const handleBuyNft = async (
             ? details.nftID.quantity_minted
             : details.nftID.quantity_minted + qty,
       });
-
       DeleteOrder({ orderID: id });
     } else {
       await UpdateOrder({
