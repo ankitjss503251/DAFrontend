@@ -15,9 +15,9 @@ import {
   getBrandById,
   GetIndividualAuthorDetail,
   getCategories,
-  fetchOfferNft
+  fetchOfferNft,
 } from "../apiServices";
-import {ethers} from "ethers";
+import { ethers } from "ethers";
 import contracts from "../config/contracts";
 import erc20Abi from "./../config/abis/erc20.json";
 import erc721Abi from "./../config/abis/simpleERC721.json";
@@ -26,7 +26,6 @@ import Avatar from "./../assets/images/avatar5.jpg";
 // import { fetchBidNft } from "../apiServices";
 // import { GENERAL_DATE, GENERAL_TIMESTAMP } from "./constants";
 import NotificationManager from "react-notifications/lib/NotificationManager";
-
 
 // const ipfsAPI = require("ipfs-api");
 // const ipfs = ipfsAPI("ipfs.infura.io", "5001", {
@@ -38,66 +37,66 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
 //   return Object.keys(obj).length === 0;
 // };
 
-export const buildSellOrder=async (id) => {
+export const buildSellOrder = async (id) => {
   let details;
   try {
-    details=await getOrderDetails({orderId: id});
-    console.log("details 123",details);
-    const order=[
+    details = await getOrderDetails({ orderId: id });
+    console.log("details 123", details);
+    const order = [
       details.sellerID?.walletAddress.toLowerCase(),
       details.collectionAddress,
       details.tokenID,
       details.total_quantity,
       details.salesType,
       details.paymentToken,
-      details.price? details.price.$numberDecimal:"0",
+      details.price ? details.price.$numberDecimal : "0",
       details.deadline,
       details.bundleTokens,
       details.bundleTokensQuantities,
       details.salt,
     ];
 
-    console.log("getOrder",order);
+    console.log("getOrder", order);
 
     return order;
-  } catch(e) {
-    console.log("error in api",e);
+  } catch (e) {
+    console.log("error in api", e);
   }
 };
 
-export const GetOwnerOfToken=async (
+export const GetOwnerOfToken = async (
   collection,
   tokenId,
   isERC721,
   account
 ) => {
-  let collectionInstance=await exportInstance(
+  let collectionInstance = await exportInstance(
     collection,
-    isERC721? erc721Abi.abi:erc1155Abi.abi
+    isERC721 ? erc721Abi.abi : erc1155Abi.abi
   );
-  console.log("collectionInsatnce",collectionInstance);
-  let balance=0;
-  console.log("isERC721",isERC721);
-  if(isERC721) {
+  console.log("collectionInsatnce", collectionInstance);
+  let balance = 0;
+  console.log("isERC721", isERC721);
+  if (isERC721) {
     console.log("is 721");
-    let owner=await collectionInstance.ownerOf(tokenId);
-    if(owner.toLowerCase()===account.toLowerCase()) {
-      balance="1";
+    let owner = await collectionInstance.ownerOf(tokenId);
+    if (owner.toLowerCase() === account.toLowerCase()) {
+      balance = "1";
     }
-    console.log("balance",balance.toString());
-  } else balance=await collectionInstance.balanceOf(account,tokenId);
-  console.log("balance",balance.toString());
+    console.log("balance", balance.toString());
+  } else balance = await collectionInstance.balanceOf(account, tokenId);
+  console.log("balance", balance.toString());
   return balance.toString();
 };
 
-export const getPaymentTokenInfo=async (userWallet,tokenAddress) => {
-  let token=await exportInstance(tokenAddress,erc20Abi);
-  console.log("token is ----->",token);
-  let symbol=await token.symbol();
-  let name=await token.name();
-  let allowance=await token.allowance(userWallet,contracts.MARKETPLACE);
-  let balance=await token.balanceOf(userWallet);
-  console.log("allowance",allowance.toString());
+export const getPaymentTokenInfo = async (userWallet, tokenAddress) => {
+  let token = await exportInstance(tokenAddress, erc20Abi);
+  console.log("token is ----->", token);
+  let symbol = await token.symbol();
+  let name = await token.name();
+  let allowance = await token.allowance(userWallet, contracts.MARKETPLACE);
+  let balance = await token.balanceOf(userWallet);
+  console.log("allowance", allowance.toString());
   return {
     symbol: symbol,
     name: name,
@@ -106,7 +105,7 @@ export const getPaymentTokenInfo=async (userWallet,tokenAddress) => {
   };
 };
 
-const toTypedOrder=(
+const toTypedOrder = (
   account,
   tokenAddress,
   id,
@@ -119,30 +118,30 @@ const toTypedOrder=(
   bundleTokensQuantity,
   salt
 ) => {
-  const domain={
+  const domain = {
     chainId: process.env.REACT_APP_CHAIN_ID,
     name: "Decrypt Marketplace",
     verifyingContract: contracts.MARKETPLACE,
     version: "1",
   };
 
-  const types={
+  const types = {
     Order: [
-      {name: "user",type: "address"},
-      {name: "tokenAddress",type: "address"},
-      {name: "tokenId",type: "uint256"},
-      {name: "quantity",type: "uint256"},
-      {name: "listingType",type: "uint256"},
-      {name: "paymentToken",type: "address"},
-      {name: "value",type: "uint256"},
-      {name: "deadline",type: "uint256"},
-      {name: "bundleTokens",type: "uint256[]"},
-      {name: "bundleTokensQuantity",type: "uint256[]"},
-      {name: "salt",type: "uint256"},
+      { name: "user", type: "address" },
+      { name: "tokenAddress", type: "address" },
+      { name: "tokenId", type: "uint256" },
+      { name: "quantity", type: "uint256" },
+      { name: "listingType", type: "uint256" },
+      { name: "paymentToken", type: "address" },
+      { name: "value", type: "uint256" },
+      { name: "deadline", type: "uint256" },
+      { name: "bundleTokens", type: "uint256[]" },
+      { name: "bundleTokensQuantity", type: "uint256[]" },
+      { name: "salt", type: "uint256" },
     ],
   };
 
-  const value={
+  const value = {
     user: account,
     tokenAddress: tokenAddress,
     tokenId: id,
@@ -156,89 +155,89 @@ const toTypedOrder=(
     salt: salt,
   };
 
-  return {domain,types,value};
+  return { domain, types, value };
 };
 
-export const getSignature=async (signer,...args) => {
+export const getSignature = async (signer, ...args) => {
   try {
     console.log("111");
-    const order=toTypedOrder(...args);
-    console.log("order is---->",order);
-    let provider=new ethers.providers.Web3Provider(window.ethereum);
+    const order = toTypedOrder(...args);
+    console.log("order is---->", order);
+    let provider = new ethers.providers.Web3Provider(window.ethereum);
     console.log("222");
-    const signer1=provider.getSigner();
+    const signer1 = provider.getSigner();
     console.log("333");
-    const signedTypedHash=await signer1._signTypedData(
+    const signedTypedHash = await signer1._signTypedData(
       order.domain,
       order.types,
       order.value
     );
     console.log("444");
-    const sig=ethers.utils.splitSignature(signedTypedHash);
+    const sig = ethers.utils.splitSignature(signedTypedHash);
     console.log("555");
 
-    return [sig.v,sig.r,sig.s];
-  } catch(e) {
-    if(e.code===4001) {
+    return [sig.v, sig.r, sig.s];
+  } catch (e) {
+    if (e.code === 4001) {
       NotificationManager.error("User denied ");
       return false;
     }
-    console.log("error in api",e);
+    console.log("error in api", e);
     return false;
   }
 };
 
-export const getUsersTokenBalance=async (account,tokenAddress) => {
+export const getUsersTokenBalance = async (account, tokenAddress) => {
   let token;
-  token=await exportInstance(tokenAddress,erc20Abi);
-  let userBalance=await token.balanceOf(account);
-  console.log("token",token,"userBalance",userBalance.toString(),account);
+  token = await exportInstance(tokenAddress, erc20Abi);
+  let userBalance = await token.balanceOf(account);
+  console.log("token", token, "userBalance", userBalance.toString(), account);
   return userBalance.toString();
 };
 
-export const getAllOffersByNftId=async (nftId) => {
-  let dummyData=await fetchOfferNft({
+export const getAllOffersByNftId = async (nftId) => {
+  let dummyData = await fetchOfferNft({
     nNFTId: nftId,
 
     buyerID: "All",
     bidStatus: "All",
   });
 
-  let data=[];
-  console.log("dummyData---",dummyData);
+  let data = [];
+  console.log("dummyData---", dummyData);
 
   dummyData?.data
     ? // eslint-disable-next-line array-callback-return
-    dummyData.data.map((d,i) => {
-      data.push({
-        bidId: d._id,
-        bidQuantity: d.oBidQuantity,
-        bidPrice: d.oBidPrice.$numberDecimal,
-        seller: d.oOwner.sWalletAddress,
-        orderId: d.oOrderId,
-        bidder: d.oBidder.sWalletAddress,
-        bidderProfile: d.oBidder.sProfilePicUrl,
-        buyerSignature: d.oBuyerSignature,
-        bidderFullName: d.oBidder.oName
-          ? d.oBidder.oName.sFirstname
-          :d.oBidder
+      dummyData.data.map((d, i) => {
+        data.push({
+          bidId: d._id,
+          bidQuantity: d.oBidQuantity,
+          bidPrice: d.oBidPrice.$numberDecimal,
+          seller: d.oOwner.sWalletAddress,
+          orderId: d.oOrderId,
+          bidder: d.oBidder.sWalletAddress,
+          bidderProfile: d.oBidder.sProfilePicUrl,
+          buyerSignature: d.oBuyerSignature,
+          bidderFullName: d.oBidder.oName
+            ? d.oBidder.oName.sFirstname
+            : d.oBidder
             ? d.oBidder.sWalletAddress
-            :"Unnamed",
-        nftId: d.oNFTId,
-        owner: d.oSeller,
-      });
-    })
-    :data.push([]);
+            : "Unnamed",
+          nftId: d.oNFTId,
+          owner: d.oSeller,
+        });
+      })
+    : data.push([]);
 
-  console.log("dummyData",data);
+  console.log("dummyData", data);
   return data;
 };
 
-export const getCollections=async (req) => {
-  let data=[];
-  let formattedData=[];
+export const getCollections = async (req) => {
+  let data = [];
+  let formattedData = [];
   try {
-    let reqBody={
+    let reqBody = {
       page: req.page,
       limit: req.limit,
       collectionID: req.collectionID,
@@ -254,42 +253,42 @@ export const getCollections=async (req) => {
       isOnMarketplace: req.isOnMarketplace,
     };
 
-    data=await getAllCollections(reqBody);
-  } catch(e) {
-    console.log("Error in getCollections API--->",e);
+    data = await getAllCollections(reqBody);
+  } catch (e) {
+    console.log("Error in getCollections API--->", e);
   }
-  let arr=[];
-  if(data&&data.results&&data.results.length>0) arr=data.results[0];
+  let arr = [];
+  if (data && data.results && data.results.length > 0) arr = data.results[0];
   else return [];
   arr
-    ? arr.map((coll,key) => {
-      formattedData[key]={
-        _id: coll._id,
-        logoImg: coll.logoImage,
-        coverImg: coll.coverImage,
-        name: coll.name,
-        desc: coll.description,
-        saleStartTime: coll.preSaleStartTime,
-        saleEndTime: coll.preSaleEndTime,
-        price: coll.price.$numberDecimal,
-        items: coll.nftCount,
-        totalSupply: coll.totalSupply,
-        contractAddress: coll.contractAddress,
-        brand: coll.brandID,
-        createdBy: coll.createdBy,
-        link: coll.link,
-        volumeTraded: coll.volumeTraded
-      };
-    })
-    :(formattedData[0]={});
+    ? arr.map((coll, key) => {
+        formattedData[key] = {
+          _id: coll._id,
+          logoImg: coll.logoImage,
+          coverImg: coll.coverImage,
+          name: coll.name,
+          desc: coll.description,
+          saleStartTime: coll.preSaleStartTime,
+          saleEndTime: coll.preSaleEndTime,
+          price: coll.price.$numberDecimal,
+          items: coll.nftCount,
+          totalSupply: coll.totalSupply,
+          contractAddress: coll.contractAddress,
+          brand: coll.brandID,
+          createdBy: coll.createdBy,
+          link: coll.link,
+          volumeTraded: coll.volumeTraded,
+        };
+      })
+    : (formattedData[0] = {});
   return formattedData;
 };
 
-export const getNFTs=async (req) => {
-  let data=[];
-  let formattedData=[];
+export const getNFTs = async (req) => {
+  let data = [];
+  let formattedData = [];
   try {
-    let reqBody={
+    let reqBody = {
       page: req.page,
       limit: req.limit,
       nftID: req.nftID,
@@ -302,138 +301,136 @@ export const getNFTs=async (req) => {
       searchText: req.searchText,
       isMinted: req.isMinted,
       isOnMarketplace: req.isOnMarketplace,
-   
     };
 
-    data=await getNFTList(reqBody);
-  } catch(e) {
-    console.log("Error in getNFts API--->",e);
+    data = await getNFTList(reqBody);
+  } catch (e) {
+    console.log("Error in getNFts API--->", e);
   }
 
-  let arr=[];
-  if(data&&data.length>0) arr=data;
+  let arr = [];
+  if (data && data.length > 0) arr = data;
   else return [];
 
   arr
-    ? arr.map((nft,key) => {
-      formattedData[key]={
-        id: nft._id,
-        image: nft.image,
-        name: nft.name,
-        desc: nft.description,
-        collectionAddress: nft.collectionAddress,
-        ownedBy: nft.ownedBy,
-        like:
-          nft.user_likes?.length===undefined? 0:nft.user_likes?.length,
-        Qty: nft.totalQuantity,
-        collection: nft.collectionID,
-        assetsInfo: nft?.assetsInfo[0],
-        catergoryInfo: nft?.categoryID,
-        tokenId: nft.tokenID,
-        createdBy: nft.createdBy,
-        type: nft.type,
-        attributes: nft.attributes,
-        totalQuantity: nft.totalQuantity,
-        fileType:nft.fileType,
-        collectionData: nft.CollectionData
-      };
-    })
-    :(formattedData[0]={});
+    ? arr.map((nft, key) => {
+        formattedData[key] = {
+          id: nft._id,
+          image: nft.image,
+          name: nft.name,
+          desc: nft.description,
+          collectionAddress: nft.collectionAddress,
+          ownedBy: nft.ownedBy,
+          like:
+            nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
+          Qty: nft.totalQuantity,
+          collection: nft.collectionID,
+          assetsInfo: nft?.assetsInfo[0],
+          catergoryInfo: nft?.categoryID,
+          tokenId: nft.tokenID,
+          createdBy: nft.createdBy,
+          type: nft.type,
+          attributes: nft.attributes,
+          totalQuantity: nft.totalQuantity,
+          fileType: nft.fileType,
+          collectionData: nft.CollectionData,
+        };
+      })
+    : (formattedData[0] = {});
   return formattedData;
 };
 
-export const getAuthors=async () => {
-  let data=[];
-  let formattedData=[];
+export const getAuthors = async () => {
+  let data = [];
+  let formattedData = [];
   try {
-    let reqBody={
+    let reqBody = {
       page: 1,
       limit: 12,
       searchText: "",
     };
-    data=await GetAllUserDetails(reqBody);
-  } catch(e) {
-    console.log("Error in getAllUserDetails API--->",e);
+    data = await GetAllUserDetails(reqBody);
+  } catch (e) {
+    console.log("Error in getAllUserDetails API--->", e);
   }
-  let arr=[];
-  if(data&&data.results&&data.results.length>0) arr=data.results[0];
+  let arr = [];
+  if (data && data.results && data.results.length > 0) arr = data.results[0];
   else return [];
   arr
-    ? arr.map((author,key) => {
-      formattedData[key]={
-        _id: author._id,
-        profile: author.profileIcon,
-        name: author.username,
-      };
-    })
-    :(formattedData[0]={});
+    ? arr.map((author, key) => {
+        formattedData[key] = {
+          _id: author._id,
+          profile: author.profileIcon,
+          name: author.username,
+        };
+      })
+    : (formattedData[0] = {});
   return formattedData;
 };
 
-export const getOrderByNftID=async (reqBody) => {
-  let data=[];
+export const getOrderByNftID = async (reqBody) => {
+  let data = [];
 
   try {
-    data=await GetOrdersByNftId(reqBody);
-  } catch(e) {
-    console.log("Error in getOrderByNftID API",e);
+    data = await GetOrdersByNftId(reqBody);
+  } catch (e) {
+    console.log("Error in getOrderByNftID API", e);
   }
 
   return data;
 };
 
-export const getBrandDetailsById=async (brandID) => {
-  let brand=[];
+export const getBrandDetailsById = async (brandID) => {
+  let brand = [];
   try {
-    brand=await getBrandById(brandID);
-  } catch(e) {
-    console.log("Error in getBrandByID API",e);
+    brand = await getBrandById(brandID);
+  } catch (e) {
+    console.log("Error in getBrandByID API", e);
   }
   return brand;
 };
 
-export const getUserById=async (reqBody) => {
-  let user=[];
+export const getUserById = async (reqBody) => {
+  let user = [];
   try {
-    user=await GetIndividualAuthorDetail(reqBody);
-  } catch(e) {
-    console.log("Error in getUserByID API",e);
+    user = await GetIndividualAuthorDetail(reqBody);
+  } catch (e) {
+    console.log("Error in getUserByID API", e);
   }
   return user;
 };
 
-export const getCategory=async (data) => {
-  let category=[];
+export const getCategory = async (data) => {
+  let category = [];
   try {
-    category=await getCategories(data);
-  } catch(e) {
-    console.log("Error in getCategory API",e);
+    category = await getCategories(data);
+  } catch (e) {
+    console.log("Error in getCategory API", e);
   }
 
   return category;
 };
 
-export const getPrice=async (reqBody) => {
-  let data=[];
-  let order={};
-  let min="000000000000000";
+export const getPrice = async (reqBody) => {
+  let data = [];
+  let order = {};
+  let min = "000000000000000";
   try {
-    data=await GetOrdersByNftId(reqBody);
-    data=data.results;
-    if(data) {
+    data = await GetOrdersByNftId(reqBody);
+    data = data.results;
+    if (data) {
       data.map((i) => {
-        if(min<i.price.$numberDecimal) {
-          min=i.price.$numberDecimal;
-          order=i;
+        if (min < i.price.$numberDecimal) {
+          min = i.price.$numberDecimal;
+          order = i;
         }
       });
     }
     return order;
-  } catch(e) {
-    console.log("Error in getting nft order details",e);
+  } catch (e) {
+    console.log("Error in getting nft order details", e);
   }
 };
-
 
 // export const getUsersNFTs = async (
 //   paramType,
