@@ -544,6 +544,7 @@ function CreateCollection() {
       }
       NotificationManager.success("Imported successfully");
       setLoading(false);
+      slowRefresh(1000);
       return;
     } catch (e) {
       console.log("error", e);

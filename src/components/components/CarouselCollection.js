@@ -6,19 +6,25 @@ import { getCollections } from "../../helpers/getterFunctions";
 
 function CarouselCollection() {
   const [hotCollections, setHotCollections] = useState([]);
-  useEffect(async () => {
-    try {
-      const res = await getCollections({
-        page: 1,
-        limit: 12,
-        isHotCollection: 1,
-      });
-      setHotCollections(res);
-      console.log("hot collections", res);
-    } catch (e) {
-      console.log("Error in fetching all hot collections list", e);
-    }
-  }, []);
+  useEffect( () => {
+      const fetch = async () => {
+        try {
+          const res = await getCollections({
+            page: 1,
+            limit: 12,
+            isHotCollection: 1,
+          });
+          setHotCollections(res);
+          console.log("hot collections", res);
+        } catch (e) {
+          console.log("Error in fetching all hot collections list", e);
+        }
+      };
+      fetch();
+  }
+    
+   
+  , []);
 
   var settings = {
     infinite: false,
@@ -84,7 +90,7 @@ function CarouselCollection() {
                           borderTopLeftRadius: "10px",
                           borderTopRightRadius: "10px",
                         }}
-                        src={card.coverImg}
+                        src={card.logoImg}
                         class='img-fluid w-100'
                         alt=''
                         onError={(e) =>

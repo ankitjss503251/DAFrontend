@@ -12,6 +12,9 @@ import "semantic-ui-css/semantic.min.css";
 import { CookiesProvider } from "react-cookie";
 import { NotificationContainer } from "react-notifications";
 
+
+
+
 ReactDOM.render(
   <CookiesProvider>
     <NotificationContainer />
