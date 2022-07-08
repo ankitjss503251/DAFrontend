@@ -123,34 +123,41 @@ const Header = function () {
   const [searchedText, setShowSearchedText] = useState("");
   const [catg, setCatg] = useState([]);
   const [label, setLabel] = useState("");
-  evt.removeAllListeners("wallet-connect");
-  evt.on("wallet-connect", () => {
-    console.log("walletConnect Called");
-    connectWallet();
-  });
-  useEffect(async () => {
-    const cat = await getCategory();
-    setCatg(cat);
+
+
+  useEffect( () => {
+    
+    async function setCategory(){
+      const cat = await getCategory();
+      setCatg(cat);
+    }
+    setCategory()
+  
   }, []);
 
-  useEffect(async () => {
-    if (cookies["selected_account"]) {
-      setAccount(cookies["selected_account"]);
-      const s = await onboard.connectWallet({
-        autoSelect: { label: cookies["label"], disableModals: true },
-      });
-      await onboard.setChain({
-        chainId: process.env.REACT_APP_CHAIN_ID,
-      });
-      setProvider(s[0].provider);
-      setLabel(s[0].label);
-      setCookie("label", s[0].label, { path: "/" });
-      setCookie("selected_account", s[0].accounts[0].address, { path: "/" });
-      setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
-        path: "/",
-      });
-      setCookie("balance", s[0].accounts[0].balance?.MATIC, { path: "/" });
+  useEffect( () => {
+    
+    async function setCookies(){
+      if (cookies["selected_account"]) {
+        setAccount(cookies["selected_account"]);
+        const s = await onboard.connectWallet({
+          autoSelect: { label: cookies["label"], disableModals: true },
+        });
+        await onboard.setChain({
+          chainId: process.env.REACT_APP_CHAIN_ID,
+        });
+        setProvider(s[0].provider);
+        setLabel(s[0].label);
+        setCookie("label", s[0].label, { path: "/" });
+        setCookie("selected_account", s[0].accounts[0].address, { path: "/" });
+        setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
+          path: "/",
+        });
+        setCookie("balance", s[0].accounts[0].balance?.MATIC, { path: "/" });
+      }
     }
+    
+    setCookies()
   }, []);
 
   const refreshState = () => {
@@ -164,28 +171,34 @@ const Header = function () {
     setProvider(null);
   };
 
-  useEffect(async () => {
-    console.log("provider in useEffect", provider);
-    if (provider) {
-      provider.on("accountsChanged", (accounts) => {
-        if (account && accounts[0] !== undefined) {
-          const wallets = onboard.state.get().wallets;
-          setProvider(wallets[0].provider);
-          userAuth(wallets[0], wallets[0].accounts[0].address);
-        }
-        if (accounts[0] === undefined) {
-          refreshState();
-        }
-      });
-      provider.on("chainChanged", async (chains) => {
-        console.log("chain changed", chains);
-        if (chains !== process.env.REACT_APP_CHAIN_ID) {
-          await onboard.setChain({
-            chainId: process.env.REACT_APP_CHAIN_ID,
-          });
-        }
-      });
+  useEffect( () => {
+    
+    async function setProvider(){
+      console.log("provider in useEffect", provider);
+      if (provider) {
+        provider.on("accountsChanged", (accounts) => {
+          if (account && accounts[0] !== undefined) {
+            const wallets = onboard.state.get().wallets;
+            setProvider(wallets[0].provider);
+            userAuth(wallets[0], wallets[0].accounts[0].address);
+          }
+          if (accounts[0] === undefined) {
+            refreshState();
+          }
+        });
+        provider.on("chainChanged", async (chains) => {
+          console.log("chain changed", chains);
+          if (chains !== process.env.REACT_APP_CHAIN_ID) {
+            await onboard.setChain({
+              chainId: process.env.REACT_APP_CHAIN_ID,
+            });
+          }
+        });
+  
+      }
     }
+    
+    setProvider();
   }, [provider, account, chainId]);
 
   const getUserProfile = async () => {
@@ -195,7 +208,12 @@ const Header = function () {
   };
 
   useEffect(() => {
-    if (account && !userDetails) getUserProfile();
+    
+    async function getUserProfileData(){
+      if (account && !userDetails) getUserProfile();
+    }
+    getUserProfileData();
+   
   }, [account, userDetails?.username]);
 
   const connectWallet = async () => {

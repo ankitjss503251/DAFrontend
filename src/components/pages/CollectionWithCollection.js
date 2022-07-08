@@ -63,20 +63,24 @@ function CollectionWithCollection() {
     }
   };
 
-  useEffect(async () => {
-    try {
-      const c = await getCategory();
-      setCategory(c);
-    } catch (e) {
-      console.log("Error", e);
-    }
-    try {
-      const b = await getAllBrands();
-      setBrands(b);
-      console.log("brands", b);
-    } catch (e) {
-      console.log("Error", e);
-    }
+  useEffect( () => {
+   const fetch = async () => {
+     try {
+       const c = await getCategory();
+       setCategory(c);
+     } catch (e) {
+       console.log("Error", e);
+     }
+     try {
+       const b = await getAllBrands();
+       setBrands(b);
+       console.log("brands", b);
+     } catch (e) {
+       console.log("Error", e);
+     }
+   };
+   fetch();
+
   }, []);
 
   var bgImgarrow = {
@@ -102,7 +106,9 @@ function CollectionWithCollection() {
 
   const [grid, setgrid] = useState("col-md-3 mb-4");
 
-  useEffect(async () => {
+  useEffect(() => {
+
+    const fetch = async () => {
     setLoader(true);
     try {
       const brand = await getBrandDetailsById(brandID);
@@ -162,6 +168,8 @@ function CollectionWithCollection() {
     } catch (e) {
       console.log("error in get brandbyID", e);
     }
+  }
+  fetch();
   }, [currPage, searchFor, ERCType]);
 
   const bgImage = {

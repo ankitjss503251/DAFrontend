@@ -78,6 +78,7 @@ const Home = () => {
     } catch (e) {
       console.log("Error in fetching all upcoming mints list", e);
     }
+    getCollectionData()
   }, []);
 
   return (

@@ -35,7 +35,9 @@ function Marketplacecollection() {
   const [loader, setLoader] = useState(false);
   const [cardCount, setCardCount] = useState(0);
 
-  useEffect(async () => {
+  useEffect(() => {
+    
+    const fetch = async () => {
     setLoader(true);
     let temp = allCollections;
     try {
@@ -83,6 +85,8 @@ function Marketplacecollection() {
       console.log("Error in fetching all collections list", e);
     }
     setLoader(false);
+  }
+  fetch();
   }, [loadMore, searchedText, showTab]);
 
   const handleCategoryChange = async (category) => {
