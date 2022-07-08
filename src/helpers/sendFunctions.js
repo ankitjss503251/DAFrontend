@@ -709,15 +709,24 @@ export const createOffer = async (
   try {
     buyerOrder.push(buyerAccount);
     buyerOrder.push(collectionAddress);
-    buyerOrder.push(tokenId);
-    buyerOrder.push(qty);
+    buyerOrder.push(parseInt(tokenId));
+    buyerOrder.push(parseInt(qty));
     buyerOrder.push(1);
     buyerOrder.push(paymentToken);
-    buyerOrder.push(bidPrice);
+    buyerOrder.push(bidPrice.toString());
     buyerOrder.push(deadline);
     buyerOrder.push([]);
     buyerOrder.push([]);
     buyerOrder.push(Math.round(Math.random() * 10000000));
+
+    console.log(
+      "seller order and buyer order",
+
+      "----",
+      buyerOrder,
+      buyerAccount
+    );
+
 
     let allowance = (
       await getPaymentTokenInfo(buyerAccount, buyerOrder[5])
@@ -733,11 +742,11 @@ export const createOffer = async (
     );
 
     let userTokenBal = await getUsersTokenBalance(buyerOrder[0], buyerOrder[5]);
-
+    console.log("userTokenBal",userTokenBal)
     let usrHaveQuantity = await GetOwnerOfToken(
       buyerOrder[1],
       buyerOrder[2],
-      erc721,
+      1,
       buyerOrder[0]
     );
 
@@ -773,7 +782,6 @@ export const createOffer = async (
 
     console.log(
       "seller order and buyer order",
-
       "----",
       buyerOrder,
       buyerAccount
@@ -815,11 +823,11 @@ export const createOffer = async (
 
       // window.location.reload();
     } catch (e) {
-      console.log("error in api", e);
+      console.log("error in api 1", e);
       return;
     }
   } catch (e) {
-    console.log("error in api", e);
+    console.log("error in api 2", e);
     return;
   }
 };

@@ -325,7 +325,6 @@ function CreateCollection() {
           console.log(e);
           setLoading(false);
           NotificationManager.error(e.message, "", 1500);
-        
         }
 
         console.log("contract address is--->", contractAddress);
@@ -365,15 +364,14 @@ function CreateCollection() {
             NotificationManager.error(e.message, "", 1800);
             setLoading(false);
           }
-     
+
           NotificationManager.success(
             "collection created successfully",
             "",
             1800
           );
           setLoading(false);
-          
-         
+
           setTimeout(() => {
             window.location.href = "/createcollection";
           }, 1000);
@@ -567,6 +565,7 @@ function CreateCollection() {
   };
 
   const handleEditCollection = async (_selectedCollectionId) => {
+    console.log("555");
     try {
       const reqData = {
         page: 1,
@@ -576,6 +575,7 @@ function CreateCollection() {
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
       setLogoImg(res2.logoImage);
+      console.log("images", res2.logoImage, res2.coverImage);
       setCoverImg(res2.coverImage);
       setTitle(res2.name);
       setRoyalty(res2.royalityPercentage);
@@ -773,12 +773,11 @@ function CreateCollection() {
                                     type='button'
                                     data-bs-toggle='modal'
                                     data-bs-target='#editModal'
-                                    onClick={async () => {
+                                    onClick={() => {
                                       setSelectedCollectionId(item._id);
                                       setIsEditModal("active");
                                       handleEditCollection(item._id);
-                                    }}
-                                  >
+                                    }}>
                                     Edit
                                   </button>
                                   <button
@@ -902,11 +901,7 @@ function CreateCollection() {
                         <img
                           alt=''
                           ref={uploadedImage}
-                          src={
-                            logoImg
-                              ? URL.createObjectURL(logoImg)
-                              : "../images/upload.png"
-                          }
+                          src={logoImg ? logoImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
@@ -951,11 +946,7 @@ function CreateCollection() {
                         <img
                           alt=''
                           ref={uploadedImage2}
-                          src={
-                            coverImg
-                              ? URL.createObjectURL(coverImg)
-                              : "../images/upload.png"
-                          }
+                          src={coverImg ? coverImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",

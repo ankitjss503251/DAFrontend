@@ -209,7 +209,6 @@ function NFTDetails() {
 
   const PlaceOffer = async () => {
     setLoading(true);
-
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);
@@ -255,10 +254,10 @@ function NFTDetails() {
     );
     setLoading(false);
 
-    // slowRefresh(1000);
+    slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
-    return;
+   
   };
 
   // Popup
@@ -1225,7 +1224,7 @@ function NFTDetails() {
                     name="item_qt"
                     id="item_qt"
                     min="1"
-                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
+                    disabled={NFTDetails.type === 1 ? true: false}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"
                     value={offerQuantity}
@@ -1329,7 +1328,6 @@ function NFTDetails() {
                   <button
                     type="button"
                     className="square_yello"
-                    href="/mintcollectionlive"
                     onClick={PlaceOffer}
                   >
                     Place Offer

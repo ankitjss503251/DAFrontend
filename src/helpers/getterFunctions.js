@@ -74,7 +74,7 @@ export const GetOwnerOfToken = async (
     collection,
     isERC721 ? erc721Abi.abi : erc1155Abi.abi
   );
-  console.log("collectionInsatnce", collectionInstance);
+  console.log("collectionInsatnce", collectionInstance,tokenId);
   let balance = 0;
   console.log("isERC721", isERC721);
   if (isERC721) {
@@ -182,7 +182,7 @@ export const getSignature = async (signer, ...args) => {
       NotificationManager.error("User denied ");
       return false;
     }
-    console.log("error in api", e);
+    console.log("error in api 3", e);
     return false;
   }
 };
