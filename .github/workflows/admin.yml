@@ -24,7 +24,8 @@ jobs:
           ls -la
           git add .
           git commit -m "serversideupdate"
-          git pull 
-          yarn run build
+          sudo git pull 
+          sudo yarn
+          sudo yarn run build
           pm2 ls 
           pm2 restart all
