@@ -159,7 +159,7 @@ function CreateCategories() {
       <div
         className={`modal fade createNft ${isModal}`}
         id="NftModal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >

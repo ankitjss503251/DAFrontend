@@ -34,8 +34,12 @@ function Marketplace() {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    async function windowScroll() {
+      window.scrollTo(0, 0);
+    }
+    windowScroll();
   }, []);
+
   const gridtwo = () => {
     setgrid("col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4");
     document.getElementById("gridtwo").classList.add("active");
@@ -86,23 +90,28 @@ function Marketplace() {
     }
   };
 
-  useEffect(async () => {
-    try {
-      const b = await getAllBrands();
-      setBrands(b);
-    } catch (e) {
-      console.log("Error", e);
+  useEffect(() => {
+    async function getInfo() {
+      try {
+        const b = await getAllBrands();
+        setBrands(b);
+      } catch (e) {
+        console.log("Error", e);
+      }
+      try {
+        const c = await getCategory();
+        setCategory(c);
+      } catch (e) {
+        console.log("Error", e);
+      }
     }
-    try {
-      const c = await getCategory();
-      setCategory(c);
-    } catch (e) {
-      console.log("Error", e);
-    }
+    getInfo();
   }, []);
 
-  useEffect(async () => {
-    setLoader(true);
+
+  useEffect(() => {
+    async function searchInfo() {
+      setLoader(true);
     let temp = allNFTs;
     try {
       const reqData = {
@@ -150,6 +159,8 @@ function Marketplace() {
     } catch (e) {
       console.log("Error in fetching all NFTs list", e);
     }
+    }
+    searchInfo();
   }, [loadMore, ERCType, sText, activeSaleType]);
 
   return (

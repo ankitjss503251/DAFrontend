@@ -57,9 +57,9 @@ const LogInHeader = function () {
                       Hot List</Link></li>
                     <li><Link to={'/NFTdetails'} className="sub-items">
                     <svg width="30" height="27" viewBox="0 0 30 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M10.0278 9.33337H1V26H10.0278V9.33337Z" stroke="#EF981D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M10.0278 9.33337H1V26H10.0278V9.33337Z" stroke="#EF981D" stroke-width="2" strokeLinecap="round" stroke-linejoin="round"/>
                       <path d="M19.0556 1H10.0278V26H19.0556V1Z" stroke="#EF981D" stroke-width="2" stroke-linejoin="round"/>
-                      <path d="M28.0834 14.8889H19.0557V26H28.0834V14.8889Z" stroke="#EF981D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M28.0834 14.8889H19.0557V26H28.0834V14.8889Z" stroke="#EF981D" stroke-width="2" strokeLinecap="round" stroke-linejoin="round"/>
                     </svg>
                       NFT Ranking</Link></li>
                     <li><Link to="" className="sub-items">
@@ -73,7 +73,7 @@ const LogInHeader = function () {
                 <Link className="nav-link" to={'/marketplace'}>Collections</Link>
                 </li>
                 <li className="nav-item">
-                <Link className="nav-link" to="" tabindex="-1">Resources
+                <Link className="nav-link" to="" tabIndex="-1">Resources
                   <ul className="sub_menu">
                     <li><Link to={"/helpcenter"} className="active sub-items">Help Center</Link></li>
                     <li><Link to={"/partners"} className="sub-items">Partners</Link></li>
@@ -135,10 +135,10 @@ const LogInHeader = function () {
                   </ul>
                 </li>
                 <li className="nav-item">
-                  <Link to="" tabindex="-1"><img src="../img/header_icon.png" alt="header_icon" /></Link>
+                  <Link to="" tabIndex="-1"><img src="../img/header_icon.png" alt="header_icon" /></Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="square_yello" to="" tabindex="-1" ><img src="../img/edit.png" alt="edit" /> x01a5x1a21...</Link>
+                  <Link className="square_yello" to="" tabIndex="-1" ><img src="../img/edit.png" alt="edit" /> x01a5x1a21...</Link>
                 </li>
             </ul>
              {/* <p>expand object select mention floor lumber unaware already narrow industry visit bundle</p> */}

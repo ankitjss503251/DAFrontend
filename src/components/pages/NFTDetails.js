@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Footer from "../components/footer";
 import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
@@ -39,8 +39,141 @@ import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { getNFTList } from "../../apiServices";
 
-import { useGLTF } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber"
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
+
+function loadGLTFModel(scene, glbPath, options) {
+  const { receiveShadow, castShadow } = options;
+  return new Promise((resolve, reject) => {
+    const loader = new GLTFLoader();
+    loader.load(
+      glbPath,
+      (gltf) => {
+        const obj = gltf.scene;
+        obj.name = "dinosaur";
+        obj.position.y = 0;
+        obj.position.x = 0;
+        obj.receiveShadow = receiveShadow;
+        obj.castShadow = castShadow;
+        scene.add(obj);
+
+        obj.traverse(function (child) {
+          if (child.isMesh) {
+            child.castShadow = castShadow;
+            child.receiveShadow = receiveShadow;
+          }
+        });
+
+        resolve(obj);
+      },
+      undefined,
+      function (error) {
+        console.log(error);
+        reject(error);
+      }
+    );
+  });
+}
+function easeOutCirc(x) {
+  return Math.sqrt(1 - Math.pow(x - 1, 4));
+}
+
+const Show3DImage = () => {
+  const refContainer = useRef();
+  const [loading, setLoading] = useState(true);
+  const [renderer, setRenderer] = useState();
+
+  useEffect(() => {
+    const { current: container } = refContainer;
+    if (container && !renderer) {
+      const scW = container.clientWidth;
+      const scH = container.clientHeight;
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true
+      });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(scW, scH);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      container.appendChild(renderer.domElement);
+      setRenderer(renderer);
+
+      const scene = new THREE.Scene();
+      const scale = 2;
+      const camera = new THREE.OrthographicCamera(
+        -scale,
+        scale,
+        scale,
+        -scale,
+        0.01,
+        50000
+      );
+      const target = new THREE.Vector3(-0.5, 1.2, 0);
+      const initialCameraPosition = new THREE.Vector3(
+        20 * Math.sin(0.2 * Math.PI),
+        10,
+        20 * Math.cos(0.2 * Math.PI)
+      );
+      const ambientLight = new THREE.AmbientLight(0xcccccc, 1);
+      scene.add(ambientLight);
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.autoRotate = true;
+      controls.target = target;
+
+      loadGLTFModel(scene, "https://hunter.techdigital.com.au/Parrot.glb", {
+        receiveShadow: false,
+        castShadow: false
+      }).then(() => {
+        animate();
+        setLoading(false);
+      });
+
+      let req = null;
+      let frame = 0;
+      const animate = () => {
+        req = requestAnimationFrame(animate);
+        frame = frame <= 100 ? frame + 1 : frame;
+
+        if (frame <= 100) {
+          const p = initialCameraPosition;
+          const rotSpeed = -easeOutCirc(frame / 120) * Math.PI * 20;
+
+          camera.position.y = 10;
+          camera.position.x =
+            p.x * Math.cos(rotSpeed) + p.z * Math.sin(rotSpeed);
+          camera.position.z =
+            p.z * Math.cos(rotSpeed) - p.x * Math.sin(rotSpeed);
+          camera.lookAt(target);
+        } else {
+          controls.update();
+        }
+
+        renderer.render(scene, camera);
+      };
+
+      return () => {
+        cancelAnimationFrame(req);
+        renderer.dispose();
+      };
+    }
+  }, []);
+
+  return (
+    <div
+      style={{ height: "350px", width: "350px", position: "relative" }}
+      ref={refContainer}
+    >
+      {loading && (
+        <span style={{ position: "absolute", left: "50%", top: "50%" }}>
+          Loading...
+        </span>
+      )}
+    </div>
+  );
+};
+
 
 var textColor = {
   textColor: "#EF981D",
@@ -84,15 +217,20 @@ function NFTDetails() {
   const [firstOrderNFT, setFirstOrderNFT] = useState([]);
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Wallet", "", 800);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    async function setUser() {
+      if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    }
+    setUser();
   }, [cookies.selected_account]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    async function windowScroll() {
+      window.scrollTo(0, 0);
+    }
+    windowScroll();
   }, []);
+
+  
 
   useEffect(() => {
     const fetch = async () => {
@@ -263,11 +401,6 @@ function NFTDetails() {
     return;
   };
 
-  function Model() {
-    const { scene } = useGLTF("https://staging-decrypt-nft-io.sgp1.digitaloceanspaces.com/Parrot.glb")
-    return <primitive object={scene} />;
-  }
-
   // Popup
 
   const handleMpShow = () => {
@@ -340,13 +473,17 @@ function NFTDetails() {
   }
 
   useEffect(() => {
-    var body = document.body;
-    if (loading || isPlaceBidModal || isBuyNowModal) {
-      body.classList.add("overflow_hidden");
-    } else {
-      body.classList.remove("overflow_hidden");
+    async function addClassList() {
+      var body = document.body;
+      if (loading || isPlaceBidModal || isBuyNowModal) {
+        body.classList.add("overflow_hidden");
+      } else {
+        body.classList.remove("overflow_hidden");
+      }
     }
+    addClassList();
   }, [loading, isPlaceBidModal, isBuyNowModal]);
+
 
   // Place Bid Checkout Modal
 
@@ -365,7 +502,7 @@ function NFTDetails() {
                     "..." +
                     currentUser?.slice(34, 42)}
                 </span>
-                <span class="badge badge-success">Connected</span>
+                <span className="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
             </div>
@@ -504,7 +641,7 @@ function NFTDetails() {
                     "..." +
                     currentUser?.slice(34, 42)}
                 </span>
-                <span class="badge badge-success">Connected</span>
+                <span className="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
             </div>
@@ -603,12 +740,7 @@ function NFTDetails() {
                         <source src={NFTDetails?.image} type="video/mp4" />
                       </video>:""}
                       {NFTDetails && NFTDetails.fileType=="3D"? 
-                      <Canvas camera={{position: [10, 18, 23], fov: 0.5 }}>
-                        <pointLight position={[10, 10, 10]} intensity={1.3} />
-                        <Suspense fallback={null}>
-                          <Model/>
-                        </Suspense>
-                      </Canvas>:""}
+                      <Show3DImage />:""}
               </div>
             <div className="col-lg-6 nft_details">
               <p className="mb-0">
@@ -1002,7 +1134,7 @@ function NFTDetails() {
 
               <div className="tab-content">
                 <div className="mb-3" id="tab_opt_1">
-                  <label htmlfor="item_price" className="form-label">
+                  <label htmlFor="item_price" className="form-label">
                     Price
                   </label>
                   <input
@@ -1018,7 +1150,7 @@ function NFTDetails() {
                   />
                 </div>
                 <div className="mb-3" id="tab_opt_2">
-                  <label htmlfor="item_qt" className="form-label">
+                  <label htmlFor="item_qt" className="form-label">
                     Quantity
                   </label>
                   <input
@@ -1047,7 +1179,7 @@ function NFTDetails() {
                   />
                 </div>
                 <div id="tab_opt_3" className="mb-3 put_hide">
-                  <label htmlfor="item_bid" className="form-label">
+                  <label htmlFor="item_bid" className="form-label">
                     Minimum bid
                   </label>
                   <input
@@ -1064,7 +1196,7 @@ function NFTDetails() {
                 </div>
 
                 <div id="tab_opt_4" className="mb-3">
-                  <label htmlfor="Payment" className="form-label">
+                  <label htmlFor="Payment" className="form-label">
                     Payment Token
                   </label>
 
@@ -1123,7 +1255,7 @@ function NFTDetails() {
                   )}
                 </div>
                 <div id="tab_opt_5" className="mb-3 put_hide">
-                  <label for="item_ex_date" className="form-label">
+                  <label htmlFor="item_ex_date" className="form-label">
                     Expiration date
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
@@ -1169,7 +1301,7 @@ function NFTDetails() {
             <div className="modal-body">
               <div className="tab-content">
                 <div className="mb-3" id="tab_opt_1">
-                  <label htmlfor="item_price" className="form-label">
+                  <label htmlFor="item_price" className="form-label">
                     Price
                   </label>
                   <input
@@ -1185,7 +1317,7 @@ function NFTDetails() {
                   />
                 </div>
                 <div className="mb-3" id="tab_opt_2">
-                  <label htmlfor="item_qt" className="form-label">
+                  <label htmlFor="item_qt" className="form-label">
                     Quantity
                   </label>
                   <input
@@ -1221,7 +1353,7 @@ function NFTDetails() {
                   />
                 </div>
                 <div id="tab_opt_4" className="mb-3">
-                  <label htmlfor="Payment" className="form-label">
+                  <label htmlFor="Payment" className="form-label">
                     Payment Token
                   </label>
 
@@ -1281,7 +1413,7 @@ function NFTDetails() {
                 </div>
 
                 <div id="tab_opt_5" className="mb-3 ">
-                  <label for="item_ex_date" className="form-label">
+                  <label htmlFor="item_ex_date" className="form-label">
                     Expiration date
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}

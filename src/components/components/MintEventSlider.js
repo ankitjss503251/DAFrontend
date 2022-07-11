@@ -4,15 +4,22 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
 import Wallet from "../SVG/wallet";
-import { getNFTList, GetOrdersByNftId } from "../../apiServices";
-import { handleBuyNft } from "../../helpers/sendFunctions";
-import { useCookies } from "react-cookie";
-import NotificationManager from "react-notifications/lib/NotificationManager";
-import Loader from "./../components/Loader";
-import { getCollections } from "./../../helpers/getterFunctions";
-import moment from "moment";
+import { convertToEth } from "../../helpers/numberFormatter";
+import "../components-css/App.css"
+import evt from "../../events/events"
+import { onboard } from "../menu/header";
 
+// import {  fetchInfo,
+//          testMint,
+//          mintTokens } from "../../helpers/Contract-Calls/rockstarCall";
+import BigNumber from "bignumber.js";
+import { useCookies } from "react-cookie";
+import Spinner from "../components/Spinner";
+const contract =  import (1? "../../helpers/Contract-Calls/rockstarCall" :"../../helpers/Contract-Calls/gachyiCalls");
+
+evt.setMaxListeners(1)
 function MintEventSlider(props) {
+ 
   var settings = {
     slidesToShow: 3,
     slidesToScroll: 1,
@@ -43,182 +50,123 @@ function MintEventSlider(props) {
       },
     ],
   };
-
-  const [nfts, setNfts] = useState([]);
-  const [currentUser, setCurrentUser] = useState();
+  const [createdItemId, setCreatedItemId] = useState();
+  const [isPutOnMarketplace, setIsPutOnMarketPlace] = useState(true);
+  const [hideClosePopup, sethideClosePopup] = useState(true);
+  const [hideRedirectPopup, sethideRedirectPopup] = useState(false);
+  const [ClosePopupDisabled, setClosePopupDisabled] = useState(true);
+  const [RedirectPopupDisabled, setRedirectPopupDisabled] = useState(true);
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [currQty, setCurrQty] = useState(1);
+  const [price, setPrice] = useState();
   const [loading, setLoading] = useState(false);
-  const [isMintEnabled, setIsMintEnabled] = useState(true);
 
-  let mint = [];
+  
 
-  useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Wallet", "", 800);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    console.log("current user is---->", currentUser, cookies.selected_account);
-  }, []);
 
   useEffect(() => {
-
-    const fetch = async () => {
-      let reqBody = {
-        page: 1,
-        limit: 100,
-        collectionID: props.id,
-        isLazyMinted: true,
-      };
-      let nfts = await getNFTList(reqBody);
-
-      if (nfts && nfts.results && nfts.results.length > 0) {
-        for (let i = 0; i < nfts.results.length; i++) {
-          mint[i] = 0;
-        }
-        setNfts(nfts.results[0]);
-      }
-      try {
-        const res = await getCollections({
-          page: 1,
-          limit: 12,
-          collectionID: props.id,
-        });
-        const st = res[0].saleStartTime;
-        const ct = moment()
-          .add({
-            hours: 5,
-            minutes: 30,
-          })
-          .toISOString();
-        if (ct < st) {
-          setIsMintEnabled(false);
-        } else setIsMintEnabled(true);
-      } catch (e) {
-        console.log("Error", e);
-      }
-    };
-    fetch();
-  }, [props.id]);
-
-  const handleMint = async (i) => {
-    setLoading(true);
-    console.log("curr user", currentUser);
-    let id, isERC721, account, balance, qty;
-    id = nfts[i]._id;
-    isERC721 = nfts[i].type == 1;
-    account = currentUser;
-    balance = 10000;
-    qty = currQty;
-    try {
-      let orders = await GetOrdersByNftId({ nftId: id });
-      console.log("orders", orders);
-      console.log(
-        "id, isERC721, account, balance, qty",
-        orders.results[0]._id,
-        isERC721,
-        account,
-        balance,
-        qty
-      );
-      let res = await handleBuyNft(
-        orders?.results[0]?._id,
-        isERC721,
-        account,
-        balance,
-        qty,
-        1,
-        props.id
-      );
-      if (res == false) {
-        setLoading(false);
-        return;
-      }
-    } catch (e) {
-      console.log("err", e);
-      NotificationManager.error("Something went wrong");
-      setLoading(false);
-      return;
+    const fetchData = async () => {
+      let { fetchInfo }= await contract
+      let getcateg = await fetchInfo();
+      setPrice( convertToEth(new BigNumber(getcateg[0].toString())));
     }
-    setLoading(false);
-  };
+    fetchData();
+   
+  }, []);
+  const connectWalletEvent =()=>{
+    evt.emit("wallet-connect")
+  }
+  const mintFunction = async (qty,price,user) => {
+    let { testMint}= await contract
+     let result = await testMint(qty,price,user)
+      console.log(result);
+     
+  }
+  useEffect(() => {
+    var body = document.body;
+    if (loading ) {
+      body.classList.add("overflow_hidden");
+    } else {
+      body.classList.remove("overflow_hidden");
+    }
+  }, [loading]);
+
 
   return (
     <Slider {...settings}>
-      {nfts && nfts.length > 0
-        ? nfts.map((n, i) => {
-            return (
-              <div className="mintevent text-center">
-                <div className="start_btn">
-                  Start
-                  <span>Live</span>
-                </div>
-                <h4>Mint Event</h4>
-                <p>
-                  {n.quantity_minted} / {n.totalQuantity} Minted
-                </p>
-                <div className="da_img mb-3">
-                  <img src={"../img/mint/da.png"} alt="" />
-                </div>
-                <Link to={"#"} className="connect_wallet_btn mb-4">
-                  {" "}
-                  <Wallet /> Connect Wallet
-                </Link>
-                <div className="mintprice">Mint Price {props.price} HNTR</div>
-                <div className="amount">
-                  <h5>Select Amount</h5>
-                  <p>Minimum for mint is 1*</p>
-                  <div className="qt_selector">
-                    <button
-                      onClick={() => {
-                        let mint = currQty - 1;
-                        if (mint < 1) mint = 1;
-                        setCurrQty(Number(mint));
-                      }}
-                    >
-                      -
-                    </button>
 
-                    <input
-                      type="text"
-                      name=""
-                      required=""
-                      id=""
-                      onChange={(e) => {
-                        setCurrQty(Number(e.target.value));
-                      }}
-                      value={currQty}
-                    />
+      <div className='mintevent text-center'>
+      {loading ? <Spinner /> : ""}
+        <div className='stamintFunctionbtn'>
+          Start
+          <span>Live</span>
+        </div>
+        <h4>Mint Event</h4>
+        <p>
+          {/* {n.quantity_minted} / {n.totalQuantity} Minted */}
+        </p>
+        <div className='da_img mb-3'>
+          <img src={"../img/mint/da.png"} alt='' />
+        </div>
+        {!cookies.selected_account?(<button className='connect_wallet_btn mb-4'onClick={() => {
+          connectWalletEvent();
+        }}>
+          {" "}
+          <Wallet /> Connect Wallet
+        </button>):("")}
+        <div className='mintprice'>Mint Price {price} HNTR</div>
+        <div className='amount'>
+          <h5>Select Amount</h5>
+          <p>Minimum for mint is 1*</p>
+          <div className='qt_selector'>
+            <button
+              onClick={() => {
+                let mint = currQty - 1;
+                if (mint < 1) mint = 1;
+                setCurrQty(Number(mint));
+              }}>
+              -
+            </button>
 
-                    <button
-                      onClick={() => {
-                        let mint = currQty + 1;
-                        if (mint > n.totalQuantity - n.quantity_minted)
-                          mint = n.totalQuantity - n.quantity_minted;
-                        setCurrQty(Number(mint));
-                      }}
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div className="mint_btn mt-4">
-                    <button
-                      className=""
-                      type="button"
-                      onClick={async (e) => {
-                        console.log("index", i);
-                        await handleMint(i);
-                      }}
-                      disabled={!isMintEnabled}
-                    >
-                      Mint
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        : ""}
+            <input
+              type='text'
+              name=''
+              required=''
+              id=''
+              onChange={(e) => {
+                setCurrQty(Number(e.target.value));
+              }}
+              value={currQty}
+            />
+
+            <button
+              onClick={() => {
+                let mint = currQty + 1;
+                // if (mint > n.totalQuantity - n.quantity_minted)
+                //   mint = n.totalQuantity - n.quantity_minted;
+                setCurrQty(Number(mint));
+              }}>
+              +
+            </button>
+          </div>
+          <div className='mint_btn mt-4'>
+            <button
+              className=''
+              type='button'
+              onClick={async (e) => {
+                // console.log("index", i);
+                await mintFunction(currQty,price,cookies.selected_account);
+              }}
+             disabled={!cookies.selected_account}
+            >
+              Mint
+            </button>
+          </div>
+        </div>
+      </div>
+   
     </Slider>
+   
   );
 }
 

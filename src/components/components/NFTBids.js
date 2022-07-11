@@ -326,17 +326,14 @@ function NFTBids(props) {
                         </td>
                         <td>Auction</td>
                         <td>
-                          {console.log(
-                            "b.deadline",
-                            new Date(b.bidDeadline * 1000) < new Date()
-                          )}
-                          <Clock
+                          {/* <Clock
                             deadline={moment(new Date(b.bidDeadline * 1000))
                               .subtract({
                                 hours: 5,
                                 minutes: 30,
                               })
-                              .toISOString()}></Clock>
+                              .toISOString()}></Clock> */}
+                              --:--:--
                         </td>
                         <td className='blue_text'>
                           {new Date(b.bidDeadline * 1000) < new Date()
@@ -414,7 +411,8 @@ function NFTBids(props) {
                                     b._id,
                                     "Cancelled"
                                   );
-                                  setReloadContent(!reloadContent);
+                                
+                                  
                                 }}>
                                 Cancel
                               </button>

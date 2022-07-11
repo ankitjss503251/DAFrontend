@@ -23,13 +23,14 @@ import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
 import defaultProfile from "../../assets/images/favicon.png";
+import evt from "../../events/events"
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
 
-const onboard = Onboard({
+ const onboard = Onboard({
   wallets: [walletConnect, injected],
   chains: [
     {
@@ -121,8 +122,11 @@ const Header = function () {
   const [searchedText, setShowSearchedText] = useState("");
   const [catg, setCatg] = useState([]);
   const [label, setLabel] = useState("");
-
-
+  evt.removeAllListeners("wallet-connect")
+  evt.on("wallet-connect", ()=>{
+    console.log("walletConnect Called");
+    connectWallet();
+  })
   useEffect(async () => {
     const cat = await getCategory();
     setCatg(cat);
@@ -280,7 +284,7 @@ const Header = function () {
             });
             getUserProfile();
             NotificationManager.success(res.message, "", 800);
-            // slowRefresh(1000);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -501,7 +505,7 @@ const Header = function () {
                 </NavLink>
               </li>
               <li className='nav-item'>
-                <NavLink className='nav-link' to='/helpcenter' tabindex='-1'>
+                <NavLink className='nav-link' to='/helpcenter' tabIndex='-1'>
                   Resources
                   <ul className='sub_menu'>
                     <li>
@@ -555,7 +559,7 @@ const Header = function () {
                     <button
                       onClick={!account ? connectWallet : disconnectWallet}
                       className='main_btn'
-                      tabindex='-1'>
+                      tabIndex='-1'>
                       {!account
                         ? "Connect Wallet"
                         : account.slice(0, 4) + "..." + account.slice(38, 42)}
@@ -581,7 +585,7 @@ const Header = function () {
                     </div>
                   </li> */}
                   <li className='nav-item'>
-                    <NavLink to='' tabindex='-1' className='profile_pic'>
+                    <NavLink to='' tabIndex='-1' className='profile_pic'>
                       <img
                         src={
                           userDetails?.profileIcon
@@ -696,7 +700,7 @@ const Header = function () {
                   <li className='nav-item'>
                     <button
                       className='square_yello'
-                      tabindex='-1'
+                      tabIndex='-1'
                       onClick={disconnectWallet}>
                       <img src='../img/edit.png' alt='edit' />{" "}
                       {account?.slice(0, 4) + "..." + account?.slice(38, 42)}

@@ -414,6 +414,7 @@ function CreateNFTs() {
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">NFTs</h5>
         <br />
+        {nfts && nfts.length > 0 ? 
           <table class="table table-hover text-light">
             <thead>
               <tr>
@@ -439,13 +440,13 @@ function CreateNFTs() {
                   })
                 : "No NFTs Found"}
             </tbody>
-          </table>
+          </table> : "No NFT Found"}
         </div>
       </div>
       <div
         className={`modal fade createNft ${isModal} `}
         id="NftModal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
         data-keyboard="false"
@@ -668,7 +669,7 @@ function CreateNFTs() {
       <div
         className="modal fade"
         id="AttributeModal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="attributeModal"
         aria-hidden="true"
         data-keyboard="false"
