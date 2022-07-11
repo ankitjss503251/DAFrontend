@@ -421,8 +421,6 @@ function CreateCollection() {
             });
             console.log("res", _nfts);
 
-            let nftCount = _nfts.length;
-
             await importCollection({
               address: importedAddress,
               totalSupply:
@@ -444,6 +442,7 @@ function CreateCollection() {
         fd.append("contractAddress", importedAddress.toLowerCase());
         fd.append("link", importedCollectionLink);
         fd.append("isDeployed", 1);
+
         fd.append("id", selectedCollectionId);
         fd.append("isOnMarketplace", 1);
         fd.append("isImported", 1);
@@ -585,7 +584,7 @@ function CreateCollection() {
                     + Add Collection
                   </button>
                 </div>
-                <div className="add_btn mb-4 d-flex justify-content-end">
+                {/*<div className="add_btn mb-4 d-flex justify-content-end">
                   <button
                     className="btn btn-admin text-light"
                     type="button"
@@ -595,7 +594,7 @@ function CreateCollection() {
                   >
                     + Import Collection
                   </button>
-                </div>
+                  </div>*/}
               </>
             )}
         <div className="adminbody table-widget text-light box-background ">
