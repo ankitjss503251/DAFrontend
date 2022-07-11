@@ -261,6 +261,7 @@ function CreateCollection() {
         fd.append("name", title);
         fd.append("symbol", symbol);
         fd.append("description", description);
+        fd.append("isMinted", 1);
         fd.append("logoImage", logoImg);
         fd.append("coverImage", coverImg);
         fd.append("link", importedCollectionLink);
@@ -269,7 +270,7 @@ function CreateCollection() {
         fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
         fd.append("preSaleStartTime", preSaleStartTime);
         fd.append("preSaleEndTime", datetime2);
-        fd.append("preSaleTokenAddress", contracts.USDT);
+        fd.append("preSaleTokenAddress", contracts.BUSD);
         fd.append("totalSupply", maxSupply);
         fd.append("type", Number(nftType));
         fd.append("price", ethers.utils.parseEther(price.toString()));
@@ -289,7 +290,7 @@ function CreateCollection() {
           creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
           console.log("creator is---->", creator);
           console.log("create collection is called");
-          console.log("contracts usdt address", contracts.USDT);
+          console.log("contracts buds address", contracts.BUSD);
         } catch (e) {
           console.log("err", e);
           setLoading(false);
@@ -306,12 +307,12 @@ function CreateCollection() {
                   symbol,
                   "www.uri.com",
                   royalty * 100,
-                  contracts.USDT
+                  contracts.BUSD
                 ))
               : (res1 = await creator.deployExtendedERC1155(
                   "www.uri.com",
                   royalty * 100,
-                  contracts.USDT
+                  contracts.BUSD
                 ));
 
             let hash = res1;
@@ -345,8 +346,8 @@ function CreateCollection() {
           fd.append("coverImage", coverImg);
           fd.append("categoryID", category);
           fd.append("brandID", brand);
-          fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
-          fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
+          fd.append("isDeployed", isOffChain === "Yes" ? 1 : 0);
+          fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
           fd.append("isMinted", 1);
           fd.append("isImported", 0);
           //fd.append("chainID", chain);
@@ -354,7 +355,7 @@ function CreateCollection() {
           fd.append("contractAddress", contractAddress);
           fd.append("preSaleStartTime", preSaleStartTime);
           fd.append("preSaleEndTime", datetime2);
-          fd.append("preSaleTokenAddress", contracts.USDT);
+          fd.append("preSaleTokenAddress", contracts.BUSD);
           fd.append("totalSupply", maxSupply);
           fd.append("type", type);
           fd.append("price", ethers.utils.parseEther(price.toString()));
@@ -392,7 +393,7 @@ function CreateCollection() {
       let originalSupply = await token.indicatesID();
 
       console.log("totalSupply", parseInt(originalSupply));
-      let dbSupply;
+
       if (isNew) {
         let collection = await getAllCollections({
           contractAddress: importedAddress.toLowerCase(),
@@ -421,7 +422,6 @@ function CreateCollection() {
             console.log("res", _nfts);
 
             let nftCount = _nfts.length;
-            dbSupply = parseInt(nftCount);
 
             await importCollection({
               address: importedAddress,
@@ -458,8 +458,6 @@ function CreateCollection() {
         });
         console.log("res", _nfts);
 
-        let nftCount = _nfts.length;
-        dbSupply = parseInt(nftCount);
         console.log("coll update", res._id);
         // slowRefresh(1000);
       }

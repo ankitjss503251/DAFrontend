@@ -62,7 +62,7 @@ function NFTDetails() {
   const [itemprice, setItemprice] = useState(0);
   const [item_qt, setItem_qt] = useState(1);
   const [item_bid, setItem_bid] = useState(0);
-  const [selectedToken, setSelectedToken] = useState("USDT");
+  const [selectedToken, setSelectedToken] = useState("BUSD");
   const [selectedTokenFS, setSelectedTokenFS] = useState("BNB");
   const [datetime, setDatetime] = useState("");
   const [currentUser, setCurrentUser] = useState();
