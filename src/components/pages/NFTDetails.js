@@ -616,19 +616,18 @@ function NFTDetails() {
               ) : (
                 ""
               )}
-              {/*
-             {NFTDetails && NFTDetails.fileType == "3D" ? (
-               <Canvas camera={{position: [10, 100, 100], fov: 1 }}>
-               <pointLight position={[10, 10, 10]} intensity={1.3} />
-               <Suspense fallback={null}>
-                 <Model image={NFTDetails.image}/>
-               </Suspense>
-               <OrbitControls/>
-             </Canvas>
+
+              {NFTDetails && NFTDetails.fileType == "3D" ? (
+                <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
+                  <pointLight position={[10, 10, 10]} intensity={1.3} />
+                  <Suspense fallback={null}>
+                    <Model image={NFTDetails.image} />
+                  </Suspense>
+                  <OrbitControls />
+                </Canvas>
               ) : (
                 ""
               )}
-             */}
             </div>
             <div className="col-lg-6 nft_details">
               <p className="mb-0">
