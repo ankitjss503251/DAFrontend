@@ -73,10 +73,10 @@ function CreateNFTs() {
           setNftImg(e.target.files[0]);
           setImg(blobURL);
         } else if (
-          url == "gif" ||
-          url == "jpeg" ||
-          url == "jpg" ||
-          url == "png"
+          url === "gif" ||
+          url === "jpeg" ||
+          url === "jpg" ||
+          url === "png"
         ) {
           setFileType("Image");
 
