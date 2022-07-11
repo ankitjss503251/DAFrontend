@@ -212,7 +212,7 @@ function CreateBrands() {
               <form className="row">
                 <div className="mb-1 col-md-4">
                   <label for="recipient-name" className="col-form-label">
-                    Upload Image *
+                    Upload Logo *
                   </label>
                   <div
                     style={{
@@ -258,7 +258,7 @@ function CreateBrands() {
                 </div>
                 <div className="mb-1 col-md-8">
                   <label for="recipient-name" className="col-form-label">
-                    Upload Collection Cover Image *
+                    Upload Cover Image *
                   </label>
                   <div
                     style={{
@@ -286,7 +286,7 @@ function CreateBrands() {
                       }}
                       onClick={() => imageUploader2.current.click()}
                     >
-                      <h4 className="text-center">Click or Drop here</h4>
+                      <p className="text-center">Click or Drop here</p>
                       <img
                         alt=""
                         ref={uploadedImage2}

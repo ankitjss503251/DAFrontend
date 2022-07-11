@@ -4018,6 +4018,11 @@ a:hover {
   .navbar-toggler {
     border: 1px solid #fffbfb;
   }
+  .navbar-toggler img{
+    height: 46px;
+    width: 50px;
+  }
+
   i.fa.fa-bars {
     color: #fff;
   }
