@@ -17,7 +17,7 @@ function CollectionList(props) {
           <div className='collection_row mb-3'>
             <div className='collection_col'>
               <span>{props.nft.collectionName} Collection</span>
-              <h6>{props.nft.name}</h6>
+              <h6>{props.nft.name?.length > 8 ? props.nft.name?.slice(0,8) + "..." : props.nft.name}</h6>
             </div>
             <div className='collection_col text-end'>
               <span>Price</span>
@@ -47,7 +47,7 @@ function CollectionList(props) {
                   : "View"}
               </Link>
             </div>
-            <div className='collection_col text-end'>
+            {/* <div className='collection_col text-end'>
               <span className='lastone'>
                 <svg
                   width='16'
@@ -61,7 +61,7 @@ function CollectionList(props) {
                 </svg>
                 {props.nft.like}
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -18,6 +18,7 @@ import { Tokens } from "../../helpers/tokensToSymbol";
 import { ethers } from "ethers";
 import Spinner from "./Spinner";
 import { slowRefresh } from "../../helpers/NotifyStatus";
+import { fetchBidNft } from "../../apiServices";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -30,6 +31,7 @@ function NFTlisting(props) {
   const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [haveBid, setHaveBid] = useState(false);
 
   useEffect(() => {
     if (cookies.selected_account) {
@@ -43,6 +45,24 @@ function NFTlisting(props) {
       if (props.id) {
         const _orders = await getOrderByNftID({ nftID: props.id });
         setOrders(_orders?.results);
+      }
+    };
+    fetch();
+  }, [props.id]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let searchParams = {
+        nftID: props.id,
+        buyerID: localStorage.getItem("userId"),
+        bidStatus: "All",
+        orderID: "All",
+      };
+
+      let _data = await fetchBidNft(searchParams);
+      console.log("bid data123", _data);
+      if (_data && _data.data.length > 0) {
+        setHaveBid(true);
       }
     };
     fetch();
@@ -303,7 +323,7 @@ function NFTlisting(props) {
                 false,
                 props?.NftDetails?.collectionAddress?.toLowerCase()
               );
-              setLoading(false);
+              // setLoading(false);
             }}
           >
             {"Buy Now"}
@@ -375,7 +395,7 @@ function NFTlisting(props) {
                           {o.salesType === 0
                             ? "Fixed Sale"
                             : o.salesType === 1
-                            ? "Timed Auction"
+                            ? "Auction"
                             : "Open for Bids"}
                         </td>
                         <td>
@@ -458,7 +478,11 @@ function NFTlisting(props) {
                                   }
                                 }}
                               >
-                                {o.salesType === 0 ? "Buy Now" : "Place Bid"}
+                                {o.salesType === 0
+                                  ? "Buy Now"
+                                  : haveBid
+                                  ? "Update Bid"
+                                  : "Place Bid"}
                               </button>
                             )}
                           </div>

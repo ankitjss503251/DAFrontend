@@ -24,6 +24,7 @@ import "../../App.css";
 import { useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
+import { slowRefresh } from "../../helpers/NotifyStatus";
 
 function CreateNFTs() {
   const [nftImg, setNftImg] = useState();
@@ -140,10 +141,8 @@ function CreateNFTs() {
     if (handleValidationCheck()) {
       setLoading(true);
       setModal("");
-      let salt = Math.round(Math.random() * 10000000);
 
       var formdata = new FormData();
-      let createRes;
       let collectionDetail;
       let NFTcontract;
       let reqBody = {
@@ -164,19 +163,6 @@ function CreateNFTs() {
         console.log("collectionDetail", collectionDetail);
         collectionDetail = collectionDetail?.results[0][0];
         console.log("collectionDetail11", collectionDetail);
-        // if (collectionDetail.totalSupply < collectionDetail.nftCount + 1) {
-        //   console.log(
-        //     "collection.totalSupply",
-        //     collectionDetail.totalSupply < collectionDetail.nftCount + 1
-        //   );
-        //   NotificationManager.error(
-        //     "Total Supply exceeded max supply",
-        //     "",
-        //     800
-        //   );
-        //   setLoading(false);
-        //   return;
-        // }
 
         await UpdateTokenCount(collectionDetail.contractAddress);
 
@@ -196,10 +182,6 @@ function CreateNFTs() {
         formdata.append("imageType", "0");
         formdata.append("imageDimension", "0");
         formdata.append("fileType", fileType);
-
-        //for (var key of formdata.entries()) {
-        //  console.log(key[0] + ', ' + key[1]);
-        //}
 
         console.log("field values--->", formdata);
       } catch (e) {
@@ -240,16 +222,6 @@ function CreateNFTs() {
 
         let res1 = "";
         try {
-          // let gasLimit = await NFTcontract.estimateGas.mint(
-          //   currentUser,
-          //   nextId,
-          //   { from: currentUser, value: 0 }
-          // );
-          // options = {
-          //   from: currentUser,
-          //   gasLimit: gasLimit + 10,
-          //   value: 0,
-          // };
           const options = {
             from: currentUser,
             gasLimit: 9000000,
@@ -275,27 +247,13 @@ function CreateNFTs() {
         setLoading(false);
         return;
       }
-      //fd.append("attributes", JSON.stringify(attributes));
-      //fd.append("levels", JSON.stringify([]));
-      //fd.append("creatorAddress", currentUser.toLowerCase());
-      //fd.append("name", title);
-      //fd.append("nftFile", nftImg);
-      //fd.append("quantity", quantity);
-      //fd.append("collectionID", JSON.parse(collection)._id);
-      //fd.append("collectionAddress", collectionDetail.contractAddress);
-      //fd.append("description", description);
-      //fd.append("tokenID", collectionDetail.nextID);
-      //fd.append("type", collectionDetail.type);
-      //fd.append("isMinted", 0);
-      //fd.append("imageSize", "0");
-      //fd.append("imageType", "0");
-      //fd.append("imageDimension", "0");
 
       try {
         console.log("FormData before Call", formdata);
         await createNft(formdata);
         NotificationManager.success("NFT created successfully", "", 800);
         setLoading(false);
+        slowRefresh(1000);
         console.log("NFTcontract", NFTcontract);
       } catch (e) {
         console.log("err", e);
@@ -303,22 +261,6 @@ function CreateNFTs() {
         setLoading(false);
         return;
       }
-
-      // let sellerOrder = [
-      //   currentUser.toLowerCase(),
-      //   collectionDetail.contractAddress,
-      //   collectionDetail.nextID,
-      //   quantity,
-      //   0,
-      //   contracts.BUSD,
-      //   collectionDetail.price.$numberDecimal,
-      //   GENERAL_TIMESTAMP,
-      //   [],
-      //   [],
-      //   salt,
-      // ];
-
-      // console.log("sellerOrder", sellerOrder);
     }
   };
 

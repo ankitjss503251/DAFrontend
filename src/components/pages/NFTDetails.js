@@ -24,11 +24,7 @@ import { useCookies } from "react-cookie";
 import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
 
 import contracts from "../../config/contracts";
-import {
-  GENERAL_DATE,
-  GENERAL_TIMESTAMP,
-  ZERO_ADDRESS,
-} from "../../helpers/constants";
+import { GENERAL_DATE } from "../../helpers/constants";
 import { NotificationManager } from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
@@ -37,7 +33,7 @@ import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { getNFTList } from "../../apiServices";
+import { fetchBidNft, getNFTList } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
 
 import { useGLTF, OrbitControls } from "@react-three/drei";
@@ -66,7 +62,7 @@ function NFTDetails() {
   const [itemprice, setItemprice] = useState(0);
   const [item_qt, setItem_qt] = useState(1);
   const [item_bid, setItem_bid] = useState(0);
-  const [selectedToken, setSelectedToken] = useState("USDT");
+  const [selectedToken, setSelectedToken] = useState("BUSD");
   const [selectedTokenFS, setSelectedTokenFS] = useState("BNB");
   const [datetime, setDatetime] = useState("");
   const [currentUser, setCurrentUser] = useState();
@@ -74,7 +70,6 @@ function NFTDetails() {
   const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isPutOnMarketplace, setIsPutonMarketplace] = useState("");
   const [modal, setModal] = useState(false);
   const [offerPrice, setOfferPrice] = useState();
   const [offerQuantity, setOfferQuantity] = useState(1);
@@ -83,6 +78,8 @@ function NFTDetails() {
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState("");
   const [firstOrderNFT, setFirstOrderNFT] = useState([]);
+  const [haveBid, setHaveBid] = useState(false);
+  const [ownedBy, setOwnedBy] = useState("");
 
   useEffect(() => {
     async function setUser() {
@@ -112,19 +109,19 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
-        console.log("setNFTDetails", res[0]);
+        setOwnedBy(res[0]?.ownedBy[(res[0]?.ownedBy?.length) - 1]?.address);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
-
+        
         const reqData1 = {
           page: 1,
           limit: 12,
           collectionID: res[0].collection,
         };
+
         const nfts = await getNFTs(reqData1);
-
+        
         setAllNFTs(nfts);
-
         if (
           currentUser &&
           res[0].ownedBy &&
@@ -158,6 +155,24 @@ function NFTDetails() {
     };
     fetch();
   }, [id, currentUser]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let searchParams = {
+        nftID: NFTDetails.id,
+        buyerID: localStorage.getItem("userId"),
+        bidStatus: "All",
+        orderID: "All",
+      };
+
+      let _data = await fetchBidNft(searchParams);
+      console.log("bid data123", _data);
+      if (_data && _data.data.length > 0) {
+        setHaveBid(true);
+      }
+    };
+    fetch();
+  }, [NFTDetails]);
 
   const PutMarketplace = async () => {
     setLoading(true);
@@ -262,7 +277,6 @@ function NFTDetails() {
     slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
-   
   };
 
   function Model(props) {
@@ -570,7 +584,7 @@ function NFTDetails() {
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
               setLoading(false);
-              slowRefresh(1000);
+              // slowRefresh(1000);
             }}
           >
             {"Buy Now"}
@@ -636,7 +650,7 @@ function NFTDetails() {
               <div className="owner_by mb-4">
                 <p>
                   Owned by{" "}
-                  <span style={textColor}>{collection?.createdBy}</span>
+                  <span style={textColor}>{ownedBy.slice(0,8) + "..." + ownedBy.slice(34,42)}</span>
                 </p>
                 <span className="add_wishlist">
                   <svg
@@ -786,7 +800,7 @@ function NFTDetails() {
                         setIsPlaceBidModal(true);
                       }}
                     >
-                      Place Bid
+                      {haveBid ? "Update Bid" : "Place Bid"}
                     </button>
                   )
                 ) : (
@@ -968,10 +982,7 @@ function NFTDetails() {
       </section>
 
       {/* <!-- The Modal --> */}
-      <div
-        className={`modal marketplace putOnMarketplace ${isPutOnMarketplace}`}
-        id="detailPop"
-      >
+      <div className={`modal marketplace putOnMarketplace`} id="detailPop">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             {/* <!-- Modal Header --> */}
@@ -1029,22 +1040,26 @@ function NFTDetails() {
               </ul>
 
               <div className="tab-content">
-                <div className="mb-3" id="tab_opt_1">
-                  <label htmlFor="item_price" className="form-label">
-                    Price
-                  </label>
-                  <input
-                    type="text"
-                    name="item_price"
-                    id="item_price"
-                    min="0"
-                    max="18"
-                    className="form-control input_design"
-                    placeholder="Please Enter Price (MATIC)"
-                    value={itemprice}
-                    onChange={(event) => setItemprice(event.target.value)}
-                  />
-                </div>
+                {marketplaceSaleType === 0 ? (
+                  <div className="mb-3" id="tab_opt_1">
+                    <label htmlFor="item_price" className="form-label">
+                      Price
+                    </label>
+                    <input
+                      type="text"
+                      name="item_price"
+                      id="item_price"
+                      min="0"
+                      max="18"
+                      className="form-control input_design"
+                      placeholder="Please Enter Price (MATIC)"
+                      value={itemprice}
+                      onChange={(event) => setItemprice(event.target.value)}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
                 <div className="mb-3" id="tab_opt_2">
                   <label htmlFor="item_qt" className="form-label">
                     Quantity
@@ -1225,7 +1240,7 @@ function NFTDetails() {
                     name="item_qt"
                     id="item_qt"
                     min="1"
-                    disabled={NFTDetails.type === 1 ? true: false}
+                    disabled={NFTDetails.type === 1 ? true : false}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"
                     value={offerQuantity}

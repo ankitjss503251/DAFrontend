@@ -22,7 +22,7 @@ jobs:
            git add .
            git commit -m "serversidechanges"
            git pull origin main
-           yarn
-           yarn run build
+           sudo yarn
+           sudo yarn run build
            pm2 ls
            pm2 restart all

@@ -37,7 +37,6 @@ function Marketplace() {
   };
 
   function Model(props) {
-    console.log("props--->", props);
     const { scene } = useGLTF(props.image);
     return <primitive object={scene} />;
   }
@@ -583,7 +582,7 @@ function Marketplace() {
                         <div className="items_text nft-info-div">
                           <div className="items_info ">
                             <div className="items_left">
-                              <h3 className="">{card.name}</h3>
+                              <h3 className="">{card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}</h3>
                              {card.paymentToken !== undefined ? <>
                              {/* <div className="token_img">
                               <img src={Tokens[card?.paymentToken?.toLowerCase()].icon} alt="payment token"/>
@@ -592,7 +591,7 @@ function Marketplace() {
                              </>
                              : ""}
                             </div>
-                            <div className="items_right justify-content-end d-flex">
+                            {/* <div className="items_right justify-content-end d-flex">
                               <span>
                                 <svg
                                   width="16"
@@ -608,7 +607,7 @@ function Marketplace() {
                                 </svg>
                                 {card.like}
                               </span>
-                            </div>
+                            </div> */}
                           </div>
                           <Link
                             to={`/NFTdetails/${card.id}`}

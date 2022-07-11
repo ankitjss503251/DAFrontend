@@ -142,7 +142,7 @@ function ItemsList() {
                   <div className='items_text nft-info-div'>
                     <div className='items_info'>
                       <div className='items_left '>
-                        <h3 className=''>{card.name}</h3>
+                        <h3 className=''>{card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}</h3>
                         <p>{card.price} {Tokens[card?.paymentToken?.toLowerCase()]?.symbolName}</p>
                       </div>
                       {/* <div className='items_right justify-content-end d-flex'>
