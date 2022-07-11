@@ -558,6 +558,7 @@ function Marketplace() {
                           ) : (
                             ""
                           )}
+
                           {card && card.fileType === "3D" ? (
                             <Canvas
                               class="img-fluid items_img w-100 my-3"
