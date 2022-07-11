@@ -18,6 +18,7 @@ import { Tokens } from "../../helpers/tokensToSymbol";
 import { ethers } from "ethers";
 import Spinner from "./Spinner";
 import { slowRefresh } from "../../helpers/NotifyStatus";
+import { fetchBidNft } from "../../apiServices";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -30,6 +31,7 @@ function NFTlisting(props) {
   const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [haveBid, setHaveBid] = useState(false);
 
   useEffect(() => {
     if (cookies.selected_account) {
@@ -46,6 +48,24 @@ function NFTlisting(props) {
         setOrders(_orders?.results);
       }
       console.log("tokens", Tokens);
+    };
+    fetch();
+  }, [props.id]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let searchParams = {
+        nftID: props.id,
+        buyerID: localStorage.getItem("userId"),
+        bidStatus: "All",
+        orderID: "All",
+      };
+
+      let _data = await fetchBidNft(searchParams);
+      console.log("bid data123", _data);
+      if (_data && _data.data.length > 0) {
+        setHaveBid(true);
+      }
     };
     fetch();
   }, [props.id]);
@@ -466,7 +486,11 @@ function NFTlisting(props) {
                                   }
                                 }}
                               >
-                                {o.salesType === 0 ? "Buy Now" : "Place Bid"}
+                                {o.salesType === 0
+                                  ? "Buy Now"
+                                  : haveBid
+                                  ? "Update Bid"
+                                  : "Place Bid"}
                               </button>
                             )}
                           </div>

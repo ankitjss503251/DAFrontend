@@ -181,21 +181,21 @@ export const handleBuyNft = async (
 
   console.log("seller and buyer order is", sellerOrder, buyerOrder);
   // if (LazyMintingStatus !== 1) {
-    try {
-      let usrHaveQuantity = await GetOwnerOfToken(
-        sellerOrder[1],
-        sellerOrder[2],
-        isERC721,
-        sellerOrder[0]
-      );
-      if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-        NotificationManager.error("Seller don't own that much quantity");
-        return false;
-      }
-    } catch (e) {
-      console.log("error", e);
-      return;
-    }
+  try {
+    let usrHaveQuantity = await GetOwnerOfToken(
+      sellerOrder[1],
+      sellerOrder[2],
+      isERC721,
+      sellerOrder[0]
+    );
+    // if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
+    //   NotificationManager.error("Seller don't own that much quantity");
+    //   return false;
+    // }
+  } catch (e) {
+    console.log("error", e);
+    return;
+  }
   // }
 
   // check if seller still owns that much quantity of current token id
@@ -227,18 +227,18 @@ export const handleBuyNft = async (
       value: sellerOrder[5] === ZERO_ADDRESS ? amount : 0,
     };
 
-    let completeOrder = await marketplace.completeOrder(
-      sellerOrder,
-      signature,
-      buyerOrder,
-      signature,
-      options
-    );
-    console.log("complete order is--->", completeOrder, options);
-    let res = await completeOrder.wait();
-    if (res.status === 0) {
-      return false;
-    }
+    // let completeOrder = await marketplace.completeOrder(
+    //   sellerOrder,
+    //   signature,
+    //   buyerOrder,
+    //   signature,
+    //   options
+    // );
+    // console.log("complete order is--->", completeOrder, options);
+    // let res = await completeOrder.wait();
+    // if (res.status === 0) {
+    //   return false;
+    // }
   } catch (e) {
     console.log("error in contract function calling", e);
     if (e.code === 4001) {
@@ -266,7 +266,7 @@ export const handleBuyNft = async (
             ? details.nftID.quantity_minted
             : details.nftID.quantity_minted + qty,
       });
-      DeleteOrder({ orderID: id });
+      // DeleteOrder({ orderID: id });
     } else {
       await UpdateOrder({
         orderId: id,
@@ -285,17 +285,17 @@ export const handleBuyNft = async (
             : details.nftID.quantity_minted + qty,
       });
 
-      if (
-        Number(details.quantity_sold) + Number(qty) >=
-        details.total_quantity
-      ) {
-        try {
-          await DeleteOrder({ orderID: id });
-        } catch (e) {
-          console.log("error in updating order data", e);
-          return false;
-        }
-      }
+      // if (
+      //   Number(details.quantity_sold) + Number(qty) >=
+      //   details.total_quantity
+      // ) {
+      //   try {
+      //     await DeleteOrder({ orderID: id });
+      //   } catch (e) {
+      //     console.log("error in updating order data", e);
+      //     return false;
+      //   }
+      // }
     }
   } catch (e) {
     console.log("error in updating order data", e);
@@ -727,7 +727,6 @@ export const createOffer = async (
       buyerAccount
     );
 
-
     let allowance = (
       await getPaymentTokenInfo(buyerAccount, buyerOrder[5])
     ).allowance.toString();
@@ -742,7 +741,7 @@ export const createOffer = async (
     );
 
     let userTokenBal = await getUsersTokenBalance(buyerOrder[0], buyerOrder[5]);
-    console.log("userTokenBal",userTokenBal)
+    console.log("userTokenBal", userTokenBal);
     let usrHaveQuantity = await GetOwnerOfToken(
       buyerOrder[1],
       buyerOrder[2],

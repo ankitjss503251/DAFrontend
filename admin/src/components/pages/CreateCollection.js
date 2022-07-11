@@ -269,7 +269,7 @@ function CreateCollection() {
         fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
         fd.append("preSaleStartTime", preSaleStartTime);
         fd.append("preSaleEndTime", datetime2);
-        fd.append("preSaleTokenAddress", contracts.BUSD);
+        fd.append("preSaleTokenAddress", contracts.USDT);
         fd.append("totalSupply", maxSupply);
         fd.append("type", Number(nftType));
         fd.append("price", ethers.utils.parseEther(price.toString()));
@@ -289,7 +289,7 @@ function CreateCollection() {
           creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
           console.log("creator is---->", creator);
           console.log("create collection is called");
-          console.log("contracts busd address", contracts.BUSD);
+          console.log("contracts usdt address", contracts.USDT);
         } catch (e) {
           console.log("err", e);
           setLoading(false);
@@ -306,12 +306,12 @@ function CreateCollection() {
                   symbol,
                   "www.uri.com",
                   royalty * 100,
-                  contracts.BUSD
+                  contracts.USDT
                 ))
               : (res1 = await creator.deployExtendedERC1155(
                   "www.uri.com",
                   royalty * 100,
-                  contracts.BUSD
+                  contracts.USDT
                 ));
 
             let hash = res1;
@@ -354,7 +354,7 @@ function CreateCollection() {
           fd.append("contractAddress", contractAddress);
           fd.append("preSaleStartTime", preSaleStartTime);
           fd.append("preSaleEndTime", datetime2);
-          fd.append("preSaleTokenAddress", contracts.BUSD);
+          fd.append("preSaleTokenAddress", contracts.USDT);
           fd.append("totalSupply", maxSupply);
           fd.append("type", type);
           fd.append("price", ethers.utils.parseEther(price.toString()));
@@ -381,7 +381,6 @@ function CreateCollection() {
       }
     }
   };
-
 
   const handleImportNFT = async (isNew) => {
     window.sessionStorage.setItem("importLink", importedCollectionLink);
@@ -519,7 +518,6 @@ function CreateCollection() {
   };
 
   const handleEditCollection = async (_selectedCollectionId) => {
-    console.log("555");
     try {
       const reqData = {
         page: 1,
@@ -529,7 +527,6 @@ function CreateCollection() {
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
       setLogoImg(res2.logoImage);
-      console.log("images", res2.logoImage, res2.coverImage);
       setCoverImg(res2.coverImage);
       setTitle(res2.name);
       setRoyalty(res2.royalityPercentage);
@@ -729,17 +726,16 @@ function CreateCollection() {
                               View NFTs
                             </button> */}
                                   <button
-
-                                    className='btn p-1  text-light'
-                                    type='button'
-                                    data-bs-toggle='modal'
-                                    data-bs-target='#editModal'
-                                    onClick={() => {
-
+                                    className="btn p-1  text-light"
+                                    type="button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editModal"
+                                    onClick={async () => {
                                       setSelectedCollectionId(item._id);
                                       setIsEditModal("active");
                                       handleEditCollection(item._id);
-                                    }}>
+                                    }}
+                                  >
                                     Edit
                                   </button>
                                   <button
@@ -870,7 +866,11 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage}
-                          src={logoImg ? logoImg : "../images/upload.png"}
+                          src={
+                            logoImg
+                              ? URL.createObjectURL(logoImg)
+                              : "../images/upload.png"
+                          }
                           style={{
                             width: "110px",
                             height: "110px",
@@ -917,7 +917,11 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage2}
-                          src={coverImg ? coverImg : "../images/upload.png"}
+                          src={
+                            coverImg
+                              ? URL.createObjectURL(coverImg)
+                              : "../images/upload.png"
+                          }
                           style={{
                             width: "110px",
                             height: "110px",
@@ -944,35 +948,38 @@ function CreateCollection() {
                       }}
                     />
                   </div>
+                  {/*
+                    <div className="col-md-6 mb-1">
+                      <label for="recipient-name" className="col-form-label">
+                        Royalty *
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="recipient-name"
+                        value={royalty}
+                        name="royalty"
+                        onKeyPress={(e) => {
+                          if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
+                        }}
+                        onChange={(e) => {
+                          if (e.target.value > 100) {
+                            NotificationManager.error(
+                              "Royalty can't be greater than 100",
+                              "",
+                              800
+                            );
+                            return;
+                          }
+                          setRoyalty(e.target.value);
+                        }}
+                      />
+                    </div>
+                      */}
+
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Royalty *
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="recipient-name"
-                      value={royalty}
-                      name="royalty"
-                      onKeyPress={(e) => {
-                        if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
-                      }}
-                      onChange={(e) => {
-                        if (e.target.value > 100) {
-                          NotificationManager.error(
-                            "Royalty can't be greater than 100",
-                            "",
-                            800
-                          );
-                          return;
-                        }
-                        setRoyalty(e.target.value);
-                      }}
-                    />
-                  </div>
-                  <div className="col-md-6 mb-1">
-                    <label for="recipient-name" className="col-form-label">
-                      Start Date *
+                      Start Date
                     </label>
                     <input
                       type="datetime-local"
@@ -985,7 +992,7 @@ function CreateCollection() {
                   </div>
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      End Date *
+                      End Date
                     </label>
                     <input
                       type="datetime-local"
@@ -996,7 +1003,7 @@ function CreateCollection() {
                   </div>
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Max Supply *
+                      Max Supply
                     </label>
                     <input
                       type="text"
@@ -1019,7 +1026,7 @@ function CreateCollection() {
                   </div>
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Price *
+                      Price
                     </label>
                     <input
                       type="text"
@@ -1093,7 +1100,7 @@ function CreateCollection() {
                   </div>
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Minting Link *
+                      Minting Link
                     </label>
                     <input
                       type="text"
@@ -1208,7 +1215,7 @@ function CreateCollection() {
 
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Collection Link *
+                      Collection Link
                     </label>
                     <input
                       type="text"
@@ -1281,7 +1288,7 @@ function CreateCollection() {
 
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Collection Link *
+                      Collection Link
                     </label>
                     <input
                       type="text"
@@ -1354,7 +1361,7 @@ function CreateCollection() {
                 <form className="row">
                   <div className="mb-1 col-md-4">
                     <label for="recipient-name" className="col-form-label">
-                      Upload Image *
+                      Upload Logo *
                     </label>
                     <div
                       style={{
@@ -1400,7 +1407,7 @@ function CreateCollection() {
                   </div>
                   <div className="mb-1 col-md-8">
                     <label for="recipient-name" className="col-form-label">
-                      Upload Collection Cover Image *
+                      Upload Cover Image *
                     </label>
                     <div
                       style={{
@@ -1459,7 +1466,7 @@ function CreateCollection() {
                       }}
                     />
                   </div>
-                  <div className="col-md-6 mb-1">
+                  {/*<div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
                       Royalty *
                     </label>
@@ -1484,10 +1491,12 @@ function CreateCollection() {
                         setRoyalty(e.target.value);
                       }}
                     />
-                  </div>
+                  </div> 
+                  */}
+
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Start Date *
+                      Start Date
                     </label>
                     <input
                       type="datetime-local"
@@ -1500,7 +1509,7 @@ function CreateCollection() {
                   </div>
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      End Date *
+                      End Date
                     </label>
                     <input
                       type="datetime-local"
@@ -1511,7 +1520,7 @@ function CreateCollection() {
                   </div>
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Max Supply *
+                      Max Supply
                     </label>
                     <input
                       type="text"
@@ -1534,7 +1543,7 @@ function CreateCollection() {
                   </div>
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Price *
+                      Price
                     </label>
                     <input
                       type="text"
@@ -1613,7 +1622,20 @@ function CreateCollection() {
                       onChange={(e) => setDescription(e.target.value)}
                     ></textarea>
                   </div>
-
+                  <div className="col-md-12 mb-1">
+                    <label for="recipient-name" className="col-form-label">
+                      Minting Link *
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
+                      value={importedCollectionLink}
+                      onChange={(e) =>
+                        setImportedCollectionLink(e.target.value)
+                      }
+                    />
+                  </div>
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
                       NFT Type *
