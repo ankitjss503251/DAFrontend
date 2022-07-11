@@ -227,18 +227,18 @@ export const handleBuyNft = async (
       value: sellerOrder[5] === ZERO_ADDRESS ? amount : 0,
     };
 
-    let completeOrder = await marketplace.completeOrder(
-      sellerOrder,
-      signature,
-      buyerOrder,
-      signature,
-      options
-    );
-    console.log("complete order is--->", completeOrder, options);
-    let res = await completeOrder.wait();
-    if (res.status === 0) {
-      return false;
-    }
+    // let completeOrder = await marketplace.completeOrder(
+    //   sellerOrder,
+    //   signature,
+    //   buyerOrder,
+    //   signature,
+    //   options
+    // );
+    // console.log("complete order is--->", completeOrder, options);
+    // let res = await completeOrder.wait();
+    // if (res.status === 0) {
+    //   return false;
+    // }
   } catch (e) {
     console.log("error in contract function calling", e);
     if (e.code === 4001) {
@@ -266,7 +266,7 @@ export const handleBuyNft = async (
             ? details.nftID.quantity_minted
             : details.nftID.quantity_minted + qty,
       });
-      DeleteOrder({ orderID: id });
+      // DeleteOrder({ orderID: id });
     } else {
       await UpdateOrder({
         orderId: id,
@@ -841,7 +841,6 @@ export const handleAcceptBids = async (
   let details;
   let options;
   try {
-    console.log("bid data", bidData);
     order = await buildSellOrder(bidData.orderID);
     details = await getOrderDetails({ orderId: bidData.orderID });
   } catch (e) {
