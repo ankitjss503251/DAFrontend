@@ -572,7 +572,7 @@ function NFTDetails() {
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
               setLoading(false);
-              slowRefresh(1000);
+              // slowRefresh(1000);
             }}
           >
             {"Buy Now"}
@@ -1031,22 +1031,26 @@ function NFTDetails() {
               </ul>
 
               <div className="tab-content">
-                <div className="mb-3" id="tab_opt_1">
-                  <label htmlFor="item_price" className="form-label">
-                    Price
-                  </label>
-                  <input
-                    type="text"
-                    name="item_price"
-                    id="item_price"
-                    min="0"
-                    max="18"
-                    className="form-control input_design"
-                    placeholder="Please Enter Price (MATIC)"
-                    value={itemprice}
-                    onChange={(event) => setItemprice(event.target.value)}
-                  />
-                </div>
+                {marketplaceSaleType === 0 ? (
+                  <div className="mb-3" id="tab_opt_1">
+                    <label htmlFor="item_price" className="form-label">
+                      Price
+                    </label>
+                    <input
+                      type="text"
+                      name="item_price"
+                      id="item_price"
+                      min="0"
+                      max="18"
+                      className="form-control input_design"
+                      placeholder="Please Enter Price (MATIC)"
+                      value={itemprice}
+                      onChange={(event) => setItemprice(event.target.value)}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
                 <div className="mb-3" id="tab_opt_2">
                   <label htmlFor="item_qt" className="form-label">
                     Quantity
