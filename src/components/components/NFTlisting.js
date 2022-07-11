@@ -377,7 +377,7 @@ function NFTlisting(props) {
                           {o.salesType === 0
                             ? "Fixed Sale"
                             : o.salesType === 1
-                            ? "Timed Auction"
+                            ? "Auction"
                             : "Open for Bids"}
                         </td>
                         <td>

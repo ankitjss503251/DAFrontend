@@ -347,6 +347,8 @@ function CreateCollection() {
           fd.append("brandID", brand);
           fd.append("isDeployed", isOffChain == "Yes" ? 1 : 0);
           fd.append("isOnMarketplace", isOnMarketplace == "Yes" ? 1 : 0);
+          fd.append("isMinted", 1);
+          fd.append("isImported", 0);
           //fd.append("chainID", chain);
           fd.append("link", importedCollectionLink);
           fd.append("contractAddress", contractAddress);
@@ -380,55 +382,6 @@ function CreateCollection() {
     }
   };
 
-  const deployCollection = async (coll) => {
-    let res1;
-    let creator;
-    setLoading(true);
-    try {
-      creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
-      console.log("creator is---->", creator);
-      console.log("create collection is called");
-      console.log("contracts busd address", contracts.BUSD);
-    } catch (e) {
-      console.log("err", e);
-      setLoading(false);
-      return;
-    }
-    try {
-      coll.type == "1"
-        ? (res1 = await creator.deployExtendedERC721(
-            coll.name,
-            coll.symbol,
-            "www.uri.com",
-            coll.royalityPercentage,
-            coll.preSaleTokenAddress
-          ))
-        : (res1 = await creator.deployExtendedERC1155(
-            "www.uri.com",
-            coll.royalityPercentage,
-            coll.preSaleTokenAddress
-          ));
-      let hash = res1;
-      res1 = await res1.wait();
-      let contractAddress = await readReceipt(hash);
-
-      console.log("res1 is--->", res1);
-
-      console.log("contract address is--->", contractAddress);
-      let fd = new FormData();
-      fd.append("id", coll._id);
-      fd.append("contractAddress", contractAddress);
-      fd.append("isDeployed", 1);
-      await UpdateCollection(fd);
-    } catch (e) {
-      console.log(e);
-      NotificationManager.error(e.message, "", 1500);
-      setLoading(false);
-      setTimeout(() => {
-        window.location.href = "/createcollection";
-      }, 1000);
-    }
-  };
 
   const handleImportNFT = async (isNew) => {
     window.sessionStorage.setItem("importLink", importedCollectionLink);
@@ -614,47 +567,49 @@ function CreateCollection() {
   };
 
   return (
-    <div className='wrapper'>
+    <div className="wrapper">
       {/* <!-- Sidebar  --> */}
       <Sidebar />
       {loading ? <Loader /> : ""}
       {/* <!-- Page Content  --> */}
-      <div id='content'>
+      <div id="content">
         {isSuperAdmin()
           ? null
           : currentUser && (
               <>
-                <div className='add_btn mb-4 d-flex justify-content-end'>
+                <div className="add_btn mb-4 d-flex justify-content-end">
                   <button
-                    className='btn btn-admin text-light'
-                    type='button'
-                    data-bs-toggle='modal'
-                    data-bs-target='#exampleModal'
+                    className="btn btn-admin text-light"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
                     onClick={() => {
                       setModal("active");
-                    }}>
+                    }}
+                  >
                     + Add Collection
                   </button>
                 </div>
-                <div className='add_btn mb-4 d-flex justify-content-end'>
+                <div className="add_btn mb-4 d-flex justify-content-end">
                   <button
-                    className='btn btn-admin text-light'
-                    type='button'
-                    data-bs-toggle='modal'
-                    data-bs-target='#exampleModal2'
-                    onClick={() => setNewImportModal("active")}>
+                    className="btn btn-admin text-light"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal2"
+                    onClick={() => setNewImportModal("active")}
+                  >
                     + Import Collection
                   </button>
                 </div>
               </>
             )}
-        <div className='adminbody table-widget text-light box-background '>
-          <h5 className='admintitle font-600 font-24 text-yellow text-center'>
+        <div className="adminbody table-widget text-light box-background ">
+          <h5 className="admintitle font-600 font-24 text-yellow text-center">
             My Collections
           </h5>
           <br />
-          <div className='table-responsive'>
-            <table className='table table-hover text-light'>
+          <div className="table-responsive">
+            <table className="table table-hover text-light">
               <thead>
                 <tr>
                   <th>Collection</th>
@@ -680,16 +635,16 @@ function CreateCollection() {
                           <tr>
                             <td>
                               {" "}
-                              <div className='first-col'>
+                              <div className="first-col">
                                 <img
                                   src={item.logoImage}
-                                  className='profile_i m-2'
-                                  alt=''
+                                  className="profile_i m-2"
+                                  alt=""
                                   onError={(e) =>
                                     (e.target.src = "../images/login.jpg")
                                   }
                                 />
-                                <div className='dates-col'>
+                                <div className="dates-col">
                                   <span>
                                     {" "}
                                     Start Date:&nbsp;{" "}
@@ -710,31 +665,34 @@ function CreateCollection() {
                                 </div>
                               </div>
                               {isSuperAdmin() ? (
-                                <div className='btn_container'>
+                                <div className="btn_container">
                                   <button
-                                    className='btn p-1   text-light '
-                                    type='button'
+                                    className="btn p-1   text-light "
+                                    type="button"
                                     onClick={() => {
                                       blockUnblockColl(
                                         item._id,
                                         item.status ? 0 : 1
                                       );
-                                    }}>
+                                    }}
+                                  >
                                     {item.status === 0 ? "Unblock" : "Block"}
                                   </button>
                                 </div>
                               ) : (
-                                <div className='btn_container'>
-                                  {item.isImported === 0 ? (
+                                <div className="btn_container">
+                                  {item.isImported === 0 &&
+                                  item.isMinted === 0 ? (
                                     <button
-                                      className='btn p-1  text-light'
-                                      data-bs-toggle='modal'
-                                      data-bs-target='#exampleModal1'
-                                      type='button'
+                                      className="btn p-1  text-light"
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#exampleModal1"
+                                      type="button"
                                       onClick={async () => {
                                         setSelectedCollectionId(item._id);
                                         setImportModal(true);
-                                      }}>
+                                      }}
+                                    >
                                       Import
                                     </button>
                                   ) : (
@@ -744,7 +702,7 @@ function CreateCollection() {
                                     className={`btn p-1 showHide-btn ${
                                       !item.isOnMarketplace ? "active" : ""
                                     }`}
-                                    type='button'
+                                    type="button"
                                     onClick={async () => {
                                       item.isOnMarketplace === 0
                                         ? await setShowOnMarketplace(
@@ -755,7 +713,8 @@ function CreateCollection() {
                                             item._id,
                                             0
                                           );
-                                    }}>
+                                    }}
+                                  >
                                     {item.isOnMarketplace === 0
                                       ? "Show"
                                       : "Hide"}
@@ -770,11 +729,13 @@ function CreateCollection() {
                               View NFTs
                             </button> */}
                                   <button
+
                                     className='btn p-1  text-light'
                                     type='button'
                                     data-bs-toggle='modal'
                                     data-bs-target='#editModal'
                                     onClick={() => {
+
                                       setSelectedCollectionId(item._id);
                                       setIsEditModal("active");
                                       handleEditCollection(item._id);
@@ -785,28 +746,30 @@ function CreateCollection() {
                                     className={`btn p-1 exclusive-btn ${
                                       !item.isExclusive ? "active" : ""
                                     }`}
-                                    type='button'
+                                    type="button"
                                     onClick={() =>
                                       handleCollection(
                                         item._id,
                                         "isExclusive",
                                         !item.isExclusive ? 1 : 0
                                       )
-                                    }>
+                                    }
+                                  >
                                     Exclusive Collection
                                   </button>
                                   <button
                                     className={`btn p-1  hot-btn ${
                                       !item.isHotCollection ? "active" : ""
                                     }`}
-                                    type='button'
+                                    type="button"
                                     onClick={() =>
                                       handleCollection(
                                         item._id,
                                         "isHotCollection",
                                         !item.isHotCollection ? 1 : 0
                                       )
-                                    }>
+                                    }
+                                  >
                                     Hot Collection
                                   </button>
                                 </div>
@@ -849,29 +812,32 @@ function CreateCollection() {
 
         <div
           className={`modal fade createNft ${isModal}`}
-          id='exampleModal'
-          tabindex='-1'
-          aria-labelledby='exampleModalLabel'
-          aria-hidden='true'>
-          <div className='modal-dialog modal-lg'>
-            <div className='modal-content'>
-              <div className='modal-header'>
+          id="exampleModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
                 <h5
-                  className='modal-title text-yellow font-24 font-600'
-                  id='exampleModalLabel'>
+                  className="modal-title text-yellow font-24 font-600"
+                  id="exampleModalLabel"
+                >
                   Create New Collection
                 </h5>
                 <button
-                  type='button'
-                  className='btn-close'
-                  data-bs-dismiss='modal'
-                  aria-label='Close'></button>
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
               </div>
-              <div className='modal-body'>
-                <form className='row'>
-                  <div className='mb-1 col-md-4'>
-                    <label for='recipient-name' className='col-form-label'>
-                      Upload Image *
+              <div className="modal-body">
+                <form className="row">
+                  <div className="mb-1 col-md-4">
+                    <label for="recipient-name" className="col-form-label">
+                      Upload Logo *
                     </label>
                     <div
                       style={{
@@ -879,10 +845,11 @@ function CreateCollection() {
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <input
-                        type='file'
-                        accept='image/*'
+                        type="file"
+                        accept="image/*"
                         onChange={handleImageUpload}
                         ref={imageUploader}
                         style={{
@@ -890,17 +857,18 @@ function CreateCollection() {
                         }}
                       />
                       <div
-                        className='update_btn'
+                        className="update_btn"
                         style={{
                           height: "100%",
                           width: "100%",
                           position: "relative",
                         }}
-                        onClick={() => imageUploader.current.click()}>
-                        <p className='text-center'>Click or Drop here</p>
+                        onClick={() => imageUploader.current.click()}
+                      >
+                        <p className="text-center">Click or Drop here</p>
 
                         <img
-                          alt=''
+                          alt=""
                           ref={uploadedImage}
                           src={logoImg ? logoImg : "../images/upload.png"}
                           style={{
@@ -908,15 +876,15 @@ function CreateCollection() {
                             height: "110px",
                             margin: "auto",
                           }}
-                          className='img-fluid profile_circle_img'
+                          className="img-fluid profile_circle_img"
                         />
                         {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
-                  <div className='mb-1 col-md-8'>
-                    <label for='recipient-name' className='col-form-label'>
-                      Upload Collection Cover Image *
+                  <div className="mb-1 col-md-8">
+                    <label for="recipient-name" className="col-form-label">
+                      Upload Cover Image *
                     </label>
                     <div
                       style={{
@@ -924,10 +892,11 @@ function CreateCollection() {
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <input
-                        type='file'
-                        accept='image/*'
+                        type="file"
+                        accept="image/*"
                         onChange={handleImageUpload2}
                         ref={imageUploader2}
                         style={{
@@ -935,17 +904,18 @@ function CreateCollection() {
                         }}
                       />
                       <div
-                        className='update_btn'
+                        className="update_btn"
                         style={{
                           height: "100%",
                           width: "100%",
                           position: "relative",
                         }}
-                        onClick={() => imageUploader2.current.click()}>
-                        <h4 className='text-center'>Click or Drop here</h4>
+                        onClick={() => imageUploader2.current.click()}
+                      >
+                        <p className="text-center">Click or Drop here</p>
 
                         <img
-                          alt=''
+                          alt=""
                           ref={uploadedImage2}
                           src={coverImg ? coverImg : "../images/upload.png"}
                           style={{
@@ -953,37 +923,37 @@ function CreateCollection() {
                             height: "110px",
                             margin: "auto",
                           }}
-                          className='img-fluid profile_circle_img'
+                          className="img-fluid profile_circle_img"
                         />
                         {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Title *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
-                      name='title'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
+                      name="title"
                       value={title}
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Royalty *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={royalty}
-                      name='royalty'
+                      name="royalty"
                       onKeyPress={(e) => {
                         if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
                       }}
@@ -1000,38 +970,38 @@ function CreateCollection() {
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Start Date *
                     </label>
                     <input
-                      type='datetime-local'
+                      type="datetime-local"
                       value={(preSaleStartTime || "")
                         .toString()
                         .substring(0, 16)}
                       onChange={handleChange}
-                      className='form-control'
+                      className="form-control"
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       End Date *
                     </label>
                     <input
-                      type='datetime-local'
+                      type="datetime-local"
                       value={(datetime2 || "").toString().substring(0, 16)}
                       onChange={handleChange2}
-                      className='form-control'
+                      className="form-control"
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Max Supply *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={maxSupply}
                       onChange={(e) => {
                         let maxSupply = parseInt(e.target.value, 10);
@@ -1047,14 +1017,14 @@ function CreateCollection() {
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Price *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={price}
                       onChange={(e) => numberInputCheck(e)}
                       onKeyPress={(e) => {
@@ -1062,15 +1032,16 @@ function CreateCollection() {
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Category *
                     </label>
                     <select
-                      class='form-select'
-                      aria-label='Default select example'
+                      class="form-select"
+                      aria-label="Default select example"
                       value={category}
-                      onChange={(e) => setCategory(e.target.value)}>
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
                       <option selected>Open this select menu</option>
                       {categories && categories.length > 0
                         ? categories.map((c, i) => {
@@ -1079,15 +1050,16 @@ function CreateCollection() {
                         : ""}
                     </select>
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Brand *
                     </label>
                     <select
-                      class='form-select'
-                      aria-label='Default select example'
+                      class="form-select"
+                      aria-label="Default select example"
                       value={brand}
-                      onChange={(e) => setBrand(e.target.value)}>
+                      onChange={(e) => setBrand(e.target.value)}
+                    >
                       <option selected>Open this select menu</option>
                       {brands && brands.length > 0
                         ? brands.map((b, i) => {
@@ -1096,93 +1068,96 @@ function CreateCollection() {
                         : ""}
                     </select>
                   </div>
-                  <div className='col-md-12 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-12 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Symbol *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={symbol}
                       onChange={(e) => setSymbol(e.target.value)}
                     />
                   </div>
-                  <div className='col-md-12 mb-1'>
-                    <label for='message-text' className='col-form-label'>
+                  <div className="col-md-12 mb-1">
+                    <label for="message-text" className="col-form-label">
                       Description *
                     </label>
                     <textarea
-                      className='form-control'
-                      id='message-text'
+                      className="form-control"
+                      id="message-text"
                       value={description}
-                      onChange={(e) =>
-                        setDescription(e.target.value)
-                      }></textarea>
+                      onChange={(e) => setDescription(e.target.value)}
+                    ></textarea>
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Minting Link *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
-                      name='title'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
+                      name="title"
                       value={importedCollectionLink}
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       NFT Type *
                     </label>
                     <select
-                      class='form-select'
-                      aria-label='Default select example'
+                      class="form-select"
+                      aria-label="Default select example"
                       value={nftType}
-                      onChange={(e) => setNftType(e.target.value)}>
+                      onChange={(e) => setNftType(e.target.value)}
+                    >
                       <option selected>Open this select menu</option>
-                      <option value='1'>Single</option>;
-                      <option value='2'>Multiple</option>;
+                      <option value="1">Single</option>;
+                      <option value="2">Multiple</option>;
                     </select>
                   </div>
 
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       OffChain
                     </label>
                     <select
-                      class='form-select'
-                      aria-label='Default select example'
+                      class="form-select"
+                      aria-label="Default select example"
                       value={isOffChain}
-                      onChange={(e) => setIsOffChain(e.target.value)}>
+                      onChange={(e) => setIsOffChain(e.target.value)}
+                    >
                       <option selected>No</option>
                       <option>Yes</option>
                     </select>
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Show on Marketplace
                     </label>
                     <select
-                      class='form-select'
-                      aria-label='Default select example'
+                      class="form-select"
+                      aria-label="Default select example"
                       value={isOnMarketplace}
-                      onChange={(e) => setIsOnMarketplace(e.target.value)}>
+                      onChange={(e) => setIsOnMarketplace(e.target.value)}
+                    >
                       <option selected>Yes</option>
                       <option>No</option>
                     </select>
                   </div>
                 </form>
               </div>
-              <div className='modal-footer justify-content-center'>
+              <div className="modal-footer justify-content-center">
                 <button
-                  type='button'
-                  className='btn btn-admin text-light'
-                  onClick={() => handleCollectionCreationAndUpdation(false)}>
+                  type="button"
+                  className="btn btn-admin text-light"
+                  onClick={() => handleCollectionCreationAndUpdation(false)}
+                >
                   Create Collection
                 </button>
               </div>
@@ -1192,52 +1167,55 @@ function CreateCollection() {
 
         <div
           className={`modal fade importCol ${importModal}`}
-          id='exampleModal1'
-          tabindex='-1'
-          aria-labelledby='exampleModal1Label'
-          aria-hidden='true'>
-          <div className='modal-dialog modal-lg'>
-            <div className='modal-content'>
-              <div className='modal-header'>
+          id="exampleModal1"
+          tabindex="-1"
+          aria-labelledby="exampleModal1Label"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
                 <h5
-                  className='modal-title text-yellow font-24 font-600'
-                  id='exampleModal1Label'>
+                  className="modal-title text-yellow font-24 font-600"
+                  id="exampleModal1Label"
+                >
                   Import Existing Collection
                 </h5>
                 <button
-                  type='button'
-                  className='btn-close'
-                  data-bs-dismiss='modal'
-                  aria-label='Close'></button>
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
               </div>
-              <div className='modal-body'>
-                <form className='row'>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+              <div className="modal-body">
+                <form className="row">
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Collection Address *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={importedAddress}
-                      name='address'
+                      name="address"
                       onChange={(e) => {
                         setImportedAddress(e.target.value);
                       }}
                     />
                   </div>
 
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Collection Link *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={importedCollectionLink}
-                      name='address'
+                      name="address"
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
                       }}
@@ -1245,13 +1223,14 @@ function CreateCollection() {
                   </div>
                 </form>
               </div>
-              <div className='modal-footer justify-content-center'>
+              <div className="modal-footer justify-content-center">
                 <button
-                  type='button'
-                  className='btn btn-admin text-light'
+                  type="button"
+                  className="btn btn-admin text-light"
                   onClick={async () => {
                     await handleImportNFT(false);
-                  }}>
+                  }}
+                >
                   Import Collection
                 </button>
               </div>
@@ -1261,67 +1240,70 @@ function CreateCollection() {
 
         <div
           className={`modal fade importCol ${newImportModal}`}
-          id='exampleModal2'
-          tabindex='-1'
-          aria-labelledby='exampleModal2Label'
-          aria-hidden='true'>
-          <div className='modal-dialog modal-lg'>
-            <div className='modal-content'>
-              <div className='modal-header'>
+          id="exampleModal2"
+          tabindex="-1"
+          aria-labelledby="exampleModal2Label"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
                 <h5
-                  className='modal-title text-yellow font-24 font-600'
-                  id='exampleModal1Label'>
+                  className="modal-title text-yellow font-24 font-600"
+                  id="exampleModal1Label"
+                >
                   Import New Collection
                 </h5>
                 <button
-                  type='button'
-                  className='btn-close'
-                  data-bs-dismiss='modal'
-                  aria-label='Close'></button>
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
               </div>
-              <div className='modal-body'>
-                <form className='row'>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+              <div className="modal-body">
+                <form className="row">
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Collection Address *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={importedAddress}
-                      name='address'
+                      name="address"
                       onChange={(e) => {
                         setImportedAddress(e.target.value);
                       }}
                     />
                   </div>
 
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Collection Link *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={importedCollectionLink}
-                      name='address'
+                      name="address"
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Collection Name *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={title}
-                      name='title'
+                      name="title"
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
@@ -1330,13 +1312,14 @@ function CreateCollection() {
                 </form>
               </div>
 
-              <div className='modal-footer justify-content-center'>
+              <div className="modal-footer justify-content-center">
                 <button
-                  type='button'
-                  className='btn btn-admin text-light'
+                  type="button"
+                  className="btn btn-admin text-light"
                   onClick={async () => {
                     await handleImportNFT(true);
-                  }}>
+                  }}
+                >
                   Import Collection
                 </button>
               </div>
@@ -1346,28 +1329,31 @@ function CreateCollection() {
 
         <div
           className={`modal fade createNft ${isEditModal}`}
-          id='editModal'
-          tabindex='-1'
-          aria-labelledby='editModalLabel'
-          aria-hidden='true'>
-          <div className='modal-dialog modal-lg'>
-            <div className='modal-content'>
-              <div className='modal-header'>
+          id="editModal"
+          tabindex="-1"
+          aria-labelledby="editModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
                 <h5
-                  className='modal-title text-yellow font-24 font-600'
-                  id='exampleModalLabel'>
+                  className="modal-title text-yellow font-24 font-600"
+                  id="exampleModalLabel"
+                >
                   Update Collection
                 </h5>
                 <button
-                  type='button'
-                  className='btn-close'
-                  data-bs-dismiss='modal'
-                  aria-label='Close'></button>
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
               </div>
-              <div className='modal-body'>
-                <form className='row'>
-                  <div className='mb-1 col-md-4'>
-                    <label for='recipient-name' className='col-form-label'>
+              <div className="modal-body">
+                <form className="row">
+                  <div className="mb-1 col-md-4">
+                    <label for="recipient-name" className="col-form-label">
                       Upload Image *
                     </label>
                     <div
@@ -1376,10 +1362,11 @@ function CreateCollection() {
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <input
-                        type='file'
-                        accept='image/*'
+                        type="file"
+                        accept="image/*"
                         onChange={handleImageUpload}
                         ref={imageUploader}
                         style={{
@@ -1387,16 +1374,17 @@ function CreateCollection() {
                         }}
                       />
                       <div
-                        className='update_btn'
+                        className="update_btn"
                         style={{
                           height: "100%",
                           width: "100%",
                           position: "relative",
                         }}
-                        onClick={() => imageUploader.current.click()}>
-                        <p className='text-center'>Click or Drop here</p>
+                        onClick={() => imageUploader.current.click()}
+                      >
+                        <p className="text-center">Click or Drop here</p>
                         <img
-                          alt=''
+                          alt=""
                           ref={uploadedImage}
                           src={logoImg ? logoImg : "../images/upload.png"}
                           style={{
@@ -1404,14 +1392,14 @@ function CreateCollection() {
                             height: "110px",
                             margin: "auto",
                           }}
-                          className='img-fluid profile_circle_img'
+                          className="img-fluid profile_circle_img"
                         />
                         {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
-                  <div className='mb-1 col-md-8'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="mb-1 col-md-8">
+                    <label for="recipient-name" className="col-form-label">
                       Upload Collection Cover Image *
                     </label>
                     <div
@@ -1420,10 +1408,11 @@ function CreateCollection() {
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                      }}>
+                      }}
+                    >
                       <input
-                        type='file'
-                        accept='image/*'
+                        type="file"
+                        accept="image/*"
                         onChange={handleImageUpload2}
                         ref={imageUploader2}
                         style={{
@@ -1431,16 +1420,17 @@ function CreateCollection() {
                         }}
                       />
                       <div
-                        className='update_btn'
+                        className="update_btn"
                         style={{
                           height: "100%",
                           width: "100%",
                           position: "relative",
                         }}
-                        onClick={() => imageUploader2.current.click()}>
-                        <h4 className='text-center'>Click or Drop here</h4>
+                        onClick={() => imageUploader2.current.click()}
+                      >
+                        <h4 className="text-center">Click or Drop here</h4>
                         <img
-                          alt=''
+                          alt=""
                           ref={uploadedImage2}
                           src={coverImg ? coverImg : "../images/upload.png"}
                           style={{
@@ -1448,37 +1438,37 @@ function CreateCollection() {
                             height: "110px",
                             margin: "auto",
                           }}
-                          className='img-fluid profile_circle_img'
+                          className="img-fluid profile_circle_img"
                         />
                         {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Title *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
-                      name='title'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
+                      name="title"
                       value={title}
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Royalty *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={royalty}
-                      name='royalty'
+                      name="royalty"
                       onKeyPress={(e) => {
                         if (!/^\d*?\d*$/.test(e.key)) e.preventDefault();
                       }}
@@ -1495,38 +1485,38 @@ function CreateCollection() {
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Start Date *
                     </label>
                     <input
-                      type='datetime-local'
+                      type="datetime-local"
                       value={(preSaleStartTime || "")
                         .toString()
                         .substring(0, 16)}
                       onChange={handleChange}
-                      className='form-control'
+                      className="form-control"
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       End Date *
                     </label>
                     <input
-                      type='datetime-local'
+                      type="datetime-local"
                       value={(datetime2 || "").toString().substring(0, 16)}
                       onChange={handleChange2}
-                      className='form-control'
+                      className="form-control"
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Max Supply *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={maxSupply}
                       onChange={(e) => {
                         let maxSupply = parseInt(e.target.value, 10);
@@ -1542,14 +1532,14 @@ function CreateCollection() {
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Price *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={price}
                       onChange={(e) => numberInputCheck(e)}
                       onKeyPress={(e) => {
@@ -1557,22 +1547,24 @@ function CreateCollection() {
                       }}
                     />
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Category *
                     </label>
                     <select
-                      class='form-select'
-                      aria-label='Default select example'
+                      class="form-select"
+                      aria-label="Default select example"
                       value={category}
-                      onChange={(e) => setCategory(e.target.value)}>
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
                       <option selected>Open this select menu</option>
                       {categories && categories.length > 0
                         ? categories.map((c, i) => {
                             return (
                               <option
                                 value={c._id}
-                                selected={category === c.name ? true : false}>
+                                selected={category === c.name ? true : false}
+                              >
                                 {c.name}
                               </option>
                             );
@@ -1580,15 +1572,16 @@ function CreateCollection() {
                         : ""}
                     </select>
                   </div>
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Brand *
                     </label>
                     <select
-                      class='form-select'
-                      aria-label='Default select example'
+                      class="form-select"
+                      aria-label="Default select example"
                       value={brand}
-                      onChange={(e) => setBrand(e.target.value)}>
+                      onChange={(e) => setBrand(e.target.value)}
+                    >
                       <option selected>Open this select menu</option>
                       {brands && brands.length > 0
                         ? brands.map((b, i) => {
@@ -1597,54 +1590,55 @@ function CreateCollection() {
                         : ""}
                     </select>
                   </div>
-                  <div className='col-md-12 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-12 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       Symbol *
                     </label>
                     <input
-                      type='text'
-                      className='form-control'
-                      id='recipient-name'
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
                       value={symbol}
                       onChange={(e) => setSymbol(e.target.value)}
                     />
                   </div>
-                  <div className='col-md-12 mb-1'>
-                    <label for='message-text' className='col-form-label'>
+                  <div className="col-md-12 mb-1">
+                    <label for="message-text" className="col-form-label">
                       Description *
                     </label>
                     <textarea
-                      className='form-control'
-                      id='message-text'
+                      className="form-control"
+                      id="message-text"
                       value={description}
-                      onChange={(e) =>
-                        setDescription(e.target.value)
-                      }></textarea>
+                      onChange={(e) => setDescription(e.target.value)}
+                    ></textarea>
                   </div>
 
-                  <div className='col-md-6 mb-1'>
-                    <label for='recipient-name' className='col-form-label'>
+                  <div className="col-md-6 mb-1">
+                    <label for="recipient-name" className="col-form-label">
                       NFT Type *
                     </label>
                     <select
-                      class='form-select'
-                      aria-label='Default select example'
+                      class="form-select"
+                      aria-label="Default select example"
                       value={nftType}
-                      onChange={(e) => setNftType(e.target.value)}>
+                      onChange={(e) => setNftType(e.target.value)}
+                    >
                       <option selected>Open this select menu</option>
-                      <option value='1'>Single</option>;
-                      <option value='2'>Multiple</option>;
+                      <option value="1">Single</option>;
+                      <option value="2">Multiple</option>;
                     </select>
                   </div>
                 </form>
               </div>
-              <div className='modal-footer justify-content-center'>
+              <div className="modal-footer justify-content-center">
                 <button
-                  type='button'
-                  className='btn btn-admin text-light'
+                  type="button"
+                  className="btn btn-admin text-light"
                   onClick={() => {
                     handleCollectionCreationAndUpdation(true);
-                  }}>
+                  }}
+                >
                   Update Collection
                 </button>
               </div>
