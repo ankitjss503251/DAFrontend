@@ -11,7 +11,8 @@ import { onboard } from "../menu/header";
 import BigNumber from "bignumber.js";
 import { useCookies } from "react-cookie";
 import DevTeam from "./../../assets/images/devTeam.png";
-import Spinner from "../components/Spinner";
+import {MAX_WHITELIST_BUY_PER_USER} from "../../helpers/constants"
+import Spinner from "../components/Spinner"
 
 evt.setMaxListeners(1);
 function MintEventSlider(props) {
@@ -50,12 +51,34 @@ function MintEventSlider(props) {
   const [currQty, setCurrQty] = useState(1);
   const [price, setPrice] = useState();
   const [loading, setLoading] = useState(false);
+  const [maxNFT,setMaxNFT] =useState();
+
+  useEffect(() => {
+    const bodyClass = async () => {
+      var body = document.body;
+      if (loading) {
+        body.classList.add("overflow_hidden");
+      } else {
+        body.classList.remove("overflow_hidden");
+      }
+    };
+    bodyClass();
+  }, [loading]);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       let { fetchInfo } = await contract;
-      let getcateg = await fetchInfo(props.id);
+      let getcateg = await fetchInfo(props.id,cookies.selected_account);
+      if(MAX_WHITELIST_BUY_PER_USER>parseInt(getcateg[3])){
+        setMaxNFT(MAX_WHITELIST_BUY_PER_USER-parseInt(getcateg[3]));
+      }
+      else{
+        setMaxNFT(1);
+        
+      }
       setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
+      setLoading(false)
     };
     fetchData();
   }, []);
@@ -67,19 +90,11 @@ function MintEventSlider(props) {
     let result = await testMint(props.id, qty, price, user);
     console.log(result);
   };
-  useEffect(() => {
-    var body = document.body;
-    if (loading) {
-      body.classList.add("overflow_hidden");
-    } else {
-      body.classList.remove("overflow_hidden");
-    }
-  }, [loading]);
-
+ 
   return (
     <Slider {...settings}>
       <div className="mintevent text-center">
-        {loading ? <Spinner /> : ""}
+      {loading ? <Spinner /> : ""}
         <div className="stamintFunctionbtn">
           Start
           <span>Live</span>
@@ -111,7 +126,8 @@ function MintEventSlider(props) {
               onClick={() => {
                 let mint = currQty - 1;
                 if (mint < 1) mint = 1;
-                if (mint > 5) mint = 5;
+                if (mint > maxNFT) mint = maxNFT;
+                if (1 > maxNFT) mint = 1;
                 setCurrQty(Number(mint));
               }}
             >
@@ -133,7 +149,8 @@ function MintEventSlider(props) {
               onClick={() => {
                 let mint = currQty + 1;
                 if (mint < 1) mint = 1;
-                if (mint > 5) mint = 5;
+                if (mint > maxNFT) mint = maxNFT;
+                if (1 > maxNFT) mint = 1;
                 // if (mint > n.totalQuantity - n.quantity_minted)
                 //   mint = n.totalQuantity - n.quantity_minted;
                 setCurrQty(Number(mint));
