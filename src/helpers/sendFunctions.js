@@ -101,12 +101,12 @@ export const handleBuyNft = async (
     switch (key) {
       case 0:
         if (isERC721) {
-          sellerOrder.push(order[key].toLowerCase());
+          sellerOrder.push(order[key]?.toLowerCase());
           buyerOrder.push(account?.toLowerCase());
           break;
         } else {
           sellerOrder.push(order[key]);
-          buyerOrder.push(account);
+          buyerOrder.push(account?.toLowerCase());
           break;
         }
       case 1:
@@ -180,23 +180,23 @@ export const handleBuyNft = async (
   }
 
   console.log("seller and buyer order is", sellerOrder, buyerOrder);
-  if (LazyMintingStatus !== 1) {
-    try {
-      let usrHaveQuantity = await GetOwnerOfToken(
-        sellerOrder[1],
-        sellerOrder[2],
-        isERC721,
-        sellerOrder[0]
-      );
-      if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-        NotificationManager.error("Seller don't own that much quantity");
-        return false;
-      }
-    } catch (e) {
-      console.log("error", e);
-      return;
+  // if (LazyMintingStatus !== 1) {
+  try {
+    let usrHaveQuantity = await GetOwnerOfToken(
+      sellerOrder[1],
+      sellerOrder[2],
+      isERC721,
+      sellerOrder[0]
+    );
+    if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
+      NotificationManager.error("Seller don't own that much quantity");
+      return false;
     }
+  } catch (e) {
+    console.log("error", e);
+    return;
   }
+  // }
 
   // check if seller still owns that much quantity of current token id
   // check if seller still have approval for marketplace
@@ -224,7 +224,7 @@ export const handleBuyNft = async (
     options = {
       from: account,
       gasLimit: 9000000,
-      value: sellerOrder[5] == ZERO_ADDRESS ? amount : 0,
+      value: sellerOrder[5] === ZERO_ADDRESS ? amount : 0,
     };
 
     let completeOrder = await marketplace.completeOrder(
@@ -253,10 +253,10 @@ export const handleBuyNft = async (
       await UpdateOrder({
         orderId: id,
         nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
-        seller: details.sellerID.walletAddress.toLowerCase(), //to make sure we update the quantity left : walletAddress
+        seller: details.sellerID.walletAddress?.toLowerCase(), //to make sure we update the quantity left : walletAddress
         qtyBought: Number(qty),
         qty_sold: Number(details.quantity_sold) + Number(qty),
-        buyer: account.toLowerCase(),
+        buyer: account?.toLowerCase(),
         LazyMintingStatus:
           details.nftID.quantity_minted + qty == details.nftID.totalQuantity
             ? 0
@@ -266,7 +266,6 @@ export const handleBuyNft = async (
             ? details.nftID.quantity_minted
             : details.nftID.quantity_minted + qty,
       });
-
       DeleteOrder({ orderID: id });
     } else {
       await UpdateOrder({
@@ -275,13 +274,13 @@ export const handleBuyNft = async (
         seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
         qtyBought: Number(qty),
         qty_sold: Number(details.quantity_sold) + Number(qty),
-        buyer: account.toLowerCase(),
+        buyer: account?.toLowerCase(),
         LazyMintingStatus:
-          details.nftID.quantity_minted + qty == details.nftID.totalQuantity
+          details.nftID.quantity_minted + qty === details.nftID.totalQuantity
             ? 0
             : 1,
         quantity_minted:
-          details.nftID.quantity_minted == details.nftID.totalQuantity
+          details.nftID.quantity_minted === details.nftID.totalQuantity
             ? details.nftID.quantity_minted
             : details.nftID.quantity_minted + qty,
       });
@@ -437,10 +436,10 @@ export const putOnMarketplace = async (account, orderData) => {
     let reqParams = {
       nftID: orderData.nftId,
       seller: account,
-      tokenAddress: orderData.tokenAddress
-        ? orderData.tokenAddress.toLowerCase()
+      tokenAddress: orderData?.tokenAddress
+        ? orderData.tokenAddress?.toLowerCase()
         : "0x0000000000000000000000000000000000000000",
-      collectionAddress: orderData.collection.toLowerCase(),
+      collectionAddress: orderData.collection?.toLowerCase(),
       price: _price,
       quantity: Number(orderData.quantity),
       saleType: Number(orderData.saleType),
@@ -456,7 +455,7 @@ export const putOnMarketplace = async (account, orderData) => {
     console.log("seller sign", reqParams);
 
     NotificationManager.success("Order created successfully");
-    slowRefresh();
+    slowRefresh(1000);
     // window.location.href = "/profile";
   } catch (err) {
     console.log("error in Api", err);
@@ -710,15 +709,23 @@ export const createOffer = async (
   try {
     buyerOrder.push(buyerAccount);
     buyerOrder.push(collectionAddress);
-    buyerOrder.push(tokenId);
-    buyerOrder.push(qty);
+    buyerOrder.push(parseInt(tokenId));
+    buyerOrder.push(parseInt(qty));
     buyerOrder.push(1);
     buyerOrder.push(paymentToken);
-    buyerOrder.push(bidPrice);
+    buyerOrder.push(bidPrice.toString());
     buyerOrder.push(deadline);
     buyerOrder.push([]);
     buyerOrder.push([]);
     buyerOrder.push(Math.round(Math.random() * 10000000));
+
+    console.log(
+      "seller order and buyer order",
+
+      "----",
+      buyerOrder,
+      buyerAccount
+    );
 
     let allowance = (
       await getPaymentTokenInfo(buyerAccount, buyerOrder[5])
@@ -734,11 +741,11 @@ export const createOffer = async (
     );
 
     let userTokenBal = await getUsersTokenBalance(buyerOrder[0], buyerOrder[5]);
-
+    console.log("userTokenBal", userTokenBal);
     let usrHaveQuantity = await GetOwnerOfToken(
       buyerOrder[1],
       buyerOrder[2],
-      erc721,
+      1,
       buyerOrder[0]
     );
 
@@ -774,7 +781,6 @@ export const createOffer = async (
 
     console.log(
       "seller order and buyer order",
-
       "----",
       buyerOrder,
       buyerAccount
@@ -804,23 +810,24 @@ export const createOffer = async (
           console.log("offer is--->", offer);
           if (!isEmptyObject(offer)) {
             NotificationManager.success("Offer Placed Successfully");
+            slowRefresh(1000);
           } else {
             NotificationManager.error("Something Went Wrong!");
+            return false;
           }
         } catch (e) {
           NotificationManager.error("Failed");
+          return false;
         }
-
-        // slowRefresh();
       }
 
       // window.location.reload();
     } catch (e) {
-      console.log("error in api", e);
+      console.log("error in api 1", e);
       return;
     }
   } catch (e) {
-    console.log("error in api", e);
+    console.log("error in api 2", e);
     return;
   }
 };
@@ -979,19 +986,7 @@ export const handleAcceptBids = async (
       console.log("error in contract", e);
       return;
     }
-    // try {
-    //   let reqParams = {
-    //     bidID: bidData._id,
-    //     erc721: isERC721,
-    //     status: isERC721 ? 2 : 1,
-    //     qty_sold: details.quantity_sold + bidData.bidQuantity,
-    //   };
-
-    //   await acceptBid(reqParams);
-    // } catch (e) {
-    //   console.log("error in api", e);
-    //   return;
-    // }
+   
     try {
       await UpdateOrder({
         orderID: bidData.orderID,
@@ -999,7 +994,7 @@ export const handleAcceptBids = async (
         seller: details?.sellerID?.walletAddress, //to make sure we update the quantity left : walletAddress
         qtyBought: Number(bidData.bidQuantity),
         qty_sold: Number(details.quantity_sold) + Number(bidData.bidQuantity),
-        buyer: buyerOrder[0].toLowerCase(),
+        buyer: buyerOrder[0]?.toLowerCase(),
         LazyMintingStatus: LazyMintingStatus,
       });
 
@@ -1024,7 +1019,7 @@ export const handleAcceptBids = async (
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-  // slowRefresh();
+  slowRefresh(1000);
 };
 
 export const handleAcceptOffers = async (bidData, props, account) => {
@@ -1044,8 +1039,8 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         break;
 
       case 1:
-        sellerOrder.push(props.NftDetails.collectionAddress.toLowerCase());
-        buyerOrder.push(props.NftDetails.collectionAddress.toLowerCase());
+        sellerOrder.push(props.NftDetails.collectionAddress?.toLowerCase());
+        buyerOrder.push(props.NftDetails.collectionAddress?.toLowerCase());
         break;
       case 2:
         sellerOrder.push(Number(props.NftDetails.tokenId));
@@ -1066,8 +1061,8 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         buyerOrder.push(1);
         break;
       case 5:
-        sellerOrder.push(bidData.tokenAddress.toLowerCase());
-        buyerOrder.push(bidData.tokenAddress.toLowerCase());
+        sellerOrder.push(bidData.tokenAddress?.toLowerCase());
+        buyerOrder.push(bidData.tokenAddress?.toLowerCase());
         break;
       case 6:
         buyerOrder.push(amount);
@@ -1090,6 +1085,9 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         sellerOrder.push(Number(bidData.salt));
         buyerOrder.push(Number(bidData.salt));
         break;
+      default:
+        sellerOrder.push([]);
+        buyerOrder.push([]);
     }
   }
   console.log("seller order", sellerOrder);
@@ -1195,7 +1193,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
       return;
     }
 
-    let erc721 = props.NftDetails.type == 1 ? 1 : 2;
+    let erc721 = props.NftDetails.type === 1 ? 1 : 2;
 
     try {
       let reqParams = {
@@ -1227,7 +1225,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-  // slowRefresh();
+  slowRefresh(1000);
 };
 
 export const handleUpdateBidStatus = async (

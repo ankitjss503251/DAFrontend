@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Footer from "../components/footer";
 import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
@@ -24,11 +24,7 @@ import { useCookies } from "react-cookie";
 import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
 
 import contracts from "../../config/contracts";
-import {
-  GENERAL_DATE,
-  GENERAL_TIMESTAMP,
-  ZERO_ADDRESS,
-} from "../../helpers/constants";
+import { GENERAL_DATE } from "../../helpers/constants";
 import { NotificationManager } from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
@@ -37,8 +33,11 @@ import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { getNFTList } from "../../apiServices";
+import { fetchBidNft, getNFTList } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
+
+import { useGLTF, OrbitControls } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
 
 var textColor = {
   textColor: "#EF981D",
@@ -63,7 +62,7 @@ function NFTDetails() {
   const [itemprice, setItemprice] = useState(0);
   const [item_qt, setItem_qt] = useState(1);
   const [item_bid, setItem_bid] = useState(0);
-  const [selectedToken, setSelectedToken] = useState("USDT");
+  const [selectedToken, setSelectedToken] = useState("BUSD");
   const [selectedTokenFS, setSelectedTokenFS] = useState("BNB");
   const [datetime, setDatetime] = useState("");
   const [currentUser, setCurrentUser] = useState();
@@ -71,7 +70,6 @@ function NFTDetails() {
   const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isPutOnMarketplace, setIsPutonMarketplace] = useState("");
   const [modal, setModal] = useState(false);
   const [offerPrice, setOfferPrice] = useState();
   const [offerQuantity, setOfferQuantity] = useState(1);
@@ -80,16 +78,20 @@ function NFTDetails() {
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState("");
   const [firstOrderNFT, setFirstOrderNFT] = useState([]);
+  const [haveBid, setHaveBid] = useState(false);
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Wallet", "", 800);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    async function setUser() {
+      if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    }
+    setUser();
   }, [cookies.selected_account]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    async function windowScroll() {
+      window.scrollTo(0, 0);
+    }
+    windowScroll();
   }, []);
 
   useEffect(() => {
@@ -154,6 +156,24 @@ function NFTDetails() {
     };
     fetch();
   }, [id, currentUser]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let searchParams = {
+        nftID: NFTDetails.id,
+        buyerID: localStorage.getItem("userId"),
+        bidStatus: "All",
+        orderID: "All",
+      };
+
+      let _data = await fetchBidNft(searchParams);
+      console.log("bid data123", _data);
+      if (_data && _data.data.length > 0) {
+        setHaveBid(true);
+      }
+    };
+    fetch();
+  }, [NFTDetails]);
 
   const PutMarketplace = async () => {
     setLoading(true);
@@ -255,11 +275,15 @@ function NFTDetails() {
     );
     setLoading(false);
 
-    // slowRefresh(1000);
+    slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
-    return;
   };
+
+  function Model(props) {
+    const { scene } = useGLTF(props.image);
+    return <primitive object={scene} />;
+  }
 
   // Popup
 
@@ -333,12 +357,15 @@ function NFTDetails() {
   }
 
   useEffect(() => {
-    var body = document.body;
-    if (loading || isPlaceBidModal || isBuyNowModal) {
-      body.classList.add("overflow_hidden");
-    } else {
-      body.classList.remove("overflow_hidden");
+    async function addClassList() {
+      var body = document.body;
+      if (loading || isPlaceBidModal || isBuyNowModal) {
+        body.classList.add("overflow_hidden");
+      } else {
+        body.classList.remove("overflow_hidden");
+      }
     }
+    addClassList();
   }, [loading, isPlaceBidModal, isBuyNowModal]);
 
   // Place Bid Checkout Modal
@@ -358,7 +385,7 @@ function NFTDetails() {
                     "..." +
                     currentUser?.slice(34, 42)}
                 </span>
-                <span class="badge badge-success">Connected</span>
+                <span className="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
             </div>
@@ -497,7 +524,7 @@ function NFTDetails() {
                     "..." +
                     currentUser?.slice(34, 42)}
                 </span>
-                <span class="badge badge-success">Connected</span>
+                <span className="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
             </div>
@@ -558,7 +585,7 @@ function NFTDetails() {
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
               setLoading(false);
-              slowRefresh(1000);
+              // slowRefresh(1000);
             }}
           >
             {"Buy Now"}
@@ -602,27 +629,15 @@ function NFTDetails() {
               ) : (
                 ""
               )}
+
               {NFTDetails && NFTDetails.fileType == "3D" ? (
-                <GLTFModel
-                  height="280"
-                  width="220"
-                  position={{ x: 0, y: 0, z: 0 }}
-                  anitialias={false}
-                  //enableZoom={false}
-                  //bd4972d8-3441-439e-b669-c8553190f1c6
-                  className="img-fluid nftimg"
-                  src={NFTDetails?.image}
-                >
-                  <AmbientLight color={0xffffff} />
-                  <DirectionLight
-                    color={0xffffff}
-                    position={{ x: 100, y: 200, z: 100 }}
-                  />
-                  <DirectionLight
-                    color={0xff00ff}
-                    position={{ x: -100, y: 200, z: -100 }}
-                  />
-                </GLTFModel>
+                <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
+                  <pointLight position={[10, 10, 10]} intensity={1.3} />
+                  <Suspense fallback={null}>
+                    <Model image={NFTDetails.image} />
+                  </Suspense>
+                  <OrbitControls />
+                </Canvas>
               ) : (
                 ""
               )}
@@ -786,7 +801,7 @@ function NFTDetails() {
                         setIsPlaceBidModal(true);
                       }}
                     >
-                      Place Bid
+                      {haveBid ? "Update Bid" : "Place Bid"}
                     </button>
                   )
                 ) : (
@@ -968,10 +983,7 @@ function NFTDetails() {
       </section>
 
       {/* <!-- The Modal --> */}
-      <div
-        className={`modal marketplace putOnMarketplace ${isPutOnMarketplace}`}
-        id="detailPop"
-      >
+      <div className={`modal marketplace putOnMarketplace`} id="detailPop">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             {/* <!-- Modal Header --> */}
@@ -1029,24 +1041,28 @@ function NFTDetails() {
               </ul>
 
               <div className="tab-content">
-                <div className="mb-3" id="tab_opt_1">
-                  <label htmlfor="item_price" className="form-label">
-                    Price
-                  </label>
-                  <input
-                    type="text"
-                    name="item_price"
-                    id="item_price"
-                    min="0"
-                    max="18"
-                    className="form-control input_design"
-                    placeholder="Please Enter Price (MATIC)"
-                    value={itemprice}
-                    onChange={(event) => setItemprice(event.target.value)}
-                  />
-                </div>
+                {marketplaceSaleType === 0 ? (
+                  <div className="mb-3" id="tab_opt_1">
+                    <label htmlFor="item_price" className="form-label">
+                      Price
+                    </label>
+                    <input
+                      type="text"
+                      name="item_price"
+                      id="item_price"
+                      min="0"
+                      max="18"
+                      className="form-control input_design"
+                      placeholder="Please Enter Price (MATIC)"
+                      value={itemprice}
+                      onChange={(event) => setItemprice(event.target.value)}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
                 <div className="mb-3" id="tab_opt_2">
-                  <label htmlfor="item_qt" className="form-label">
+                  <label htmlFor="item_qt" className="form-label">
                     Quantity
                   </label>
                   <input
@@ -1075,7 +1091,7 @@ function NFTDetails() {
                   />
                 </div>
                 <div id="tab_opt_3" className="mb-3 put_hide">
-                  <label htmlfor="item_bid" className="form-label">
+                  <label htmlFor="item_bid" className="form-label">
                     Minimum bid
                   </label>
                   <input
@@ -1092,7 +1108,7 @@ function NFTDetails() {
                 </div>
 
                 <div id="tab_opt_4" className="mb-3">
-                  <label htmlfor="Payment" className="form-label">
+                  <label htmlFor="Payment" className="form-label">
                     Payment Token
                   </label>
 
@@ -1114,22 +1130,22 @@ function NFTDetails() {
                           BNB
                         </option>
                         <option value={"HNTR"}>HNTR</option>
-                        <option value={"USDT"}>USDT</option>
+                        <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
                   ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
                         {" "}
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1137,14 +1153,14 @@ function NFTDetails() {
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1201,7 +1217,7 @@ function NFTDetails() {
             <div className="modal-body">
               <div className="tab-content">
                 <div className="mb-3" id="tab_opt_1">
-                  <label htmlfor="item_price" className="form-label">
+                  <label htmlFor="item_price" className="form-label">
                     Price
                   </label>
                   <input
@@ -1217,7 +1233,7 @@ function NFTDetails() {
                   />
                 </div>
                 <div className="mb-3" id="tab_opt_2">
-                  <label htmlfor="item_qt" className="form-label">
+                  <label htmlFor="item_qt" className="form-label">
                     Quantity
                   </label>
                   <input
@@ -1225,7 +1241,7 @@ function NFTDetails() {
                     name="item_qt"
                     id="item_qt"
                     min="1"
-                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
+                    disabled={NFTDetails.type === 1 ? true : false}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"
                     value={offerQuantity}
@@ -1253,7 +1269,7 @@ function NFTDetails() {
                   />
                 </div>
                 <div id="tab_opt_4" className="mb-3">
-                  <label htmlfor="Payment" className="form-label">
+                  <label htmlFor="Payment" className="form-label">
                     Payment Token
                   </label>
 
@@ -1275,22 +1291,22 @@ function NFTDetails() {
                           BNB
                         </option> */}
                         {/* <option value={"HNTR"}>HNTR</option> */}
-                        <option value={"USDT"}>USDT</option>
+                        <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
                   ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
                         {" "}
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1298,14 +1314,14 @@ function NFTDetails() {
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1313,7 +1329,7 @@ function NFTDetails() {
                 </div>
 
                 <div id="tab_opt_5" className="mb-3 ">
-                  <label for="item_ex_date" className="form-label">
+                  <label htmlFor="item_ex_date" className="form-label">
                     Expiration date
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
@@ -1329,7 +1345,6 @@ function NFTDetails() {
                   <button
                     type="button"
                     className="square_yello"
-                    href="/mintcollectionlive"
                     onClick={PlaceOffer}
                   >
                     Place Offer

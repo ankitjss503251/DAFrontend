@@ -53,10 +53,10 @@ function Minttab(props) {
               ? props.upcoming.map((card, key) => {
                   return (
                     <div className="col-lg-4 col-md-6 mb-4" key={key}>
-                      <a href={`/multimintingpage/${card._id}`}>
+                      <a href={card.link}>
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
-                            <img alt="" src={card.coverImg} class="img-fluid" />
+                            <img alt="" src={card.logoImg} class="img-fluid" />
                             <div className="mint_date">
                               <span>
                                 {moment(card.saleStartTime).format("DD")}
@@ -68,8 +68,11 @@ function Minttab(props) {
                             <div className="logoImg_con">
                               <img
                                 alt=""
-                                src={card.logoImg}
+                                src={card.brand.logoImage}
                                 className="mc_img"
+                                onError={(e) => {
+                                  e.target.src = "../img/collections/list4.png"
+                                }}
                               />
                             </div>
                             <h4>{card.name}</h4>
@@ -151,10 +154,10 @@ function Minttab(props) {
               ? props.past.map((card, key) => {
                   return (
                     <div className="col-lg-4 col-md-6 mb-4" key={key}>
-                      <a href={`/multimintingpage/${card._id}`}>
+                      <a href={card.link}>
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
-                            <img alt="" src={card.coverImg} class="img-fluid" />
+                            <img alt="" src={card.logoImg} class="img-fluid" />
                             <div className="mint_date">
                               <span>
                                 {moment(card.saleStartTime).format("DD")}
@@ -166,7 +169,7 @@ function Minttab(props) {
                             <div className="logoImg_con">
                               <img
                                 alt=""
-                                src={card.logoImg}
+                                src={card.coverImg}
                                 className="mc_img"
                               />
                             </div>
