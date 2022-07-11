@@ -23,6 +23,7 @@
     "bootstrap": "^5.1.1",
     "cra-template": "1.1.2",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.0.1",
     "elegant-icons": "0.0.1",
     "emailjs-com": "^3.2.0",
     "env-cmd": "^10.1.0",

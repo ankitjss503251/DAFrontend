@@ -41,7 +41,6 @@ function MultiMintingPage(props) {
   const params = useParams();
 
   const contractCalls = lazyImport(params.id);
-  console.log("params", params.id);
   const [currentUser, setCurrentUser] = useState();
   const [collectionDetails, setCollectionDetails] = useState();
   const [categories, setcategories] = useState();
@@ -138,11 +137,23 @@ function MultiMintingPage(props) {
 
     // console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
+  useEffect(() => {
+    const bodyClass = async () => {
+      var body = document.body;
+      if (isShowPopup) {
+        body.classList.add("overflow_hidden");
+      } else {
+        body.classList.remove("overflow_hidden");
+      }
+    };
+    bodyClass();
+  }, [isShowPopup]);
+
 
   useEffect(() => {
     const fetchData = async () => {
       let { fetchInfo } = await contractCalls;
-      let getcateg = await fetchInfo(params.id);
+      let getcateg = await fetchInfo(params.id,cookies.selected_account);
       setTotalSupply(getcateg[2].toString());
       setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
     };

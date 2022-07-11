@@ -481,13 +481,13 @@ export const GetOwnedNftList = async (data) => {
     return err;
   }
 };
-export const isWhitelisted = async (address) => {
+export const isWhitelisted = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(address),
+    body: JSON.stringify(data),
   };
 
   try {

@@ -8,3 +8,4 @@ export const MAX_ALLOWANCE_AMOUNT = ethers.constants.MaxInt256;
 // export const options = [{ value: contracts.USDT, title: "USDT" }];
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+export const MAX_WHITELIST_BUY_PER_USER=2
