@@ -188,10 +188,10 @@ export const handleBuyNft = async (
       isERC721,
       sellerOrder[0]
     );
-    // if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-    //   NotificationManager.error("Seller don't own that much quantity");
-    //   return false;
-    // }
+    if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
+      NotificationManager.error("Seller don't own that much quantity");
+      return false;
+    }
   } catch (e) {
     console.log("error", e);
     return;
@@ -227,18 +227,18 @@ export const handleBuyNft = async (
       value: sellerOrder[5] === ZERO_ADDRESS ? amount : 0,
     };
 
-    // let completeOrder = await marketplace.completeOrder(
-    //   sellerOrder,
-    //   signature,
-    //   buyerOrder,
-    //   signature,
-    //   options
-    // );
-    // console.log("complete order is--->", completeOrder, options);
-    // let res = await completeOrder.wait();
-    // if (res.status === 0) {
-    //   return false;
-    // }
+    let completeOrder = await marketplace.completeOrder(
+      sellerOrder,
+      signature,
+      buyerOrder,
+      signature,
+      options
+    );
+    console.log("complete order is--->", completeOrder, options);
+    let res = await completeOrder.wait();
+    if (res.status === 0) {
+      return false;
+    }
   } catch (e) {
     console.log("error in contract function calling", e);
     if (e.code === 4001) {
@@ -266,7 +266,7 @@ export const handleBuyNft = async (
             ? details.nftID.quantity_minted
             : details.nftID.quantity_minted + qty,
       });
-      // DeleteOrder({ orderID: id });
+      DeleteOrder({ orderID: id });
     } else {
       await UpdateOrder({
         orderId: id,
@@ -285,17 +285,17 @@ export const handleBuyNft = async (
             : details.nftID.quantity_minted + qty,
       });
 
-      // if (
-      //   Number(details.quantity_sold) + Number(qty) >=
-      //   details.total_quantity
-      // ) {
-      //   try {
-      //     await DeleteOrder({ orderID: id });
-      //   } catch (e) {
-      //     console.log("error in updating order data", e);
-      //     return false;
-      //   }
-      // }
+      if (
+        Number(details.quantity_sold) + Number(qty) >=
+        details.total_quantity
+      ) {
+        try {
+          await DeleteOrder({ orderID: id });
+        } catch (e) {
+          console.log("error in updating order data", e);
+          return false;
+        }
+      }
     }
   } catch (e) {
     console.log("error in updating order data", e);
@@ -303,7 +303,7 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
-  // slowRefresh(1000);
+  slowRefresh(1000);
   // setTimeout(() => {
   //   window.location.href = `/NFTDetails/${details?.nftID?._id}`;
   // }, 1000);
@@ -455,7 +455,7 @@ export const putOnMarketplace = async (account, orderData) => {
     console.log("seller sign", reqParams);
 
     NotificationManager.success("Order created successfully");
-    slowRefresh();
+    slowRefresh(1000);
     // window.location.href = "/profile";
   } catch (err) {
     console.log("error in Api", err);
@@ -810,14 +810,15 @@ export const createOffer = async (
           console.log("offer is--->", offer);
           if (!isEmptyObject(offer)) {
             NotificationManager.success("Offer Placed Successfully");
+            slowRefresh(1000);
           } else {
             NotificationManager.error("Something Went Wrong!");
+            return false;
           }
         } catch (e) {
           NotificationManager.error("Failed");
+          return false;
         }
-
-        // slowRefresh();
       }
 
       // window.location.reload();
@@ -985,19 +986,7 @@ export const handleAcceptBids = async (
       console.log("error in contract", e);
       return;
     }
-    // try {
-    //   let reqParams = {
-    //     bidID: bidData._id,
-    //     erc721: isERC721,
-    //     status: isERC721 ? 2 : 1,
-    //     qty_sold: details.quantity_sold + bidData.bidQuantity,
-    //   };
-
-    //   await acceptBid(reqParams);
-    // } catch (e) {
-    //   console.log("error in api", e);
-    //   return;
-    // }
+   
     try {
       await UpdateOrder({
         orderID: bidData.orderID,
@@ -1030,7 +1019,7 @@ export const handleAcceptBids = async (
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-  // slowRefresh();
+  slowRefresh(1000);
 };
 
 export const handleAcceptOffers = async (bidData, props, account) => {
@@ -1204,7 +1193,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
       return;
     }
 
-    let erc721 = props.NftDetails.type == 1 ? 1 : 2;
+    let erc721 = props.NftDetails.type === 1 ? 1 : 2;
 
     try {
       let reqParams = {
@@ -1236,7 +1225,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-  // slowRefresh();
+  slowRefresh(1000);
 };
 
 export const handleUpdateBidStatus = async (
