@@ -558,7 +558,8 @@ function Marketplace() {
                           ) : (
                             ""
                           )}
-                          {card && card.fileType === "3D" ? (
+                          {/* 
+                         {card && card.fileType === "3D" ? (
                             <Canvas
                               class="img-fluid items_img w-100 my-3"
                               camera={{ position: [10, 100, 100], fov: 1 }}
@@ -575,6 +576,7 @@ function Marketplace() {
                           ) : (
                             ""
                           )}
+                        */}
                         </a>
                         <div className="items_text nft-info-div">
                           <div className="items_info ">
