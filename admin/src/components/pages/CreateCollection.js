@@ -269,7 +269,7 @@ function CreateCollection() {
         fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
         fd.append("preSaleStartTime", preSaleStartTime);
         fd.append("preSaleEndTime", datetime2);
-        fd.append("preSaleTokenAddress", contracts.USDT);
+        fd.append("preSaleTokenAddress", contracts.BUSD);
         fd.append("totalSupply", maxSupply);
         fd.append("type", Number(nftType));
         fd.append("price", ethers.utils.parseEther(price.toString()));
@@ -289,7 +289,7 @@ function CreateCollection() {
           creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
           console.log("creator is---->", creator);
           console.log("create collection is called");
-          console.log("contracts usdt address", contracts.USDT);
+          console.log("contracts busd address", contracts.BUSD);
         } catch (e) {
           console.log("err", e);
           setLoading(false);
@@ -306,12 +306,12 @@ function CreateCollection() {
                   symbol,
                   "www.uri.com",
                   royalty * 100,
-                  contracts.USDT
+                  contracts.BUSD
                 ))
               : (res1 = await creator.deployExtendedERC1155(
                   "www.uri.com",
                   royalty * 100,
-                  contracts.USDT
+                  contracts.BUSD
                 ));
 
             let hash = res1;
@@ -352,7 +352,7 @@ function CreateCollection() {
           fd.append("contractAddress", contractAddress);
           fd.append("preSaleStartTime", preSaleStartTime);
           fd.append("preSaleEndTime", datetime2);
-          fd.append("preSaleTokenAddress", contracts.USDT);
+          fd.append("preSaleTokenAddress", contracts.BUSD);
           fd.append("totalSupply", maxSupply);
           fd.append("type", type);
           fd.append("price", ethers.utils.parseEther(price.toString()));
@@ -388,7 +388,7 @@ function CreateCollection() {
       creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
       console.log("creator is---->", creator);
       console.log("create collection is called");
-      console.log("contracts usdt address", contracts.USDT);
+      console.log("contracts busd address", contracts.BUSD);
     } catch (e) {
       console.log("err", e);
       setLoading(false);

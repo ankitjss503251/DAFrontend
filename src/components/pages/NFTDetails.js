@@ -66,7 +66,7 @@ function NFTDetails() {
   const [itemprice,setItemprice]=useState(0);
   const [item_qt,setItem_qt]=useState(1);
   const [item_bid,setItem_bid]=useState(0);
-  const [selectedToken,setSelectedToken]=useState("USDT");
+  const [selectedToken,setSelectedToken]=useState("BUSD");
   const [selectedTokenFS,setSelectedTokenFS]=useState("BNB");
   const [datetime,setDatetime]=useState("");
   const [currentUser,setCurrentUser]=useState();
@@ -1119,22 +1119,22 @@ function NFTDetails() {
                           BNB
                         </option>
                         <option value={"HNTR"}>HNTR</option>
-                        <option value={"USDT"}>USDT</option>
+                        <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
                   ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
                         {" "}
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1142,14 +1142,14 @@ function NFTDetails() {
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1280,22 +1280,22 @@ function NFTDetails() {
                           BNB
                         </option> */}
                         {/* <option value={"HNTR"}>HNTR</option> */}
-                        <option value={"USDT"}>USDT</option>
+                        <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
                   ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
                         {" "}
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1303,14 +1303,14 @@ function NFTDetails() {
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>

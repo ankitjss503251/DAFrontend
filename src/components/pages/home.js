@@ -66,20 +66,23 @@ var mint_bg = {
 
 const Home = () => {
   const [upcomingMints, setUpcomingMints] = useState([]);
-  useEffect(async () => {
-    try {
-      const res = await getCollections({
-        page: 1,
-        limit: 12,
-        isExclusive: 1,
-        isOnMarketplace: 1
-      });
-      setUpcomingMints(res);
-    } catch (e) {
-      console.log("Error in fetching all upcoming mints list", e);
+  useEffect(() => {
+    const getCollectionData = async () => {
+      try {
+        const res = await getCollections({
+          page: 1,
+          limit: 12,
+          isExclusive: 1,
+          isOnMarketplace: 1
+        });
+        setUpcomingMints(res);
+      } catch (e) {
+        console.log("Error in fetching all upcoming mints list", e);
+      }
+      getCollectionData()
     }
-    getCollectionData()
-  }, []);
+  }
+ , []);
 
   return (
     <div style={bgImgStyle}>

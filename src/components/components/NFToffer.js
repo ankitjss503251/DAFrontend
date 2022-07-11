@@ -22,8 +22,8 @@ function NFToffer(props) {
   const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);
   const [offer, setOffer] = useState([]);
-  const [selectedToken, setSelectedToken] = useState("USDT");
-  const [selectedTokenFS, setSelectedTokenFS] = useState("USDT");
+  const [selectedToken, setSelectedToken] = useState("BUSD");
+  const [selectedTokenFS, setSelectedTokenFS] = useState("BUSD");
   const [datetime, setDatetime] = useState("");
   const [loading, setLoading] = useState(false);
   const [offerPrice, setOfferPrice] = useState();
@@ -155,6 +155,7 @@ function NFToffer(props) {
             <tbody>
               {offer && offer.length > 0
                 ? offer.map((b, i) => {
+                    console.log("token image", b);
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
 
@@ -173,7 +174,7 @@ function NFToffer(props) {
                         <td>
                           <img
                             alt=''
-                            src={Tokens[b?.paymentToken]}
+                            src={Tokens[b?.tokenAddress?.toLowerCase()]}
                             className='img-fluid hunter_fav'
                           />{" "}
                           {Number(
@@ -246,13 +247,18 @@ function NFToffer(props) {
                                 data-bs-target='#brandModal'
                                 onClick={() => {
                                   setModal("active");
-                                  console.log("current offer details", b,Number(
-                                    convertToEth(b?.bidPrice?.$numberDecimal)
-                                  ).toFixed(4));
-                                  setOfferPrice(convertToEth(b?.bidPrice?.$numberDecimal)
-                                  .toFixed(4));
-
-                                 
+                                  console.log(
+                                    "current offer details",
+                                    b,
+                                    Number(
+                                      convertToEth(b?.bidPrice?.$numberDecimal)
+                                    ).toFixed(4)
+                                  );
+                                  setOfferPrice(
+                                    convertToEth(
+                                      b?.bidPrice?.$numberDecimal
+                                    ).toFixed(4)
+                                  );
                                 }}>
                                 Update Offer
                               </button>
@@ -366,7 +372,7 @@ function NFToffer(props) {
                     <>
                       <select
                         className='form-select input_design select_bg'
-                        name='USDT'
+                        name='BUSD'
                         value={selectedTokenFS}
                         onChange={(event) => {
                           event.preventDefault();
@@ -379,21 +385,21 @@ function NFToffer(props) {
                           BNB
                         </option>
                         <option value={"HNTR"}>HNTR</option> */}
-                        <option value={"USDT"}>USDT</option>
+                        <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
                   ) : marketplaceSaleType == 1 ? (
                     <>
                       <select
                         className='form-select input_design select_bg'
-                        name='USDT'
+                        name='BUSD'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }>
                         {" "}
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -401,13 +407,13 @@ function NFToffer(props) {
                     <>
                       <select
                         className='form-select input_design select_bg'
-                        name='USDT'
+                        name='BUSD'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }>
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
