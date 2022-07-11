@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Tokens } from "../../helpers/tokensToSymbol";
 
 function CollectionList(props) {
   return (
@@ -20,39 +21,13 @@ function CollectionList(props) {
             </div>
             <div className='collection_col text-end'>
               <span>Price</span>
-              <span className='col_proiduct_price'>
-                <svg
-                  width='10'
-                  height='16'
-                  viewBox='0 0 10 16'
-                  fill='none'
-                  xmlns='http://www.w3.org/2000/svg'>
-                  <path
-                    d='M4.99858 0L4.8894 0.364508V10.9417L4.99858 11.0487L9.9971 8.14657L4.99858 0Z'
-                    fill='#343434'
-                  />
-                  <path
-                    d='M4.99852 0L0 8.14657L4.99852 11.0488V5.91494V0Z'
-                    fill='#8C8C8C'
-                  />
-                  <path
-                    d='M4.99854 11.9784L4.93701 12.0521V15.8199L4.99854 15.9964L10 9.07768L4.99854 11.9784Z'
-                    fill='#3C3C3B'
-                  />
-                  <path
-                    d='M4.99852 15.9964V11.9783L0 9.07761L4.99852 15.9964Z'
-                    fill='#8C8C8C'
-                  />
-                  <path
-                    d='M4.99854 11.0488L9.99697 8.14661L4.99854 5.91498V11.0488Z'
-                    fill='#141414'
-                  />
-                  <path
-                    d='M0 8.14661L4.99844 11.0488V5.91498L0 8.14661Z'
-                    fill='#393939'
-                  />
-                </svg>
+              <span className='col_proiduct_price d-flex align-items-center'>
+               <div className="token_img">
+                {props.nft.paymentToken && <img src={Tokens[props.nft.paymentToken?.toLowerCase()]?.icon} alt="payment token symbol"/> }
+               </div>
+               <div className="ml-3">
                 {props.nft.price}
+               </div>
               </span>
               {/* <span>
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">

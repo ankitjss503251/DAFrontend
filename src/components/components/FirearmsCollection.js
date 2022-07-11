@@ -65,15 +65,15 @@ function FirearmsCollection(props) {
                             class='img-fluid'
                           />
                         </span>
-                        <h3 className=''>{card.name}</h3>
-                        <p>
+                        <h3 className='text-left'>{card.name}</h3>
+                        {/* <p>
                           <img
                             alt=''
                             src={"../img/favicon.png"}
                             class='img-fluid'
                           />
-                          {card.price} HNTR
-                        </p>
+                          {card.price} 
+                        </p> */}
                       </div>
                     </a>
                   </div>

@@ -13,6 +13,7 @@ import Clock from "./../components/Clock";
 import { getCollections } from "../../helpers/getterFunctions";
 import moment from "moment";
 import { convertToEth } from "../../helpers/numberFormatter";
+import { Tokens } from "../../helpers/tokensToSymbol";
 
 const fadeInUp = keyframes`
   0% {
@@ -73,16 +74,15 @@ const Home = () => {
           page: 1,
           limit: 12,
           isExclusive: 1,
-          isOnMarketplace: 1
+          isOnMarketplace: 1,
         });
         setUpcomingMints(res);
       } catch (e) {
         console.log("Error in fetching all upcoming mints list", e);
       }
-      getCollectionData()
-    }
-  }
- , []);
+    };
+    getCollectionData();
+  }, []);
 
   return (
     <div style={bgImgStyle}>
@@ -188,7 +188,8 @@ const Home = () => {
             </div>
             {upcomingMints && upcomingMints?.length > 0
               ? upcomingMints.slice(0, 3).map((card, key) => {
-                  const st = card.saleStartTime;
+                const st = card.saleStartTime;
+                console.log("start date", st, st !== null);
                   const et = card.saleEndTime;
                   const ct = moment()
                     .add({
@@ -196,7 +197,6 @@ const Home = () => {
                       minutes: 30,
                     })
                     .toISOString();
-                  console.log("cardd", card);
                   return (
                     <div
                       className='col-lg-4 col-md-6 col-sm-12 mb-lg-0 mb-xl-0 mb-4'
@@ -208,18 +208,17 @@ const Home = () => {
                               alt=''
                               src={card?.logoImg}
                               class='img-fluid'
-                              onError={(e) => e.target.src = "../img/collections/list4.png"}
+                              onError={(e) =>
+                                (e.target.src = "../img/collections/list4.png")
+                              }
                             />
-                            {ct >= st && ct < et ? (
-                              ""
-                            ) : (
-                              <div className='mint_date'>
+                            {st !== null ? (ct >= st && ct < et) ?  <div className='mint_date'>
                                 <span>
                                   {moment(card?.saleStartTime).format("DD")}
                                 </span>{" "}
                                 {moment(card?.saleStartTime).format("MMM")}
-                              </div>
-                            )}
+                              </div> : "" : ""}
+                            
                           </div>
                         </a>
                         <div className='mint_text p-4'>
@@ -231,17 +230,24 @@ const Home = () => {
                                 alt=''
                                 src={card.brand?.logoImage}
                                 className='mc_img'
-                                onError={(e) => e.target.src = "../img/collections/list4.png"}
+                                onError={(e) =>
+                                  (e.target.src =
+                                    "../img/collections/list4.png")
+                                }
                               />
                             </a>
                           </div>
-                          <a href={card.link}> <h4 className="mb-2">{card.name}</h4></a>
+                          <a href={card.link}>
+                            {" "}
+                            <h4 className='mb-2'>{card.name}</h4>
+                          </a>
                           <ul className='m-0 p-0'>
                             <li>
-                              <img alt='' src={"../img/mint/hntr.svg"} />{" "}
-                              {`${Number(convertToEth(card.price)).toFixed(
+                            
+                             <span>{`${Number(convertToEth(card.price)).toFixed(
                                 4
                               )} HNTR`}{" "}
+                              </span> 
                             </li>
                             <li>
                               <img alt='' src={"../img/mint/items.svg"} />{" "}
@@ -574,14 +580,15 @@ const Home = () => {
           <div className='col-lg-12'>
             <CarouselNew />
           </div>
-          {
-            upcomingMints.length > 0 ?
-          <div class='col-md-12 text-center mt-5'>
-            <Link to={"/marketplace"} className='view_all_bdr'>
-              View All
-            </Link>
-          </div> : ""
-          }
+          {upcomingMints.length > 0 ? (
+            <div class='col-md-12 text-center mt-5'>
+              <Link to={"/marketplace"} className='view_all_bdr'>
+                View All
+              </Link>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </section>
 

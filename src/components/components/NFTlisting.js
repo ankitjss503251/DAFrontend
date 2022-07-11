@@ -42,10 +42,8 @@ function NFTlisting(props) {
     const fetch = async () => {
       if (props.id) {
         const _orders = await getOrderByNftID({ nftID: props.id });
-        console.log("orders", _orders?.results?.length);
         setOrders(_orders?.results);
       }
-      console.log("tokens", Tokens);
     };
     fetch();
   }, [props.id]);
@@ -358,14 +356,14 @@ function NFTlisting(props) {
                         <td>
                           <img
                             alt=""
-                            src={Tokens[o.paymentToken.toLowerCase()]}
+                            src={Tokens[o.paymentToken.toLowerCase()].icon}
                             className="img-fluid hunter_fav"
                           />{" "}
                           {o.price && o.price.$numberDecimal
                             ? Number(
                                 convertToEth(o.price.$numberDecimal)
                               ).toFixed(4)
-                            : "0"}
+                            : "0"}{" "}{Tokens[o.paymentToken.toLowerCase()].symbolName}
                         </td>
                         <td>
                           {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
@@ -401,12 +399,6 @@ function NFTlisting(props) {
                             : "Active"}
                         </td>
                         <td>
-                          {console.log(
-                            "new Date(o.deadline*1000) < new Date()",
-                            new Date(o.deadline * 1000) < new Date(),
-                            new Date(o.deadline * 1000),
-                            new Date()
-                          )}
                           <div className="text-center">
                             {o.sellerID?.walletAddress?.toLowerCase() ===
                             currentUser?.toLowerCase() ? (

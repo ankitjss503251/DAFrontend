@@ -111,9 +111,8 @@ function NFTDetails() {
           window.location.href = "/marketplace";
           return;
         }
-        console.log("current User is--->", currentUser);
         setNFTDetails(res[0]);
-        console.table("nft detail------>>>", res[0]);
+        console.log("setNFTDetails", res[0]);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
 
@@ -144,7 +143,6 @@ function NFTDetails() {
 
         if (id) {
           const _orders = await getOrderByNftID({ nftID: id });
-          console.log("orders123", _orders?.results);
 
           setOrders(_orders?.results);
           const _nft = await getNFTList({
@@ -740,13 +738,13 @@ function NFTDetails() {
                     <h4>Price</h4>
                     <div className="price_div">
                       <img
-                        src={Tokens[orders[0].paymentToken]}
+                        src={Tokens[orders[0].paymentToken].icon}
                         className="img-fluid hunter_fav"
                         alt=""
                       />
                       {Number(convertToEth(orders[0].price.$numberDecimal))
                         .toFixed(6)
-                        .slice(0, -2)}{" "}
+                        .slice(0, -2)}{" "}{Tokens[orders[0].paymentToken].symbolName}
                     </div>
                   </>
                 ) : (

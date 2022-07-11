@@ -19,6 +19,7 @@ import BGImg from "./../../assets/images/background.jpg";
 import SkeletonCard from "../components/Skeleton/NFTSkeletonCard";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { Tokens } from "../../helpers/tokensToSymbol";
 
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
@@ -137,7 +138,7 @@ function Marketplace() {
             const orderDet = await getPrice({
               nftID: res[i].id,
             });
-
+            console.log("orderDet", orderDet);  
             // const brandDet = await getBrandDetailsById(
             //   res[i].collectionData[0].brandID
             // );
@@ -151,6 +152,7 @@ function Marketplace() {
                   : Number(convertToEth(orderDet?.price?.$numberDecimal))
                       .toFixed(6)
                       .slice(0, -2),
+              paymentToken: orderDet?.paymentToken
               // brand: brandDet,
             };
           }
@@ -506,6 +508,7 @@ function Marketplace() {
             ) : allNFTs?.length > 0 ? (
               allNFTs.map((oIndex) => {
                 return oIndex.map((card, key) => {
+                  // console.log("12222222234567",Tokens[card?.paymentToken?.toLowerCase()])
                   return (
                     <div className={grid}>
                       <div className="items_slide h-100" key={key}>
@@ -581,7 +584,13 @@ function Marketplace() {
                           <div className="items_info ">
                             <div className="items_left">
                               <h3 className="">{card.name}</h3>
-                              <p>{card.price} HNTR</p>
+                             {card.paymentToken !== undefined ? <>
+                             {/* <div className="token_img">
+                              <img src={Tokens[card?.paymentToken?.toLowerCase()].icon} alt="payment token"/>
+                             </div> */}
+                              <p>{" "}{card.price}{" "}{Tokens[card?.paymentToken?.toLowerCase()].symbolName} </p> 
+                             </>
+                             : ""}
                             </div>
                             <div className="items_right justify-content-end d-flex">
                               <span>

@@ -10,6 +10,7 @@ import {
 } from "./../../helpers/getterFunctions";
 import "./../components-css/App.css";
 import { convertToEth } from "../../helpers/numberFormatter";
+import { Tokens } from "../../helpers/tokensToSymbol";
 
 function ItemsList() {
   const [putOnSaleItems, setPutOnSaleItems] = useState([]);
@@ -37,6 +38,7 @@ function ItemsList() {
                .slice(0, -2),
          saleType: orderDet?.salesType,
          brand: brandDet,
+         paymentToken: orderDet?.paymentToken
        };
      }
 
@@ -141,9 +143,9 @@ function ItemsList() {
                     <div className='items_info'>
                       <div className='items_left '>
                         <h3 className=''>{card.name}</h3>
-                        <p>{card.price} HNTR</p>
+                        <p>{card.price} {Tokens[card?.paymentToken?.toLowerCase()]?.symbolName}</p>
                       </div>
-                      <div className='items_right justify-content-end d-flex'>
+                      {/* <div className='items_right justify-content-end d-flex'>
                         <span>
                           <svg
                             width='16'
@@ -158,7 +160,7 @@ function ItemsList() {
                           </svg>
                           99
                         </span>
-                      </div>
+                      </div> */}
                     </div>
                     <Link
                       to={`/NFTdetails/${card.id}`}

@@ -40,7 +40,6 @@ function NFTBids(props) {
   // ];
 
   useEffect(() => {
-    console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     // else NotificationManager.error("Connect Your Wallet", "", 800);
 
@@ -57,10 +56,8 @@ function NFTBids(props) {
       };
 
       let _data = await fetchBidNft(searchParams);
-      console.log("bid data123", _data);
       if (_data && _data.data.length > 0) {
         setBids(_data.data);
-        console.log("bid data", _data.data);
       }
     };
     fetch();
@@ -309,14 +306,14 @@ function NFTBids(props) {
                               b.orderID.length > 0
                                 ? Tokens[
                                     b.orderID[0]?.paymentToken?.toLowerCase()
-                                  ]
+                                  ].icon
                                 : "-"
                             }
                             className='img-fluid hunter_fav'
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}
+                          ).toFixed(4)}{Tokens[b.orderID[0].paymentToken].symbolName}
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
