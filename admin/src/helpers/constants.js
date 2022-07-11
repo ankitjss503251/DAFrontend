@@ -8,7 +8,7 @@ export const MAX_ALLOWANCE_AMOUNT = ethers.constants.MaxInt256;
 export const options = [
   { value: contracts.WETH, title: "WETH" },
   { value: contracts.USDC, title: "USDC" },
-  { value: contracts.USDT, title: "USDT" },
+  { value: contracts.BUSD, title: "BUSD" },
 ];
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
