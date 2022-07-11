@@ -269,7 +269,7 @@ function CreateCollection() {
         fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
         fd.append("preSaleStartTime", preSaleStartTime);
         fd.append("preSaleEndTime", datetime2);
-        fd.append("preSaleTokenAddress", contracts.USDT);
+        fd.append("preSaleTokenAddress", contracts.BUSD);
         fd.append("totalSupply", maxSupply);
         fd.append("type", Number(nftType));
         fd.append("price", ethers.utils.parseEther(price.toString()));
@@ -289,7 +289,7 @@ function CreateCollection() {
           creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
           console.log("creator is---->", creator);
           console.log("create collection is called");
-          console.log("contracts usdt address", contracts.USDT);
+          console.log("contracts busd address", contracts.BUSD);
         } catch (e) {
           console.log("err", e);
           setLoading(false);
@@ -306,12 +306,12 @@ function CreateCollection() {
                   symbol,
                   "www.uri.com",
                   royalty * 100,
-                  contracts.USDT
+                  contracts.BUSD
                 ))
               : (res1 = await creator.deployExtendedERC1155(
                   "www.uri.com",
                   royalty * 100,
-                  contracts.USDT
+                  contracts.BUSD
                 ));
 
             let hash = res1;
@@ -354,7 +354,7 @@ function CreateCollection() {
           fd.append("contractAddress", contractAddress);
           fd.append("preSaleStartTime", preSaleStartTime);
           fd.append("preSaleEndTime", datetime2);
-          fd.append("preSaleTokenAddress", contracts.USDT);
+          fd.append("preSaleTokenAddress", contracts.BUSD);
           fd.append("totalSupply", maxSupply);
           fd.append("type", type);
           fd.append("price", ethers.utils.parseEther(price.toString()));
@@ -381,6 +381,7 @@ function CreateCollection() {
       }
     }
   };
+
 
   const handleImportNFT = async (isNew) => {
     window.sessionStorage.setItem("importLink", importedCollectionLink);
@@ -518,6 +519,7 @@ function CreateCollection() {
   };
 
   const handleEditCollection = async (_selectedCollectionId) => {
+    console.log("555");
     try {
       const reqData = {
         page: 1,
@@ -527,6 +529,7 @@ function CreateCollection() {
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
       setLogoImg(res2.logoImage);
+      console.log("images", res2.logoImage, res2.coverImage);
       setCoverImg(res2.coverImage);
       setTitle(res2.name);
       setRoyalty(res2.royalityPercentage);
@@ -726,16 +729,17 @@ function CreateCollection() {
                               View NFTs
                             </button> */}
                                   <button
-                                    className="btn p-1  text-light"
-                                    type="button"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#editModal"
-                                    onClick={async () => {
+
+                                    className='btn p-1  text-light'
+                                    type='button'
+                                    data-bs-toggle='modal'
+                                    data-bs-target='#editModal'
+                                    onClick={() => {
+
                                       setSelectedCollectionId(item._id);
                                       setIsEditModal("active");
                                       handleEditCollection(item._id);
-                                    }}
-                                  >
+                                    }}>
                                     Edit
                                   </button>
                                   <button
@@ -866,11 +870,7 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage}
-                          src={
-                            logoImg
-                              ? URL.createObjectURL(logoImg)
-                              : "../images/upload.png"
-                          }
+                          src={logoImg ? logoImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
@@ -917,11 +917,7 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage2}
-                          src={
-                            coverImg
-                              ? URL.createObjectURL(coverImg)
-                              : "../images/upload.png"
-                          }
+                          src={coverImg ? coverImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",

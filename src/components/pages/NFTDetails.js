@@ -261,10 +261,10 @@ function NFTDetails() {
     );
     setLoading(false);
 
-    // slowRefresh(1000);
+    slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
-    return;
+   
   };
 
   function Model(props) {
@@ -1120,22 +1120,22 @@ function NFTDetails() {
                           BNB
                         </option>
                         <option value={"HNTR"}>HNTR</option>
-                        <option value={"USDT"}>USDT</option>
+                        <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
                   ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
                         {" "}
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1143,14 +1143,14 @@ function NFTDetails() {
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1231,7 +1231,7 @@ function NFTDetails() {
                     name="item_qt"
                     id="item_qt"
                     min="1"
-                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
+                    disabled={NFTDetails.type === 1 ? true: false}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"
                     value={offerQuantity}
@@ -1281,22 +1281,22 @@ function NFTDetails() {
                           BNB
                         </option> */}
                         {/* <option value={"HNTR"}>HNTR</option> */}
-                        <option value={"USDT"}>USDT</option>
+                        <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
                   ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
                         {" "}
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1304,14 +1304,14 @@ function NFTDetails() {
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1335,7 +1335,6 @@ function NFTDetails() {
                   <button
                     type="button"
                     className="square_yello"
-                    href="/mintcollectionlive"
                     onClick={PlaceOffer}
                   >
                     Place Offer

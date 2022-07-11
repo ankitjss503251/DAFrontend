@@ -1087,9 +1087,11 @@ function CollectionWithCollection() {
                   </div>
                   <div className='row mt-5'>
                     <div class='col-md-12 text-center '>
-                      <a class='view_all_bdr' href='/'>
-                        Load More
-                      </a>
+                    <button
+                      type='button'
+                      className={`btn view_all_bdr`}   >
+                      Load More
+                    </button>
                     </div>
                   </div>
                 </div>

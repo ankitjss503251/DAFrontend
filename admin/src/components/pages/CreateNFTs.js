@@ -310,7 +310,7 @@ function CreateNFTs() {
       //   collectionDetail.nextID,
       //   quantity,
       //   0,
-      //   contracts.USDT,
+      //   contracts.BUSD,
       //   collectionDetail.price.$numberDecimal,
       //   GENERAL_TIMESTAMP,
       //   [],
