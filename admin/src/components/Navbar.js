@@ -187,19 +187,20 @@ const Navbar = (props) => {
   const userAuth = async (primaryWallet, address) => {
     try {
       const isUserExist = await checkuseraddress(address);
-      if (isUserExist.message === "User not found") {
+      if (isUserExist?.message === "User not found") {
         try {
           const res = await adminRegister(address);
           const res2 = await Login(address);
-          if (res.message === "Wallet Address required") {
-            NotificationManager.info(res.message);
+          if (res?.message === "Wallet Address required") {
+            NotificationManager.info(res?.message);
             return;
-          } else if (res.message === "User already exists") {
-            NotificationManager.error(res.message);
+          } else if (res?.message === "User already exists") {
+            NotificationManager.error(res?.message);
             return;
           } else {
             setAccount(primaryWallet.accounts[0].address);
             setLabel(primaryWallet.label);
+            window.sessionStorage.setItem("role", res2?.data?.userType);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
@@ -214,7 +215,7 @@ const Navbar = (props) => {
             });
             getUserProfile();
             NotificationManager.success(res?.message);
-            slowRefresh(1000);
+            // slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -225,18 +226,20 @@ const Navbar = (props) => {
         try {
           const res = await Login(address);
           console.log("Login API response", res);
-          if (res.message === "Wallet Address required") {
-            NotificationManager.info(res.message);
+          if (res?.message === "Wallet Address required") {
+            NotificationManager.info(res?.message);
             return;
           } else if (
-            res.message === "User not found" ||
-            res.message === "Login Invalid"
+            res?.message === "User not found" ||
+            res?.message === "Login Invalid"
           ) {
             NotificationManager.error(res?.message);
             return;
           } else {
             setAccount(primaryWallet.accounts[0].address);
+
             setLabel(primaryWallet.label);
+            window.sessionStorage.setItem("role", res?.data?.userType);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
@@ -251,7 +254,7 @@ const Navbar = (props) => {
             });
             getUserProfile();
             NotificationManager.success(res?.message);
-            slowRefresh(1000);
+            // slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -267,30 +270,32 @@ const Navbar = (props) => {
   const disconnectWallet = async () => {
     await onboard.disconnectWallet({ label: label });
     await Logout(cookies["selected_account"]);
+    window.sessionStorage.removeItem("role");
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
 
   return (
-    <div className='admin-navbar d-flex w-100'>
+    <div className="admin-navbar d-flex w-100">
       {isChainSwitched ? (
         <PopupModal
           content={
-            <div className='switch_container'>
+            <div className="switch_container">
               <h3>Chain Switched</h3>
-              <p className='my-4 mr-2'>
+              <p className="my-4 mr-2">
                 Please Switch to Matic Testnet Network
               </p>
-              <div className='d-flex justify-content-center align-items-center'>
+              <div className="d-flex justify-content-center align-items-center">
                 <button
-                  className='btn network_btn'
+                  className="btn network_btn"
                   onClick={async () => {
                     await onboard.setChain({
                       chainId: process.env.REACT_APP_CHAIN_ID,
                     });
                     setIsChainSwitched(false);
-                  }}>
+                  }}
+                >
                   Switch Network
                 </button>
               </div>
@@ -301,16 +306,16 @@ const Navbar = (props) => {
       ) : (
         ""
       )}
-      <div className='profile_box text-light me-auto d-flex align-items-center text-uppercase montserrat font-400'>
-        <div className='profile_img'>
-          <img src={"../images/user.jpg"} alt='' className='img-fluid' />
+      <div className="profile_box text-light me-auto d-flex align-items-center text-uppercase montserrat font-400">
+        <div className="profile_img">
+          <img src={"../images/user.jpg"} alt="" className="img-fluid" />
         </div>
         {props.model}
-        <a className='logo' href='/'>
+        <a className="logo" href="/">
           Digital Arms
         </a>
       </div>
-      <ul className='p-0 m-0'>
+      <ul className="p-0 m-0">
         {/* <li className='text-light'>
           <div className='position-relative'>
             <Message />
@@ -326,14 +331,16 @@ const Navbar = (props) => {
         <li>
           {props.isAdmin ? (
             <button
-              className='round-btn montserrat text-light text-decoration-none'
-              onClick={logoutSuperAdmin}>
+              className="round-btn montserrat text-light text-decoration-none"
+              onClick={logoutSuperAdmin}
+            >
               {"Logout"}
             </button>
           ) : (
             <button
-              className='round-btn montserrat text-light text-decoration-none'
-              onClick={!account ? connectWallet : disconnectWallet}>
+              className="round-btn montserrat text-light text-decoration-none"
+              onClick={!account ? connectWallet : disconnectWallet}
+            >
               {!account ? (
                 "Connect Wallet"
               ) : (

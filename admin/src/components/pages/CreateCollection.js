@@ -59,6 +59,7 @@ function CreateCollection() {
   const [newImportModal, setNewImportModal] = useState("");
   const [isEditModal, setIsEditModal] = useState("");
   const [reloadContent, setReloadContent] = useState(true);
+  const [isMinted, setIsMinted] = useState(0);
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -261,7 +262,7 @@ function CreateCollection() {
         fd.append("name", title);
         fd.append("symbol", symbol);
         fd.append("description", description);
-        fd.append("isMinted", 1);
+        fd.append("isMinted", isMinted);
         fd.append("logoImage", logoImg);
         fd.append("coverImage", coverImg);
         fd.append("link", importedCollectionLink);
@@ -535,6 +536,7 @@ function CreateCollection() {
       setBrand(res2.brandID?.name);
       setDescription(res2.description);
       setSymbol(res2.symbol);
+      setIsMinted(res2.isMinted);
     } catch (e) {
       console.log("Error", e);
     }
@@ -863,11 +865,7 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage}
-                          src={
-                            logoImg
-                              ? logoImg
-                              : "../images/upload.png"
-                          }
+                          src={logoImg ? logoImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
@@ -914,11 +912,7 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage2}
-                          src={
-                            coverImg
-                              ?coverImg
-                              : "../images/upload.png"
-                          }
+                          src={coverImg ? coverImg : "../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
