@@ -109,12 +109,12 @@ const Navbar = (props) => {
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
 
-  useEffect( () => {
-   init();
+  useEffect(() => {
+    init();
   }, []);
 
-const init = async () => {
-   if (cookies["selected_account"]) {
+  const init = async () => {
+    if (cookies["selected_account"]) {
       setAccount(cookies["selected_account"]);
       const s = await onboard.connectWallet({
         autoSelect: { label: cookies["label"], disableModals: true },
@@ -131,7 +131,7 @@ const init = async () => {
       });
       setCookie("balance", s[0].accounts[0].balance, { path: "/" });
     }
-}
+  };
 
   const refreshState = () => {
     removeCookie("selected_account", { path: "/" });
@@ -168,20 +168,20 @@ const init = async () => {
   const connectWallet = async () => {
     const wallets = await onboard.connectWallet();
     if (wallets.length !== 0) {
-    await onboard.setChain({
-      chainId: process.env.REACT_APP_CHAIN_ID,
-    });
-    const primaryWallet = wallets[0];
-    setChainId(primaryWallet.chains[0].id);
-    console.log("provider", primaryWallet.provider);
-    setProvider(primaryWallet.provider);
-    const address = wallets[0].accounts[0].address;
-    try {
-      userAuth(primaryWallet, address);
-    } catch (e) {
-      console.log("Error in user auth", e);
+      await onboard.setChain({
+        chainId: process.env.REACT_APP_CHAIN_ID,
+      });
+      const primaryWallet = wallets[0];
+      setChainId(primaryWallet.chains[0].id);
+      console.log("provider", primaryWallet.provider);
+      setProvider(primaryWallet.provider);
+      const address = wallets[0].accounts[0].address;
+      try {
+        userAuth(primaryWallet, address);
+      } catch (e) {
+        console.log("Error in user auth", e);
+      }
     }
-  }
   };
 
   const userAuth = async (primaryWallet, address) => {
@@ -255,7 +255,7 @@ const init = async () => {
             return;
           }
         } catch (e) {
-          NotificationManager.error(e);
+          NotificationManager.error("Something went wrong", "", 800);
           return;
         }
       }
@@ -306,7 +306,9 @@ const init = async () => {
           <img src={"../images/user.jpg"} alt='' className='img-fluid' />
         </div>
         {props.model}
-        <a className="logo" href='/'>Digital Arms</a>
+        <a className='logo' href='/'>
+          Digital Arms
+        </a>
       </div>
       <ul className='p-0 m-0'>
         {/* <li className='text-light'>
@@ -322,12 +324,13 @@ const init = async () => {
           </div>
         </li> */}
         <li>
-          {props.isAdmin?
-          <button
+          {props.isAdmin ? (
+            <button
               className='round-btn montserrat text-light text-decoration-none'
               onClick={logoutSuperAdmin}>
-              {"Logout" }
-            </button>:
+              {"Logout"}
+            </button>
+          ) : (
             <button
               className='round-btn montserrat text-light text-decoration-none'
               onClick={!account ? connectWallet : disconnectWallet}>
@@ -340,7 +343,7 @@ const init = async () => {
                 </>
               )}
             </button>
-          }
+          )}
         </li>
       </ul>
     </div>

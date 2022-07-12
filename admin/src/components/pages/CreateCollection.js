@@ -20,7 +20,6 @@ import {
 import contracts from "../../config/contracts";
 import degnrABI from "./../../config/abis/dgnr8.json";
 import { ethers } from "ethers";
-//import Loader from "../components/loader";
 import { NotificationManager } from "react-notifications";
 import Loader from "../components/loader";
 import { convertToEth } from "../../helpers/numberFormatter";
@@ -28,6 +27,7 @@ import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 import { slowRefresh } from "../../helpers/NotifyStatus";
+import { ItemDescription } from "semantic-ui-react";
 
 function CreateCollection() {
   const [logoImg, setLogoImg] = useState("");
@@ -768,9 +768,9 @@ function CreateCollection() {
                                 </div>
                               )}
                             </td>
-                            <td>{item.name ? item.name : "-"}</td>
+                            <td>{item.name ? item.name?.length > 8 ? item.name?.slice(0,8)+"..."  : item.name: "-"}</td>
                             <td>{item.symbol ? item.symbol : "-"}</td>
-                            <td>{item.description ? item.description : "-"}</td>
+                            <td>{item.description ? item.description?.length > 15 ? item.description?.slice(0,15)+"..." : item.description : "-"}</td>
                             {/* <td>
                               {item.royalityPercentage
                                 ? item.royalityPercentage
@@ -865,7 +865,7 @@ function CreateCollection() {
                           ref={uploadedImage}
                           src={
                             logoImg
-                              ? URL.createObjectURL(logoImg)
+                              ? logoImg
                               : "../images/upload.png"
                           }
                           style={{
@@ -916,7 +916,7 @@ function CreateCollection() {
                           ref={uploadedImage2}
                           src={
                             coverImg
-                              ? URL.createObjectURL(coverImg)
+                              ?coverImg
                               : "../images/upload.png"
                           }
                           style={{
