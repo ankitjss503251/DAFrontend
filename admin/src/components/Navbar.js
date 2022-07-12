@@ -215,7 +215,7 @@ const Navbar = (props) => {
             });
             getUserProfile();
             NotificationManager.success(res?.message);
-            // slowRefresh(1000);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -254,7 +254,7 @@ const Navbar = (props) => {
             });
             getUserProfile();
             NotificationManager.success(res?.message);
-            // slowRefresh(1000);
+            slowRefresh(1000);
             return;
           }
         } catch (e) {

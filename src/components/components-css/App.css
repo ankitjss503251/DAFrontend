@@ -3691,7 +3691,8 @@ iframe {
   color: #ffffff;
 }
 button.border_btn {
-  width: 180px;
+  /* width: 180px; */
+  width: max-content;
   height: 45px;
   background: #0d171e;
   border: 1px solid #ef981d;
