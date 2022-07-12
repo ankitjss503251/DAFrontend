@@ -376,9 +376,9 @@ function CreateCollection() {
           );
           setLoading(false);
 
-          setTimeout(() => {
-            window.location.href = "/createcollection";
-          }, 1000);
+          // setTimeout(() => {
+          //   window.location.href = "/createcollection";
+          // }, 1000);
         }
       }
     }
