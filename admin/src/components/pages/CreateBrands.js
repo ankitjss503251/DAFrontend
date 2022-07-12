@@ -176,8 +176,8 @@ function CreateBrands() {
                           alt=""
                         />
                       </td>
-                      <td>{data.name}</td>
-                      <td>{data.description}</td>
+                      <td>{data.name ? data.name?.length > 8 ? data.name?.slice(0,8) + "..." : data.name : "-"}</td>
+                      <td>{data.description ? data.description?.length > 15 ? data.description?.slice(0,15) : data.description : '-'}</td>
                     </tr>
                   </tbody>
                 ))

@@ -367,8 +367,8 @@ function CreateNFTs() {
                               }
                             />
                           </td>
-                          <td>{n.name}</td>
-                          <td>{n.description}</td>
+                          <td>{n.name ? n.name?.length > 8 ? n.name?.slice(0,8)+"..."  : n.name: "-"}</td>
+                          <td>{n.description ? n.description?.length > 15 ? n.description?.slice(0,15)+"..." : n.description : "-"}</td>
                         </tr>
                       );
                     })

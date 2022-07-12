@@ -12,13 +12,14 @@ import { BigNumber } from "bignumber.js";
 import evt from "../../events/events";
 import "../components-css/App.css";
 import { getContractAddress } from "ethers/lib/utils";
-import BGImg from "../../assets/images/background.jpg"
+import BGImg from "../../assets/images/background.jpg";
 
 let contractFunctionality = {
   "0xEecd2Ba92f87E332320ce5cFe62afD2B989cb5e9": "rockstarCall",
   "0x40ef57815E2a44518d5c82Fb6c322B613044d6B4": "rockstarCall",
   "0xBf3Bd3E4c3Bf465AA8dBAc067D33c7Ba428c39f2": "rockstarCall",
   "0x49C2652878a7E18B8158A8de4D07DB28094ae2dA": "rockstarCall",
+  "0xd33ee4CA8BEdC7877d5930A937EAf6C7c12ea736": "rockstarCall",
 };
 
 function lazyImport(addr) {
