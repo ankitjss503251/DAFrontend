@@ -122,13 +122,7 @@ function CreateCategories() {
         )}
 
         <div className="adminbody table-widget text-light box-background">
-          <h5 className="admintitle font-600 font-24 text-yellow">Example</h5>
-          <p className="admindescription">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book.
-          </p>
+          <h5 className="admintitle font-600 font-24 text-yellow">Categories</h5>
           <table class="table table-hover text-light">
             <thead>
               <tr>

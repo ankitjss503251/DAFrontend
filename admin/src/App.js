@@ -1,5 +1,5 @@
 // import logo from './logo.svg';
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Home1 from "./components/pages/Home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -26,8 +26,6 @@ const CreateCategories = withLogin(CreateCategories1);
 const CreateBrands = withLogin(CreateBrands1);
 const CreateCollection = withLogin(CreateCollection1);
 const CreateNFTs = withLogin(CreateNFTs1);
-
-
 
 const instaImg = {
   backgroundImage: "url(./images/main_bg.png)",
@@ -71,7 +69,7 @@ function App() {
       </div>
 
       <BrowserRouter>
-      {/* {isAdminLogin?null:<Navbar />} */}
+        {/* {isAdminLogin?null:<Navbar />} */}
         <Routes>
           <Route path="/" element={<Home />} />
           {/* <Route
@@ -81,8 +79,7 @@ function App() {
             toggleMode={toggleMode}
           /> */}
           <Route path="sadmin" element={<Login />} />
-          <Route path="admins" element={<Admins />} >
-          </Route>
+          <Route path="admins" element={<Admins />}></Route>
           <Route path="form" element={<Form />} />
           <Route path="table" element={<Table />} />
           <Route path="performance" element={<Performance />} />
