@@ -60,6 +60,8 @@ function CreateCollection() {
   const [isEditModal, setIsEditModal] = useState("");
   const [reloadContent, setReloadContent] = useState(true);
   const [isMinted, setIsMinted] = useState(0);
+  const [isEdit1, setIsEdit1] = useState(false);
+  const [isEdit2, setIsEdit2] = useState(false);
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -88,9 +90,10 @@ function CreateCollection() {
       let _brands = await GetBrand();
       console.log("_brands", _brands);
       setBrands(_brands);
-
+      setBrand(_brands[0]._id);
       let _cat = await getCategory();
       setCategories(_cat);
+      setCategory(_cat[0]._id);
       console.log("_cat", _cat);
     };
     fetch();
@@ -130,6 +133,7 @@ function CreateCollection() {
   const imageUploader = React.useRef(null);
 
   const handleImageUpload = (e) => {
+    setIsEdit1(false);
     const [file] = e.target.files;
     if (file) {
       const reader = new FileReader();
@@ -141,6 +145,7 @@ function CreateCollection() {
       reader.readAsDataURL(file);
       if (e.target.files && e.target.files[0]) {
         setLogoImg(e.target.files[0]);
+        console.log("logo Image", URL.createObjectURL(e.target.files[0]));
       }
     }
   };
@@ -149,6 +154,7 @@ function CreateCollection() {
   const imageUploader2 = React.useRef(null);
 
   const handleImageUpload2 = (e) => {
+    setIsEdit2(false);
     const [file] = e.target.files;
     if (file) {
       const reader = new FileReader();
@@ -204,6 +210,7 @@ function CreateCollection() {
     if (!currentUser) {
       return false;
     }
+
     if (logoImg === "" || logoImg === undefined) {
       NotificationManager.error("Please Upload Logo Image", "", 800);
       return false;
@@ -216,10 +223,10 @@ function CreateCollection() {
       NotificationManager.error("Please Enter Title", "", 800);
       return false;
     }
-    if (royalty === "" || royalty === undefined) {
-      NotificationManager.error("Please Enter the value for Royalty", "", 800);
-      return false;
-    }
+    // if (royalty === "" || royalty === undefined) {
+    //   NotificationManager.error("Please Enter the value for Royalty", "", 800);
+    //   return false;
+    // }
 
     if (category === "" || category === undefined) {
       NotificationManager.error("Please Choose a Category", "", 800);
@@ -278,6 +285,11 @@ function CreateCollection() {
         fd.append("royalty", royalty * 1000);
         try {
           await UpdateCollection(fd);
+          NotificationManager.success(
+            "Collection updated successfully",
+            "",
+            800
+          );
           setLoading(false);
           setTimeout(() => {
             window.location.href = "/createcollection";
@@ -376,9 +388,9 @@ function CreateCollection() {
           );
           setLoading(false);
 
-          // setTimeout(() => {
-          //   window.location.href = "/createcollection";
-          // }, 1000);
+          setTimeout(() => {
+            window.location.href = "/createcollection";
+          }, 1000);
         }
       }
     }
@@ -409,6 +421,7 @@ function CreateCollection() {
           fd.append("name", title);
           fd.append("contractAddress", importedAddress.toLowerCase());
           fd.append("totalSupply", parseInt(originalSupply) - 1);
+          fd.append("link", importedCollectionLink);
 
           res = await createCollection(fd);
           console.log("coll create", res._id);
@@ -427,6 +440,7 @@ function CreateCollection() {
               totalSupply:
                 parseInt(originalSupply) - 1 ? parseInt(originalSupply) - 1 : 0,
               name: title,
+              link: importedCollectionLink,
             });
           } catch (e) {
             setLoading(false);
@@ -448,6 +462,7 @@ function CreateCollection() {
         fd.append("isOnMarketplace", 1);
         fd.append("isImported", 1);
         fd.append("totalSupply", parseInt(originalSupply) - 1);
+
         res = await UpdateCollection(fd);
 
         let _nfts = await getNFTList({
@@ -532,11 +547,12 @@ function CreateCollection() {
       setDatetime2(res2.preSaleEndTime);
       setMaxSupply(res2.totalSupply);
       setPrice(Number(convertToEth(res2.price?.$numberDecimal)));
-      setCategory(res2.categoryID?.name);
-      setBrand(res2.brandID?.name);
+      setCategory(res2.categoryID?._id);
+      setBrand(res2.brandID?._id);
       setDescription(res2.description);
       setSymbol(res2.symbol);
       setIsMinted(res2.isMinted);
+      setImportedCollectionLink(res2.link);
     } catch (e) {
       console.log("Error", e);
     }
@@ -554,12 +570,29 @@ function CreateCollection() {
       console.log("Error", e);
     }
   };
+
   const blockUnblockColl = (id, status) => {
     blockUnBlockCollection(id, status)
       .then((res) => {
         setReloadContent(Math.random());
       })
       .catch((e) => {});
+  };
+
+  const clearState = () => {
+    setBrand("");
+    setLogoImg("");
+    setCoverImg("");
+    setTitle("");
+    setPrice(0);
+    setPreSaleStartTime("");
+    setDatetime2("");
+    setMaxSupply("");
+    setCategory("");
+    setDescription("");
+    setSymbol("");
+    setIsMinted("");
+    setImportedCollectionLink("");
   };
 
   return (
@@ -580,6 +613,7 @@ function CreateCollection() {
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal"
                     onClick={() => {
+                      clearState();
                       setModal("active");
                     }}
                   >
@@ -730,6 +764,8 @@ function CreateCollection() {
                                     data-bs-toggle="modal"
                                     data-bs-target="#editModal"
                                     onClick={async () => {
+                                      setIsEdit1(true);
+                                      setIsEdit2(true);
                                       setSelectedCollectionId(item._id);
                                       setIsEditModal("active");
                                       handleEditCollection(item._id);
@@ -770,9 +806,21 @@ function CreateCollection() {
                                 </div>
                               )}
                             </td>
-                            <td>{item.name ? item.name?.length > 8 ? item.name?.slice(0,8)+"..."  : item.name: "-"}</td>
+                            <td>
+                              {item.name
+                                ? item.name?.length > 8
+                                  ? item.name?.slice(0, 8) + "..."
+                                  : item.name
+                                : "-"}
+                            </td>
                             <td>{item.symbol ? item.symbol : "-"}</td>
-                            <td>{item.description ? item.description?.length > 15 ? item.description?.slice(0,15)+"..." : item.description : "-"}</td>
+                            <td>
+                              {item.description
+                                ? item.description?.length > 15
+                                  ? item.description?.slice(0, 15) + "..."
+                                  : item.description
+                                : "-"}
+                            </td>
                             {/* <td>
                               {item.royalityPercentage
                                 ? item.royalityPercentage
@@ -861,18 +909,44 @@ function CreateCollection() {
                         onClick={() => imageUploader.current.click()}
                       >
                         <p className="text-center">Click or Drop here</p>
+                        {isEdit1 && logoImg ? (
+                          <img
+                            alt=""
+                            ref={uploadedImage}
+                            src={logoImg}
+                            style={{
+                              width: "110px",
+                              height: "110px",
+                              margin: "auto",
+                            }}
+                            className="img-fluid profile_circle_img"
+                          />
+                        ) : logoImg && !isEdit1 ? (
+                          <img
+                            alt=""
+                            ref={uploadedImage}
+                            src={URL.createObjectURL(logoImg)}
+                            style={{
+                              width: "110px",
+                              height: "110px",
+                              margin: "auto",
+                            }}
+                            className="img-fluid profile_circle_img"
+                          />
+                        ) : (
+                          <img
+                            alt=""
+                            ref={uploadedImage}
+                            src={"../images/upload.png"}
+                            style={{
+                              width: "110px",
+                              height: "110px",
+                              margin: "auto",
+                            }}
+                            className="img-fluid profile_circle_img"
+                          />
+                        )}
 
-                        <img
-                          alt=""
-                          ref={uploadedImage}
-                          src={logoImg ? logoImg : "../images/upload.png"}
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className="img-fluid profile_circle_img"
-                        />
                         {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
@@ -909,17 +983,44 @@ function CreateCollection() {
                       >
                         <p className="text-center">Click or Drop here</p>
 
-                        <img
-                          alt=""
-                          ref={uploadedImage2}
-                          src={coverImg ? coverImg : "../images/upload.png"}
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className="img-fluid profile_circle_img"
-                        />
+                        {isEdit2 && coverImg ? (
+                          <img
+                            alt=""
+                            ref={uploadedImage}
+                            src={coverImg}
+                            style={{
+                              width: "110px",
+                              height: "110px",
+                              margin: "auto",
+                            }}
+                            className="img-fluid profile_circle_img"
+                          />
+                        ) : coverImg && !isEdit2 ? (
+                          <img
+                            alt=""
+                            ref={uploadedImage}
+                            src={URL.createObjectURL(coverImg)}
+                            style={{
+                              width: "110px",
+                              height: "110px",
+                              margin: "auto",
+                            }}
+                            className="img-fluid profile_circle_img"
+                          />
+                        ) : (
+                          <img
+                            alt=""
+                            ref={uploadedImage}
+                            src={"../images/upload.png"}
+                            style={{
+                              width: "110px",
+                              height: "110px",
+                              margin: "auto",
+                            }}
+                            className="img-fluid profile_circle_img"
+                          />
+                        )}
+
                         {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
@@ -1384,7 +1485,7 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage}
-                          src={logoImg ? logoImg : "../images/upload.png"}
+                          src={logoImg}
                           style={{
                             width: "110px",
                             height: "110px",
@@ -1430,7 +1531,7 @@ function CreateCollection() {
                         <img
                           alt=""
                           ref={uploadedImage2}
-                          src={coverImg ? coverImg : "../images/upload.png"}
+                          src={coverImg}
                           style={{
                             width: "110px",
                             height: "110px",

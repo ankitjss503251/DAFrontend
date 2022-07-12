@@ -193,8 +193,8 @@ const Home = () => {
             </div>
             {upcomingMints && upcomingMints?.length > 0
               ? upcomingMints.slice(0, 3).map((card, key) => {
-                const st = card.saleStartTime;
-                console.log("start date", st, st !== null);
+                  const st = card.saleStartTime;
+                  console.log("start date", st, st !== null);
                   const et = card.saleEndTime;
                   const ct = moment()
                     .add({
@@ -208,25 +208,60 @@ const Home = () => {
                       key={key}
                     >
                       <div className="mint_box" style={mint_bg}>
-                        <a href={card.link}>
+                        {card.link ? (
+                          <a href={card.link}>
+                            <div className="mint_img">
+                              <img
+                                alt=""
+                                src={card?.logoImg}
+                                class="img-fluid"
+                                onError={(e) =>
+                                  (e.target.src =
+                                    "../img/collections/list4.png")
+                                }
+                              />
+                              {st !== null ? (
+                                ct >= st && ct < et ? (
+                                  <div className="mint_date">
+                                    <span>
+                                      {moment(card?.saleStartTime).format("DD")}
+                                    </span>{" "}
+                                    {moment(card?.saleStartTime).format("MMM")}
+                                  </div>
+                                ) : (
+                                  ""
+                                )
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                          </a>
+                        ) : (
                           <div className="mint_img">
                             <img
                               alt=""
                               src={card?.logoImg}
-                              class='img-fluid'
+                              class="img-fluid"
                               onError={(e) =>
                                 (e.target.src = "../img/collections/list4.png")
                               }
                             />
-                            {st !== null ? (ct >= st && ct < et) ?  <div className='mint_date'>
-                                <span>
-                                  {moment(card?.saleStartTime).format("DD")}
-                                </span>{" "}
-                                {moment(card?.saleStartTime).format("MMM")}
-                              </div> : "" : ""}
-                            
+                            {st !== null ? (
+                              ct >= st && ct < et ? (
+                                <div className="mint_date">
+                                  <span>
+                                    {moment(card?.saleStartTime).format("DD")}
+                                  </span>{" "}
+                                  {moment(card?.saleStartTime).format("MMM")}
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            ) : (
+                              ""
+                            )}
                           </div>
-                        </a>
+                        )}
                         <div className="mint_text p-4">
                           <div className="logoImg_con">
                             <a
@@ -236,7 +271,7 @@ const Home = () => {
                               <img
                                 alt=""
                                 src={card.brand?.logoImage}
-                                className='mc_img'
+                                className="mc_img"
                                 onError={(e) =>
                                   (e.target.src =
                                     "../img/collections/list4.png")
@@ -246,15 +281,19 @@ const Home = () => {
                           </div>
                           <a href={card.link}>
                             {" "}
-                            <h4 className='mb-2'>{card.name?.length > 8 ? card.name?.slice(0,8) + "..." : card.name}</h4>
+                            <h4 className="mb-2">
+                              {card.name?.length > 8
+                                ? card.name?.slice(0, 8) + "..."
+                                : card.name}
+                            </h4>
                           </a>
-                          <ul className='m-0 p-0'>
+                          <ul className="m-0 p-0">
                             <li>
-                            
-                             <span>{`${Number(convertToEth(card.price)).toFixed(
-                                4
-                              )} HNTR`}{" "}
-                              </span> 
+                              <span>
+                                {`${Number(convertToEth(card.price)).toFixed(
+                                  4
+                                )} HNTR`}{" "}
+                              </span>
                             </li>
                             <li>
                               <img alt="" src={"../img/mint/items.svg"} />{" "}
@@ -594,8 +633,8 @@ const Home = () => {
             <CarouselNew />
           </div>
           {upcomingMints.length > 0 ? (
-            <div class='col-md-12 text-center mt-5'>
-              <Link to={"/marketplace"} className='view_all_bdr'>
+            <div class="col-md-12 text-center mt-5">
+              <Link to={"/marketplace"} className="view_all_bdr">
                 View All
               </Link>
             </div>
