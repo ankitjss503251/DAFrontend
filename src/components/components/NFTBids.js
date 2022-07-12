@@ -40,7 +40,6 @@ function NFTBids(props) {
   // ];
 
   useEffect(() => {
-    console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     // else NotificationManager.error("Connect Your Wallet", "", 800);
 
@@ -57,10 +56,8 @@ function NFTBids(props) {
       };
 
       let _data = await fetchBidNft(searchParams);
-      console.log("bid data123", _data);
       if (_data && _data.data.length > 0) {
         setBids(_data.data);
-        console.log("bid data", _data.data);
       }
     };
     fetch();
@@ -273,15 +270,15 @@ function NFTBids(props) {
       {isUpdateBidModal ? updateBidModal : ""}
       <div className='col-md-12'>
         <div className='nft_list'>
-          <table className='table text-light fixed_header'>
+          <table className='table text-light'>
             <thead>
               <tr>
-                <th>FROM</th>
-                <th>PRICE</th>
-                <th>DATE</th>
-                <th>SALE TYPE</th>
-                <th>ENDS IN</th>
-                <th>STATUS</th>
+                <th scope="col">FROM</th>
+                <th scope="col">PRICE</th>
+                <th scope="col">DATE</th>
+                <th scope="col">SALE TYPE</th>
+                <th scope="col">ENDS IN</th>
+                <th scope="col">STATUS</th>
                 <th className='text-center'>ACTION</th>
               </tr>
             </thead>
@@ -292,6 +289,7 @@ function NFTBids(props) {
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
                     return (
                       <tr>
+                        
                         <td className='d-flex justify-content-start align-items-center mb-0'>
                           <span className='blue_dot circle_dot'></span>
                           <span>
@@ -309,14 +307,14 @@ function NFTBids(props) {
                               b.orderID.length > 0
                                 ? Tokens[
                                     b.orderID[0]?.paymentToken?.toLowerCase()
-                                  ]
+                                  ].icon
                                 : "-"
                             }
                             className='img-fluid hunter_fav'
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}
+                          ).toFixed(4)}{Tokens[b.orderID[0].paymentToken].symbolName}
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
@@ -342,10 +340,10 @@ function NFTBids(props) {
                         </td>
                         <td className='text-center'>
                           {bidOwner === currentUser?.toLowerCase() ? (
-                            <div className='d-flex justify-content-center align-items-center'>
+                            <div className='d-flex flex-column justify-content-center align-items-center'>
                               <button
                                 to={"/"}
-                                className='small_yellow_btn small_btn mr-3'
+                                className='small_yellow_btn small_btn mb-3'
                                 onClick={async () => {
                                   setLoading(true);
                                   await handleAcceptBids(
@@ -372,12 +370,12 @@ function NFTBids(props) {
                             </div>
                           ) : bidOwner !== currentUser?.toLowerCase() &&
                             bidder === currentUser?.toLowerCase() ? (
-                            <div className='d-flex justify-content-center align-items-center'>
+                            <div className='d-flex flex-column justify-content-center align-items-center '>
                               <button
                                 disabled={
                                   new Date(b.bidDeadline * 1000) < new Date()
                                 }
-                                className='small_yellow_btn small_btn mr-3'
+                                className='small_yellow_btn small_btn mb-2'
                                 onClick={() => {
                                   setCurrentBid(b);
                                   // setBidDeadline(

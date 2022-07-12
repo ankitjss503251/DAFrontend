@@ -35,7 +35,7 @@ const AuthorList = () => {
                         alt=""
                       />
                       <div className="auther_info">
-                        <h6>{card.name ? card.name : "Unnamed"}</h6>
+                        <h6>{card?.name ? (card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name)  : "unnamed"}</h6>
                         {/* <p>3.2 ETH</p> */}
                       </div>
                     </div>

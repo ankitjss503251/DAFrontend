@@ -12,6 +12,7 @@ import { BigNumber } from "bignumber.js";
 import evt from "../../events/events";
 import "../components-css/App.css";
 import { getContractAddress } from "ethers/lib/utils";
+import BGImg from "../../assets/images/background.jpg"
 
 let contractFunctionality = {
   "0xEecd2Ba92f87E332320ce5cFe62afD2B989cb5e9": "rockstarCall",
@@ -29,20 +30,19 @@ function lazyImport(addr) {
   return calles;
 }
 
-const bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
-
 function MultiMintingPage(props) {
+  const bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
+  };
+
   const params = useParams();
 
   const contractCalls = lazyImport(params.id);
-  console.log("params", params.id);
   const [currentUser, setCurrentUser] = useState();
   const [collectionDetails, setCollectionDetails] = useState();
   const [categories, setcategories] = useState();
@@ -139,11 +139,22 @@ function MultiMintingPage(props) {
 
     // console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
+  useEffect(() => {
+    const bodyClass = async () => {
+      var body = document.body;
+      if (isShowPopup) {
+        body.classList.add("overflow_hidden");
+      } else {
+        body.classList.remove("overflow_hidden");
+      }
+    };
+    bodyClass();
+  }, [isShowPopup]);
 
   useEffect(() => {
     const fetchData = async () => {
       let { fetchInfo } = await contractCalls;
-      let getcateg = await fetchInfo(params.id);
+      let getcateg = await fetchInfo(params.id, cookies.selected_account);
       setTotalSupply(getcateg[2].toString());
       setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
     };

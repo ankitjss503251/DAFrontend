@@ -15,7 +15,6 @@ function CarouselCollection() {
             isHotCollection: 1,
           });
           setHotCollections(res);
-          console.log("hot collections", res);
         } catch (e) {
           console.log("Error in fetching all hot collections list", e);
         }
@@ -117,8 +116,8 @@ function CarouselCollection() {
                         </div>
                       </a>
                       <a href={`/collection/${card?._id}`}>
-                        <h4 className='collname'>{card?.name}</h4>
-                        <p>{card.desc ? card.desc : "-"}</p>
+                        <h4 className='collname'>{card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}</h4>
+                        <p>{card.desc ? (card.desc?.length > 8 ? card.desc?.slice(0,8) + "..." : card.desc) : "-"}</p>
                       </a>
                     </div>
                   </div>
