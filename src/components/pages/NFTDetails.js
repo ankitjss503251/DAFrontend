@@ -1054,7 +1054,36 @@ function NFTDetails() {
                       className="form-control input_design"
                       placeholder="Please Enter Price (MATIC)"
                       value={itemprice}
-                      onChange={(event) => setItemprice(event.target.value)}
+                      onKeyPress={(e) => {
+                        if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                      }}
+                      onChange={(e) => {
+                        const re = /[+-]?[0-9]+\.?[0-9]*/;
+                        let val = e.target.value;
+          
+                        if (e.target.value === "" || re.test(e.target.value)) {
+                          const numStr = String(val);
+                          if (numStr.includes(".")) {
+                            if (numStr.split(".")[1].length > 8) {
+                            } else {
+                              if (val.split(".").length > 2) {
+                                val = val.replace(/\.+$/, "");
+                              }
+                              if (val.length === 1 && val !== "0.") {
+                                val = Number(val);
+                              }
+                            }
+                          } else {
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
+                            }
+                            if (val.length === 1 && val !== "0.") {
+                              val = Number(val);
+                            }
+                          }
+                          setItemprice(val);
+                        }
+                      }}
                     />
                   </div>
                 ) : (
@@ -1102,7 +1131,36 @@ function NFTDetails() {
                     className="form-control input_design"
                     placeholder="Enter Minimum Bid"
                     value={item_bid}
-                    onChange={(event) => setItem_bid(event.target.value)}
+                    onKeyPress={(e) => {
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => {
+                      const re = /[+-]?[0-9]+\.?[0-9]*/;
+                      let val = e.target.value;
+        
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        const numStr = String(val);
+                        if (numStr.includes(".")) {
+                          if (numStr.split(".")[1].length > 8) {
+                          } else {
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
+                            }
+                            if (val.length === 1 && val !== "0.") {
+                              val = Number(val);
+                            }
+                          }
+                        } else {
+                          if (val.split(".").length > 2) {
+                            val = val.replace(/\.+$/, "");
+                          }
+                          if (val.length === 1 && val !== "0.") {
+                            val = Number(val);
+                          }
+                        }
+                        setItem_bid(val);
+                      }
+                    }}
                   />
                 </div>
 
@@ -1228,7 +1286,36 @@ function NFTDetails() {
                     className="form-control input_design"
                     placeholder="Please Enter Price"
                     value={offerPrice}
-                    onChange={(event) => setOfferPrice(event.target.value)}
+                    onKeyPress={(e) => {
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => {
+                      const re = /[+-]?[0-9]+\.?[0-9]*/;
+                      let val = e.target.value;
+        
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        const numStr = String(val);
+                        if (numStr.includes(".")) {
+                          if (numStr.split(".")[1].length > 8) {
+                          } else {
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
+                            }
+                            if (val.length === 1 && val !== "0.") {
+                              val = Number(val);
+                            }
+                          }
+                        } else {
+                          if (val.split(".").length > 2) {
+                            val = val.replace(/\.+$/, "");
+                          }
+                          if (val.length === 1 && val !== "0.") {
+                            val = Number(val);
+                          }
+                        }
+                        setOfferPrice(val);
+                      }
+                    }}
                   />
                 </div>
                 <div className="mb-3" id="tab_opt_2">

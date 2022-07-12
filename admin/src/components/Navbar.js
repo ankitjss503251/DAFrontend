@@ -258,7 +258,7 @@ const Navbar = (props) => {
             return;
           }
         } catch (e) {
-          NotificationManager.error(e);
+          NotificationManager.error("Something went wrong", "", 800);
           return;
         }
       }

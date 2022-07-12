@@ -144,7 +144,7 @@ function CreateCategories() {
               ? myCategory.map((data, index) => (
                   <tbody key={index}>
                     <tr>
-                      <td>{data.name}</td>
+                      <td>{data.name ? data.name?.length > 8 ? data.name?.slice(0,8)+"..."  : data.name: "-"}</td>
                       <td>
                         <img src={data.image} className="profile_i" alt="" />
                       </td>
