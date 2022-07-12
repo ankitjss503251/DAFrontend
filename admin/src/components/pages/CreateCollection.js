@@ -376,9 +376,9 @@ function CreateCollection() {
           );
           setLoading(false);
 
-          // setTimeout(() => {
-          //   window.location.href = "/createcollection";
-          // }, 1000);
+          setTimeout(() => {
+            window.location.href = "/createcollection";
+          }, 1000);
         }
       }
     }
@@ -409,6 +409,7 @@ function CreateCollection() {
           fd.append("name", title);
           fd.append("contractAddress", importedAddress.toLowerCase());
           fd.append("totalSupply", parseInt(originalSupply) - 1);
+          fd.append("link", importedCollectionLink);
 
           res = await createCollection(fd);
           console.log("coll create", res._id);
@@ -427,6 +428,7 @@ function CreateCollection() {
               totalSupply:
                 parseInt(originalSupply) - 1 ? parseInt(originalSupply) - 1 : 0,
               name: title,
+              link: importedCollectionLink,
             });
           } catch (e) {
             setLoading(false);
@@ -448,6 +450,7 @@ function CreateCollection() {
         fd.append("isOnMarketplace", 1);
         fd.append("isImported", 1);
         fd.append("totalSupply", parseInt(originalSupply) - 1);
+
         res = await UpdateCollection(fd);
 
         let _nfts = await getNFTList({
@@ -770,9 +773,21 @@ function CreateCollection() {
                                 </div>
                               )}
                             </td>
-                            <td>{item.name ? item.name?.length > 8 ? item.name?.slice(0,8)+"..."  : item.name: "-"}</td>
+                            <td>
+                              {item.name
+                                ? item.name?.length > 8
+                                  ? item.name?.slice(0, 8) + "..."
+                                  : item.name
+                                : "-"}
+                            </td>
                             <td>{item.symbol ? item.symbol : "-"}</td>
-                            <td>{item.description ? item.description?.length > 15 ? item.description?.slice(0,15)+"..." : item.description : "-"}</td>
+                            <td>
+                              {item.description
+                                ? item.description?.length > 15
+                                  ? item.description?.slice(0, 15) + "..."
+                                  : item.description
+                                : "-"}
+                            </td>
                             {/* <td>
                               {item.royalityPercentage
                                 ? item.royalityPercentage
