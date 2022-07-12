@@ -9,7 +9,7 @@ import BigNumber from "bignumber.js";
 import evt from "../../events/events"
 
 const cID=0;
-export const fetchInfo = async (addr) => {
+export const fetchInfo = async (addr,user) => {
     let gooContract = await exportInstance(addr, gooAbi.abi);
     try {
       let categories = await gooContract.categories(cID)

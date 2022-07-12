@@ -75,7 +75,7 @@ function Minttab(props) {
                                 }}
                               />
                             </div>
-                            <h4>{card.name}</h4>
+                            <h4>{card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}</h4>
                             <ul className="m-0 p-0">
                               <li>
                                 <img alt="" src={"../img/mint/hntr.svg"} />{" "}
@@ -158,12 +158,13 @@ function Minttab(props) {
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
                             <img alt="" src={card.logoImg} class="img-fluid" />
-                            <div className="mint_date">
+                            {card.saleStartTime !== null ?  <div className="mint_date">
                               <span>
                                 {moment(card.saleStartTime).format("DD")}
                               </span>{" "}
                               {moment(card.saleStartTime).format("MMM")}
-                            </div>
+                            </div> : ""}
+                           
                           </div>
                           <div className="mint_text p-4">
                             <div className="logoImg_con">
@@ -173,7 +174,7 @@ function Minttab(props) {
                                 className="mc_img"
                               />
                             </div>
-                            <h4>{card.name}</h4>
+                            <h4>{card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}</h4>
                             <ul className="m-0 p-0">
                               <li>
                                 <img alt="" src={"../img/mint/hntr.svg"} />{" "}

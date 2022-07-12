@@ -841,7 +841,6 @@ export const handleAcceptBids = async (
   let details;
   let options;
   try {
-    console.log("bid data", bidData);
     order = await buildSellOrder(bidData.orderID);
     details = await getOrderDetails({ orderId: bidData.orderID });
   } catch (e) {

@@ -15,9 +15,6 @@
 .DS_Store
 .env.local
 **/.env
-.env
-
-/.env
 
 
 npm-debug.log*
