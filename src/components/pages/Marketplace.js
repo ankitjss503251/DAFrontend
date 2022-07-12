@@ -441,8 +441,8 @@ function Marketplace() {
                           <input type="radio" id="all" name="radio-group" />
                           <label for="all">All</label>
                         </div>
-                        {category
-                          ? category.map((c) => {
+                        {category.length > 0
+                          ? category?.map((c) => {
                               return (
                                 <div class="form-check form-check-inline">
                                   <input
@@ -480,8 +480,8 @@ function Marketplace() {
                     </li> */}
                     <li>
                       <form action="#" className="checked_form">
-                        {brands
-                          ? brands.map((b) => {
+                        {brands.length > 0
+                          ? brands?.map((b) => {
                               return (
                                 <div class="form-check form-check-inline">
                                   <input
