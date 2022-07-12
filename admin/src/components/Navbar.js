@@ -200,7 +200,7 @@ const Navbar = (props) => {
           } else {
             setAccount(primaryWallet.accounts[0].address);
             setLabel(primaryWallet.label);
-            setCookie("role", res2?.data?.role, { path: "/" });
+            window.sessionStorage.setItem("role", res2?.data?.userType);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
@@ -215,7 +215,7 @@ const Navbar = (props) => {
             });
             getUserProfile();
             NotificationManager.success(res?.message);
-            slowRefresh(1000);
+            // slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -239,7 +239,7 @@ const Navbar = (props) => {
             setAccount(primaryWallet.accounts[0].address);
 
             setLabel(primaryWallet.label);
-            setCookie("role", res?.data?.role, { path: "/" });
+            window.sessionStorage.setItem("role", res?.data?.userType);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
@@ -254,7 +254,7 @@ const Navbar = (props) => {
             });
             getUserProfile();
             NotificationManager.success(res?.message);
-            slowRefresh(1000);
+            // slowRefresh(1000);
             return;
           }
         } catch (e) {
@@ -270,6 +270,7 @@ const Navbar = (props) => {
   const disconnectWallet = async () => {
     await onboard.disconnectWallet({ label: label });
     await Logout(cookies["selected_account"]);
+    window.sessionStorage.removeItem("role");
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
