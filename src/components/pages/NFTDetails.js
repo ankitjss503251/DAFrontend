@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Footer from "../components/footer";
 import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
@@ -21,14 +21,10 @@ import {
   createBid,
 } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
-import {GLTFModel,AmbientLight,DirectionLight} from "react-3d-viewer";
+import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
 
 import contracts from "../../config/contracts";
-import {
-  GENERAL_DATE,
-  GENERAL_TIMESTAMP,
-  ZERO_ADDRESS,
-} from "../../helpers/constants";
+import { GENERAL_DATE } from "../../helpers/constants";
 import { NotificationManager } from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
@@ -37,7 +33,11 @@ import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { getNFTList } from "../../apiServices";
+import { fetchBidNft, getNFTList } from "../../apiServices";
+import { fetchOfferNft } from "../../apiServices";
+
+import { useGLTF } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
@@ -198,7 +198,7 @@ function NFTDetails() {
   const [itemprice, setItemprice] = useState(0);
   const [item_qt, setItem_qt] = useState(1);
   const [item_bid, setItem_bid] = useState(0);
-  const [selectedToken, setSelectedToken] = useState("USDT");
+  const [selectedToken, setSelectedToken] = useState("BUSD");
   const [selectedTokenFS, setSelectedTokenFS] = useState("BNB");
   const [datetime, setDatetime] = useState("");
   const [currentUser, setCurrentUser] = useState();
@@ -206,7 +206,6 @@ function NFTDetails() {
   const [owned, setOwned] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isPutOnMarketplace, setIsPutonMarketplace] = useState("");
   const [modal, setModal] = useState(false);
   const [offerPrice, setOfferPrice] = useState();
   const [offerQuantity, setOfferQuantity] = useState(1);
@@ -215,6 +214,7 @@ function NFTDetails() {
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState("");
   const [firstOrderNFT, setFirstOrderNFT] = useState([]);
+  const [haveBid, setHaveBid] = useState(false);
 
   useEffect(() => {
     async function setUser() {
@@ -294,6 +294,24 @@ function NFTDetails() {
     };
     fetch();
   }, [id, currentUser]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let searchParams = {
+        nftID: NFTDetails.id,
+        buyerID: localStorage.getItem("userId"),
+        bidStatus: "All",
+        orderID: "All",
+      };
+
+      let _data = await fetchBidNft(searchParams);
+      console.log("bid data123", _data);
+      if (_data && _data.data.length > 0) {
+        setHaveBid(true);
+      }
+    };
+    fetch();
+  }, [NFTDetails]);
 
   const PutMarketplace = async () => {
     setLoading(true);
@@ -398,8 +416,12 @@ function NFTDetails() {
     slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
-    return;
   };
+
+  function Model(props) {
+    const { scene } = useGLTF(props.image);
+    return <primitive object={scene} />;
+  }
 
   // Popup
 
@@ -429,8 +451,8 @@ function NFTDetails() {
     document.getElementById("tab_opt_3").classList.add("put_show");
     document.getElementById("tab_opt_4").classList.remove("put_hide");
     document.getElementById("tab_opt_4").classList.add("put_show");
-    document.getElementById("tab_opt_5").classList.remove("put_hide");
-    document.getElementById("tab_opt_5").classList.add("put_show");
+    // document.getElementById("tab_opt_5").classList.remove("put_hide");
+    // document.getElementById("tab_opt_5").classList.add("put_show");
     document.getElementById("btn1").classList.remove("active");
     document.getElementById("btn2").classList.add("active");
     document.getElementById("btn3").classList.remove("active");
@@ -702,7 +724,7 @@ function NFTDetails() {
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
               setLoading(false);
-              slowRefresh(1000);
+              // slowRefresh(1000);
             }}
           >
             {"Buy Now"}
@@ -722,26 +744,43 @@ function NFTDetails() {
       {loading ? <Spinner /> : ""}
       {isPlaceBidModal ? placeBidModal : ""}
       {isBuyNowModal ? buyNowModal : ""}
-      <section style={bgImgStyle} className='pdd_8'>
-        <div className='container'>
-          <div className='row mb-5'>
-            <div className='col-lg-6 mb-xl-5 mb-lg-5 mb-5'>
-              {NFTDetails && NFTDetails.fileType=="Image"?<img
-                src={NFTDetails?.image}
-                className="img-fluid nftimg"
-                alt=""
-                onError={(e) => {
-                  console.log("image error is--->",e)
-                  e.target.src = "../img/collections/list4.png"
-                }}
-              />:""}
-              {NFTDetails && NFTDetails.fileType=="Video"?<video 
-                        className="img-fluid nftimg" controls>
-                        <source src={NFTDetails?.image} type="video/mp4" />
-                      </video>:""}
-                      {NFTDetails && NFTDetails.fileType=="3D"? 
-                      <Show3DImage />:""}
-              </div>
+      <section style={bgImgStyle} className="pdd_8">
+        <div className="container">
+          <div className="row mb-5">
+            <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5">
+              {NFTDetails && NFTDetails.fileType == "Image" ? (
+                <img
+                  src={NFTDetails?.image}
+                  className="img-fluid nftimg"
+                  alt=""
+                  onError={(e) => {
+                    console.log("image error is--->", e);
+                    e.target.src = "../img/collections/list4.png";
+                  }}
+                />
+              ) : (
+                ""
+              )}
+              {NFTDetails && NFTDetails.fileType == "Video" ? (
+                <video className="img-fluid nftimg" controls>
+                  <source src={NFTDetails?.image} type="video/mp4" />
+                </video>
+              ) : (
+                ""
+              )}
+
+              {NFTDetails && NFTDetails.fileType == "3D" ? (
+                <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
+                  <pointLight position={[10, 10, 10]} intensity={1.3} />
+                  <Suspense fallback={null}>
+                    <Model image={NFTDetails.image} />
+                  </Suspense>
+                  <OrbitControls />
+                </Canvas>
+              ) : (
+                ""
+              )}
+            </div>
             <div className="col-lg-6 nft_details">
               <p className="mb-0">
                 {collection?.name} Collection{" "}
@@ -769,26 +808,30 @@ function NFTDetails() {
                   {NFTDetails?.like} favourites
                 </span>
               </div>
-              <ul
-                className="nav nav-pills mb-4 w-100"
-                id="pills-tab"
-                role="tablist"
-              >
-                <li className="nav-item w-100" role="presentation">
-                  <button
-                    className="nav-link active details-btn "
-                    id="pills-home-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-home"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-home"
-                    aria-selected="true"
-                  >
-                    Details
-                  </button>
-                </li>
-              </ul>
+              {NFTDetails?.attributes?.length > 0 ? (
+                <ul
+                  className="nav nav-pills mb-4 w-100"
+                  id="pills-tab"
+                  role="tablist"
+                >
+                  <li className="nav-item w-100" role="presentation">
+                    <button
+                      className="nav-link active details-btn "
+                      id="pills-home-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#pills-home"
+                      type="button"
+                      role="tab"
+                      aria-controls="pills-home"
+                      aria-selected="true"
+                    >
+                      Details
+                    </button>
+                  </li>
+                </ul>
+              ) : (
+                ""
+              )}
               <div className="tab-content" id="pills-tabContent">
                 <div
                   className="tab-pane fade show active"
@@ -889,12 +932,15 @@ function NFTDetails() {
                   ) : (
                     <button
                       type="button"
+                      disabled={
+                        new Date(orders[0].deadline * 1000) < new Date()
+                      }
                       className="title_color buy_now"
                       onClick={() => {
                         setIsPlaceBidModal(true);
                       }}
                     >
-                      Place Bid
+                      {haveBid ? "Update Bid" : "Place Bid"}
                     </button>
                   )
                 ) : (
@@ -1027,10 +1073,14 @@ function NFTDetails() {
                 <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
-            <div className='col-md-12 mb-5'>
-              <h3 className='title_36 mb-4'>Offers</h3>
-              <div className='table-responsive'>
-                <NFToffer id={NFTDetails.id} NftDetails={NFTDetails} collectionAddress={collection?.contractAddress} />
+            <div className="col-md-12 mb-5">
+              <h3 className="title_36 mb-4">Offers</h3>
+              <div className="table-responsive">
+                <NFToffer
+                  id={NFTDetails.id}
+                  NftDetails={NFTDetails}
+                  collectionAddress={collection?.contractAddress}
+                />
               </div>
             </div>
             <div className="col-md-12 mb-5">
@@ -1072,10 +1122,7 @@ function NFTDetails() {
       </section>
 
       {/* <!-- The Modal --> */}
-      <div
-        className={`modal marketplace putOnMarketplace ${isPutOnMarketplace}`}
-        id="detailPop"
-      >
+      <div className={`modal marketplace putOnMarketplace`} id="detailPop">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             {/* <!-- Modal Header --> */}
@@ -1133,22 +1180,26 @@ function NFTDetails() {
               </ul>
 
               <div className="tab-content">
-                <div className="mb-3" id="tab_opt_1">
-                  <label htmlFor="item_price" className="form-label">
-                    Price
-                  </label>
-                  <input
-                    type="text"
-                    name="item_price"
-                    id="item_price"
-                    min="0"
-                    max="18"
-                    className="form-control input_design"
-                    placeholder="Please Enter Price (MATIC)"
-                    value={itemprice}
-                    onChange={(event) => setItemprice(event.target.value)}
-                  />
-                </div>
+                {marketplaceSaleType === 0 ? (
+                  <div className="mb-3" id="tab_opt_1">
+                    <label htmlFor="item_price" className="form-label">
+                      Price
+                    </label>
+                    <input
+                      type="text"
+                      name="item_price"
+                      id="item_price"
+                      min="0"
+                      max="18"
+                      className="form-control input_design"
+                      placeholder="Please Enter Price (MATIC)"
+                      value={itemprice}
+                      onChange={(event) => setItemprice(event.target.value)}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
                 <div className="mb-3" id="tab_opt_2">
                   <label htmlFor="item_qt" className="form-label">
                     Quantity
@@ -1218,22 +1269,22 @@ function NFTDetails() {
                           BNB
                         </option>
                         <option value={"HNTR"}>HNTR</option>
-                        <option value={"USDT"}>USDT</option>
+                        <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
-                  ) : marketplaceSaleType == 1 ? (
+                  ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
                         {" "}
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1241,31 +1292,35 @@ function NFTDetails() {
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
                   )}
                 </div>
-                <div id="tab_opt_5" className="mb-3 put_hide">
-                  <label htmlFor="item_ex_date" className="form-label">
-                    Expiration date
-                  </label>
-                  {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
-                  <input
-                    type="datetime-local"
-                    value={datetime.toString().substring(0, 16)}
-                    onChange={handleChange}
-                    className="input_design"
-                  />
-                </div>
+                {marketplaceSaleType === 1 ? (
+                  <div id="tab_opt_5" className="mb-3">
+                    <label for="item_ex_date" className="form-label">
+                      Expiration date
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={datetime.toString().substring(0, 16)}
+                      onChange={handleChange}
+                      className="input_design"
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
+
                 <div className="mt-5 mb-3 text-center">
                   <button
                     type="button"
@@ -1311,7 +1366,7 @@ function NFTDetails() {
                     min="0"
                     max="18"
                     className="form-control input_design"
-                    placeholder="Please Enter Price (MATIC)"
+                    placeholder="Please Enter Price"
                     value={offerPrice}
                     onChange={(event) => setOfferPrice(event.target.value)}
                   />
@@ -1325,12 +1380,12 @@ function NFTDetails() {
                     name="item_qt"
                     id="item_qt"
                     min="1"
-                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
+                    disabled={NFTDetails.type === 1 ? true : false}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"
                     value={offerQuantity}
                     onChange={(event) => {
-                      if (NFTDetails.type == 1 && event.target.value > 1) {
+                      if (NFTDetails.type === 1 && event.target.value > 1) {
                         setOfferQuantity(1);
                         NotificationManager.error(
                           "Quantity must be 1.",
@@ -1373,24 +1428,24 @@ function NFTDetails() {
                         {" "}
                         <option value={"BNB"} selected>
                           BNB
-                        </option>
-                        <option value={"HNTR"}>HNTR</option>
-                        <option value={"USDT"}>USDT</option>
+                        </option> 
+                        {/* <option value={"HNTR"}>HNTR</option> */}
+                        <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
-                  ) : marketplaceSaleType == 1 ? (
+                  ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
                         {" "}
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1398,14 +1453,14 @@ function NFTDetails() {
                     <>
                       <select
                         className="form-select input_design select_bg"
-                        name="USDT"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"USDT"} selected>
-                          USDT
+                        <option value={"BUSD"} selected>
+                          BUSD
                         </option>
                       </select>
                     </>
@@ -1429,7 +1484,6 @@ function NFTDetails() {
                   <button
                     type="button"
                     className="square_yello"
-                    href="/mintcollectionlive"
                     onClick={PlaceOffer}
                   >
                     Place Offer

@@ -66,18 +66,24 @@ var mint_bg = {
 
 const Home = () => {
   const [upcomingMints, setUpcomingMints] = useState([]);
-  useEffect(async () => {
-    try {
-      const res = await getCollections({
-        page: 1,
-        limit: 12,
-        isExclusive: 1,
-      });
-      setUpcomingMints(res);
-    } catch (e) {
-      console.log("Error in fetching all upcoming mints list", e);
+  useEffect(() => {
+    const getCollectionData = async () => {
+      try {
+        const res = await getCollections({
+          page: 1,
+          limit: 12,
+          isExclusive: 1,
+          isOnMarketplace: 1
+        });
+        setUpcomingMints(res);
+      } catch (e) {
+        console.log("Error in fetching all upcoming mints list", e);
+      }
+      
     }
-  }, []);
+    getCollectionData()
+  }
+ , []);
 
   return (
     <div style={bgImgStyle}>
@@ -201,7 +207,7 @@ const Home = () => {
                           <div className='mint_img'>
                             <img
                               alt=''
-                              src={card?.coverImg}
+                              src={card?.logoImg}
                               class='img-fluid'
                               onError={(e) => e.target.src = "../img/collections/list4.png"}
                             />

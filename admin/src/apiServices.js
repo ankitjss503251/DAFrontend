@@ -38,7 +38,7 @@ export const adminRegister = async (account) => {
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/auth/register",
+      process.env.REACT_APP_API_BASE_URL + "/auth/adminregister",
       requestOptions
     );
 
@@ -397,7 +397,7 @@ export const GetBrand = async (id) => {
 };
 
 export const createNft = async (data) => {
-  console.log("data is----------->",data)
+  console.log("data is----------->", data);
   const requestOptions = {
     method: "POST",
     headers: {
@@ -405,9 +405,9 @@ export const createNft = async (data) => {
     },
     body: data,
   };
-  
-  console.log("requestOptions are -------->",requestOptions)
-  
+
+  console.log("requestOptions are -------->", requestOptions);
+
   try {
     console.log("create nft");
     // for (var value of data.values()) {
@@ -817,6 +817,25 @@ export const getNFTList = async (data) => {
       ?.includes("application/json");
     const datas = isJson && (await response.json());
     console.log("dataass", datas);
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const UpdateTokenCount = async (data) => {
+  const requestOptions = {
+    method: "GET",
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + `/nft/updateCollectionToken/${data}`,
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
     return datas.data;
   } catch (err) {
     return err;

@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { getBrandDetailsById } from "../../helpers/getterFunctions";
 import { convertToEth } from "../../helpers/numberFormatter";
 
 var mint_bg = {
   backgroundImage: "url(./img/mint/mint_bg.png)",
 };
 
-function MintLivetab(props) {
+
+
+const MintLivetab = (props) => {
+
+
   return (
     <div className="container">
       <ul className="nav nav-pills mb-5 mint_tab" id="pills-tab" role="tablist">
@@ -39,7 +44,7 @@ function MintLivetab(props) {
                       <a href={`/multimintingpage/${card._id}`}>
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
-                            <img alt="" src={card.coverImg} class="img-fluid" />
+                            <img alt="" src={card.logoImg} class="img-fluid" />
                             {/* <div className='mint_date'>
                             <span>16</span>May
                           </div> */}
@@ -48,7 +53,7 @@ function MintLivetab(props) {
                             <div className="logoImg_con">
                               <img
                                 alt=""
-                                src={card.logoImg}
+                                src={card.brand.logoImage}
                                 className="mc_img"
                               />
                             </div>

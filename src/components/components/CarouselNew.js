@@ -14,34 +14,38 @@ import { convertToEth } from "../../helpers/numberFormatter";
 function ItemsList() {
   const [putOnSaleItems, setPutOnSaleItems] = useState([]);
 
-  useEffect(async () => {
-    try {
-      const reqData = {
-        page: 1,
-        limit: 12,
-      };
-      const res = await getNFTs(reqData);
-      for (let i = 0; i < res.length; i++) {
-        const orderDet = await getPrice({ nftID: res[i].id });
-        const brandDet = await getBrandDetailsById(
-          res[i].collectionData[0].brandID
-        );
-        res[i] = {
-          ...res[i],
-          price: !orderDet?.price?.$numberDecimal
-            ? "--"
-            : Number(convertToEth(orderDet?.price?.$numberDecimal))
-                .toFixed(6)
-                .slice(0, -2),
-          saleType: orderDet?.salesType,
-          brand: brandDet,
-        };
-      }
+  useEffect(
+    () => {
+ const fetch = async () => {
+   try {
+     const reqData = {
+       page: 1,
+       limit: 12,
+     };
+     const res = await getNFTs(reqData);
+     for (let i = 0; i < res.length; i++) {
+       const orderDet = await getPrice({ nftID: res[i].id });
+       const brandDet = await getBrandDetailsById(
+         res[i].collectionData[0].brandID
+       );
+       res[i] = {
+         ...res[i],
+         price: !orderDet?.price?.$numberDecimal
+           ? "--"
+           : Number(convertToEth(orderDet?.price?.$numberDecimal))
+               .toFixed(6)
+               .slice(0, -2),
+         saleType: orderDet?.salesType,
+         brand: brandDet,
+       };
+     }
 
-      setPutOnSaleItems(res);
-    } catch (e) {
-      console.log("Error in fetching all collections list", e);
-    }
+     setPutOnSaleItems(res);
+   } catch (e) {
+     console.log("Error in fetching all collections list", e);
+   }
+ };
+   fetch();
   }, []);
 
   var settings = {
@@ -135,7 +139,7 @@ function ItemsList() {
                   </a>
                   <div className='items_text nft-info-div'>
                     <div className='items_info'>
-                      <div className='items_left'>
+                      <div className='items_left '>
                         <h3 className=''>{card.name}</h3>
                         <p>{card.price} HNTR</p>
                       </div>

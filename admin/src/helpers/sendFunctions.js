@@ -72,7 +72,7 @@ export const putOnMarketplace = async (account, orderData) => {
       Number(orderData.tokenID),
       1,
       0,
-      contracts.USDT,
+      contracts.BUSD,
       100000000,
       GENERAL_TIMESTAMP,
       [],
@@ -140,7 +140,7 @@ export const putOnMarketplace = async (account, orderData) => {
     let reqParams = {
       seller: account,
       collectionAddress: orderData.collection,
-      tokenAddress: contracts.USDT,
+      tokenAddress: contracts.BUSD,
       price: 100000000,
       quantity: 1,
       deadline: GENERAL_TIMESTAMP,

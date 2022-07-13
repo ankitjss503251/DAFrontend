@@ -4,11 +4,16 @@ import { getCategory } from "../../helpers/getterFunctions";
 
 const Category = () => {
   const [catg, setCatg] = useState([]);
-  useEffect(async () => {
+  useEffect(() => {
+const fetch = async () => {
     const cat = await getCategory();
     console.log("sefsd", cat);
     setCatg(cat);
-  }, []);
+    }
+    fetch();
+  }
+    
+  , []);
 
   return (
     <div className='row text-center'>
