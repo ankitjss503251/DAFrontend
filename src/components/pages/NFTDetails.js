@@ -530,10 +530,9 @@ function NFTDetails() {
               }
             }}
           >
-            {haveBid && bidStatus !== "Accepted" && haveBid !== "none"
+            {haveBid 
               ? "Update Bid"
-                ? haveBid && bidStatus === "Accepted" && haveBid !== "none"
-                : ""
+               
               : "Place Bid"}
           </button>
         </div>
