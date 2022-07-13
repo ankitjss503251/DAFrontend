@@ -290,10 +290,10 @@ function NFTDetails() {
     }
 
     let deadline = moment(datetime).unix();
-    let tokenAddress =
-      marketplaceSaleType === 0
-        ? contracts[selectedTokenFS]
-        : contracts[selectedToken];
+    // let tokenAddress =
+    //   marketplaceSaleType === 0
+    //     ? contracts[selectedTokenFS]
+    //     : contracts[selectedToken];
     await createOffer(
       NFTDetails?.tokenId,
       collection?.contractAddress,
@@ -304,11 +304,11 @@ function NFTDetails() {
       ethers.utils.parseEther(offerPrice),
       deadline,
       NFTDetails.id,
-      contracts[selectedToken]
+      contracts.BUSD
     );
     setLoading(false);
 
-    slowRefresh(1000);
+    // slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
   };
