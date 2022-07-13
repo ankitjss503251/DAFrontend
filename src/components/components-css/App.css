@@ -4019,7 +4019,7 @@ a:hover {
   .navbar-toggler {
     border: 1px solid #fffbfb;
   }
-  .navbar-toggler img{
+  .navbar-toggler img {
     height: 46px;
     width: 50px;
   }
@@ -5041,21 +5041,45 @@ button:disabled {
   width: 450px !important;
 }
 
-
-.text-left{
+.text-left {
   text-align: left;
 }
 
-.token_img{
+.token_img {
   height: 20px;
   width: 20px;
   border-radius: 100%;
   margin-right: 5px;
 }
 
-.token_img img{
+.token_img img {
   height: 100%;
   width: 100%;
   object-fit: contain;
   border-radius: inherit;
 }
+
+input[type="datetime-local"] {
+  display: inline-block;
+  position: relative;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+
+  /* background: transparent; */
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+  filter: invert(1);
+  background-size:
+  25px
+  
+  ;
+  background-position: 98%;
+  }
