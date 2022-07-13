@@ -499,8 +499,8 @@ const Header = function () {
                       All NFTs
                     </NavLink>
                   </li>
-                  {catg
-                    ? catg.map((c, key) => {
+                  {catg.length > 0
+                    ? catg?.map((c, key) => {
                         return (
                           <li key={key}>
                             <NavLink

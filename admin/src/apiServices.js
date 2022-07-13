@@ -73,7 +73,7 @@ export const Login = async (account) => {
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/auth/Login",
+      process.env.REACT_APP_API_BASE_URL + "/auth/adminlogin",
       requestOptions
     );
 

@@ -4,7 +4,7 @@ import BNBSymbol from "./../assets/images/bnb.png";
 import HNTRSymbol from "./../assets/images/hntr.png";
 
 export const Tokens = {
-  [contracts["BUSD"].toLowerCase()]: BUSDSymbol,
-  [contracts["BNB"].toLowerCase()]: BNBSymbol,
-  [contracts["HNTR"].toLowerCase()]: HNTRSymbol,
+  [contracts["BUSD"].toLowerCase()]: { icon: BUSDSymbol, symbolName : "BUSD"},
+  [contracts["BNB"].toLowerCase()]: { icon: BNBSymbol, symbolName: "BNB"},
+  [contracts["HNTR"].toLowerCase()]: {icon: HNTRSymbol, symbolName: "HNTR"}
 };

@@ -109,12 +109,12 @@ const Navbar = (props) => {
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
 
-  useEffect( () => {
-   init();
+  useEffect(() => {
+    init();
   }, []);
 
-const init = async () => {
-   if (cookies["selected_account"]) {
+  const init = async () => {
+    if (cookies["selected_account"]) {
       setAccount(cookies["selected_account"]);
       const s = await onboard.connectWallet({
         autoSelect: { label: cookies["label"], disableModals: true },
@@ -131,7 +131,7 @@ const init = async () => {
       });
       setCookie("balance", s[0].accounts[0].balance, { path: "/" });
     }
-}
+  };
 
   const refreshState = () => {
     removeCookie("selected_account", { path: "/" });
@@ -168,38 +168,39 @@ const init = async () => {
   const connectWallet = async () => {
     const wallets = await onboard.connectWallet();
     if (wallets.length !== 0) {
-    await onboard.setChain({
-      chainId: process.env.REACT_APP_CHAIN_ID,
-    });
-    const primaryWallet = wallets[0];
-    setChainId(primaryWallet.chains[0].id);
-    console.log("provider", primaryWallet.provider);
-    setProvider(primaryWallet.provider);
-    const address = wallets[0].accounts[0].address;
-    try {
-      userAuth(primaryWallet, address);
-    } catch (e) {
-      console.log("Error in user auth", e);
+      await onboard.setChain({
+        chainId: process.env.REACT_APP_CHAIN_ID,
+      });
+      const primaryWallet = wallets[0];
+      setChainId(primaryWallet.chains[0].id);
+      console.log("provider", primaryWallet.provider);
+      setProvider(primaryWallet.provider);
+      const address = wallets[0].accounts[0].address;
+      try {
+        userAuth(primaryWallet, address);
+      } catch (e) {
+        console.log("Error in user auth", e);
+      }
     }
-  }
   };
 
   const userAuth = async (primaryWallet, address) => {
     try {
       const isUserExist = await checkuseraddress(address);
-      if (isUserExist.message === "User not found") {
+      if (isUserExist?.message === "User not found") {
         try {
           const res = await adminRegister(address);
           const res2 = await Login(address);
-          if (res.message === "Wallet Address required") {
-            NotificationManager.info(res.message);
+          if (res?.message === "Wallet Address required") {
+            NotificationManager.info(res?.message);
             return;
-          } else if (res.message === "User already exists") {
-            NotificationManager.error(res.message);
+          } else if (res?.message === "User already exists") {
+            NotificationManager.error(res?.message);
             return;
           } else {
             setAccount(primaryWallet.accounts[0].address);
             setLabel(primaryWallet.label);
+            window.sessionStorage.setItem("role", res2?.data?.userType);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
@@ -225,18 +226,20 @@ const init = async () => {
         try {
           const res = await Login(address);
           console.log("Login API response", res);
-          if (res.message === "Wallet Address required") {
-            NotificationManager.info(res.message);
+          if (res?.message === "Wallet Address required") {
+            NotificationManager.info(res?.message);
             return;
           } else if (
-            res.message === "User not found" ||
-            res.message === "Login Invalid"
+            res?.message === "User not found" ||
+            res?.message === "Login Invalid"
           ) {
             NotificationManager.error(res?.message);
             return;
           } else {
             setAccount(primaryWallet.accounts[0].address);
+
             setLabel(primaryWallet.label);
+            window.sessionStorage.setItem("role", res?.data?.userType);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
@@ -255,7 +258,7 @@ const init = async () => {
             return;
           }
         } catch (e) {
-          NotificationManager.error(e);
+          NotificationManager.error("Something went wrong", "", 800);
           return;
         }
       }
@@ -267,30 +270,32 @@ const init = async () => {
   const disconnectWallet = async () => {
     await onboard.disconnectWallet({ label: label });
     await Logout(cookies["selected_account"]);
+    window.sessionStorage.removeItem("role");
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
 
   return (
-    <div className='admin-navbar d-flex w-100'>
+    <div className="admin-navbar d-flex w-100">
       {isChainSwitched ? (
         <PopupModal
           content={
-            <div className='switch_container'>
+            <div className="switch_container">
               <h3>Chain Switched</h3>
-              <p className='my-4 mr-2'>
+              <p className="my-4 mr-2">
                 Please Switch to Matic Testnet Network
               </p>
-              <div className='d-flex justify-content-center align-items-center'>
+              <div className="d-flex justify-content-center align-items-center">
                 <button
-                  className='btn network_btn'
+                  className="btn network_btn"
                   onClick={async () => {
                     await onboard.setChain({
                       chainId: process.env.REACT_APP_CHAIN_ID,
                     });
                     setIsChainSwitched(false);
-                  }}>
+                  }}
+                >
                   Switch Network
                 </button>
               </div>
@@ -301,14 +306,16 @@ const init = async () => {
       ) : (
         ""
       )}
-      <div className='profile_box text-light me-auto d-flex align-items-center text-uppercase montserrat font-400'>
-        <div className='profile_img'>
-          <img src={"../images/user.jpg"} alt='' className='img-fluid' />
+      <div className="profile_box text-light me-auto d-flex align-items-center text-uppercase montserrat font-400">
+        <div className="profile_img">
+          <img src={"../images/user.jpg"} alt="" className="img-fluid" />
         </div>
         {props.model}
-        <a className="logo" href='/'>Digital Arms</a>
+        <a className="logo" href="/">
+          Digital Arms
+        </a>
       </div>
-      <ul className='p-0 m-0'>
+      <ul className="p-0 m-0">
         {/* <li className='text-light'>
           <div className='position-relative'>
             <Message />
@@ -322,15 +329,18 @@ const init = async () => {
           </div>
         </li> */}
         <li>
-          {props.isAdmin?
-          <button
-              className='round-btn montserrat text-light text-decoration-none'
-              onClick={logoutSuperAdmin}>
-              {"Logout" }
-            </button>:
+          {props.isAdmin ? (
             <button
-              className='round-btn montserrat text-light text-decoration-none'
-              onClick={!account ? connectWallet : disconnectWallet}>
+              className="round-btn montserrat text-light text-decoration-none"
+              onClick={logoutSuperAdmin}
+            >
+              {"Logout"}
+            </button>
+          ) : (
+            <button
+              className="round-btn montserrat text-light text-decoration-none"
+              onClick={!account ? connectWallet : disconnectWallet}
+            >
               {!account ? (
                 "Connect Wallet"
               ) : (
@@ -340,7 +350,7 @@ const init = async () => {
                 </>
               )}
             </button>
-          }
+          )}
         </li>
       </ul>
     </div>

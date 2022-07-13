@@ -8,7 +8,7 @@ import { AuthorCard } from "../../Data/dummyJSON";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
 import { useParams } from "react-router-dom";
-import { GetIndividualAuthorDetail, GetOwnedNftList } from "../../apiServices";
+import { GetIndividualAuthorDetail, getOnSaleItems, GetOwnedNftList } from "../../apiServices";
 import moment from "moment";
 import coverImg from "./../../assets/images/authorbg.jpg";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
@@ -28,7 +28,8 @@ function Author() {
   const [togglemode, setTogglemode] = useState("filterhide");
   const [loader, setLoader] = useState(false);
   const [cardCount, setCardCount] = useState(1);
-  const [searchFor, setSearchFor] = useState("")
+  const [searchFor, setSearchFor] = useState("");
+  const [onSaleNFTs, setOnSaleNFTs] = useState([]);
  
 
 
@@ -85,18 +86,38 @@ function Author() {
       setLoader(true);
       let _profile = await GetIndividualAuthorDetail({ userID: id });
       setProfile(_profile);
-      let reqBody = {
-        page: 1,
-        limit: 12,
-        userWalletAddress: _profile?.walletAddress?.toLowerCase(),
-        searchType: "owned",
-        searchText: searchFor
-      };
-      let _owned = await GetOwnedNftList(reqBody);
-      setCardCount(cardCount + _owned.count);
-      setTotalOwned(_owned.count);
-      if (_owned && _owned.results.length > 0) setOwnedNFTs(_owned.results[0]);
-      setLoader(false);
+      try{
+
+        let reqBody = {
+          page: 1,
+          limit: 12,
+          userWalletAddress: _profile?.walletAddress?.toLowerCase(),
+          searchType: "owned",
+          searchText: searchFor
+        };
+        let _owned = await GetOwnedNftList(reqBody);
+        setCardCount(cardCount + _owned.count);
+        setTotalOwned(_owned.count);
+        if (_owned && _owned.results.length > 0) setOwnedNFTs(_owned.results[0]);
+        setLoader(false);
+      }catch(e){
+        console.log("Error in fetching owned nfts", e);
+      }      
+
+      try{
+        
+        let reqBody = {
+          page: 1,
+          limit: 12,
+          userWalletAddress: _profile?.walletAddress?.toLowerCase()
+        }
+        const onsale = await getOnSaleItems(reqBody);
+        setOnSaleNFTs(onsale);
+       
+      }
+      catch(e){
+        console.log("Error in fetching onSale Items",e);
+      }
     };
     fetch();
   }, [id, searchFor]);
@@ -572,19 +593,19 @@ function Author() {
               aria-labelledby="pills-Sale-tab"
             >
               <div className="row">
-                {AuthorCard?.map((card, key) => (
-                  <div className={grid} key={key}>
+              {loader ? (
+              <CollectionsNFT cards={cardCount} grid={grid} />
+            ) : onSaleNFTs?.map((card, key) => {
+                return (  <div className={grid} key={key}>
                     <AuthorListing
-                      image={card.img}
-                      submenu={card.Subheading}
-                      heading={card.Heading}
-                      price={card.price}
-                      date={card.Date}
-                      button={card.Slug}
-                      link={card.Like}
+                      image={card.image}
+                      card={card}
+                      link={`/nftDetails/${card._id}`}
+                      bttn={card.OrderData[0].salesType}
                     />
                   </div>
-                ))}
+                )
+                })}
               </div>
             </div>
             <div

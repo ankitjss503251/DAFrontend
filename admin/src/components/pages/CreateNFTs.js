@@ -17,7 +17,6 @@ import { useCookies } from "react-cookie";
 import extendedERC721Abi from "./../../config/abis/extendedERC721.json";
 import { exportInstance } from "../../apiServices";
 import contracts from "./../../config/contracts";
-import { getSignature } from "./../../helpers/getterFunctions";
 import { GENERAL_DATE, GENERAL_TIMESTAMP } from "../../helpers/constants";
 import Loader from "../components/loader";
 import "../../App.css";
@@ -275,8 +274,10 @@ function CreateNFTs() {
         limit: 20,
       };
       let data = await GetMyCollectionsList(reqBody);
-      if (data && data.results && data.results.length > 0)
-        setCollections(data?.results[0]);
+      if (data && data.results && data.results.length > 0) {
+        let res = data?.results[0].filter((d, i) => d.isMinted === 1);
+        setCollections(res);
+      }
 
       // console.log("data", data);
     };
@@ -368,8 +369,20 @@ function CreateNFTs() {
                               }
                             />
                           </td>
-                          <td>{n.name}</td>
-                          <td>{n.description}</td>
+                          <td>
+                            {n.name
+                              ? n.name?.length > 8
+                                ? n.name?.slice(0, 8) + "..."
+                                : n.name
+                              : "-"}
+                          </td>
+                          <td>
+                            {n.description
+                              ? n.description?.length > 15
+                                ? n.description?.slice(0, 15) + "..."
+                                : n.description
+                              : "-"}
+                          </td>
                         </tr>
                       );
                     })

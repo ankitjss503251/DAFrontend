@@ -215,6 +215,8 @@ function NFTDetails() {
   const [price, setPrice] = useState("");
   const [firstOrderNFT, setFirstOrderNFT] = useState([]);
   const [haveBid, setHaveBid] = useState(false);
+  const [haveOffer, setHaveOffer] = useState(false);
+  const [ownedBy, setOwnedBy] = useState("");
 
   useEffect(() => {
     async function setUser() {
@@ -245,9 +247,8 @@ function NFTDetails() {
           window.location.href = "/marketplace";
           return;
         }
-        console.log("current User is--->", currentUser);
         setNFTDetails(res[0]);
-        console.table("nft detail------>>>", res[0]);
+        setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length - 1]?.address);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
 
@@ -256,10 +257,10 @@ function NFTDetails() {
           limit: 12,
           collectionID: res[0].collection,
         };
+
         const nfts = await getNFTs(reqData1);
 
         setAllNFTs(nfts);
-
         if (
           currentUser &&
           res[0].ownedBy &&
@@ -278,7 +279,6 @@ function NFTDetails() {
 
         if (id) {
           const _orders = await getOrderByNftID({ nftID: id });
-          console.log("orders123", _orders?.results);
 
           setOrders(_orders?.results);
           const _nft = await getNFTList({
@@ -308,6 +308,26 @@ function NFTDetails() {
       console.log("bid data123", _data);
       if (_data && _data.data.length > 0) {
         setHaveBid(true);
+      }
+    };
+    fetch();
+  }, [NFTDetails]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let searchParams = {
+        nftID: NFTDetails.id,
+        buyerID: localStorage.getItem("userId"),
+        bidStatus: "All",
+        orderID: "All",
+      };
+
+      let _data = await fetchOfferNft(searchParams);
+      if (_data && _data.data.length > 0) {
+        setHaveOffer(true);
+        //console.log("offer is in ofeerererere------>",offer[0])
+        //setOfferPrice(offer?offer[0].bidPrice
+        //  :"")
       }
     };
     fetch();
@@ -790,7 +810,9 @@ function NFTDetails() {
               <div className="owner_by mb-4">
                 <p>
                   Owned by{" "}
-                  <span style={textColor}>{collection?.createdBy}</span>
+                  <span style={textColor}>
+                    {ownedBy.slice(0, 8) + "..." + ownedBy.slice(34, 42)}
+                  </span>
                 </p>
                 <span className="add_wishlist">
                   <svg
@@ -892,13 +914,14 @@ function NFTDetails() {
                     <h4>Price</h4>
                     <div className="price_div">
                       <img
-                        src={Tokens[orders[0].paymentToken]}
+                        src={Tokens[orders[0].paymentToken].icon}
                         className="img-fluid hunter_fav"
                         alt=""
                       />
                       {Number(convertToEth(orders[0].price.$numberDecimal))
                         .toFixed(6)
                         .slice(0, -2)}{" "}
+                      {Tokens[orders[0].paymentToken].symbolName}
                     </div>
                   </>
                 ) : (
@@ -954,7 +977,7 @@ function NFTDetails() {
                     data-bs-target="#brandModal"
                     onClick={() => setModal("active")}
                   >
-                    Make Offers
+                    {haveOffer ? "Update Offer" : "Make Offers"}
                   </button>
                 ) : (
                   ""
@@ -1194,7 +1217,36 @@ function NFTDetails() {
                       className="form-control input_design"
                       placeholder="Please Enter Price (MATIC)"
                       value={itemprice}
-                      onChange={(event) => setItemprice(event.target.value)}
+                      onKeyPress={(e) => {
+                        if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                      }}
+                      onChange={(e) => {
+                        const re = /[+-]?[0-9]+\.?[0-9]*/;
+                        let val = e.target.value;
+
+                        if (e.target.value === "" || re.test(e.target.value)) {
+                          const numStr = String(val);
+                          if (numStr.includes(".")) {
+                            if (numStr.split(".")[1].length > 8) {
+                            } else {
+                              if (val.split(".").length > 2) {
+                                val = val.replace(/\.+$/, "");
+                              }
+                              if (val.length === 1 && val !== "0.") {
+                                val = Number(val);
+                              }
+                            }
+                          } else {
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
+                            }
+                            if (val.length === 1 && val !== "0.") {
+                              val = Number(val);
+                            }
+                          }
+                          setItemprice(val);
+                        }
+                      }}
                     />
                   </div>
                 ) : (
@@ -1242,7 +1294,36 @@ function NFTDetails() {
                     className="form-control input_design"
                     placeholder="Enter Minimum Bid"
                     value={item_bid}
-                    onChange={(event) => setItem_bid(event.target.value)}
+                    onKeyPress={(e) => {
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => {
+                      const re = /[+-]?[0-9]+\.?[0-9]*/;
+                      let val = e.target.value;
+
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        const numStr = String(val);
+                        if (numStr.includes(".")) {
+                          if (numStr.split(".")[1].length > 8) {
+                          } else {
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
+                            }
+                            if (val.length === 1 && val !== "0.") {
+                              val = Number(val);
+                            }
+                          }
+                        } else {
+                          if (val.split(".").length > 2) {
+                            val = val.replace(/\.+$/, "");
+                          }
+                          if (val.length === 1 && val !== "0.") {
+                            val = Number(val);
+                          }
+                        }
+                        setItem_bid(val);
+                      }
+                    }}
                   />
                 </div>
 
@@ -1368,7 +1449,36 @@ function NFTDetails() {
                     className="form-control input_design"
                     placeholder="Please Enter Price"
                     value={offerPrice}
-                    onChange={(event) => setOfferPrice(event.target.value)}
+                    onKeyPress={(e) => {
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => {
+                      const re = /[+-]?[0-9]+\.?[0-9]*/;
+                      let val = e.target.value;
+
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        const numStr = String(val);
+                        if (numStr.includes(".")) {
+                          if (numStr.split(".")[1].length > 8) {
+                          } else {
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
+                            }
+                            if (val.length === 1 && val !== "0.") {
+                              val = Number(val);
+                            }
+                          }
+                        } else {
+                          if (val.split(".").length > 2) {
+                            val = val.replace(/\.+$/, "");
+                          }
+                          if (val.length === 1 && val !== "0.") {
+                            val = Number(val);
+                          }
+                        }
+                        setOfferPrice(val);
+                      }
+                    }}
                   />
                 </div>
                 <div className="mb-3" id="tab_opt_2">

@@ -387,8 +387,7 @@ export const GetOrdersByNftId = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-    
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   };
@@ -481,13 +480,13 @@ export const GetOwnedNftList = async (data) => {
     return err;
   }
 };
-export const isWhitelisted = async (address) => {
+export const isWhitelisted = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(address),
+    body: JSON.stringify(data),
   };
 
   try {
@@ -509,7 +508,7 @@ export const getBrandById = async (brandID) => {
   const requestOptions = {
     method: "GET",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
   };
   try {
@@ -622,7 +621,7 @@ export const createBidNft = async (data) => {
 };
 
 export const createOfferNFT = async (data) => {
-  console.log("data for createOfer is--->",data)
+  console.log("data for createOfer is--->", data);
   const requestOptions = {
     method: "POST",
     headers: {
@@ -646,10 +645,7 @@ export const createOfferNFT = async (data) => {
   }
 };
 
-
-
 export const fetchBidNft = async (data) => {
-  console.log("Data", data);
   const requestOptions = {
     method: "POST",
     headers: {
@@ -673,9 +669,7 @@ export const fetchBidNft = async (data) => {
   }
 };
 
-
 export const fetchOfferNft = async (data) => {
-  console.log("Data for offer NFT", data);
   const requestOptions = {
     method: "POST",
     headers: {
@@ -693,14 +687,12 @@ export const fetchOfferNft = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("offer data in api services",datas)
     return datas.data;
   } catch (err) {
-    console.log("'error in offer-->",err)
+    console.log("'error in offer-->", err);
     return err;
   }
 };
-
 
 export const acceptBid = async (data) => {
   const requestOptions = {
@@ -727,7 +719,6 @@ export const acceptBid = async (data) => {
 };
 
 export const updateBidNft = async (data) => {
-  console.log("dataaa", data);
   const requestOptions = {
     method: "POST",
     headers: {
@@ -746,6 +737,29 @@ export const updateBidNft = async (data) => {
       ?.includes("application/json");
     const datas = isJson && (await response.json());
     return datas;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const getOnSaleItems = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/nft/getOnSaleItems",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data.results[0];
   } catch (err) {
     return err;
   }
@@ -1066,8 +1080,6 @@ export const updateBidNft = async (data) => {
 //     return err;
 //   }
 // };
-
-
 
 // export const Follow = async (data) => {
 //   const requestOptions = {

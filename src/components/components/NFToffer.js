@@ -32,7 +32,6 @@ function NFToffer(props) {
   const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
 
   useEffect(() => {
-    console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     // else NotificationManager.error("Connect Yout Wallet", "", 800);
 
@@ -47,10 +46,8 @@ function NFToffer(props) {
         bidStatus: "All",
         //orderID: "All",
       };
-      console.log("fetch NFT is Called", searchParams);
 
       let _data = await fetchOfferNft(searchParams);
-      console.log("offer data123", _data.data);
       if (_data && _data.data.length > 0) {
         let a = _data.data;
 
@@ -58,7 +55,6 @@ function NFToffer(props) {
         //console.log("offer is in ofeerererere------>",offer[0])
         //setOfferPrice(offer?offer[0].bidPrice
         //  :"")
-        console.log("bid data", _data.data[0]);
       }
     };
     fetch();
@@ -155,7 +151,6 @@ function NFToffer(props) {
             <tbody>
               {offer && offer.length > 0
                 ? offer.map((b, i) => {
-                    console.log("token image", b);
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
 
@@ -174,12 +169,12 @@ function NFToffer(props) {
                         <td>
                           <img
                             alt=''
-                            src={Tokens[b?.tokenAddress?.toLowerCase()]}
+                            src={Tokens[b?.tokenAddress?.toLowerCase()].icon}
                             className='img-fluid hunter_fav'
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}
+                          ).toFixed(4)}{" "}{Tokens[b?.tokenAddress?.toLowerCase()].symbolName}
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
@@ -188,11 +183,7 @@ function NFToffer(props) {
                           </span>
                         </td>
                         <td>
-                          {" "}
-                          {console.log(
-                            "b.deadline",
-                            new Date(b.bidDeadline * 1000) < new Date()
-                          )}
+                         
                           <Clock
                             deadline={moment(new Date(b.bidDeadline * 1000))
                               .subtract({

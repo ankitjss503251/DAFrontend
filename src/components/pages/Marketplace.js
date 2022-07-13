@@ -19,6 +19,7 @@ import BGImg from "./../../assets/images/background.jpg";
 import SkeletonCard from "../components/Skeleton/NFTSkeletonCard";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { Tokens } from "../../helpers/tokensToSymbol";
 
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
@@ -36,7 +37,6 @@ function Marketplace() {
   };
 
   function Model(props) {
-    console.log("props--->", props);
     const { scene } = useGLTF(props.image);
     return <primitive object={scene} />;
   }
@@ -137,7 +137,7 @@ function Marketplace() {
             const orderDet = await getPrice({
               nftID: res[i].id,
             });
-
+            console.log("orderDet", orderDet);  
             // const brandDet = await getBrandDetailsById(
             //   res[i].collectionData[0].brandID
             // );
@@ -151,6 +151,7 @@ function Marketplace() {
                   : Number(convertToEth(orderDet?.price?.$numberDecimal))
                       .toFixed(6)
                       .slice(0, -2),
+              paymentToken: orderDet?.paymentToken
               // brand: brandDet,
             };
           }
@@ -440,8 +441,8 @@ function Marketplace() {
                           <input type="radio" id="all" name="radio-group" />
                           <label for="all">All</label>
                         </div>
-                        {category
-                          ? category.map((c) => {
+                        {category.length > 0
+                          ? category?.map((c) => {
                               return (
                                 <div class="form-check form-check-inline">
                                   <input
@@ -479,8 +480,8 @@ function Marketplace() {
                     </li> */}
                     <li>
                       <form action="#" className="checked_form">
-                        {brands
-                          ? brands.map((b) => {
+                        {brands.length > 0
+                          ? brands?.map((b) => {
                               return (
                                 <div class="form-check form-check-inline">
                                   <input
@@ -506,6 +507,7 @@ function Marketplace() {
             ) : allNFTs?.length > 0 ? (
               allNFTs.map((oIndex) => {
                 return oIndex.map((card, key) => {
+                  // console.log("12222222234567",Tokens[card?.paymentToken?.toLowerCase()])
                   return (
                     <div className={grid}>
                       <div className="items_slide h-100" key={key}>
@@ -580,10 +582,16 @@ function Marketplace() {
                         <div className="items_text nft-info-div">
                           <div className="items_info ">
                             <div className="items_left">
-                              <h3 className="">{card.name}</h3>
-                              <p>{card.price} HNTR</p>
+                              <h3 className="">{card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}</h3>
+                             {card.paymentToken !== undefined ? <>
+                             {/* <div className="token_img">
+                              <img src={Tokens[card?.paymentToken?.toLowerCase()].icon} alt="payment token"/>
+                             </div> */}
+                              <p>{" "}{card.price}{" "}{Tokens[card?.paymentToken?.toLowerCase()].symbolName} </p> 
+                             </>
+                             : ""}
                             </div>
-                            <div className="items_right justify-content-end d-flex">
+                            {/* <div className="items_right justify-content-end d-flex">
                               <span>
                                 <svg
                                   width="16"
@@ -599,7 +607,7 @@ function Marketplace() {
                                 </svg>
                                 {card.like}
                               </span>
-                            </div>
+                            </div> */}
                           </div>
                           <Link
                             to={`/NFTdetails/${card.id}`}
