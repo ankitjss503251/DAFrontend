@@ -399,7 +399,7 @@ function NFTlisting(props) {
                     .subtract({
                       hours: 5,
                       minutes: 30,
-                    })._d > new Date() ? (
+                    })._d < new Date() ? (
                             "--:--:--"
                           ) : (
                             <Clock

@@ -227,9 +227,9 @@ function Collection() {
             <span className='ctc'>
               <img alt='' src={"../img/favicon.png"} class='img-fluid' />
               <div className=''>
-                {collectionDetails?.contractAddress?.slice(0, 4) +
+                {collectionDetails?.contractAddress ? collectionDetails?.contractAddress?.slice(0, 4) +
                   "..." +
-                  collectionDetails?.contractAddress?.slice(38, 42)}
+                  collectionDetails?.contractAddress?.slice(38, 42) : "-"}
               </div>
 
               <CopyToClipboard

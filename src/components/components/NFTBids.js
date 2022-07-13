@@ -377,8 +377,12 @@ function NFTBids(props) {
                             bidder === currentUser?.toLowerCase() ? (
                             <div className="d-flex flex-column justify-content-center align-items-center ">
                               <button
-                                disabled={
-                                  new Date(b.bidDeadline * 1000) < new Date()
+                                disabled={ moment(new Date(b.bidDeadline * 1000))
+                                  .subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })._d < new Date()
+                                
                                 }
                                 className="small_yellow_btn small_btn mb-2"
                                 onClick={() => {
@@ -407,7 +411,11 @@ function NFTBids(props) {
                               </button>
                               <button
                                 disabled={
-                                  new Date(b.bidDeadline * 1000) < new Date()
+                                  moment(new Date(b.bidDeadline * 1000))
+                                  .subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })._d < new Date()
                                 }
                                 className="small_border_btn small_btn"
                                 onClick={async () => {
@@ -424,6 +432,13 @@ function NFTBids(props) {
                             <button
                               to={"/"}
                               className="small_border_btn small_btn"
+                              disabled={
+                                moment(new Date(b.bidDeadline * 1000))
+                                .subtract({
+                                  hours: 5,
+                                  minutes: 30,
+                                })._d < new Date()
+                              }
                             >
                               Place Bid
                             </button>

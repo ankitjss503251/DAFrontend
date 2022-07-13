@@ -226,7 +226,7 @@ function NFToffer(props) {
                             </div>
                           ) : bidOwner !== currentUser.toLowerCase() &&
                             bidder === currentUser.toLowerCase() ? (
-                            <div className='d-flex justify-content-center align-items-center'>
+                            <div className={`d-${b.bidStatus === "Accepted" ? "none" : "flex"} justify-content-center align-items-center`} >
                               <button
                                 disabled={
                                   new Date(b.bidDeadline * 1000) < new Date()
@@ -239,15 +239,16 @@ function NFToffer(props) {
                                   console.log(
                                     "current offer details",
                                     b,
-                                    Number(
-                                      convertToEth(b?.bidPrice?.$numberDecimal)
-                                    ).toFixed(4)
+                                    moment(b?.bidDeadline * 1000).toISOString()
                                   );
                                   setOfferPrice(
                                     convertToEth(
                                       b?.bidPrice?.$numberDecimal
-                                    ).toFixed(4)
+                                    )
+                                    
                                   );
+                                  setDatetime(moment(b?.bidDeadline * 1000).toISOString())
+                                  
                                 }}>
                                 Update Offer
                               </button>
