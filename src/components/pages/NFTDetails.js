@@ -177,9 +177,8 @@ function NFTDetails() {
 
         setPrice(convertToEth(b?.bidPrice?.$numberDecimal));
         setBidStatus(b?.bidStatus);
-      }
-      else{
-        setHaveBid(false)
+      } else {
+        setHaveBid(false);
       }
     };
     fetch();
@@ -530,11 +529,7 @@ function NFTDetails() {
               }
             }}
           >
-            {haveBid && bidStatus !== "Accepted" && haveBid !== "none"
-              ? "Update Bid"
-                ? haveBid && bidStatus === "Accepted" && haveBid !== "none"
-                : ""
-              : "Place Bid"}
+            {haveBid ? "Update Bid" : "Place Bid"}
           </button>
         </div>
       }
