@@ -793,7 +793,11 @@ function NFTDetails() {
                     <button
                       type="button"
                       disabled={
-                        new Date(orders[0].deadline * 1000) < new Date()
+                        moment(new Date(orders[0].deadline * 1000))
+                        .subtract({
+                          hours: 5,
+                          minutes: 30,
+                        })._d < new Date()
                       }
                       className="title_color buy_now"
                       onClick={() => {
@@ -811,7 +815,7 @@ function NFTDetails() {
                     type="button"
                     className="border_btn title_color"
                     data-bs-toggle="modal"
-                    data-bs-target="#brandModal"
+                    data-bs-target="#makeOfferModal"
                     onClick={() => setModal("active")}
                   >
                     Make Offers
@@ -1257,7 +1261,7 @@ function NFTDetails() {
 
       {/*Bid/Offer Modal*/}
 
-      <div className="modal marketplace" id="brandModal">
+      <div className="modal marketplace" id="makeOfferModal">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             {/* <!-- Modal Header --> */}

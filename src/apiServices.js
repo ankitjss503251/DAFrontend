@@ -444,7 +444,7 @@ export const DeleteOrder = async (data) => {
 
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/order/deleteOrder",
+      process.env.REACT_APP_API_BASE_URL + "/order/deleteOrder1",
       requestOptions
     );
     const isJson = response.headers

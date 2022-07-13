@@ -58,6 +58,7 @@ function NFTBids(props) {
       let _data = await fetchBidNft(searchParams);
       if (_data && _data.data.length > 0) {
         setBids(_data.data);
+        console.log(".......bids data.......",_data.data);
       }
     };
     fetch();
@@ -304,17 +305,17 @@ function NFTBids(props) {
                           <img
                             alt=''
                             src={
-                              b.orderID.length > 0
+                              b?.orderID?.length > 0
                                 ? Tokens[
-                                    b.orderID[0]?.paymentToken?.toLowerCase()
-                                  ].icon
+                                    b?.orderID[0]?.paymentToken?.toLowerCase()
+                                  ]?.icon
                                 : "-"
                             }
                             className='img-fluid hunter_fav'
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}{Tokens[b.orderID[0].paymentToken].symbolName}
+                          ).toFixed(4)}{" "}{Tokens[b?.orderID[0]?.paymentToken]?.symbolName}
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
