@@ -79,6 +79,7 @@ function NFTDetails() {
   const [price, setPrice] = useState("");
   const [firstOrderNFT, setFirstOrderNFT] = useState([]);
   const [haveBid, setHaveBid] = useState(false);
+  const [haveOffer, setHaveOffer] = useState(false);
   const [ownedBy, setOwnedBy] = useState("");
 
   useEffect(() => {
@@ -109,10 +110,10 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
-        setOwnedBy(res[0]?.ownedBy[(res[0]?.ownedBy?.length) - 1]?.address);
+        setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length - 1]?.address);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
-        
+
         const reqData1 = {
           page: 1,
           limit: 12,
@@ -120,7 +121,7 @@ function NFTDetails() {
         };
 
         const nfts = await getNFTs(reqData1);
-        
+
         setAllNFTs(nfts);
         if (
           currentUser &&
@@ -169,6 +170,26 @@ function NFTDetails() {
       console.log("bid data123", _data);
       if (_data && _data.data.length > 0) {
         setHaveBid(true);
+      }
+    };
+    fetch();
+  }, [NFTDetails]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let searchParams = {
+        nftID: NFTDetails.id,
+        buyerID: localStorage.getItem("userId"),
+        bidStatus: "All",
+        orderID: "All",
+      };
+
+      let _data = await fetchOfferNft(searchParams);
+      if (_data && _data.data.length > 0) {
+        setHaveOffer(true);
+        //console.log("offer is in ofeerererere------>",offer[0])
+        //setOfferPrice(offer?offer[0].bidPrice
+        //  :"")
       }
     };
     fetch();
@@ -650,7 +671,9 @@ function NFTDetails() {
               <div className="owner_by mb-4">
                 <p>
                   Owned by{" "}
-                  <span style={textColor}>{ownedBy.slice(0,8) + "..." + ownedBy.slice(34,42)}</span>
+                  <span style={textColor}>
+                    {ownedBy.slice(0, 8) + "..." + ownedBy.slice(34, 42)}
+                  </span>
                 </p>
                 <span className="add_wishlist">
                   <svg
@@ -758,7 +781,8 @@ function NFTDetails() {
                       />
                       {Number(convertToEth(orders[0].price.$numberDecimal))
                         .toFixed(6)
-                        .slice(0, -2)}{" "}{Tokens[orders[0].paymentToken].symbolName}
+                        .slice(0, -2)}{" "}
+                      {Tokens[orders[0].paymentToken].symbolName}
                     </div>
                   </>
                 ) : (
@@ -818,7 +842,7 @@ function NFTDetails() {
                     data-bs-target="#makeOfferModal"
                     onClick={() => setModal("active")}
                   >
-                    Make Offers
+                    {haveOffer ? "Update Offer" : "Make Offers"}
                   </button>
                 ) : (
                   ""
@@ -1064,7 +1088,7 @@ function NFTDetails() {
                       onChange={(e) => {
                         const re = /[+-]?[0-9]+\.?[0-9]*/;
                         let val = e.target.value;
-          
+
                         if (e.target.value === "" || re.test(e.target.value)) {
                           const numStr = String(val);
                           if (numStr.includes(".")) {
@@ -1141,7 +1165,7 @@ function NFTDetails() {
                     onChange={(e) => {
                       const re = /[+-]?[0-9]+\.?[0-9]*/;
                       let val = e.target.value;
-        
+
                       if (e.target.value === "" || re.test(e.target.value)) {
                         const numStr = String(val);
                         if (numStr.includes(".")) {
@@ -1296,7 +1320,7 @@ function NFTDetails() {
                     onChange={(e) => {
                       const re = /[+-]?[0-9]+\.?[0-9]*/;
                       let val = e.target.value;
-        
+
                       if (e.target.value === "" || re.test(e.target.value)) {
                         const numStr = String(val);
                         if (numStr.includes(".")) {
