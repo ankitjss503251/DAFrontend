@@ -110,6 +110,7 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+        console.log("nftdetailsssssssss", res[0])
         setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length - 1]?.address);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
@@ -291,7 +292,7 @@ function NFTDetails() {
       ethers.utils.parseEther(offerPrice),
       deadline,
       NFTDetails.id,
-      tokenAddress
+     contracts[selectedToken]
     );
     setLoading(false);
 

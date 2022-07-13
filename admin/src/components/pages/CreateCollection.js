@@ -620,7 +620,7 @@ function CreateCollection() {
                     + Add Collection
                   </button>
                 </div>
-                {/*<div className="add_btn mb-4 d-flex justify-content-end">
+                <div className="add_btn mb-4 d-flex justify-content-end">
                   <button
                     className="btn btn-admin text-light"
                     type="button"
@@ -630,7 +630,7 @@ function CreateCollection() {
                   >
                     + Import Collection
                   </button>
-                  </div>*/}
+                  </div>
               </>
             )}
         <div className="adminbody table-widget text-light box-background ">

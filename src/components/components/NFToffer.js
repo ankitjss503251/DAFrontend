@@ -104,7 +104,6 @@ function NFToffer(props) {
       ethers.utils.parseEther(offerPrice),
       deadline,
       props.NftDetails.id,
-      tokenAddress,
       contracts[selectedTokenFS]
     );
 
@@ -140,11 +139,11 @@ function NFToffer(props) {
           <table className='table text-light fixed_header'>
             <thead>
               <tr>
-                <th>FROM</th>
-                <th>PRICE</th>
-                <th>DATE</th>
-                <th>ENDS IN</th>
-                <th>STATUS</th>
+                <th scope="col">FROM</th>
+                <th scope="col">PRICE</th>
+                <th scope="col">DATE</th>
+                <th scope="col">ENDS IN</th>
+                <th scope="col">STATUS</th>
                 <th className='text-center'>ACTION</th>
               </tr>
             </thead>
@@ -153,7 +152,6 @@ function NFToffer(props) {
                 ? offer.map((b, i) => {
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
-
                     return (
                       <tr>
                         <td className='d-flex justify-content-start align-items-center mb-0'>
@@ -169,12 +167,12 @@ function NFToffer(props) {
                         <td>
                           <img
                             alt=''
-                            src={Tokens[b?.tokenAddress?.toLowerCase()].icon}
+                            src={Tokens[b?.paymentToken?.toLowerCase()]?.icon}
                             className='img-fluid hunter_fav'
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}{" "}{Tokens[b?.tokenAddress?.toLowerCase()].symbolName}
+                          ).toFixed(4)}{" "}{Tokens[b?.paymentToken?.toLowerCase()]?.symbolName}
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
@@ -315,7 +313,36 @@ function NFToffer(props) {
                     className='form-control input_design'
                     placeholder='Please Enter Price (MATIC)'
                     value={offerPrice}
-                    onChange={(event) => setOfferPrice(event.target.value)}
+                    onKeyPress={(e) => {
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => {
+                      const re = /[+-]?[0-9]+\.?[0-9]*/;
+                      let val = e.target.value;
+
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        const numStr = String(val);
+                        if (numStr.includes(".")) {
+                          if (numStr.split(".")[1].length > 8) {
+                          } else {
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
+                            }
+                            if (val.length === 1 && val !== "0.") {
+                              val = Number(val);
+                            }
+                          }
+                        } else {
+                          if (val.split(".").length > 2) {
+                            val = val.replace(/\.+$/, "");
+                          }
+                          if (val.length === 1 && val !== "0.") {
+                            val = Number(val);
+                          }
+                        }
+                        setOfferPrice(val);
+                      }
+                    }}
                   />
                 </div>
                 <div className='mb-3' id='tab_opt_2'>

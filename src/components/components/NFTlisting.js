@@ -355,15 +355,7 @@ function NFTlisting(props) {
             <tbody>
               {orders && orders.length > 0
                 ? orders.map((o, i) => {
-                    console.log("order in listing",moment(new Date(o.deadline * 1000))
-                    .subtract({
-                      hours: 5,
-                      minutes: 30,
-                    })._d ,new Date(), moment(new Date(o.deadline * 1000))
-                    .subtract({
-                      hours: 5,
-                      minutes: 30,
-                    })._d > new Date());
+                   
                     return (
                       <tr>
                         <td className='d-flex justify-content-start align-items-center mb-0'>

@@ -82,11 +82,11 @@ export const Login = async (account) => {
       ?.includes("application/json");
     const data = isJson && (await response.json());
     // check for error response
-    if (!response.ok) {
-      // get error message from body or default to response status
-      const error = (data && data.message) || response.status;
-      return Promise.reject(error);
-    }
+    // if (!response.ok) {
+    //   // get error message from body or default to response status
+    //   const error = (data && data.message) || response.status;
+    //   return Promise.reject(error);
+    // }
     localStorage.setItem("Authorization", data.data.token);
     return data;
     //   this.setState({ postId: data.id });
