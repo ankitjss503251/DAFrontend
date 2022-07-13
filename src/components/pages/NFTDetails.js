@@ -67,8 +67,8 @@ function NFTDetails() {
   const [datetime, setDatetime] = useState("");
   const [currentUser, setCurrentUser] = useState();
   const [cookies] = useCookies([]);
-  const [owned, setOwned] = useState(false);
-  const [orders, setOrders] = useState([]);
+  const [owned, setOwned] = useState("none");
+  const [orders, setOrders] = useState("none");
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
   const [offerPrice, setOfferPrice] = useState();
@@ -78,8 +78,8 @@ function NFTDetails() {
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState("");
   const [firstOrderNFT, setFirstOrderNFT] = useState([]);
-  const [haveBid, setHaveBid] = useState(false);
-  const [haveOffer, setHaveOffer] = useState(false);
+  const [haveBid, setHaveBid] = useState("none");
+  const [haveOffer, setHaveOffer] = useState("none");
   const [ownedBy, setOwnedBy] = useState("");
 
   useEffect(() => {
@@ -135,7 +135,7 @@ function NFTDetails() {
             ) {
               setOwned(true);
               break;
-            }
+            } else setOwned(false);
           }
         }
 
@@ -143,6 +143,9 @@ function NFTDetails() {
           const _orders = await getOrderByNftID({ nftID: id });
 
           setOrders(_orders?.results);
+          if (_orders?.results.length <= 0) {
+            setOrders([]);
+          }
           const _nft = await getNFTList({
             page: 1,
             limit: 1,
@@ -170,6 +173,8 @@ function NFTDetails() {
       console.log("bid data123", _data);
       if (_data && _data.data.length > 0) {
         setHaveBid(true);
+      } else {
+        setHaveBid(false);
       }
     };
     fetch();
@@ -190,6 +195,8 @@ function NFTDetails() {
         //console.log("offer is in ofeerererere------>",offer[0])
         //setOfferPrice(offer?offer[0].bidPrice
         //  :"")
+      } else {
+        setHaveOffer(false);
       }
     };
     fetch();
@@ -770,26 +777,26 @@ function NFTDetails() {
                 </div>
               </div>
               <div className="price_box">
-                {orders.length > 0 ? (
+                {orders?.length > 0 && orders !== "none" ? (
                   <>
                     <h4>Price</h4>
                     <div className="price_div">
                       <img
-                        src={Tokens[orders[0].paymentToken].icon}
+                        src={Tokens[orders[0].paymentToken]?.icon}
                         className="img-fluid hunter_fav"
                         alt=""
                       />
-                      {Number(convertToEth(orders[0].price.$numberDecimal))
+                      {Number(convertToEth(orders[0].price?.$numberDecimal))
                         .toFixed(6)
                         .slice(0, -2)}{" "}
-                      {Tokens[orders[0].paymentToken].symbolName}
+                      {Tokens[orders[0].paymentToken]?.symbolName}
                     </div>
                   </>
                 ) : (
                   ""
                 )}
-
-                {orders.length <= 0 ? (
+                {console.log("orders", orders)}
+                {orders.length <= 0 && orders !== "none" && owned !== "none" ? (
                   owned ? (
                     <button
                       type="button"
@@ -802,7 +809,11 @@ function NFTDetails() {
                   ) : (
                     ""
                   )
-                ) : !owned && orders.length > 0 ? (
+                ) : !owned &&
+                  orders.length > 0 &&
+                  owned !== "none" &&
+                  haveBid !== "none" &&
+                  haveOffer !== "none" ? (
                   orders[0].salesType === 0 ? (
                     <button
                       type="button"
@@ -830,7 +841,7 @@ function NFTDetails() {
                 ) : (
                   ""
                 )}
-                {!owned ? (
+                {!owned && owned !== "none" && haveOffer !== "none" ? (
                   <button
                     type="button"
                     className="border_btn title_color"
