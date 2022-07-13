@@ -529,7 +529,7 @@ function NFTDetails() {
               }
             }}
           >
-           {(haveBid && bidStatus !== "Accepted") ? "Update Bid" ? (haveBid && bidStatus === "Accepted")  : "" : "Place Bid"}
+           {(haveBid) ? "Update Bid" : "Place Bid"}
           </button>
         </div>
       }
@@ -842,7 +842,7 @@ function NFTDetails() {
                         setIsPlaceBidModal(true);
                       }}
                     >
-                      {haveBid ? "Update Bid" : "Place Bid"}
+                       {(haveBid && bidStatus !== "Accepted") ? "Update Bid" ? (haveBid && bidStatus === "Accepted")  : "" : "Place Bid"}
                     </button>
                   )
                 ) : (
