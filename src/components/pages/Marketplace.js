@@ -589,7 +589,7 @@ function Marketplace() {
                              </div> */}
                               <p>{" "}{card.price}{" "}{Tokens[card?.paymentToken?.toLowerCase()].symbolName} </p> 
                              </>
-                             : ""}
+                             : <p>--</p>}
                             </div>
                             {/* <div className="items_right justify-content-end d-flex">
                               <span>

@@ -81,6 +81,7 @@ function NFTDetails() {
   const [haveBid, setHaveBid] = useState("none");
   const [haveOffer, setHaveOffer] = useState("none");
   const [ownedBy, setOwnedBy] = useState("");
+  const [bidStatus, setBidStatus] = useState("");
 
   useEffect(() => {
     async function setUser() {
@@ -170,11 +171,17 @@ function NFTDetails() {
       };
 
       let _data = await fetchBidNft(searchParams);
-      console.log("bid data123", _data);
       if (_data && _data.data.length > 0) {
+        const b = _data.data[0];
         setHaveBid(true);
-      } else {
-        setHaveBid(false);
+
+        setPrice(
+          convertToEth(
+            b?.bidPrice?.$numberDecimal
+          )
+        );
+        setBidStatus(b?.bidStatus);
+
       }
     };
     fetch();
@@ -190,19 +197,25 @@ function NFTDetails() {
       };
 
       let _data = await fetchOfferNft(searchParams);
+      
       if (_data && _data.data.length > 0) {
+       const b = _data.data[0];
         setHaveOffer(true);
-        //console.log("offer is in ofeerererere------>",offer[0])
-        //setOfferPrice(offer?offer[0].bidPrice
-        //  :"")
-      } else {
-        setHaveOffer(false);
+
+        setOfferPrice(
+          convertToEth(
+            b?.bidPrice?.$numberDecimal
+          )
+          
+        );
+        setDatetime(moment(b?.bidDeadline * 1000).toISOString())
+
       }
     };
     fetch();
   }, [NFTDetails]);
 
-  const PutMarketplace = async () => {
+  const PutMarketplace = async () => {price
     setLoading(true);
     console.log("sale type", marketplaceSaleType);
 
@@ -298,7 +311,7 @@ function NFTDetails() {
       ethers.utils.parseEther(offerPrice),
       deadline,
       NFTDetails.id,
-      tokenAddress
+     contracts[selectedToken]
     );
     setLoading(false);
 
@@ -523,14 +536,15 @@ function NFTDetails() {
               }
             }}
           >
-            {"Place Bid"}
+           {(haveBid && bidStatus !== "Accepted") ? "Update Bid" ? (haveBid && bidStatus === "Accepted")  : "" : "Place Bid"}
           </button>
         </div>
       }
       handleClose={() => {
         setIsPlaceBidModal(!isPlaceBidModal);
         setQty(1);
-        setPrice("");
+        !haveBid ? 
+        setPrice("") : "";
       }}
     />
   );
@@ -828,7 +842,11 @@ function NFTDetails() {
                     <button
                       type="button"
                       disabled={
-                        new Date(orders[0].deadline * 1000) < new Date()
+                        moment(new Date(orders[0].deadline * 1000))
+                        .subtract({
+                          hours: 5,
+                          minutes: 30,
+                        })._d < new Date()
                       }
                       className="title_color buy_now"
                       onClick={() => {
@@ -846,7 +864,7 @@ function NFTDetails() {
                     type="button"
                     className="border_btn title_color"
                     data-bs-toggle="modal"
-                    data-bs-target="#brandModal"
+                    data-bs-target="#makeOfferModal"
                     onClick={() => setModal("active")}
                   >
                     {haveOffer ? "Update Offer" : "Make Offers"}
@@ -1292,7 +1310,7 @@ function NFTDetails() {
 
       {/*Bid/Offer Modal*/}
 
-      <div className="modal marketplace" id="brandModal">
+      <div className="modal marketplace" id="makeOfferModal">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             {/* <!-- Modal Header --> */}
@@ -1468,7 +1486,7 @@ function NFTDetails() {
                     className="square_yello"
                     onClick={PlaceOffer}
                   >
-                    Place Offer
+                   {haveOffer ? "Update Offer" : "Make Offers"}
                   </button>
                 </div>
               </div>

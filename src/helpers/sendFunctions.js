@@ -689,7 +689,6 @@ export const createOffer = async (
   bidPrice,
   deadline,
   nftID,
-  tokenAddress,
   paymentToken
 ) => {
   console.log(
@@ -798,7 +797,7 @@ export const createOffer = async (
           bidDeadline: deadline,
           bidQuantity: Number(qty),
           buyerSignature: signature,
-          tokenAddress: tokenAddress,
+          tokenAddress: collectionAddress,
           salt: buyerOrder[10],
           paymentToken: paymentToken,
         };
@@ -985,7 +984,7 @@ export const handleAcceptBids = async (
       console.log("error in contract", e);
       return;
     }
-   
+
     try {
       await UpdateOrder({
         orderID: bidData.orderID,
@@ -1060,8 +1059,8 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         buyerOrder.push(1);
         break;
       case 5:
-        sellerOrder.push(bidData.tokenAddress?.toLowerCase());
-        buyerOrder.push(bidData.tokenAddress?.toLowerCase());
+        sellerOrder.push(bidData.paymentToken?.toLowerCase());
+        buyerOrder.push(bidData.paymentToken?.toLowerCase());
         break;
       case 6:
         buyerOrder.push(amount);
@@ -1099,12 +1098,14 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     sellerOrder[1],
     props.NftDetails.type ? erc721Abi.abi : erc1155Abi.abi
   );
+  console.log("export instance", NFTcontract);
 
   let approval = await NFTcontract.isApprovedForAll(
     sellerOrder[0],
     contracts.MARKETPLACE
   );
 
+  console.log("approval", approval);
   //if(!LazyMintingStatus) {
   //  let usrHaveQuantity=await GetOwnerOfToken(
   //    sellerOrder[1],
@@ -1142,12 +1143,12 @@ export const handleAcceptOffers = async (bidData, props, account) => {
       return;
     }
   }
-
+  console.log("xxx0000000000xxx");
   let paymentTokenData = await getPaymentTokenInfo(
     buyerOrder[0],
     buyerOrder[5]
   );
-
+  console.log("getPaymentTokenInfo", paymentTokenData);
   if (
     new BigNumber(paymentTokenData.balance).isLessThan(
       new BigNumber(buyerOrder[6].toString()).multipliedBy(
@@ -1164,6 +1165,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
       contracts.MARKETPLACE,
       marketPlaceABI.abi
     );
+    console.log("marketplace", marketplace);
     let completeOrder;
     try {
       options = {
@@ -1181,6 +1183,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         options
       );
       completeOrder = await completeOrder.wait();
+      console.log("complete order", completeOrder);
       if (completeOrder.status === 0) {
         // NotificationManager.error("Transaction Failed");
         return false;
