@@ -11,6 +11,8 @@ import Cookies from "js-cookie";
 import { BigNumber } from "bignumber.js";
 import evt from "../../events/events";
 import "../components-css/App.css";
+import { getContractAddress } from "ethers/lib/utils";
+import Spinner from "../components/Spinner"
 import BGImg from "../../assets/images/background.jpg";
 
 let contractFunctionality = {
@@ -153,16 +155,32 @@ function MultiMintingPage(props) {
     };
     bodyClass();
   }, [isShowPopup]);
+  useEffect(() => {
+  
+    const bodyClass = async () => {
+      var body = document.body;
+      if (loading) {
+        body.classList.add("overflow_hidden");
+      } else {
+        body.classList.remove("overflow_hidden");
+      }
+    };
+    bodyClass();
+  }, [loading]);
 
   useEffect(() => {
+    setLoading(true)
     const fetchData = async () => {
       let { fetchInfo } = await contractCalls;
-      let getcateg = await fetchInfo(params.id, cookies.selected_account);
+      let getcateg = await fetchInfo(params.id);
       setTotalSupply(getcateg[2].toString());
       setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
+      setLoading(false)
     };
+    
     setInterval(fetchData, 10000);
     fetchData();
+
   }, []);
   function closePopup() {
     setisShowPopup(false);
@@ -183,6 +201,7 @@ function MultiMintingPage(props) {
 
   return (
     <div style={bgImgStyle}>
+       {loading ? <Spinner /> : ""}
       <section className="collection_banner pdd_8" style={bgImage}></section>
       <section className="collection_info">
         <div className="container">
