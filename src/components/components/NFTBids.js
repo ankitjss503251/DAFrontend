@@ -14,6 +14,7 @@ import Clock from "./Clock";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
+import { slowRefresh } from "../../helpers/NotifyStatus";
 import { ethers } from "ethers";
 import Spinner from "./Spinner";
 
@@ -58,6 +59,7 @@ function NFTBids(props) {
       let _data = await fetchBidNft(searchParams);
       if (_data && _data.data.length > 0) {
         setBids(_data.data);
+        console.log(".......bids data.......", _data.data);
       }
     };
     fetch();
@@ -316,7 +318,7 @@ function NFTBids(props) {
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}
+                          ).toFixed(4)}{" "}
                           {Tokens[b?.orderID[0]?.paymentToken]?.symbolName}
                         </td>
                         <td>
@@ -378,7 +380,12 @@ function NFTBids(props) {
                             <div className="d-flex flex-column justify-content-center align-items-center ">
                               <button
                                 disabled={
-                                  new Date(b.bidDeadline * 1000) < new Date()
+                                  moment(
+                                    new Date(b.bidDeadline * 1000)
+                                  ).subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })._d < new Date()
                                 }
                                 className="small_yellow_btn small_btn mb-2"
                                 onClick={() => {
@@ -407,7 +414,12 @@ function NFTBids(props) {
                               </button>
                               <button
                                 disabled={
-                                  new Date(b.bidDeadline * 1000) < new Date()
+                                  moment(
+                                    new Date(b.bidDeadline * 1000)
+                                  ).subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })._d < new Date()
                                 }
                                 className="small_border_btn small_btn"
                                 onClick={async () => {
@@ -415,6 +427,7 @@ function NFTBids(props) {
                                     b._id,
                                     "Cancelled"
                                   );
+                                  slowRefresh(1000);
                                 }}
                               >
                                 Cancel
@@ -424,6 +437,14 @@ function NFTBids(props) {
                             <button
                               to={"/"}
                               className="small_border_btn small_btn"
+                              disabled={
+                                moment(new Date(b.bidDeadline * 1000)).subtract(
+                                  {
+                                    hours: 5,
+                                    minutes: 30,
+                                  }
+                                )._d < new Date()
+                              }
                             >
                               Place Bid
                             </button>
