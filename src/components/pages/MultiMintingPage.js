@@ -22,6 +22,7 @@ let contractFunctionality = {
   "0xd33ee4CA8BEdC7877d5930A937EAf6C7c12ea736": "rockstarCall",
   "0x15BC229950E9aa6EA91A4A22ED2f23D2ea7a2475": "rockstarCall",
   "0x246F32c82E6AeD04bf6931a80282bF90d62B4dB4": "rockstarCall",
+  "0xD354AcCD7dbd701Ff5f6513eE37C57Ea556618A3": "rockstarCall"
 };
 
 function lazyImport(addr) {
