@@ -52,16 +52,13 @@ function NFToffer(props) {
         let a = _data.data;
 
         setOffer(a);
-        //console.log("offer is in ofeerererere------>",offer[0])
-        //setOfferPrice(offer?offer[0].bidPrice
-        //  :"")
+       
       }
     };
     fetch();
   }, [props.id]);
 
   const PlaceOffer = async () => {
-    console.log("update offer is called");
     setLoading(true);
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
@@ -243,11 +240,7 @@ function NFToffer(props) {
                                 data-bs-target="#brandModal"
                                 onClick={() => {
                                   setModal("active");
-                                  console.log(
-                                    "current offer details",
-                                    b,
-                                    moment(b?.bidDeadline * 1000).toISOString()
-                                  );
+                                 
                                   setOfferPrice(
                                     convertToEth(b?.bidPrice?.$numberDecimal)
                                   );
@@ -407,7 +400,6 @@ function NFToffer(props) {
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
-                          console.log("selected token", selectedTokenFS);
                           setSelectedTokenFS(event.target.value);
                         }}
                       >
