@@ -32,7 +32,7 @@ const NftDetail = () => {
     // else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
 
-    console.log("current user is---->", currentUser, cookies.selected_account);
+
   }, [cookies.selected_account]);
 
   useEffect(() => {
@@ -73,11 +73,11 @@ const NftDetail = () => {
         collectionAddress: address,
         tokenID: id,
       });
-      console.log("nft details", res);
+     
       if (res && res.length > 0) {
         res = res[0][0];
       }
-      console.log("nft details", res);
+   
       setNftDetails(res);
 
       let orders = await GetOrdersByNftId({
@@ -89,7 +89,6 @@ const NftDetail = () => {
         console.log("here");
       }
 
-      console.log("orders", orders);
     }
   };
 

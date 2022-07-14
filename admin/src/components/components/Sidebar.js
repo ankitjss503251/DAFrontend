@@ -39,38 +39,45 @@ function Sidebar() {
             </NavLink>
           </li>
         ) : null}
-        <li>
-          <NavLink
-            to={"/createcollection"}
-            className="text-decoration-none text-light"
-          >
-            <Collectionsvg /> Create Collection
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to={"/createnfts"}
-            className="text-decoration-none text-light"
-          >
-            <Nftsvg /> Create NFTs
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to={"/createbrands"}
-            className="text-decoration-none text-light"
-          >
-            <Performancesvg /> Create Brands
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to={"/createcategories"}
-            className="text-decoration-none text-light"
-          >
-            <Performancesvg /> Create Categories
-          </NavLink>
-        </li>
+        {console.log("role", window.sessionStorage.getItem("role"))}
+        {window.sessionStorage.getItem("role") === "admin" ? (
+          <>
+            <li>
+              <NavLink
+                to={"/createcollection"}
+                className="text-decoration-none text-light"
+              >
+                <Collectionsvg /> Create Collection
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to={"/createnfts"}
+                className="text-decoration-none text-light"
+              >
+                <Nftsvg /> Create NFTs
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to={"/createbrands"}
+                className="text-decoration-none text-light"
+              >
+                <Performancesvg /> Create Brands
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to={"/createcategories"}
+                className="text-decoration-none text-light"
+              >
+                <Performancesvg /> Create Categories
+              </NavLink>
+            </li>
+          </>
+        ) : (
+          ""
+        )}
         {/* <li>
           <NavLink
             to={"/performance"}

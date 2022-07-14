@@ -32,7 +32,6 @@ function NFToffer(props) {
   const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
 
   useEffect(() => {
-    console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     // else NotificationManager.error("Connect Yout Wallet", "", 800);
 
@@ -47,10 +46,8 @@ function NFToffer(props) {
         bidStatus: "All",
         //orderID: "All",
       };
-      console.log("fetch NFT is Called", searchParams);
 
       let _data = await fetchOfferNft(searchParams);
-      console.log("offer data123", _data.data);
       if (_data && _data.data.length > 0) {
         let a = _data.data;
 
@@ -58,7 +55,6 @@ function NFToffer(props) {
         //console.log("offer is in ofeerererere------>",offer[0])
         //setOfferPrice(offer?offer[0].bidPrice
         //  :"")
-        console.log("bid data", _data.data[0]);
       }
     };
     fetch();
@@ -108,7 +104,6 @@ function NFToffer(props) {
       ethers.utils.parseEther(offerPrice),
       deadline,
       props.NftDetails.id,
-      tokenAddress,
       contracts[selectedTokenFS]
     );
 
@@ -137,32 +132,30 @@ function NFToffer(props) {
   }
 
   return (
-    <div className='row'>
+    <div className="row">
       {loading ? <Spinner /> : ""}
-      <div className='col-md-12'>
-        <div className='nft_list'>
-          <table className='table text-light fixed_header'>
+      <div className="col-md-12">
+        <div className="nft_list">
+          <table className="table text-light fixed_header">
             <thead>
               <tr>
-                <th>FROM</th>
-                <th>PRICE</th>
-                <th>DATE</th>
-                <th>ENDS IN</th>
-                <th>STATUS</th>
-                <th className='text-center'>ACTION</th>
+                <th scope="col">FROM</th>
+                <th scope="col">PRICE</th>
+                <th scope="col">DATE</th>
+                <th scope="col">ENDS IN</th>
+                <th scope="col">STATUS</th>
+                <th className="text-center">ACTION</th>
               </tr>
             </thead>
             <tbody>
               {offer && offer.length > 0
                 ? offer.map((b, i) => {
-                    console.log("token image", b);
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
-
                     return (
                       <tr>
-                        <td className='d-flex justify-content-start align-items-center mb-0'>
-                          <span className='blue_dot circle_dot'></span>
+                        <td className="d-flex justify-content-start align-items-center mb-0">
+                          <span className="blue_dot circle_dot"></span>
                           <span>
                             {b?.bidderID?.walletAddress
                               ? b?.bidderID?.walletAddress?.slice(0, 3) +
@@ -173,45 +166,42 @@ function NFToffer(props) {
                         </td>
                         <td>
                           <img
-                            alt=''
-                            src={Tokens[b?.tokenAddress?.toLowerCase()]}
-                            className='img-fluid hunter_fav'
+                            alt=""
+                            src={Tokens[b?.paymentToken?.toLowerCase()]?.icon}
+                            className="img-fluid hunter_fav"
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}
+                          ).toFixed(4)}{" "}
+                          {Tokens[b?.paymentToken?.toLowerCase()]?.symbolName}
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
-                          <span className='nft_time'>
+                          <span className="nft_time">
                             {moment(b.createdOn).format("HH:MM:SS")}
                           </span>
                         </td>
                         <td>
-                          {" "}
-                          {console.log(
-                            "b.deadline",
-                            new Date(b.bidDeadline * 1000) < new Date()
-                          )}
                           <Clock
                             deadline={moment(new Date(b.bidDeadline * 1000))
                               .subtract({
                                 hours: 5,
                                 minutes: 30,
                               })
-                              .toISOString()}></Clock>
+                              .toISOString()}
+                          ></Clock>
                         </td>
-                        <td className='white_text'>
+                        <td className="white_text">
                           {" "}
                           {b.bidStatus == "MakeOffer" ? "Active" : b.bidStatus}
                         </td>
-                        <td className='text-center'>
+                        <td className="text-center">
                           {bidOwner === currentUser.toLowerCase() &&
                           b.bidStatus === "MakeOffer" ? (
-                            <div className='d-flex justify-content-center align-items-center'>
+                            <div className="d-flex justify-content-center align-items-center">
                               <button
                                 to={"/"}
-                                className='small_yellow_btn small_btn mr-3'
+                                className="small_yellow_btn small_btn mr-3"
                                 onClick={async () => {
                                   setLoading(true);
                                   await handleAcceptOffers(
@@ -220,66 +210,76 @@ function NFToffer(props) {
                                     currentUser.toLowerCase()
                                   );
                                   setLoading(false);
-                                }}>
+                                }}
+                              >
                                 Accept
                               </button>
                               <button
                                 to={"/"}
-                                className='small_border_btn small_btn'
+                                className="small_border_btn small_btn"
                                 onClick={async () => {
                                   await handleUpdateBidStatus(
                                     b._id,
                                     "Rejected"
                                   );
-                                }}>
+                                }}
+                              >
                                 Reject
                               </button>
                             </div>
                           ) : bidOwner !== currentUser.toLowerCase() &&
                             bidder === currentUser.toLowerCase() ? (
-                            <div className='d-flex justify-content-center align-items-center'>
+                            <div
+                              className={`d-${
+                                b.bidStatus === "Accepted" ? "none" : "flex"
+                              } justify-content-center align-items-center`}
+                            >
                               <button
                                 disabled={
                                   new Date(b.bidDeadline * 1000) < new Date()
                                 }
-                                className='small_yellow_btn small_btn mr-3'
-                                data-bs-toggle='modal'
-                                data-bs-target='#brandModal'
+                                className="small_yellow_btn small_btn mr-3"
+                                data-bs-toggle="modal"
+                                data-bs-target="#brandModal"
                                 onClick={() => {
                                   setModal("active");
                                   console.log(
                                     "current offer details",
                                     b,
-                                    Number(
-                                      convertToEth(b?.bidPrice?.$numberDecimal)
-                                    ).toFixed(4)
+                                    moment(b?.bidDeadline * 1000).toISOString()
                                   );
                                   setOfferPrice(
-                                    convertToEth(
-                                      b?.bidPrice?.$numberDecimal
-                                    ).toFixed(4)
+                                    convertToEth(b?.bidPrice?.$numberDecimal)
                                   );
-                                }}>
+                                  setDatetime(
+                                    moment(b?.bidDeadline * 1000).toISOString()
+                                  );
+                                }}
+                              >
                                 Update Offer
                               </button>
                               <button
                                 disabled={
                                   new Date(b.bidDeadline * 1000) < new Date()
                                 }
-                                className='small_border_btn small_btn'
+                                className="small_border_btn small_btn"
                                 onClick={async () => {
                                   await handleUpdateBidStatus(
                                     b._id,
                                     "Cancelled"
                                   );
-                                }}>
+
+                                  slowRefresh(1000);
+                                }}
+                              >
                                 Cancel
                               </button>
                             </div>
                           ) : bidder === currentUser.toLowerCase() ? (
                             <button
                               to={"/"}
-                              className='small_yellow_btn small_btn mr-3'>
+                              className="small_yellow_btn small_btn mr-3"
+                            >
                               Update Offer
                             </button>
                           ) : (
@@ -296,49 +296,79 @@ function NFToffer(props) {
       </div>
 
       {/*update offer modal*/}
-      <div className='modal marketplace' id='brandModal'>
-        <div className='modal-dialog modal-lg modal-dialog-centered'>
-          <div className='modal-content'>
+      <div className="modal marketplace" id="brandModal">
+        <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div className="modal-content">
             {/* <!-- Modal Header --> */}
-            <div className='modal-header p-4'>
-              <h4 className='text-light title_20 mb-0'>Offer</h4>
+            <div className="modal-header p-4">
+              <h4 className="text-light title_20 mb-0">Offer</h4>
               <button
-                type='button'
-                className='btn-close text-light'
-                data-bs-dismiss='modal'></button>
+                type="button"
+                className="btn-close text-light"
+                data-bs-dismiss="modal"
+              ></button>
             </div>
 
             {/* <!-- Modal body --> */}
-            <div className='modal-body'>
-              <div className='tab-content'>
-                <div className='mb-3' id='tab_opt_1'>
-                  <label htmlfor='item_price' className='form-label'>
+            <div className="modal-body">
+              <div className="tab-content">
+                <div className="mb-3" id="tab_opt_1">
+                  <label htmlfor="item_price" className="form-label">
                     Price
                   </label>
                   <input
-                    type='text'
-                    name='item_price'
-                    id='item_price'
-                    min='0'
-                    max='18'
-                    className='form-control input_design'
-                    placeholder='Please Enter Price (MATIC)'
+                    type="text"
+                    name="item_price"
+                    id="item_price"
+                    min="0"
+                    max="18"
+                    className="form-control input_design"
+                    placeholder="Please Enter Price (MATIC)"
                     value={offerPrice}
-                    onChange={(event) => setOfferPrice(event.target.value)}
+                    onKeyPress={(e) => {
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => {
+                      const re = /[+-]?[0-9]+\.?[0-9]*/;
+                      let val = e.target.value;
+
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        const numStr = String(val);
+                        if (numStr.includes(".")) {
+                          if (numStr.split(".")[1].length > 8) {
+                          } else {
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
+                            }
+                            if (val.length === 1 && val !== "0.") {
+                              val = Number(val);
+                            }
+                          }
+                        } else {
+                          if (val.split(".").length > 2) {
+                            val = val.replace(/\.+$/, "");
+                          }
+                          if (val.length === 1 && val !== "0.") {
+                            val = Number(val);
+                          }
+                        }
+                        setOfferPrice(val);
+                      }
+                    }}
                   />
                 </div>
-                <div className='mb-3' id='tab_opt_2'>
-                  <label htmlfor='item_qt' className='form-label'>
+                <div className="mb-3" id="tab_opt_2">
+                  <label htmlfor="item_qt" className="form-label">
                     Quantity
                   </label>
                   <input
-                    type='text'
-                    name='item_qt'
-                    id='item_qt'
-                    min='1'
+                    type="text"
+                    name="item_qt"
+                    id="item_qt"
+                    min="1"
                     disabled={NFTDetails.type === 1 ? "disabled" : ""}
-                    className='form-control input_design'
-                    placeholder='Please Enter Quantity'
+                    className="form-control input_design"
+                    placeholder="Please Enter Quantity"
                     value={offerQuantity}
                     onChange={(event) => {
                       if (NFTDetails.type == 1 && event.target.value > 1) {
@@ -363,23 +393,24 @@ function NFToffer(props) {
                     }}
                   />
                 </div>
-                <div id='tab_opt_4' className='mb-3'>
-                  <label htmlfor='Payment' className='form-label'>
+                <div id="tab_opt_4" className="mb-3">
+                  <label htmlfor="Payment" className="form-label">
                     Payment Token
                   </label>
 
                   {marketplaceSaleType === 0 ? (
                     <>
                       <select
-                        className='form-select input_design select_bg'
-                        name='BUSD'
+                        className="form-select input_design select_bg"
+                        name="BUSD"
                         value={selectedTokenFS}
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
                           console.log("selected token", selectedTokenFS);
                           setSelectedTokenFS(event.target.value);
-                        }}>
+                        }}
+                      >
                         {" "}
                         {/* <option value={"BNB"} selected>
                           BNB
@@ -391,12 +422,13 @@ function NFToffer(props) {
                   ) : marketplaceSaleType == 1 ? (
                     <>
                       <select
-                        className='form-select input_design select_bg'
-                        name='BUSD'
+                        className="form-select input_design select_bg"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }>
+                        }
+                      >
                         {" "}
                         <option value={"BUSD"} selected>
                           BUSD
@@ -406,12 +438,13 @@ function NFToffer(props) {
                   ) : (
                     <>
                       <select
-                        className='form-select input_design select_bg'
-                        name='BUSD'
+                        className="form-select input_design select_bg"
+                        name="BUSD"
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }>
+                        }
+                      >
                         <option value={"BUSD"} selected>
                           BUSD
                         </option>
@@ -420,25 +453,26 @@ function NFToffer(props) {
                   )}
                 </div>
 
-                <div id='tab_opt_5' className='mb-3 '>
-                  <label for='item_ex_date' className='form-label'>
+                <div id="tab_opt_5" className="mb-3 ">
+                  <label for="item_ex_date" className="form-label">
                     Expiration date
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
                   <input
-                    type='datetime-local'
+                    type="datetime-local"
                     value={(datetime || "").toString().substring(0, 16)}
                     //value={datetime}
                     onChange={handleChange}
-                    className='input_design'
+                    className="input_design"
                   />
                 </div>
-                <div className='mt-5 mb-3 text-center'>
+                <div className="mt-5 mb-3 text-center">
                   <button
-                    type='button'
-                    className='square_yello'
-                    href='/mintcollectionlive'
-                    onClick={PlaceOffer}>
+                    type="button"
+                    className="square_yello"
+                    href="/mintcollectionlive"
+                    onClick={PlaceOffer}
+                  >
                     Update Offer
                   </button>
                 </div>

@@ -88,8 +88,6 @@ function Collection() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Wallet", "", 800);
-    console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
   const filterToggle = () => {
@@ -154,6 +152,7 @@ function Collection() {
                     .slice(0, -2),
             saleType: order?.salesType,
             collectionName: res[0].name,
+            paymentToken: order?.paymentToken
           };
         }
         temp = [...temp, ...nfts];
@@ -228,9 +227,9 @@ function Collection() {
             <span className='ctc'>
               <img alt='' src={"../img/favicon.png"} class='img-fluid' />
               <div className=''>
-                {collectionDetails?.contractAddress?.slice(0, 4) +
+                {collectionDetails?.contractAddress ? collectionDetails?.contractAddress?.slice(0, 4) +
                   "..." +
-                  collectionDetails?.contractAddress?.slice(38, 42)}
+                  collectionDetails?.contractAddress?.slice(38, 42) : "-"}
               </div>
 
               <CopyToClipboard

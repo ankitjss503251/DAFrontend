@@ -13,6 +13,7 @@ import Clock from "./../components/Clock";
 import { getCollections } from "../../helpers/getterFunctions";
 import moment from "moment";
 import { convertToEth } from "../../helpers/numberFormatter";
+import { Tokens } from "../../helpers/tokensToSymbol";
 
 const fadeInUp = keyframes`
   0% {
@@ -193,6 +194,7 @@ const Home = () => {
             {upcomingMints && upcomingMints?.length > 0
               ? upcomingMints.slice(0, 3).map((card, key) => {
                   const st = card.saleStartTime;
+                  console.log("start date", st, st !== null);
                   const et = card.saleEndTime;
                   const ct = moment()
                     .add({
@@ -200,14 +202,41 @@ const Home = () => {
                       minutes: 30,
                     })
                     .toISOString();
-                  console.log("cardd", card);
                   return (
                     <div
                       className="col-lg-4 col-md-6 col-sm-12 mb-lg-0 mb-xl-0 mb-4"
                       key={key}
                     >
                       <div className="mint_box" style={mint_bg}>
-                        <a href={card.link}>
+                        {card.link ? (
+                          <a href={card.link}>
+                            <div className="mint_img">
+                              <img
+                                alt=""
+                                src={card?.logoImg}
+                                class="img-fluid"
+                                onError={(e) =>
+                                  (e.target.src =
+                                    "../img/collections/list4.png")
+                                }
+                              />
+                              {st !== null ? (
+                                ct >= st && ct < et ? (
+                                  <div className="mint_date">
+                                    <span>
+                                      {moment(card?.saleStartTime).format("DD")}
+                                    </span>{" "}
+                                    {moment(card?.saleStartTime).format("MMM")}
+                                  </div>
+                                ) : (
+                                  ""
+                                )
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                          </a>
+                        ) : (
                           <div className="mint_img">
                             <img
                               alt=""
@@ -217,18 +246,22 @@ const Home = () => {
                                 (e.target.src = "../img/collections/list4.png")
                               }
                             />
-                            {ct >= st && ct < et ? (
-                              ""
+                            {st !== null ? (
+                              ct >= st && ct < et ? (
+                                <div className="mint_date">
+                                  <span>
+                                    {moment(card?.saleStartTime).format("DD")}
+                                  </span>{" "}
+                                  {moment(card?.saleStartTime).format("MMM")}
+                                </div>
+                              ) : (
+                                ""
+                              )
                             ) : (
-                              <div className="mint_date">
-                                <span>
-                                  {moment(card?.saleStartTime).format("DD")}
-                                </span>{" "}
-                                {moment(card?.saleStartTime).format("MMM")}
-                              </div>
+                              ""
                             )}
                           </div>
-                        </a>
+                        )}
                         <div className="mint_text p-4">
                           <div className="logoImg_con">
                             <a
@@ -248,14 +281,19 @@ const Home = () => {
                           </div>
                           <a href={card.link}>
                             {" "}
-                            <h4 className="mb-2">{card.name}</h4>
+                            <h4 className="mb-2">
+                              {card.name?.length > 8
+                                ? card.name?.slice(0, 8) + "..."
+                                : card.name}
+                            </h4>
                           </a>
                           <ul className="m-0 p-0">
                             <li>
-                              <img alt="" src={"../img/mint/hntr.svg"} />{" "}
-                              {`${Number(convertToEth(card.price)).toFixed(
-                                4
-                              )} HNTR`}{" "}
+                              <span>
+                                {`${Number(convertToEth(card.price)).toFixed(
+                                  4
+                                )} HNTR`}{" "}
+                              </span>
                             </li>
                             <li>
                               <img alt="" src={"../img/mint/items.svg"} />{" "}

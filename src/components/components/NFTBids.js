@@ -14,6 +14,7 @@ import Clock from "./Clock";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
+import { slowRefresh } from "../../helpers/NotifyStatus";
 import { ethers } from "ethers";
 import Spinner from "./Spinner";
 
@@ -40,7 +41,6 @@ function NFTBids(props) {
   // ];
 
   useEffect(() => {
-    console.log("cookies.selected_account", cookies.selected_account);
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     // else NotificationManager.error("Connect Your Wallet", "", 800);
 
@@ -57,10 +57,9 @@ function NFTBids(props) {
       };
 
       let _data = await fetchBidNft(searchParams);
-      console.log("bid data123", _data);
       if (_data && _data.data.length > 0) {
         setBids(_data.data);
-        console.log("bid data", _data.data);
+        console.log(".......bids data.......", _data.data);
       }
     };
     fetch();
@@ -80,32 +79,32 @@ function NFTBids(props) {
   const updateBidModal = (
     <PopupModal
       content={
-        <div className='popup-content1'>
-          <h3 className='modal_heading '>Complete Checkout</h3>
-          <div className='bid_user_details my-4'>
-            <img src={Logo} alt='' />
+        <div className="popup-content1">
+          <h3 className="modal_heading ">Complete Checkout</h3>
+          <div className="bid_user_details my-4">
+            <img src={Logo} alt="" />
 
-            <div className='bid_user_address'>
+            <div className="bid_user_address">
               <div>
-                <span className='adr'>
+                <span className="adr">
                   {currentUser?.slice(0, 8) +
                     "..." +
                     currentUser?.slice(34, 42)}
                 </span>
-                <span class='badge badge-success'>Connected</span>
+                <span class="badge badge-success">Connected</span>
               </div>
-              <span className='pgn'>Polygon</span>
+              <span className="pgn">Polygon</span>
             </div>
           </div>
-          <h6 className='enter_quantity_heading required'>
+          <h6 className="enter_quantity_heading required">
             Please Enter the Bid Quantity
           </h6>
           <input
-            className='form-control checkout_input'
-            type='text'
-            min='1'
-            step='1'
-            placeholder='Quantity e.g. 1,2,3...'
+            className="form-control checkout_input"
+            type="text"
+            min="1"
+            step="1"
+            placeholder="Quantity e.g. 1,2,3..."
             disabled={props ? props.NftDetails.type === 1 : false}
             value={qty}
             onKeyPress={(e) => {
@@ -121,16 +120,17 @@ function NFTBids(props) {
                 return;
               }
               setQty(e.target.value);
-            }}></input>
-          <h6 className='enter_price_heading required'>
+            }}
+          ></input>
+          <h6 className="enter_price_heading required">
             Please Enter the Bid Price
           </h6>
 
           <input
-            className='form-control checkout_input'
-            type='text'
-            min='1'
-            placeholder='Price e.g. 0.001,1...'
+            className="form-control checkout_input"
+            type="text"
+            min="1"
+            placeholder="Price e.g. 0.001,1..."
             value={price}
             onKeyPress={(e) => {
               if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -169,7 +169,8 @@ function NFTBids(props) {
                 }
                 setPrice(val);
               }
-            }}></input>
+            }}
+          ></input>
 
           {/* <div className='form-control checkout_input'>
             <h6 className='enter_price_heading required'>
@@ -215,7 +216,7 @@ function NFTBids(props) {
             <p className='disabled_text'>Insufficient Balance in MATIC</p>
           ) : ( */}
           <button
-            className='btn-main mt-2 btn-placeABid'
+            className="btn-main mt-2 btn-placeABid"
             onClick={async () => {
               setIsUpdateBidModal(false);
               setLoading(true);
@@ -253,7 +254,8 @@ function NFTBids(props) {
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
               }
-            }}>
+            }}
+          >
             {"Update Bid"}
           </button>
           {/* )} */}
@@ -268,21 +270,21 @@ function NFTBids(props) {
   );
 
   return (
-    <div className='row'>
+    <div className="row">
       {loading ? <Spinner /> : ""}
       {isUpdateBidModal ? updateBidModal : ""}
-      <div className='col-md-12'>
-        <div className='nft_list'>
-          <table className='table text-light fixed_header'>
+      <div className="col-md-12">
+        <div className="nft_list">
+          <table className="table text-light">
             <thead>
               <tr>
-                <th>FROM</th>
-                <th>PRICE</th>
-                <th>DATE</th>
-                <th>SALE TYPE</th>
-                <th>ENDS IN</th>
-                <th>STATUS</th>
-                <th className='text-center'>ACTION</th>
+                <th scope="col">FROM</th>
+                <th scope="col">PRICE</th>
+                <th scope="col">DATE</th>
+                <th scope="col">SALE TYPE</th>
+                <th scope="col">ENDS IN</th>
+                <th scope="col">STATUS</th>
+                <th className="text-center">ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -292,8 +294,8 @@ function NFTBids(props) {
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
                     return (
                       <tr>
-                        <td className='d-flex justify-content-start align-items-center mb-0'>
-                          <span className='blue_dot circle_dot'></span>
+                        <td className="d-flex justify-content-start align-items-center mb-0">
+                          <span className="blue_dot circle_dot"></span>
                           <span>
                             {b?.bidderID?.walletAddress
                               ? b?.bidderID?.walletAddress?.slice(0, 3) +
@@ -304,23 +306,24 @@ function NFTBids(props) {
                         </td>
                         <td>
                           <img
-                            alt=''
+                            alt=""
                             src={
-                              b.orderID.length > 0
+                              b?.orderID?.length > 0
                                 ? Tokens[
-                                    b.orderID[0]?.paymentToken?.toLowerCase()
-                                  ]
+                                    b?.orderID[0]?.paymentToken?.toLowerCase()
+                                  ]?.icon
                                 : "-"
                             }
-                            className='img-fluid hunter_fav'
+                            className="img-fluid hunter_fav"
                           />{" "}
                           {Number(
                             convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}
+                          ).toFixed(4)}{" "}
+                          {Tokens[b?.orderID[0]?.paymentToken]?.symbolName}
                         </td>
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
-                          <span className='nft_time'>
+                          <span className="nft_time">
                             {moment(b.createdOn).format("LT")}
                           </span>
                         </td>
@@ -333,19 +336,19 @@ function NFTBids(props) {
                                 minutes: 30,
                               })
                               .toISOString()}></Clock> */}
-                              --:--:--
+                          --:--:--
                         </td>
-                        <td className='blue_text'>
+                        <td className="blue_text">
                           {new Date(b.bidDeadline * 1000) < new Date()
                             ? "Ended"
                             : "Active"}
                         </td>
-                        <td className='text-center'>
+                        <td className="text-center">
                           {bidOwner === currentUser?.toLowerCase() ? (
-                            <div className='d-flex justify-content-center align-items-center'>
+                            <div className="d-flex flex-column justify-content-center align-items-center">
                               <button
                                 to={"/"}
-                                className='small_yellow_btn small_btn mr-3'
+                                className="small_yellow_btn small_btn mb-3"
                                 onClick={async () => {
                                   setLoading(true);
                                   await handleAcceptBids(
@@ -354,30 +357,37 @@ function NFTBids(props) {
                                   );
                                   setLoading(false);
                                   setReloadContent(!reloadContent);
-                                }}>
+                                }}
+                              >
                                 Accept
                               </button>
                               <button
                                 to={"/"}
-                                className='small_border_btn small_btn'
+                                className="small_border_btn small_btn"
                                 onClick={async () => {
                                   await handleUpdateBidStatus(
                                     b._id,
                                     "Rejected"
                                   );
-                                  setReloadContent(!reloadContent)
-                                }}>
+                                  setReloadContent(!reloadContent);
+                                }}
+                              >
                                 Reject
                               </button>
                             </div>
                           ) : bidOwner !== currentUser?.toLowerCase() &&
                             bidder === currentUser?.toLowerCase() ? (
-                            <div className='d-flex justify-content-center align-items-center'>
+                            <div className="d-flex flex-column justify-content-center align-items-center ">
                               <button
                                 disabled={
-                                  new Date(b.bidDeadline * 1000) < new Date()
+                                  moment(
+                                    new Date(b.bidDeadline * 1000)
+                                  ).subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })._d < new Date()
                                 }
-                                className='small_yellow_btn small_btn mr-3'
+                                className="small_yellow_btn small_btn mb-2"
                                 onClick={() => {
                                   setCurrentBid(b);
                                   // setBidDeadline(
@@ -398,29 +408,44 @@ function NFTBids(props) {
                                       .utc()
                                       .format()
                                   );
-                                }}>
+                                }}
+                              >
                                 Update Bid
                               </button>
                               <button
                                 disabled={
-                                  new Date(b.bidDeadline * 1000) < new Date()
+                                  moment(
+                                    new Date(b.bidDeadline * 1000)
+                                  ).subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })._d < new Date()
                                 }
-                                className='small_border_btn small_btn'
+                                className="small_border_btn small_btn"
                                 onClick={async () => {
                                   await handleUpdateBidStatus(
                                     b._id,
                                     "Cancelled"
                                   );
-                                
-                                  
-                                }}>
+                                  slowRefresh(1000);
+                                }}
+                              >
                                 Cancel
                               </button>
                             </div>
                           ) : bidder === currentUser?.toLowerCase() ? (
                             <button
                               to={"/"}
-                              className='small_border_btn small_btn'>
+                              className="small_border_btn small_btn"
+                              disabled={
+                                moment(new Date(b.bidDeadline * 1000)).subtract(
+                                  {
+                                    hours: 5,
+                                    minutes: 30,
+                                  }
+                                )._d < new Date()
+                              }
+                            >
                               Place Bid
                             </button>
                           ) : (

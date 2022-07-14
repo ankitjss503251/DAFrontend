@@ -13,12 +13,16 @@ import evt from "../../events/events";
 import "../components-css/App.css";
 import { getContractAddress } from "ethers/lib/utils";
 import Spinner from "../components/Spinner"
+import BGImg from "../../assets/images/background.jpg";
 
 let contractFunctionality = {
   "0xEecd2Ba92f87E332320ce5cFe62afD2B989cb5e9": "rockstarCall",
   "0x40ef57815E2a44518d5c82Fb6c322B613044d6B4": "rockstarCall",
   "0xBf3Bd3E4c3Bf465AA8dBAc067D33c7Ba428c39f2": "rockstarCall",
   "0x49C2652878a7E18B8158A8de4D07DB28094ae2dA": "rockstarCall",
+  "0xd33ee4CA8BEdC7877d5930A937EAf6C7c12ea736": "rockstarCall",
+  "0x15BC229950E9aa6EA91A4A22ED2f23D2ea7a2475": "rockstarCall",
+  "0x246F32c82E6AeD04bf6931a80282bF90d62B4dB4": "rockstarCall",
 };
 
 function lazyImport(addr) {
@@ -30,16 +34,16 @@ function lazyImport(addr) {
   return calles;
 }
 
-const bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
-
 function MultiMintingPage(props) {
+  const bgImgStyle = {
+    backgroundImage: `url(${BGImg})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundPositionX: "center",
+    backgroundPositionY: "center",
+    backgroundColor: "#000",
+  };
+
   const params = useParams();
 
   const contractCalls = lazyImport(params.id);
@@ -162,7 +166,6 @@ function MultiMintingPage(props) {
     };
     bodyClass();
   }, [loading]);
-
 
   useEffect(() => {
     setLoading(true)
