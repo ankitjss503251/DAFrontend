@@ -136,12 +136,9 @@ function MultiMintingPage(props) {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Wallet", "", 800);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-
-    // console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
+
   useEffect(() => {
     const bodyClass = async () => {
       var body = document.body;
