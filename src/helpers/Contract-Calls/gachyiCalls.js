@@ -19,7 +19,16 @@ export const fetchInfo = async (addr,user) => {
     } catch (e) {
       return e;
     }
+  };
+  export const fetchUserBal = async (addr) => {
   
+    let contract = await exportInstance(addr, gooAbi.abi); 
+    try {
+      let balance = await contract.balanceOf();
+      return balance;
+    } catch (e) {
+       return e;
+    }
   };
   export const testMint = async ( addr,qty,price,from) => {
     evt.emit('txn-status',"initiate loader");

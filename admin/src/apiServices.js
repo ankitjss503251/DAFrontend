@@ -20,7 +20,7 @@ export const exportInstance = async (SCAddress, ABI) => {
 
 export const exportInstanceThroughWeb3 = async (SCAddress, ABI) => {
   let contract = new web3.eth.Contract(ABI, SCAddress);
-  // console.log("contract", contract);
+
   if (contract) {
     return contract;
   } else {
@@ -56,9 +56,6 @@ export const adminRegister = async (account) => {
     localStorage.setItem("Authorization", data.data.token);
     return data;
   } catch (error) {
-    //   this.setState({ postId: data.id });
-
-    // this.setState({ errorMessage: error.toString() });
     console.error("There was an error!", error);
   }
 };
@@ -194,7 +191,6 @@ export const updateProfile = async (account, data) => {
 };
 
 export const createCollection = async (data) => {
-  console.log("data of collection is--->", data);
   const requestOptions = {
     method: "POST",
     headers: {
@@ -286,7 +282,6 @@ export const GetMyCollectionsList = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("collection data---->", datas);
     return datas.data;
   } catch (err) {
     return err;
@@ -312,7 +307,6 @@ export const GetCombinedNfts = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("collection data---->", datas);
     return datas.data;
   } catch (err) {
     return err;
@@ -338,7 +332,6 @@ export const GetMyNftList = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("nft data---->", datas);
     return datas.data;
   } catch (err) {
     return err;
@@ -354,9 +347,7 @@ export const addBrand = async (data) => {
     body: data,
   };
   try {
-    // for (var value of data.values()) {
-    //   console.log(value);
-    // }
+   
 
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/utils/addBrand",
@@ -397,7 +388,6 @@ export const GetBrand = async (id) => {
 };
 
 export const createNft = async (data) => {
-  console.log("data is----------->", data);
   const requestOptions = {
     method: "POST",
     headers: {
@@ -406,13 +396,8 @@ export const createNft = async (data) => {
     body: data,
   };
 
-  console.log("requestOptions are -------->", requestOptions);
-
   try {
-    console.log("create nft");
-    // for (var value of data.values()) {
-    //   console.log(value);
-    // }
+    
 
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/nft/createNFT",
@@ -438,10 +423,7 @@ export const addCategory = async (data) => {
     body: data,
   };
   try {
-    // for (var value of data.values()) {
-    //   console.log(value);
-    // }
-
+   
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/utils/addCategory",
       requestOptions
@@ -492,7 +474,6 @@ export const createOrder = async (data, isImported) => {
   };
 
   try {
-    console.log("put on marketplace");
     let response;
 
     response = await fetch(
@@ -655,7 +636,6 @@ export const DeleteOrder = async (data) => {
   };
 
   try {
-    console.log("remove");
 
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/order/deleteOrder",
@@ -816,7 +796,6 @@ export const getNFTList = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("dataass", datas);
     return datas.data;
   } catch (err) {
     return err;
@@ -842,684 +821,3 @@ export const UpdateTokenCount = async (data) => {
   }
 };
 
-// export const GetAllUserDetails = async () => {
-//   let searchData = {
-//     length: 8,
-//     start: 0,
-//     sTextsearch: "",
-//     sSellingType: "",
-//     sSortingType: "Recently Added",
-//   };
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       // Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(searchData),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/user/allDetails",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetIndividualAuthorDetail = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/user/profileDetail",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const getImportedNFTs = async (data) => {
-//   const requestOptions = {
-//     method: "GET",
-//     // headers: {
-//     //   "x-api-key": "8c0e14f4-bb85-4646-84ba-e8467dce55be",
-//     // },
-//   };
-
-//   try {
-//     console.log("put on marketplace");
-
-//     let response = await fetch(
-//       `https://api-us-west1.tatum.io/v3/nft/collection/MATIC/${data.collection}?pageSize=10`,
-//       requestOptions
-//     );
-
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-
-//     return datas;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetMyLikedNft = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/getUserLikedNfts",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetMyOnSaleNft = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/getUserOnSaleNfts",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     console.log("dataaasss on sale", datas);
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetCollectionsNftList = async (data, owned = false) => {
-//   console.log("Data", data);
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       owned
-//         ? process.env.REACT_APP_API_BASE_URL + "/nft/getCollectionNFT"
-//         : process.env.REACT_APP_API_BASE_URL + "/nft/getCollectionNFTOwned",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetSearchedNft = async (data, owned = false) => {
-//   console.log("Data", data);
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/getSearchedNft",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const updateBidNft = async (data) => {
-//   console.log("dataaa", data);
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/bid/updateBidNft",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const fetchBidNft = async (data) => {
-//   console.log("Data", data);
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/bid/fetchBidNft",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const Register = async (account) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       walletAddress: account,
-//       role:"admin"
-//     }),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/auth/Register",
-//       requestOptions
-//     );
-
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const data = isJson && (await response.json());
-
-//     // check for error response
-//     if (!response.ok) {
-//       // get error message from body or default to response status
-//       const error = (data && data.message) || response.status;
-//       return Promise.reject(error);
-//     }
-//     localStorage.setItem("Authorization", data.data.token);
-//     return data;
-//   } catch (error) {
-//     //   this.setState({ postId: data.id });
-
-//     // this.setState({ errorMessage: error.toString() });
-//     console.error("There was an error!", error);
-//   }
-// };
-
-// Admin Registeration
-
-// Admin Login
-
-// export const adminLogin = async (account) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       walletAddress: account,
-//     }),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/auth/adminlogin",
-//       requestOptions
-//     );
-
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const data = isJson && (await response.json());
-//     // check for error response
-//     if (!response.ok) {
-//       // get error message from body or default to response status
-//       const error = (data && data.message) || response.status;
-//       return Promise.reject(error);
-//     }
-//     localStorage.setItem("Authorization", data.data.token);
-//     return data;
-//     //   this.setState({ postId: data.id });
-//   } catch (error) {
-//     // this.setState({ errorMessage: error.toString() });
-//     console.error("There was an error!", error);
-//   }
-// };
-
-// export const Follow = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify({ id: data }),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/user/follow",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.message;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const getUsersCollections = async () => {
-//   const requestOptions = {
-//     method: "GET",
-//     headers: {
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/collectionList",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     if (datas.data) return datas.data;
-//     return [];
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const getCollectionWiseList = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/allCollectionWiseList",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const Like = async () => {};
-
-// export const GetOnSaleItems = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/getOnSaleItems",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetNftDetails = async (id) => {
-//   const requestOptions = {
-//     method: "GET",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/viewnft/" + id,
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data ? datas.data : [];
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const SetNFTOrder = async (data) => {
-//   try {
-//     const requestOptions = {
-//       method: "PUT",
-//       headers: {
-//         Authorization: localStorage.getItem("Authorization"),
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(data),
-//     };
-
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/setNFTOrder",
-//       requestOptions
-//     );
-//     console.log("record updated", response);
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const LikeNft = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-
-//     headers: {
-//       Authorization: localStorage.getItem("Authorization"),
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/like",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetCollectionsByAddress = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL +
-//         "/nft/getCollectionDetailsByAddress/",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     console.log("collection is in api---->", datas);
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetCollectionsById = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/getCollectionDetailsById/",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetMyNftList = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/getNFTList",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const TransferNfts = async (data) => {
-//   //   {
-//   //     "nftId": "6229812aa2c3ed3120651ca6",
-//   //     "sortKey": "oTokenId",
-//   //     "sortType": -1,
-//   //     "page": 1,
-//   //     "limit": 4
-//   // }
-//   console.log("transfer nft");
-
-//   const requestOptions = {
-//     method: "PUT",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/nft/transferNfts",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const createBidNft = async (data) => {
-//   console.log("Place Bid");
-
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/bid/createBidNft",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const acceptBid = async (data) => {
-//   console.log("accept bid");
-
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("Authorization"),
-//     },
-//     body: JSON.stringify(data),
-//   };
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/bid/acceptBidNft",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const InsertHistory = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/history/insert",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
-// export const GetHistory = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/history/fetchHistory",
-//       requestOptions
-//     );
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };

@@ -83,9 +83,8 @@ function CreateNFTs() {
           console.log("nft file else is---->", e.target.files[0]);
           setNftImg(e.target.files[0]);
         } else {
-          console.log("in 3d");
           let blobURL = URL.createObjectURL(e.target.files[0]);
-          console.log(blobURL);
+
           setImg(blobURL);
           setNftImg(e.target.files[0]);
           setFileType("3D");
@@ -129,14 +128,11 @@ function CreateNFTs() {
       if (res && res.results && res.results.length > 0) {
         setNfts(res.results[0]);
       }
-      console.log("Ress", res);
     };
     fetch();
   }, []);
 
   const handleCreateNFT = async () => {
-    console.log("ATTRIBUTES", attributes);
-
     if (handleValidationCheck()) {
       setLoading(true);
       setModal("");
@@ -159,9 +155,7 @@ function CreateNFTs() {
       };
       try {
         collectionDetail = await getAllCollections(reqBody);
-        console.log("collectionDetail", collectionDetail);
         collectionDetail = collectionDetail?.results[0][0];
-        console.log("collectionDetail11", collectionDetail);
 
         await UpdateTokenCount(collectionDetail.contractAddress);
 
@@ -181,8 +175,6 @@ function CreateNFTs() {
         formdata.append("imageType", "0");
         formdata.append("imageDimension", "0");
         formdata.append("fileType", fileType);
-
-        console.log("field values--->", formdata);
       } catch (e) {
         console.log("e", e);
         NotificationManager.error("Something went wrong", "", 800);
@@ -248,12 +240,10 @@ function CreateNFTs() {
       }
 
       try {
-        console.log("FormData before Call", formdata);
         await createNft(formdata);
         NotificationManager.success("NFT created successfully", "", 800);
         setLoading(false);
         slowRefresh(1000);
-        console.log("NFTcontract", NFTcontract);
       } catch (e) {
         console.log("err", e);
         NotificationManager.error("Something went wrong", "", 800);
@@ -278,8 +268,6 @@ function CreateNFTs() {
         let res = data?.results[0].filter((d, i) => d.isMinted === 1);
         setCollections(res);
       }
-
-      // console.log("data", data);
     };
     fetch();
   }, []);

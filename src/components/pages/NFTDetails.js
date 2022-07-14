@@ -210,13 +210,7 @@ function NFTDetails() {
 
   const PutMarketplace = async () => {
     setLoading(true);
-    console.log("sale type", marketplaceSaleType);
-
-    console.log(
-      "contracts[selectedToken]",
-      contracts[selectedTokenFS],
-      selectedTokenFS
-    );
+    
 
     if (marketplaceSaleType === 0) {
       if (itemprice === undefined || itemprice === "" || itemprice === 0) {
@@ -608,7 +602,7 @@ function NFTDetails() {
             onClick={async () => {
               setIsBuyNowModal(false);
               setLoading(true);
-              await handleBuyNft(
+              let res = await handleBuyNft(
                 orders[0]._id,
                 firstOrderNFT.type === 1,
                 currentUser,
@@ -617,6 +611,10 @@ function NFTDetails() {
                 false,
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
+              if (res === false) {
+                setLoading(false);
+                return;
+              }
               setLoading(false);
               // slowRefresh(1000);
             }}
@@ -648,7 +646,6 @@ function NFTDetails() {
                   className="img-fluid nftimg"
                   alt=""
                   onError={(e) => {
-                    console.log("image error is--->", e);
                     e.target.src = "../img/collections/list4.png";
                   }}
                 />
@@ -801,7 +798,6 @@ function NFTDetails() {
                 ) : (
                   ""
                 )}
-                {console.log("orders", orders)}
                 {orders.length <= 0 && orders !== "none" && owned !== "none" ? (
                   owned ? (
                     <button
@@ -1224,7 +1220,6 @@ function NFTDetails() {
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
-                          console.log("selected token", selectedTokenFS);
                           setSelectedTokenFS(event.target.value);
                         }}
                       >
@@ -1414,7 +1409,6 @@ function NFTDetails() {
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
-                          console.log("selected token", selectedTokenFS);
                           setSelectedTokenFS(event.target.value);
                         }}
                       >
