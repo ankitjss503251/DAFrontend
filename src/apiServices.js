@@ -11,6 +11,17 @@ export const exportInstance = async (SCAddress, ABI) => {
     return {};
   }
 };
+export const FetchInstance = async (SCAddress, ABI) => {
+  let provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URL)
+  let a = new ethers.Contract(SCAddress, ABI, provider);
+
+  if (a) {
+    return a;
+  } else {
+    return {};
+  }
+};
+
 
 export const Register = async (account) => {
   const requestOptions = {
