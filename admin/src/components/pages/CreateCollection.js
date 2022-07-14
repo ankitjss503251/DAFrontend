@@ -855,15 +855,6 @@ function CreateCollection() {
 
         <div
           className={`modal fade createNft ${isModal}`}
-<<<<<<< HEAD
-          id='exampleModal'
-          tabIndex='-1'
-          aria-labelledby='exampleModalLabel'
-          aria-hidden='true'>
-          <div className='modal-dialog modal-lg'>
-            <div className='modal-content'>
-              <div className='modal-header'>
-=======
           id="exampleModal"
           tabindex="-1"
           aria-labelledby="exampleModalLabel"
@@ -872,7 +863,6 @@ function CreateCollection() {
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header">
->>>>>>> 549f6b09b30e4a6df1250545da3629b037e6de61
                 <h5
                   className="modal-title text-yellow font-24 font-600"
                   id="exampleModalLabel"
@@ -1276,15 +1266,6 @@ function CreateCollection() {
 
         <div
           className={`modal fade importCol ${importModal}`}
-<<<<<<< HEAD
-          id='exampleModal1'
-          tabIndex='-1'
-          aria-labelledby='exampleModal1Label'
-          aria-hidden='true'>
-          <div className='modal-dialog modal-lg'>
-            <div className='modal-content'>
-              <div className='modal-header'>
-=======
           id="exampleModal1"
           tabindex="-1"
           aria-labelledby="exampleModal1Label"
@@ -1293,7 +1274,6 @@ function CreateCollection() {
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header">
->>>>>>> 549f6b09b30e4a6df1250545da3629b037e6de61
                 <h5
                   className="modal-title text-yellow font-24 font-600"
                   id="exampleModal1Label"
@@ -1359,15 +1339,6 @@ function CreateCollection() {
 
         <div
           className={`modal fade importCol ${newImportModal}`}
-<<<<<<< HEAD
-          id='exampleModal2'
-          tabIndex='-1'
-          aria-labelledby='exampleModal2Label'
-          aria-hidden='true'>
-          <div className='modal-dialog modal-lg'>
-            <div className='modal-content'>
-              <div className='modal-header'>
-=======
           id="exampleModal2"
           tabindex="-1"
           aria-labelledby="exampleModal2Label"
@@ -1376,7 +1347,6 @@ function CreateCollection() {
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header">
->>>>>>> 549f6b09b30e4a6df1250545da3629b037e6de61
                 <h5
                   className="modal-title text-yellow font-24 font-600"
                   id="exampleModal1Label"
@@ -1458,15 +1428,6 @@ function CreateCollection() {
 
         <div
           className={`modal fade createNft ${isEditModal}`}
-<<<<<<< HEAD
-          id='editModal'
-          tabIndex='-1'
-          aria-labelledby='editModalLabel'
-          aria-hidden='true'>
-          <div className='modal-dialog modal-lg'>
-            <div className='modal-content'>
-              <div className='modal-header'>
-=======
           id="editModal"
           tabindex="-1"
           aria-labelledby="editModalLabel"
@@ -1475,7 +1436,6 @@ function CreateCollection() {
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header">
->>>>>>> 549f6b09b30e4a6df1250545da3629b037e6de61
                 <h5
                   className="modal-title text-yellow font-24 font-600"
                   id="exampleModalLabel"
