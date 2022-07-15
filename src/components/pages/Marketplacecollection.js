@@ -61,7 +61,9 @@ function Marketplacecollection() {
           setLoadMoreDisabled("");
           temp = [...temp, res];
           setAllCollections(temp);
+          console.log("temp", temp)
         }
+
         if (allCollections && res.length <= 0) {
           setLoader(false);
           setLoadMoreDisabled("disabled");
@@ -236,6 +238,7 @@ function Marketplacecollection() {
                           </div>
                         </div>
                       </div>
+                      
                     ));
                   })
                 ) : (
@@ -243,7 +246,7 @@ function Marketplacecollection() {
                     No Collection Found
                   </h2>
                 )}
-                {allCollections.length > 1 ? (
+                {allCollections[0]?.length > 1 ? (
                   <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                     <button
                       type='button'
