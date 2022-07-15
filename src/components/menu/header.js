@@ -195,6 +195,12 @@ const Header = function () {
 
     setProvider();
   }, [provider, account, chainId]);
+  evt.removeAllListeners("wallet-connect", walletConnect);
+  evt.on("wallet-connect", walletConnect);
+  function walletConnect(){
+  connectWallet();
+    
+  }
 
   const getUserProfile = async () => {
     const profile = await getProfile();
