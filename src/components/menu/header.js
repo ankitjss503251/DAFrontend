@@ -152,7 +152,6 @@ const Header = function () {
         setCookie("balance", s[0].accounts[0].balance?.MATIC, { path: "/" });
       }
     }
-
     setCookies();
   }, []);
 
@@ -168,6 +167,7 @@ const Header = function () {
   };
 
   useEffect(() => {
+    console.log("provider in useEffect", provider);
     async function setProvider() {
       if (provider) {
         provider.on("accountsChanged", (accounts) => {
@@ -181,7 +181,6 @@ const Header = function () {
           }
         });
         provider.on("chainChanged", async (chains) => {
-          console.log("chain changed", chains);
           if (chains !== process.env.REACT_APP_CHAIN_ID) {
             await onboard.setChain({
               chainId: process.env.REACT_APP_CHAIN_ID,
@@ -200,7 +199,6 @@ const Header = function () {
 
   const getUserProfile = async () => {
     const profile = await getProfile();
-    console.log("profile", profile.data);
     setUserDetails(profile.data);
   };
 
@@ -219,7 +217,6 @@ const Header = function () {
       });
       const primaryWallet = wallets[0];
       setChainId(primaryWallet.chains[0].id);
-      console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
 
@@ -444,13 +441,12 @@ const Header = function () {
                   }
                 }}
               />
-              <button className="search_btn" type="submit">
+              <button className='search_btn' type='submit'>
                 <Link
                   to={{
                     pathname: `/marketplace/${searchValue}`,
-                  }}
-                >
-                  <img src={"../img/search.svg"} alt="" />
+                  }}>
+                  <img src={"../img/search.svg"} alt='' />
                 </Link>
               </button>
             </div>
