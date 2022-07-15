@@ -88,13 +88,11 @@ function CreateCollection() {
   useEffect(() => {
     const fetch = async () => {
       let _brands = await GetBrand();
-      console.log("_brands", _brands);
       setBrands(_brands);
       setBrand(_brands[0]._id);
       let _cat = await getCategory();
       setCategories(_cat);
       setCategory(_cat[0]._id);
-      console.log("_cat", _cat);
     };
     fetch();
   }, []);
@@ -111,7 +109,6 @@ function CreateCollection() {
       );
       return;
     }
-    console.log("start date---->", dt, ct);
     setPreSaleStartTime(dt);
   }
 
@@ -145,7 +142,6 @@ function CreateCollection() {
       reader.readAsDataURL(file);
       if (e.target.files && e.target.files[0]) {
         setLogoImg(e.target.files[0]);
-        console.log("logo Image", URL.createObjectURL(e.target.files[0]));
       }
     }
   };
@@ -200,7 +196,6 @@ function CreateCollection() {
 
   const readReceipt = async (hash) => {
     let provider = new ethers.providers.Web3Provider(window.ethereum);
-    console.log("provider is--->", provider);
     const receipt = await provider.getTransactionReceipt(hash.hash);
     let contractAddress = receipt.logs[0].address;
     return contractAddress;
@@ -262,7 +257,6 @@ function CreateCollection() {
       setModal("");
       setIsEditModal("");
       let contractAddress = "0x";
-      console.log("category", category);
       if (isUpdate) {
         var fd = new FormData();
         fd.append("id", selectedCollectionId);
@@ -301,9 +295,6 @@ function CreateCollection() {
       } else {
         try {
           creator = await exportInstance(contracts.CREATOR_PROXY, degnrABI);
-          console.log("creator is---->", creator);
-          console.log("create collection is called");
-          console.log("contracts buds address", contracts.BUSD);
         } catch (e) {
           console.log("err", e);
           setLoading(false);
@@ -340,8 +331,6 @@ function CreateCollection() {
           setLoading(false);
           NotificationManager.error(e.message, "", 1500);
         }
-
-        console.log("contract address is--->", contractAddress);
 
         if (res1 !== undefined) {
           let type;
@@ -402,16 +391,13 @@ function CreateCollection() {
     try {
       setLoading(true);
       const token = await exportInstance(importedAddress, abi);
-      console.log("token", token);
       let originalSupply = await token.indicatesID();
 
-      console.log("totalSupply", parseInt(originalSupply));
 
       if (isNew) {
         let collection = await getAllCollections({
           contractAddress: importedAddress.toLowerCase(),
         });
-        console.log("collections", collection);
         if (collection.count < 1) {
           var fd = new FormData();
 
@@ -419,12 +405,12 @@ function CreateCollection() {
           fd.append("isImported", 1);
           fd.append("isOnMarketplace", 1);
           fd.append("name", title);
+          fd.append("isMinted", 1);
           fd.append("contractAddress", importedAddress.toLowerCase());
           fd.append("totalSupply", parseInt(originalSupply) - 1);
           fd.append("link", importedCollectionLink);
 
           res = await createCollection(fd);
-          console.log("coll create", res._id);
 
           try {
             let _nfts = await getNFTList({
@@ -433,7 +419,6 @@ function CreateCollection() {
               collectionID: res._id,
               searchText: "",
             });
-            console.log("res", _nfts);
 
             await importCollection({
               address: importedAddress,
@@ -471,18 +456,13 @@ function CreateCollection() {
           collectionID: res._id,
           searchText: "",
         });
-        console.log("res", _nfts);
-
-        console.log("coll update", res._id);
         // slowRefresh(1000);
       }
 
       for (let i = 1; i < parseInt(originalSupply); i++) {
         let tokenId = i;
-        console.log("tokenId", tokenId);
         try {
           let uri = await token.tokenURI(tokenId);
-          console.log("uri", uri);
           let resp = await fetch(uri);
           resp = await resp.json();
           let owner = await GetOwnerOfToken(
@@ -498,7 +478,6 @@ function CreateCollection() {
           resp.isImported = 1;
           resp.collectionID = res._id;
           resp.totalQuantity = 1;
-          console.log("resp", resp);
           await importNft({ nftData: resp });
         } catch (e) {
           console.log("error", e);
@@ -630,7 +609,7 @@ function CreateCollection() {
                   >
                     + Import Collection
                   </button>
-                  </div>
+                </div>
               </>
             )}
         <div className="adminbody table-widget text-light box-background ">
@@ -1103,12 +1082,7 @@ function CreateCollection() {
                       id="recipient-name"
                       value={maxSupply}
                       onChange={(e) => {
-                        let maxSupply = parseInt(e.target.value, 10);
-                        console.log(
-                          "max supply is-->",
-                          e.target.value,
-                          typeof maxSupply
-                        );
+                        
                         setMaxSupply(e.target.value);
                       }}
                       onKeyPress={(e) => {
@@ -1620,12 +1594,7 @@ function CreateCollection() {
                       id="recipient-name"
                       value={maxSupply}
                       onChange={(e) => {
-                        let maxSupply = parseInt(e.target.value, 10);
-                        console.log(
-                          "max supply is-->",
-                          e.target.value,
-                          typeof maxSupply
-                        );
+                        
                         setMaxSupply(e.target.value);
                       }}
                       onKeyPress={(e) => {
