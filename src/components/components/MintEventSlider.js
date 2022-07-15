@@ -107,7 +107,7 @@ function MintEventSlider(props) {
       <div className="mintevent text-center">
       {/* {loading ? <Spinner /> : ""} */}
      
-        <div className="stamintFunctionbtn">
+        <div className="start_btn stamintFunctionbtn">
           Start
           <span>Live</span>
         </div>
