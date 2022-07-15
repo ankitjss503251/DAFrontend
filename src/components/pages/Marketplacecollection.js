@@ -102,7 +102,7 @@ function Marketplacecollection() {
     try {
       const reqBody = {
         page: currPage,
-        limit: 3,
+        limit: 12,
         categoryID: category._id,
         isOnMarketplace: 1,
       };
@@ -127,10 +127,10 @@ function Marketplacecollection() {
 
   return (
     <div>
-      {(loadMoreDisabled && activeCat.length > 0) ||
+      {/* {(loadMoreDisabled && activeCat.length > 0) ||
       (allCollections.length > 0 && loadMoreDisabledAll)
         ? NotificationManager.info("No more items to load")
-        : ""}
+        : ""} */}
       <section className='register_hd pdd_12' style={register_bg}>
         <div className='container'>
           <div className='row'>
@@ -355,7 +355,7 @@ function Marketplacecollection() {
                     No Collection Found
                   </h2>
                 )}
-                {activeCat[0]?.length > 2 ? (
+                {activeCat[0]?.length > 12 ? (
                   <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                     <button
                       type='button'
