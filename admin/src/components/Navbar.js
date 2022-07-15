@@ -117,7 +117,7 @@ const Navbar = (props) => {
   }, []);
 
   const init = async () => {
-    if (cookies["selected_account"]) {
+    if (cookies["selected_account"] && localStorage.getItem('Authorization') !== undefined && localStorage.getItem('Authorization') !== null) {
       setAccount(cookies["selected_account"]);
       const s = await onboard.connectWallet({
         autoSelect: { label: cookies["label"], disableModals: true },
@@ -161,7 +161,7 @@ const Navbar = (props) => {
         }
       });
     }
-  }, [provider, account]);
+  }, [provider, account, chainId]);
 
   const getUserProfile = async () => {
     const profile = await getProfile();

@@ -12,6 +12,7 @@ import {
   getAllCollections,
   GetAllUserDetails,
   getNFTList,
+  viewNFTDetails,
   getBrandById,
   GetIndividualAuthorDetail,
   getCategories,
@@ -334,6 +335,50 @@ export const getNFTs = async (req) => {
           totalQuantity: nft.totalQuantity,
           fileType: nft.fileType,
           collectionData: nft.CollectionData,
+        };
+      })
+    : (formattedData[0] = {});
+  return formattedData;
+};
+
+export const getNFTDetails = async (req) => {
+  let data = [];
+  let formattedData = [];
+  try {
+    let reqBody = {
+      nftID: req.nftID
+    };
+
+    data = await viewNFTDetails(reqBody);
+  } catch (e) {
+    console.log("Error in getNFts API--->", e);
+  }
+
+  let arr = [];
+  if (data && data.length > 0) arr = data;
+  else return [];
+  arr
+    ? arr.map((nft, key) => {
+        formattedData[key] = {
+          id: nft._id,
+          image: nft.image,
+          name: nft.name,
+          desc: nft.description,
+          collectionAddress: nft.collectionAddress,
+          ownedBy: nft.ownedBy,
+          like: nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
+          Qty: nft.totalQuantity,
+          collection: nft.collectionID,
+          assetsInfo: nft?.assetsInfo[0],
+          catergoryInfo: nft?.categoryID,
+          tokenId: nft.tokenID,
+          createdBy: nft.createdBy,
+          type: nft.type,
+          attributes: nft.attributes,
+          totalQuantity: nft.totalQuantity,
+          fileType: nft.fileType,
+          collectionData: nft.CollectionData,
+          OrderData: nft.OrderData,
         };
       })
     : (formattedData[0] = {});
