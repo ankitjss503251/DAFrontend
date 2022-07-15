@@ -39,7 +39,7 @@ function Sidebar() {
             </NavLink>
           </li>
         ) : null}
-        {console.log("role", window.sessionStorage.getItem("role"))}
+       
         {window.sessionStorage.getItem("role") === "admin" ? (
           <>
             <li>
