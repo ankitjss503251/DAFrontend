@@ -21,13 +21,13 @@ import contracts from "../../config/contracts";
 import degnrABI from "./../../config/abis/dgnr8.json";
 import { ethers } from "ethers";
 import { NotificationManager } from "react-notifications";
-import Loader from "../components/loader";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { ItemDescription } from "semantic-ui-react";
+import Spinner from "../components/Spinner";
 
 function CreateCollection() {
   const [logoImg, setLogoImg] = useState("");
@@ -64,7 +64,7 @@ function CreateCollection() {
   const [isEdit2, setIsEdit2] = useState(false);
 
   useEffect(() => {
-    if (cookies.selected_account && localStorage.getItem("Authorization") !== undefined && localStorage.getItem("Authorization") !== null) setCurrentUser(cookies.selected_account);
+    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     // else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
@@ -329,7 +329,8 @@ function CreateCollection() {
         } catch (e) {
           console.log(e);
           setLoading(false);
-          NotificationManager.error(e.message, "", 1500);
+          NotificationManager.error(e.message, "", 900);
+          slowRefresh(1000);
         }
 
         if (res1 !== undefined) {
@@ -366,8 +367,9 @@ function CreateCollection() {
           try {
             await createCollection(fd);
           } catch (e) {
-            NotificationManager.error(e.message, "", 1800);
             setLoading(false);
+            NotificationManager.error(e.message, "", 800);
+            slowRefresh(1000);
           }
 
           NotificationManager.success(
@@ -376,13 +378,11 @@ function CreateCollection() {
             1800
           );
           setLoading(false);
-
-          setTimeout(() => {
-            window.location.href = "/createcollection";
-          }, 1000);
+          slowRefresh(1000);
         }
       }
     }
+
   };
 
   const handleImportNFT = async (isNew) => {
@@ -517,6 +517,7 @@ function CreateCollection() {
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
+      console.log("edit collection res", res2)
       setLogoImg(res2.logoImage);
       setCoverImg(res2.coverImage);
       setTitle(res2.name);
@@ -577,7 +578,7 @@ function CreateCollection() {
     <div className="wrapper">
       {/* <!-- Sidebar  --> */}
       <Sidebar />
-      {loading ? <Loader /> : ""}
+      {loading ? <Spinner /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
         {isSuperAdmin()

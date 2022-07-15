@@ -91,6 +91,12 @@ const onboard = Onboard({
           header: "Available Wallets",
         },
       },
+      modals: {
+        accountRequired: {
+
+          enabled: false
+        }
+      }
     },
   },
   accountCenter: {
@@ -114,7 +120,7 @@ const Navbar = (props) => {
   }, []);
 
   const init = async () => {
-    if (cookies["selected_account"] && localStorage.getItem('Authorization') !== undefined && localStorage.getItem('Authorization') !== null) {
+    if (cookies["selected_account"]) {
       setAccount(cookies["selected_account"]);
       const s = await onboard.connectWallet({
         autoSelect: { label: cookies["label"], disableModals: true },

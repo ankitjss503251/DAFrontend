@@ -507,7 +507,6 @@ function Marketplace() {
             ) : allNFTs?.length > 0 ? (
               allNFTs.map((oIndex) => {
                 return oIndex.map((card, key) => {
-                  // console.log("12222222234567",Tokens[card?.paymentToken?.toLowerCase()])
                   return (
                     <div className={grid}>
                       <div className="items_slide h-100" key={key}>

@@ -411,6 +411,7 @@ export const getCategory = async (data) => {
   return category;
 };
 
+
 export const getPrice = async (reqBody) => {
   let data = [];
   let order = {};
