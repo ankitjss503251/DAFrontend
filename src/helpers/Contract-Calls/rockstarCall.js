@@ -43,7 +43,8 @@ export const testMint = async (addr, qty, price, from) => {
       try {
         let result = await contract.estimateGas.mintTokens(qty, {
           from: from,
-          value: 0,
+          gasPrice: 10000000000,
+          gasLimit: 9000000
         });
         if (result) {
           return mintTokens(addr, qty, from);
@@ -87,22 +88,22 @@ export const testMint = async (addr, qty, price, from) => {
     } else {
       console.log("in whitelist");
       let bal=await fetchUserBal(from,addr);
-      console.log("BALANCE IS ",parseInt(bal) ,"and condition is :",parseInt(bal)<MAX_WHITELIST_BUY_PER_USER);
-      if(bal<MAX_WHITELIST_BUY_PER_USER){
+      console.log("BALANCE IS ",parseInt(bal) ,"and condition is :",(parseInt(bal)+qty)<MAX_WHITELIST_BUY_PER_USER);
+      if((parseInt(bal)+qty)<=MAX_WHITELIST_BUY_PER_USER){
         let isEligible = await isWhitelisted({ uAddress: from ,cAddress:addr });      
         if (isEligible.auth) {
-          let sig = await sigGenerator(from,addr)
+          let sig = await sigGenerator(from,addr,qty)
           let maxQty = 2;
   
           try {
             let result = await contract.estimateGas.whitelistedMint(
               qty,
-              maxQty,
+              qty,
               sig.uSignature,
-              { from: from }
+              { from: from, gasPrice: 10000000000,  gasLimit: 9000000 }
             );
             if (result) {
-              return whitelistMint(addr, qty, maxQty, sig.uSignature, from);
+              return whitelistMint(addr, qty, sig.uSignature, from);
             }
           } catch (e) {
             if (JSON.stringify(e).includes("insufficient allowance")) {
@@ -126,7 +127,6 @@ export const testMint = async (addr, qty, price, from) => {
                     return whitelistMint(
                       addr,
                       qty,
-                      maxQty,
                       sig.uSignature,
                       from
                     );
@@ -178,27 +178,31 @@ const mintTokens = async (addr, qty, from) => {
   evt.emit("txn-status", "mint-initiated");
   let contract = await exportInstance(addr, rrBabyAbi.abi);
   try {
-    let txn = await contract.mintTokens(qty, { from: from });
+    let txn = await contract.mintTokens(qty, { from: from, gasPrice: 10000000000,gasLimit: 9000000});
     txn = await txn.wait();
     evt.emit("txn-status", "mint-succeed");
     return txn;
   } catch (e) {
+    if(JSON.stringify(e).includes(`reason":"repriced","code":"TRANSACTION_REPLACED","cancelled`)){
+      evt.emit("txn-error", "check wallet for confirmation");
+      return e;
+    }
     evt.emit("txn-error", "user-denied-mint");
     return e;
   }
 };
-const whitelistMint = async (addr, qty, maxQty, sig, from) => {
+const whitelistMint = async (addr, qty, sig, from) => {
   console.log("it is in whitelisting section ");
   evt.emit("txn-status", "mint-initiated");
   let contract = await exportInstance(addr, rrBabyAbi.abi);
   try {
-    let txn = await contract.whitelistedMint(qty, maxQty, sig, { from: from });
+    let txn = await contract.whitelistedMint(qty, qty, sig, { from: from ,  gasPrice: 10000000000,gasLimit: 9000000});
     txn = await txn.wait();
     evt.emit("txn-status", "mint-succeed");
     return txn;
   } catch (e) {
-    console.log(parseJSON(e));
-    if(JSON.stringify(e).includes("transaction was replaced")){
+    console.log(e);
+    if(JSON.stringify(e).includes(`"reason":"repriced","code":"TRANSACTION_REPLACED","cancelled"`)){
       evt.emit("txn-error", "check wallet for confirmation");
       return e;
     }
