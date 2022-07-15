@@ -153,6 +153,7 @@ function Collection() {
             };
           }
           temp = [...temp, ...nfts];
+          console.log("coll nfts", temp);
           setNftList(temp);
         }
         if (nftList && nfts.length <= 0) {
