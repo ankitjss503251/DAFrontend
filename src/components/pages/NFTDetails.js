@@ -177,9 +177,8 @@ function NFTDetails() {
 
         setPrice(convertToEth(b?.bidPrice?.$numberDecimal));
         setBidStatus(b?.bidStatus);
-      }
-      else{
-        setHaveBid(false)
+      } else {
+        setHaveBid(false);
       }
     };
     fetch();
@@ -276,10 +275,7 @@ function NFTDetails() {
       return;
     }
 
-    if (
-      offerQuantity === "" ||
-      (offerQuantity === undefined && NFTDetails.type !== 1)
-    ) {
+    if (offerQuantity === "" ||(offerQuantity === undefined && NFTDetails.type !== 1)) {
       NotificationManager.error("Enter Offer Quantity");
       setLoading(false);
       return;
@@ -291,10 +287,10 @@ function NFTDetails() {
     }
 
     let deadline = moment(datetime).unix();
-    let tokenAddress =
-      marketplaceSaleType === 0
-        ? contracts[selectedTokenFS]
-        : contracts[selectedToken];
+    // let tokenAddress =
+    //   marketplaceSaleType === 0
+    //     ? contracts[selectedTokenFS]
+    //     : contracts[selectedToken];
     await createOffer(
       NFTDetails?.tokenId,
       collection?.contractAddress,
@@ -305,11 +301,11 @@ function NFTDetails() {
       ethers.utils.parseEther(offerPrice),
       deadline,
       NFTDetails.id,
-      contracts[selectedToken]
+      contracts.BUSD
     );
     setLoading(false);
 
-    slowRefresh(1000);
+    // slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
   };
@@ -530,10 +526,7 @@ function NFTDetails() {
               }
             }}
           >
-            {haveBid 
-              ? "Update Bid"
-               
-              : "Place Bid"}
+            {haveBid ? "Update Bid" : "Place Bid"}
           </button>
         </div>
       }
@@ -877,8 +870,8 @@ function NFTDetails() {
               <h3 className="title_36 mb-4">Description</h3>
               <p className="textdes">{NFTDetails?.desc} </p>
             </div>
-            <div className="col-lg-6 mb-5">
-              <h3 className="title_36 mb-4">
+            <div className="col-lg-6 mb-5 text-break">
+              <h3 className="title_36 mb-4 ">
                 About {collection?.name} Collection
               </h3>
               <div className="row">
