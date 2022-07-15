@@ -97,9 +97,10 @@ function CarouselCollection() {
                         }
                       />
                     </a>
-                    <div className='collection_text'>
-                      <a href={`/collectionwithcollection/${card?.brand?._id}`}>
-                        <div className='coll_profileimg'>
+                    <div className='collection_text text-center'>
+                      
+                      <div className='coll_profileimg'>
+                        <a href={`/collectionwithcollection/${card?.brand?._id}`}>
                           <img
                             alt=''
                             className='profile_img'
@@ -113,12 +114,17 @@ function CarouselCollection() {
                                   className='check_img'
                                   src={"../img/collections/check.png"}
                                 /> */}
-                        </div>
-                      </a>
-                      <a href={`/collection/${card?._id}`}>
-                        <h4 className='collname'>{card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}</h4>
+                        </a>
+                      </div>
+                      
+                      
+                        <h4 className='collname'>
+                          <a href={`/collection/${card?._id}`}>
+                            {card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}
+                          </a>
+                        </h4>
                         <p>{card.desc ? (card.desc?.length > 8 ? card.desc?.slice(0,8) + "..." : card.desc) : "-"}</p>
-                      </a>
+                      
                     </div>
                   </div>
                

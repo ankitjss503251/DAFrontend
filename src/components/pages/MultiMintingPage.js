@@ -12,7 +12,6 @@ import { BigNumber } from "bignumber.js";
 import evt from "../../events/events";
 import "../components-css/App.css";
 import { getContractAddress } from "ethers/lib/utils";
-import Spinner from "../components/Spinner"
 import BGImg from "../../assets/images/background.jpg";
 
 let contractFunctionality = {
@@ -27,6 +26,7 @@ let contractFunctionality = {
   "0xeB2f90BA7C76176aea69b40e61ED83c5d1117BBE": "rockstarCall",
   "0x8D2D43445149Eaa7AD68317f9D2d1575893a330b": "rockstarCall",
   "0x1f46093204744F3815c124D032E70110FA52eeFe": "rockstarCall",
+  "0x5100f7A92C835ad30cd43cE101e9FfaBd761F18a": "rockstarCall",
 };
 
 function lazyImport(addr) {
@@ -155,32 +155,16 @@ function MultiMintingPage(props) {
     };
     bodyClass();
   }, [isShowPopup]);
-  useEffect(() => {
-  
-    const bodyClass = async () => {
-      var body = document.body;
-      if (loading) {
-        body.classList.add("overflow_hidden");
-      } else {
-        body.classList.remove("overflow_hidden");
-      }
-    };
-    bodyClass();
-  }, [loading]);
 
   useEffect(() => {
-    setLoading(true)
     const fetchData = async () => {
       let { fetchInfo } = await contractCalls;
-      let getcateg = await fetchInfo(params.id);
+      let getcateg = await fetchInfo(params.id, cookies.selected_account);
       setTotalSupply(getcateg[2].toString());
       setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
-      setLoading(false)
     };
-    
     setInterval(fetchData, 10000);
     fetchData();
-
   }, []);
   function closePopup() {
     setisShowPopup(false);
@@ -201,7 +185,6 @@ function MultiMintingPage(props) {
 
   return (
     <div style={bgImgStyle}>
-       {loading ? <Spinner /> : ""}
       <section className="collection_banner pdd_8" style={bgImage}></section>
       <section className="collection_info">
         <div className="container">
