@@ -587,7 +587,7 @@ function Marketplace() {
                                   : card?.name}
                               </h3>
                               {card.paymentToken ? (
-                                <>
+                                <div className="d-flex">
                                   <div className="token_img">
                               <img src={Tokens[card?.paymentToken?.toLowerCase()]?.icon} alt="payment token"/>
                              </div> 
@@ -599,7 +599,7 @@ function Marketplace() {
                                         ?.symbolName
                                     }{" "}
                                   </p>
-                                </>
+                                </div>
                               ) : (
                                 <p>--</p>
                               )}

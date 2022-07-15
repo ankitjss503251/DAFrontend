@@ -124,47 +124,45 @@ function CollectionWithCollection() {
         let temp = [];
         let cnt = 0;
 
-        
-          const nft = await getNFTs({
-            page: currPage,
-            limit: 12,
-            brandID:brandID,
-            searchText: searchFor,
-            ERCType: ERCType,
-          });
+        const nft = await getNFTs({
+          page: currPage,
+          limit: 12,
+          brandID: brandID,
+          searchText: searchFor,
+          ERCType: ERCType,
+        });
 
-          console.log("nft", nft);
+        console.log("nft", nft);
 
-          setCardCount(cardCount + nft.length);
-          if (nft.length > 0) {
-            for (let i = 0;i < nft.length; i++) {
-              const order = await getPrice({
-                nftID: nft[i].orderData,
-              });
-              nft[i] = {
-                ...nft[i],
-                price:
-                  order?.price?.$numberDecimal === undefined
-                    ? "--"
-                    : Number(convertToEth(order?.price?.$numberDecimal))
-                        .toFixed(6)
-                        .slice(0, -2),
-                saleType: order?.salesType,
-              };
-              temp[cnt] = {
-                ...nft[i],
-                collectionName: cols[i]?.name,
-              };
-              console.log("nft", temp[cnt]);
-              cnt++;
-            }
+        setCardCount(cardCount + nft.length);
+        if (nft.length > 0) {
+          for (let i = 0; i < nft.length; i++) {
+            const order = await getPrice(nft[i].orderData);
+            nft[i] = {
+              ...nft[i],
+              price:
+                order?.price?.$numberDecimal === undefined
+                  ? "--"
+                  : Number(convertToEth(order?.price?.$numberDecimal))
+                      .toFixed(6)
+                      .slice(0, -2),
+              saleType: order?.salesType,
+              paymentToken: order?.paymentToken
+            };
+            temp[cnt] = {
+              ...nft[i],
+              collectionName: cols[i]?.name,
+            };
+            console.log("nft", temp[cnt]);
+            cnt++;
           }
-          if (nfts && nft.length <= 0) {
-            setLoader(false);
-            setLoadMoreDisabled("disabled");
-            return;
-          }
-        
+        }
+        if (nfts && nft.length <= 0) {
+          setLoader(false);
+          setLoadMoreDisabled("disabled");
+          return;
+        }
+
         setNfts(temp);
         setLoader(false);
       } catch (e) {
