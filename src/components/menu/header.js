@@ -23,7 +23,6 @@ import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
 import defaultProfile from "../../assets/images/favicon.png";
-import evt from "../../events/events";
 import menuIcon from "../../assets/menu.png";
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
@@ -170,7 +169,6 @@ const Header = function () {
 
   useEffect(() => {
     async function setProvider() {
-      console.log("provider in useEffect", provider);
       if (provider) {
         provider.on("accountsChanged", (accounts) => {
           if (account && accounts[0] !== undefined) {
@@ -195,8 +193,7 @@ const Header = function () {
 
     setProvider();
   }, [provider, account, chainId]);
-  evt.removeAllListeners("wallet-connect", walletConnect);
-  evt.on("wallet-connect", walletConnect);
+
   function walletConnect(){
   connectWallet();
     
@@ -388,7 +385,6 @@ const Header = function () {
 
   const handleSearch = async (e) => {
     setShowSearchDiv("active");
-    console.log("onchange search text--->", e.target.value);
     setSearchValue(e.target.value);
     if (e.target.value !== "") {
       setShowSearchedText(e.target.value);
@@ -448,14 +444,14 @@ const Header = function () {
                   }
                 }}
               />
-              {/* <button className="search_btn" type="submit">
+              <button className="search_btn" type="submit">
               <Link
                     to={{
                         pathname: `/marketplace/${searchValue}`,
                     }}
                     >
                 <img src={"../img/search.svg"} alt="" /></Link>
-              </button> */}
+              </button>
             </div>
             {sNfts.length > 0 || (scolns.length > 0 && searchedText) ? (
               <div className={`searched_div ${showSearchDiv}`}>

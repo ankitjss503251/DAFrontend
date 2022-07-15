@@ -269,10 +269,7 @@ function NFTDetails() {
       return;
     }
 
-    if (
-      offerQuantity === "" ||
-      (offerQuantity === undefined && NFTDetails.type !== 1)
-    ) {
+    if (offerQuantity === "" ||(offerQuantity === undefined && NFTDetails.type !== 1)) {
       NotificationManager.error("Enter Offer Quantity");
       setLoading(false);
       return;
@@ -869,8 +866,8 @@ function NFTDetails() {
               <h3 className="title_36 mb-4">Description</h3>
               <p className="textdes">{NFTDetails?.desc} </p>
             </div>
-            <div className="col-lg-6 mb-5">
-              <h3 className="title_36 mb-4">
+            <div className="col-lg-6 mb-5 text-break">
+              <h3 className="title_36 mb-4 ">
                 About {collection?.name} Collection
               </h3>
               <div className="row">
