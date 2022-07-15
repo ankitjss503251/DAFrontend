@@ -15,39 +15,36 @@ import { Tokens } from "../../helpers/tokensToSymbol";
 function ItemsList() {
   const [putOnSaleItems, setPutOnSaleItems] = useState([]);
 
-  useEffect(
-    () => {
- const fetch = async () => {
-   try {
-     const reqData = {
-       page: 1,
-       limit: 12,
-     };
-     const res = await getNFTs(reqData);
-     for (let i = 0; i < res.length; i++) {
-       const orderDet = await getPrice({ nftID: res[i].id });
-       const brandDet = await getBrandDetailsById(
-         res[i].collectionData[0].brandID
-       );
-       res[i] = {
-         ...res[i],
-         price: !orderDet?.price?.$numberDecimal
-           ? "--"
-           : Number(convertToEth(orderDet?.price?.$numberDecimal))
-               .toFixed(6)
-               .slice(0, -2),
-         saleType: orderDet?.salesType,
-         brand: brandDet,
-         paymentToken: orderDet?.paymentToken
-       };
-     }
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const reqData = {
+          page: 1,
+          limit: 12,
+        };
+        const res = await getNFTs(reqData);
+        for (let i = 0; i < res.length; i++) {
+          const orderDet = await getPrice(res[i].orderData);
+          const brandDet = res[i].brandData;
+          res[i] = {
+            ...res[i],
+            price: !orderDet?.price?.$numberDecimal
+              ? "--"
+              : Number(convertToEth(orderDet?.price?.$numberDecimal))
+                  .toFixed(6)
+                  .slice(0, -2),
+            saleType: orderDet?.salesType,
+            brand: brandDet,
+            paymentToken: orderDet?.paymentToken,
+          };
+        }
 
-     setPutOnSaleItems(res);
-   } catch (e) {
-     console.log("Error in fetching all collections list", e);
-   }
- };
-   fetch();
+        setPutOnSaleItems(res);
+      } catch (e) {
+        console.log("Error in fetching all collections list", e);
+      }
+    };
+    fetch();
   }, []);
 
   var settings = {
@@ -101,18 +98,18 @@ function ItemsList() {
   };
 
   return (
-    <div className='nft'>
+    <div className="nft">
       <Slider {...settings}>
         {putOnSaleItems
           ? putOnSaleItems.map((card, key) => {
               return (
-                <div className='items_slide h-100' key={key}>
-                  <div className='items_profileimg'>
+                <div className="items_slide h-100" key={key}>
+                  <div className="items_profileimg">
                     <a href={`/collectionwithcollection/${card.brand?._id}`}>
-                      <div className='profile_left nft-logo-img'>
+                      <div className="profile_left nft-logo-img">
                         <img
-                          alt=''
-                          className='profile_img creatorImg'
+                          alt=""
+                          className="profile_img creatorImg"
                           src={card.brand?.logoImage}
                           onError={(e) =>
                             (e.target.src = "../img/collections/list4.png")
@@ -129,21 +126,31 @@ function ItemsList() {
                   <span>514d 18h 42m 39s</span>
                 </div> */}
                   </div>
-                  <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
+                  <a href={`/NFTdetails/${card.id}`} className="nft-cont">
                     <img
-                      alt=''
+                      alt=""
                       src={card.image}
-                      class='img-fluid items_img my-3'
+                      class="img-fluid items_img my-3"
                       onError={(e) => {
                         e.target.src = "../img/collections/list4.png";
                       }}
                     />
                   </a>
-                  <div className='items_text nft-info-div'>
-                    <div className='items_info'>
-                      <div className='items_left '>
-                        <h3 className=''>{card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}</h3>
-                        <p>{card.price} {Tokens[card?.paymentToken?.toLowerCase()]?.symbolName}</p>
+                  <div className="items_text nft-info-div">
+                    <div className="items_info">
+                      <div className="items_left ">
+                        <h3 className="">
+                          {card?.name?.length > 8
+                            ? card?.name?.slice(0, 8) + "..."
+                            : card?.name}
+                        </h3>
+                        <p>
+                          {card.price}{" "}
+                          {
+                            Tokens[card?.paymentToken?.toLowerCase()]
+                              ?.symbolName
+                          }
+                        </p>
                       </div>
                       {/* <div className='items_right justify-content-end d-flex'>
                         <span>
@@ -164,7 +171,8 @@ function ItemsList() {
                     </div>
                     <Link
                       to={`/NFTdetails/${card.id}`}
-                      className='border_btn  title_color w-100'>
+                      className="border_btn  title_color w-100"
+                    >
                       {card.saleType === 0
                         ? "Buy Now"
                         : card.saleType === 1 || card.saleType === 2
@@ -177,10 +185,11 @@ function ItemsList() {
             })
           : ""}
         {putOnSaleItems?.length !== 0 ? (
-          <div className='items_slide last_slide'>
+          <div className="items_slide last_slide">
             <Link
               to={"/marketplace"}
-              className='view_slide align-items-center justify-content-center d-flex'>
+              className="view_slide align-items-center justify-content-center d-flex"
+            >
               View All
             </Link>
           </div>

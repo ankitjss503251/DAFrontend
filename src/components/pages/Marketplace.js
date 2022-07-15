@@ -130,12 +130,12 @@ function Marketplace() {
           salesType: activeSaleType !== -1 ? activeSaleType : "",
         };
         const res = await getNFTs(reqData);
-        console.log("qqqqqqq", res)
+        console.log("qqqqqqq", res);
         setCardCount(cardCount + res.length);
         if (res.length > 0) {
           setLoadMoreDisabled("");
           for (let i = 0; i < res.length; i++) {
-            const orderDet = await getPrice(res[0].orderData);
+            const orderDet = await getPrice(res[i].orderData);
             console.log("orderDet", orderDet);
             // const brandDet = await getBrandDetailsById(
             //   res[i].collectionData[0].brandID
@@ -154,7 +154,7 @@ function Marketplace() {
               brand: res[i].brandData,
             };
           }
-          console.log("res", res);
+          console.log("resss", res);
           temp = [...temp, res];
           setAllNFTs(temp);
           setLoader(false);
@@ -505,8 +505,8 @@ function Marketplace() {
               <SkeletonCard cards={cardCount} grid={grid} />
             ) : allNFTs?.length > 0 ? (
               allNFTs.map((oIndex) => {
+                
                 return oIndex.map((card, key) => {
-                  // console.log("12222222234567",Tokens[card?.paymentToken?.toLowerCase()])
                   return (
                     <div className={grid}>
                       <div className="items_slide h-100" key={key}>
@@ -586,17 +586,17 @@ function Marketplace() {
                                   ? card?.name?.slice(0, 8) + "..."
                                   : card?.name}
                               </h3>
-                              {card.paymentToken !== undefined ? (
+                              {card.paymentToken ? (
                                 <>
-                                  {/* <div className="token_img">
-                              <img src={Tokens[card?.paymentToken?.toLowerCase()].icon} alt="payment token"/>
-                             </div> */}
+                                  <div className="token_img">
+                              <img src={Tokens[card?.paymentToken?.toLowerCase()]?.icon} alt="payment token"/>
+                             </div> 
                                   <p>
                                     {" "}
                                     {card.price}{" "}
                                     {
                                       Tokens[card?.paymentToken?.toLowerCase()]
-                                        .symbolName
+                                        ?.symbolName
                                     }{" "}
                                   </p>
                                 </>
