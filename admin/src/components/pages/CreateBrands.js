@@ -18,7 +18,8 @@ function CreateBrands() {
   const [isModal, setModal] = useState("");
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    if (cookies.selected_account && localStorage.getItem("Authorization") !== undefined && localStorage.getItem("Authorization") !== null) setCurrentUser(cookies.selected_account);
+    // else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 

@@ -9,7 +9,7 @@ import NFThistory from "../components/NFThistory";
 import {
   getCollections,
   getNFTs,
-  getOrderByNftID,
+  getNFTDetails,
 } from "../../helpers/getterFunctions";
 
 import { useParams } from "react-router-dom";
@@ -33,7 +33,7 @@ import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { fetchBidNft, getNFTList } from "../../apiServices";
+import { fetchBidNft, viewNFTDetails } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
 
 import { useGLTF } from "@react-three/drei";
@@ -239,16 +239,18 @@ function NFTDetails() {
     const fetch = async () => {
       try {
         const reqData = {
-          page: 1,
-          limit: 12,
           nftID: id,
         };
-        const res = await getNFTs(reqData);
+        const res = await getNFTDetails(reqData);
         if (res.length === 0) {
           window.location.href = "/marketplace";
           return;
         }
         setNFTDetails(res[0]);
+        setOrders(res[0]?.OrderData);
+        if (res[0]?.OrderData.length <= 0) {
+          setOrders([]);
+        }
         setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length - 1]?.address);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
@@ -279,17 +281,13 @@ function NFTDetails() {
         }
 
         if (id) {
-          const _orders = await getOrderByNftID({ nftID: id });
-
-          setOrders(_orders?.results);
-          if (_orders?.results.length <= 0) {
+          const _nft = await getNFTDetails({
+            nftID: id,
+          });
+          setOrders(_nft[0]?.OrderData);
+          if (_nft[0]?.OrderData.length <= 0) {
             setOrders([]);
           }
-          const _nft = await getNFTList({
-            page: 1,
-            limit: 1,
-            nftID: _orders?.results[0]?.nftID,
-          });
           setFirstOrderNFT(_nft[0]);
         }
       } catch (e) {
@@ -407,10 +405,7 @@ function NFTDetails() {
       return;
     }
 
-    if (
-      offerQuantity === "" ||
-      (offerQuantity === undefined && NFTDetails.type !== 1)
-    ) {
+    if (offerQuantity === "" ||(offerQuantity === undefined && NFTDetails.type !== 1)) {
       NotificationManager.error("Enter Offer Quantity");
       setLoading(false);
       return;
@@ -1008,8 +1003,8 @@ function NFTDetails() {
               <h3 className="title_36 mb-4">Description</h3>
               <p className="textdes">{NFTDetails?.desc} </p>
             </div>
-            <div className="col-lg-6 mb-5">
-              <h3 className="title_36 mb-4">
+            <div className="col-lg-6 mb-5 text-break">
+              <h3 className="title_36 mb-4 ">
                 About {collection?.name} Collection
               </h3>
               <div className="row">
