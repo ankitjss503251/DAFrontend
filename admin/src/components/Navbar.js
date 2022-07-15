@@ -93,7 +93,6 @@ const onboard = Onboard({
       },
     },
   },
-  
 
   accountCenter: {
     desktop: {
@@ -101,7 +100,6 @@ const onboard = Onboard({
     },
   },
 });
-
 
 const Navbar = (props) => {
   const [cookies, setCookie, removeCookie] = useCookies([]);
@@ -169,14 +167,16 @@ const Navbar = (props) => {
   };
 
   const connectWallet = async () => {
-    if(window.ethereum){
-      console.log("window ethereum")
-    }else{
-      NotificationManager.error("Non-Ethereum browser detected. You should consider trying MetaMask!")
+    if (window.ethereum) {
+      console.log("window ethereum");
+    } else {
+      NotificationManager.error(
+        "Non-Ethereum browser detected. You should consider trying MetaMask!"
+      );
     }
-    console.log("in connect wallet")
+    console.log("in connect wallet");
     const wallets = await onboard.connectWallet();
-    
+
     if (wallets.length !== 0) {
       await onboard.setChain({
         chainId: process.env.REACT_APP_CHAIN_ID,
