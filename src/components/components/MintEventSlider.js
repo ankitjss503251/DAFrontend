@@ -65,31 +65,31 @@ function MintEventSlider(props) {
     };
     bodyClass();
   }, [loading]);
+  const fetchData = async () => {
+    // setLoading(true)
+    let { fetchInfo,
+      fetchUserBal} = await contract;
+    let getcateg = await fetchInfo(props.id);
+    console.log(props.id);
+    if(cookies.selected_account){
+      let bal=await fetchUserBal(cookies.selected_account,props.id)
+      console.log("THIS IS BALANCE",parseInt(bal));
+      if(MAX_WHITELIST_BUY_PER_USER>parseInt(bal)){
+          setMaxNFT(MAX_WHITELIST_BUY_PER_USER-parseInt(bal));
+          console.log("max NFT set To:",maxNFT);
+        }
+        else{
+          setMaxNFT(1);
+          
+        }
+      
+    }
+    
+    setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
+    //  setLoading(false)
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      // setLoading(true)
-      let { fetchInfo,
-        fetchUserBal} = await contract;
-      let getcateg = await fetchInfo(props.id);
-      console.log(props.id);
-      if(cookies.selected_account){
-        let bal=await fetchUserBal(cookies.selected_account,props.id)
-        console.log("THIS IS BALANCE",parseInt(bal));
-        if(MAX_WHITELIST_BUY_PER_USER>parseInt(bal)){
-            setMaxNFT(MAX_WHITELIST_BUY_PER_USER-parseInt(bal));
-            console.log("max NFT set To:",maxNFT);
-          }
-          else{
-            setMaxNFT(1);
-            
-          }
-        
-      }
-      
-      setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
-      //  setLoading(false)
-    };
     fetchData();
   }, []);
   const connectWalletEvent = () => {
@@ -99,6 +99,7 @@ function MintEventSlider(props) {
     let { testMint } = await contract;
     let result = await testMint(props.id, qty, price, user);
     console.log(result);
+    
   };
  
   return (
