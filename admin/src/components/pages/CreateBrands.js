@@ -19,9 +19,7 @@ function CreateBrands() {
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    console.log("current user is---->", currentUser, cookies.selected_account);
   }, [currentUser]);
 
   useEffect(() => {
@@ -29,7 +27,6 @@ function CreateBrands() {
       const fetch = async () => {
         let _myBrand = await GetBrand();
         setMyBrand(_myBrand);
-        console.log("my collection-fgasdf->", myBrand);
       };
       fetch();
     }

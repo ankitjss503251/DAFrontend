@@ -1,12 +1,8 @@
-// import logo from './logo.svg';
+
 import React, { useState } from "react";
 import "./App.css";
 import Home1 from "./components/pages/Home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Form from "./components/pages/Form";
-import Table from "./components/pages/Table";
-import Performance from "./components/pages/Performance";
-// import Navbar1 from "./components/Navbar";
 import CreateCollection1 from "./components/pages/CreateCollection";
 import CreateNFTs1 from "./components/pages/CreateNFTs";
 import Rightarrow from "./components/SVG/rightarrow";
@@ -80,9 +76,6 @@ function App() {
           /> */}
           <Route path="sadmin" element={<Login />} />
           <Route path="admins" element={<Admins />}></Route>
-          <Route path="form" element={<Form />} />
-          <Route path="table" element={<Table />} />
-          <Route path="performance" element={<Performance />} />
           <Route path="createcollection" element={<CreateCollection />} />
           <Route path="createnfts" element={<CreateNFTs />} />
           <Route path="createbrands" element={<CreateBrands />} />
