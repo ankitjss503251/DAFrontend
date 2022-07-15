@@ -351,7 +351,7 @@ function CreateCollection() {
           fd.append("brandID", brand);
           fd.append("isDeployed", isOffChain === "Yes" ? 1 : 0);
           fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
-          fd.append("isMinted", 1);
+          fd.append("isMinted", isOffChain === "Yes" ? 0 : 1);
           fd.append("isImported", 0);
           //fd.append("chainID", chain);
           fd.append("link", importedCollectionLink);
