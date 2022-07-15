@@ -25,9 +25,11 @@ function Marketplacecollection() {
   };
 
   const [allCollections, setAllCollections] = useState([]);
+  const [currPageAll, setCurrPageAll] = useState(1);
   const [currPage, setCurrPage] = useState(1);
   const [loadMore, setLoadMore] = useState(false);
   const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
+  const [loadMoreDisabledAll, setLoadMoreDisabledAll] = useState("");
   const [categories, setCategories] = useState([]);
   const [showTab, setShowTab] = useState("");
   const [activeCat, setActiveCat] = useState([]);
@@ -36,73 +38,87 @@ function Marketplacecollection() {
   const [cardCount, setCardCount] = useState(0);
 
   useEffect(() => {
-    
     const fetch = async () => {
-    setLoader(true);
-    let temp = allCollections;
-    try {
-      const res1 = await getCategory();
-      setCategories(res1);
-      let t = [];
-      res1?.map((r) => {
-        t = [...t, r.name];
-      });
+      setLoader(true);
+      let temp = allCollections;
+      try {
+        const res1 = await getCategory();
+        setCategories(res1);
+        let t = [];
+        res1?.map((r) => {
+          t = [...t, r.name];
+        });
+        console.log("1111");
+        if (!t.includes(searchedText) && !showTab) {
+          const reqData = {
+            page: currPageAll,
+            limit: 12,
+            searchText: searchedText ? searchedText : "",
+            isOnMarketplace: 1,
+          };
+          const res = await getCollections(reqData);
+          setCardCount(cardCount + res.length);
+          if (res.length > 0) {
+            setLoadMoreDisabledAll("");
+            temp = [...temp, res];
+            setAllCollections(temp);
+            console.log("2222");
+          }
 
-      if (!t.includes(searchedText)) {
-        const reqData = {
-          page: currPage,
-          limit: 3,
-          searchText: searchedText ? searchedText : "",
-          isOnMarketplace: 1,
-        };
-        const res = await getCollections(reqData);
-        setCardCount(cardCount + res.length);
-        if (res.length > 0) {
-          setLoadMoreDisabled("");
-          temp = [...temp, res];
-          setAllCollections(temp);
-          console.log("temp", temp)
-        }
-
-        if (allCollections && res.length <= 0) {
+          if (allCollections && res.length <= 0) {
+            setLoader(false);
+            setLoadMoreDisabledAll("disabled");
+            return;
+          }
+        } else {
+          console.log("3333");
+          setLoader(true);
+          try {
+            setShowTab("show active");
+            if (searchedText) {
+              document.getElementById(searchedText).classList.add("active");
+            }
+            const res1 = await getCategory({
+              name: searchedText,
+            });
+            handleCategoryChange(res1[0]);
+          } catch (e) {
+            console.log("Error", e);
+          }
           setLoader(false);
-          setLoadMoreDisabled("disabled");
-          return;
         }
-      } else {
-        setLoader(true);
-        try {
-          setShowTab("show active");
-          document.getElementById(searchedText).classList.add("active");
-          const res1 = await getCategory({
-            name: searchedText,
-          });
-          handleCategoryChange(res1[0]);
-        } catch (e) {
-          console.log("Error", e);
-        }
-        setLoader(false);
+      } catch (e) {
+        console.log("Error in fetching all collections list", e);
       }
-    } catch (e) {
-      console.log("Error in fetching all collections list", e);
-    }
-    setLoader(false);
-  }
-  fetch();
+      setLoader(false);
+    };
+    fetch();
   }, [loadMore, searchedText, showTab]);
 
   const handleCategoryChange = async (category) => {
+    console.log("4444");
     setLoader(true);
+    let temp2 = activeCat;
     try {
       const reqBody = {
         page: currPage,
-        limit: 12,
+        limit: 3,
         categoryID: category._id,
         isOnMarketplace: 1,
       };
       const ind = await getCollections(reqBody);
       setCardCount(cardCount + ind.length);
-      setActiveCat(ind);
+      if (ind.length > 0) {
+        setLoadMoreDisabled("");
+        temp2 = [...temp2, ind];
+        setActiveCat(temp2);
+        console.log("temp2", temp2);
+      }
+      if (ind?.length <= 0 && activeCat) {
+        setLoader(false);
+        setLoadMoreDisabled("disabled");
+        return;
+      }
     } catch (e) {
       console.log("Error", e);
     }
@@ -111,9 +127,8 @@ function Marketplacecollection() {
 
   return (
     <div>
-      {loadMoreDisabled &&
-      !showTab &&
-      (allCollections.length > 0 || activeCat.length > 0)
+      {(loadMoreDisabled && activeCat.length > 0) ||
+      (allCollections.length > 0 && loadMoreDisabledAll)
         ? NotificationManager.info("No more items to load")
         : ""}
       <section className='register_hd pdd_12' style={register_bg}>
@@ -146,10 +161,12 @@ function Marketplacecollection() {
                       aria-controls='#all'
                       aria-selected='true'
                       onClick={() => {
+                        setLoadMoreDisabledAll("")
                         setLoadMoreDisabled("");
                         setShowTab("");
                         setAllCollections([]);
                         setCardCount(0);
+                        setCurrPageAll(1);
                       }}>
                       All
                     </button>
@@ -176,6 +193,7 @@ function Marketplacecollection() {
                               setActiveCat([]);
                               setCardCount(0);
                               handleCategoryChange(cat);
+                              setLoadMoreDisabledAll("")
                               setLoadMoreDisabled("");
                               setShowTab("show active");
                             }}>
@@ -199,13 +217,13 @@ function Marketplacecollection() {
                   <CollectionSkeletonCard cards={cardCount} />
                 ) : allCollections?.length > 0 ? (
                   allCollections.map((oIndex) => {
-                    return oIndex.map((card) => (
-                      <div className='col-lg-4 col-md-6 mb-5'>
+                    return oIndex.map((card, key) => (
+                      <div className='col-lg-4 col-md-6 mb-5' key={key}>
                         <div className='collection_slide'>
                           <a href={`/collection/${card?._id}`}>
                             <img
                               className='img-fluid w-100'
-                              src={ card?.logoImg }
+                              src={card?.logoImg}
                               onError={(e) => {
                                 e.target.src = "../img/collections/list4.png";
                               }}
@@ -221,7 +239,8 @@ function Marketplacecollection() {
                                   className='profile_img'
                                   src={card.brand?.logoImage}
                                   onError={(e) => {
-                                    e.target.src = "../img/collections/list4.png";
+                                    e.target.src =
+                                      "../img/collections/list4.png";
                                   }}
                                 />
                                 {/* <img
@@ -232,13 +251,20 @@ function Marketplacecollection() {
                               </div>
                             </a>
                             <a href={`/collection/${card?._id}`}>
-                              <h4 className='collname'>{card.name?.length > 8 ? card.name?.slice(0,8) : card.name}</h4>
-                              <p>{card.desc?.length > 8  ? card.desc?.slice(0,8) : card.desc.slice(0,8)}</p>
+                              <h4 className='collname'>
+                                {card.name?.length > 8
+                                  ? card.name?.slice(0, 8)
+                                  : card.name}
+                              </h4>
+                              <p>
+                                {card.desc?.length > 8
+                                  ? card.desc?.slice(0, 8)
+                                  : card.desc.slice(0, 8)}
+                              </p>
                             </a>
                           </div>
                         </div>
                       </div>
-                      
                     ));
                   })
                 ) : (
@@ -246,13 +272,13 @@ function Marketplacecollection() {
                     No Collection Found
                   </h2>
                 )}
-                {allCollections[0]?.length > 1 ? (
+                {allCollections[0]?.length > 12 ? (
                   <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                     <button
                       type='button'
-                      className={`btn view_all_bdr ${loadMoreDisabled}`}
+                      className={`btn view_all_bdr ${loadMoreDisabledAll}`}
                       onClick={() => {
-                        setCurrPage(currPage + 1);
+                        setCurrPageAll(currPageAll + 1);
                         setLoadMore(!loadMore);
                       }}>
                       Load More
@@ -271,53 +297,65 @@ function Marketplacecollection() {
               <div className='row'>
                 {loader ? (
                   <CollectionSkeletonCard cards={cardCount} />
-                ) : activeCat.length > 0 ? (
-                  activeCat.map((card, key) => (
-                    <div className='col-lg-4 col-md-6 mb-5' key={key}>
-                      <div className='collection_slide'>
-                        <a href={`/collection/${card._id}`}>
-                          <img
-                            className='img-fluid w-100'
-                            src={card.logoImg}
-                            alt=''
-                            onError={(e) => {
-                              e.target.src = "../img/collections/list4.png";
-                            }}
-                          />
-                        </a>
-                        <div className='collection_text'>
-                          <a
-                            href={`/collectionwithcollection/${card.brand._id}`}>
-                            <div className='coll_profileimg'>
-                              <img
-                                alt=''
-                                className='profile_img'
-                                src={card.brand.logoImage}
-                                onError={(e) => {
-                                  e.target.src = "../img/collections/list4.png";
-                                }}
-                              />
-                              {/* <img
+                ) : activeCat?.length > 0 ? (
+                  activeCat.map((oIndex) => {
+                    return oIndex.map((card, key) => (
+                      <div className='col-lg-4 col-md-6 mb-5' key={key}>
+                        <div className='collection_slide'>
+                          <a href={`/collection/${card._id}`}>
+                            <img
+                              className='img-fluid w-100'
+                              src={card.logoImg}
+                              alt=''
+                              onError={(e) => {
+                                e.target.src = "../img/collections/list4.png";
+                              }}
+                            />
+                          </a>
+                          <div className='collection_text'>
+                            <a
+                              href={`/collectionwithcollection/${card.brand._id}`}>
+                              <div className='coll_profileimg'>
+                                <img
+                                  alt=''
+                                  className='profile_img'
+                                  src={card.brand.logoImage}
+                                  onError={(e) => {
+                                    e.target.src =
+                                      "../img/collections/list4.png";
+                                  }}
+                                />
+                                {/* <img
                                 alt=''
                                 className='check_img'
                                 src={"../img/collections/check.png"}
                               /> */}
-                            </div>
-                          </a>
-                          <a href={`/collection/${card._id}`}>
-                            <h4 className='collname'>{card.name?.length > 8 ? card.name?.slice(0,8) : card.name}</h4>
-                            <p>{card.desc?.length > 8  ? card.desc?.slice(0,8) : card.desc.slice(0,8)}</p>
-                          </a>
-                        </div>:
+                              </div>
+                            </a>
+                            <a href={`/collection/${card._id}`}>
+                              <h4 className='collname'>
+                                {card.name?.length > 8
+                                  ? card.name?.slice(0, 8)
+                                  : card.name}
+                              </h4>
+                              <p>
+                                {card.desc?.length > 8
+                                  ? card.desc?.slice(0, 8)
+                                  : card.desc.slice(0, 8)}
+                              </p>
+                            </a>
+                          </div>
+                          :
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    ));
+                  })
                 ) : (
                   <h2 className='text-white text-center'>
                     No Collection Found
                   </h2>
                 )}
-                {activeCat?.length > 12 ? (
+                {activeCat[0]?.length > 2 ? (
                   <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                     <button
                       type='button'
