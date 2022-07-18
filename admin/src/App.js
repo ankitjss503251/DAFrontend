@@ -66,10 +66,7 @@ function App() {
       </div>
 
       <BrowserRouter>
-        {/* {isAdminLogin?null:<Navbar />} */}
-
         <Routes>
-          <Route path="/" element={<Home />} />
           {/* <Route
             path="navbar"
             model={mode}
@@ -88,10 +85,9 @@ function App() {
             }
           >
             <Route path="/" element={<Home />} />
-
             {/* <Route
 
-            path="navbar"
+     path="navbar"
 
             model={mode}
 
