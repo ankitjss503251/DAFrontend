@@ -64,10 +64,11 @@ function CreateCollection() {
   const [isEdit2, setIsEdit2] = useState(false);
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    if (cookies.da_selected_account)
+      setCurrentUser(cookies.da_selected_account);
     // else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cookies.selected_account]);
+  }, [cookies.da_selected_account]);
 
   useEffect(() => {
     if (currentUser) {
@@ -382,7 +383,6 @@ function CreateCollection() {
         }
       }
     }
-
   };
 
   const handleImportNFT = async (isNew) => {
@@ -411,26 +411,6 @@ function CreateCollection() {
 
           res = await createCollection(fd);
 
-          try {
-            let _nfts = await getNFTList({
-              page: 1,
-              limit: 12,
-              collectionID: res._id,
-              searchText: "",
-            });
-
-            await importCollection({
-              address: importedAddress,
-              totalSupply:
-                parseInt(originalSupply) - 1 ? parseInt(originalSupply) - 1 : 0,
-              name: title,
-              link: importedCollectionLink,
-            });
-          } catch (e) {
-            setLoading(false);
-            console.log("error", e);
-            return;
-          }
         } else {
           NotificationManager.error("Collection already imported", "", 800);
           setLoading(false);
@@ -517,7 +497,7 @@ function CreateCollection() {
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
-      console.log("edit collection res", res2)
+      console.log("edit collection res", res2);
       setLogoImg(res2.logoImage);
       setCoverImg(res2.coverImage);
       setTitle(res2.name);
