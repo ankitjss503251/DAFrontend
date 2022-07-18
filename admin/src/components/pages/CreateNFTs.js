@@ -49,16 +49,11 @@ function CreateNFTs() {
 
   const handleImageUpload = (e) => {
     const [file] = e.target.files;
-    console.log("file ttypee  isssss", e.target.files[0]);
 
     if (file) {
-      console.log("file ldskjflakdjfl---->", file);
       let url = e.target.files[0].name.split(/[#?]/)[0].split(".").pop().trim();
-      console.log("url is----->", url);
       const reader = new FileReader();
       const { current } = uploadedImage;
-
-      console.log("current is----->", current);
       current.file = file;
       reader.onload = (e) => {
         current.src = e.target.result;
@@ -66,7 +61,6 @@ function CreateNFTs() {
       reader.readAsDataURL(file);
       if (e.target.files && e.target.files[0]) {
         if (url == "mp4") {
-          console.log("nft file is---->", e.target.files[0]);
           setFileType("Video");
           let blobURL = URL.createObjectURL(e.target.files[0]);
           console.log(blobURL);
@@ -79,8 +73,6 @@ function CreateNFTs() {
           url === "png"
         ) {
           setFileType("Image");
-
-          console.log("nft file else is---->", e.target.files[0]);
           setNftImg(e.target.files[0]);
         } else {
           let blobURL = URL.createObjectURL(e.target.files[0]);
@@ -115,7 +107,7 @@ function CreateNFTs() {
   };
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    if (cookies.selected_account && localStorage.getItem("Authorization") !== undefined && localStorage.getItem("Authorization") !== null) setCurrentUser(cookies.selected_account);
   }, [cookies.selected_account]);
 
   useEffect(() => {
@@ -253,9 +245,7 @@ function CreateNFTs() {
     }
   };
 
-  useEffect(() => {
-    setCurrentUser(cookies.selected_account);
-  }, [cookies.selected_account]);
+
 
   useEffect(() => {
     const fetch = async () => {
@@ -264,8 +254,9 @@ function CreateNFTs() {
         limit: 20,
       };
       let data = await GetMyCollectionsList(reqBody);
-      if (data && data.results && data.results.length > 0) {
-        let res = data?.results[0].filter((d, i) => d.isMinted === 1);
+      console.log("dataaaaaaaaa", data)
+      if (data && data.results && data.results[0].length > 0) {
+        let res = data?.results[0].filter((d, i) =>console.log("d.isMinted", d));
         setCollections(res);
       }
     };
@@ -308,33 +299,32 @@ function CreateNFTs() {
   };
 
   return (
-    <div className="wrapper">
+    <div className='wrapper'>
       {/* <!-- Sidebar  --> */}
       {loading ? <Loader /> : ""}
       <Sidebar />
 
       {/* <!-- Page Content  --> */}
-      <div id="content">
-        <div className="add_btn mb-4 d-flex justify-content-end">
+      <div id='content'>
+        <div className='add_btn mb-4 d-flex justify-content-end'>
           {isSuperAdmin()
             ? null
             : currentUser && (
                 <button
-                  className="btn btn-admin text-light"
-                  type="button"
-                  data-bs-toggle="modal"
-                  data-bs-target="#NftModal"
-                  onClick={() => setModal("active")}
-                >
+                  className='btn btn-admin text-light'
+                  type='button'
+                  data-bs-toggle='modal'
+                  data-bs-target='#NftModal'
+                  onClick={() => setModal("active")}>
                   + Add NFTs
                 </button>
               )}
         </div>
-        <div className="adminbody table-widget text-light box-background">
-          <h5 className="admintitle font-600 font-24 text-yellow">NFTs</h5>
+        <div className='adminbody table-widget text-light box-background'>
+          <h5 className='admintitle font-600 font-24 text-yellow'>NFTs</h5>
           <br />
           {nfts && nfts.length > 0 ? (
-            <table class="table table-hover text-light">
+            <table class='table table-hover text-light'>
               <thead>
                 <tr>
                   <th>NFT Image</th>
@@ -350,8 +340,8 @@ function CreateNFTs() {
                           <td>
                             <img
                               src={n.image}
-                              className="profile_i"
-                              alt=""
+                              className='profile_i'
+                              alt=''
                               onError={(e) =>
                                 (e.target.src = "../images/login.jpg")
                               }
@@ -384,33 +374,30 @@ function CreateNFTs() {
       </div>
       <div
         className={`modal fade createNft ${isModal} `}
-        id="NftModal"
-        tabindex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-        data-keyboard="false"
-        data-backdrop="static"
-      >
-        <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
+        id='NftModal'
+        tabindex='-1'
+        aria-labelledby='exampleModalLabel'
+        aria-hidden='true'
+        data-keyboard='false'
+        data-backdrop='static'>
+        <div className='modal-dialog modal-lg'>
+          <div className='modal-content'>
+            <div className='modal-header'>
               <h5
-                className="modal-title text-yellow font-24 font-600"
-                id="exampleModalLabel"
-              >
+                className='modal-title text-yellow font-24 font-600'
+                id='exampleModalLabel'>
                 Create NFTs
               </h5>
               <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+                type='button'
+                className='btn-close'
+                data-bs-dismiss='modal'
+                aria-label='Close'></button>
             </div>
-            <div className="modal-body">
-              <form className="row">
-                <div className="mb-1 col-md-4 offset-md-4">
-                  <label for="recipient-name" className="col-form-label">
+            <div className='modal-body'>
+              <form className='row'>
+                <div className='mb-1 col-md-4 offset-md-4'>
+                  <label for='recipient-name' className='col-form-label'>
                     Upload Image *
                   </label>
                   <div
@@ -419,11 +406,10 @@ function CreateNFTs() {
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
-                    }}
-                  >
+                    }}>
                     <input
-                      type="file"
-                      accept=".glTF,.gltf,.glb,.mp4,image/*"
+                      type='file'
+                      accept='.glTF,.gltf,.glb,.mp4,image/*'
                       onChange={handleImageUpload}
                       ref={imageUploader}
                       style={{
@@ -431,28 +417,27 @@ function CreateNFTs() {
                       }}
                     />
                     <div
-                      className="update_btn"
+                      className='update_btn'
                       style={{
                         height: "100%",
                         width: "100%",
                         position: "relative",
                       }}
-                      onClick={() => imageUploader.current.click()}
-                    >
-                      <p className="text-center">Click or Drop here</p>
+                      onClick={() => imageUploader.current.click()}>
+                      <p className='text-center'>Click or Drop here</p>
 
                       {fileType == "Image" ? (
                         <img
-                          alt=""
-                          key={img}
+                          alt=''
                           ref={uploadedImage}
+                          key={img}
                           src={"../images/upload.png"}
                           style={{
                             width: "110px",
                             height: "110px",
                             margin: "auto",
                           }}
-                          className="img-fluid profile_circle_img"
+                          className='img-fluid profile_circle_img'
                         />
                       ) : (
                         ""
@@ -465,14 +450,13 @@ function CreateNFTs() {
                             height: "110px",
                             margin: "auto",
                           }}
-                          className="img-fluid profile_circle_img"
-                          controls
-                        >
+                          className='img-fluid profile_circle_img'
+                          controls>
                           <source
                             ref={uploadedImage}
                             key={img}
                             src={img}
-                            type="video/mp4"
+                            type='video/mp4'
                           />
                         </video>
                       ) : (
@@ -481,16 +465,17 @@ function CreateNFTs() {
 
                       {fileType == "3D" ? (
                         <GLTFModel
-                          height="280"
-                          width="220"
+                          height='280'
+                          width='220'
                           position={{ x: 0, y: 0, z: 0 }}
                           anitialias={false}
                           //enableZoom={false}
                           ref={uploadedImage}
-                          className="img-fluid profile_circle_img"
+                          className='img-fluid profile_circle_img'
                           key={img}
                           src={img}
-                        >
+                          >
+                           
                           <AmbientLight color={0xffffff} />
                           <DirectionLight
                             color={0xffffff}
@@ -508,34 +493,33 @@ function CreateNFTs() {
                   </div>
                 </div>
 
-                <div className="col-md-12 mb-1">
-                  <label for="recipient-name" className="col-form-label">
+                <div className='col-md-12 mb-1'>
+                  <label for='recipient-name' className='col-form-label'>
                     Title *
                   </label>
                   <input
-                    type="text"
-                    className="form-control"
-                    id="recipient-name"
+                    type='text'
+                    className='form-control'
+                    id='recipient-name'
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
 
-                <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
+                <div className='col-md-6 mb-1'>
+                  <label for='recipient-name' className='col-form-label'>
                     Choose Collection *
                   </label>
                   <select
-                    class="form-select"
-                    aria-label="Default select example"
+                    class='form-select'
+                    aria-label='Default select example'
                     value={collection}
                     onChange={(e) => {
                       console.log("e.target.value", e.target.value);
                       setCollection(e.target.value);
                       setQuantity(1);
-                    }}
-                  >
-                    <option value="">Select</option>
+                    }}>
+                    <option value=''>Select</option>
                     {collections.length > 0
                       ? collections.map((c, i) => {
                           return (
@@ -547,14 +531,14 @@ function CreateNFTs() {
                 </div>
                 {console.log("collection?.type == 2", collection)}
                 {collection && JSON.parse(collection)?.type == 2 ? (
-                  <div className="col-md-12 mb-1">
-                    <label for="recipient-name" className="col-form-label">
+                  <div className='col-md-12 mb-1'>
+                    <label for='recipient-name' className='col-form-label'>
                       Quantity *
                     </label>
                     <input
-                      type="text"
-                      className="form-control"
-                      id="recipient-name"
+                      type='text'
+                      className='form-control'
+                      id='recipient-name'
                       value={quantity}
                       // disabled={collection.type == 1 ? true : false}
                       onKeyPress={(e) => {
@@ -567,20 +551,19 @@ function CreateNFTs() {
                   ""
                 )}
 
-                <div className="col-md-12 mb-1">
-                  <label for="message-text" className="col-form-label">
+                <div className='col-md-12 mb-1'>
+                  <label for='message-text' className='col-form-label'>
                     Description *
                   </label>
                   <textarea
-                    className="form-control"
-                    id="message-text"
+                    className='form-control'
+                    id='message-text'
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  ></textarea>
+                    onChange={(e) => setDescription(e.target.value)}></textarea>
                 </div>
-                <div className="col-md-6 mt-2">
+                <div className='col-md-6 mt-2'>
                   {attrKeys.length > 0 ? (
-                    <p className="attr_header">Attributes</p>
+                    <p className='attr_header'>Attributes</p>
                   ) : (
                     ""
                   )}
@@ -598,11 +581,10 @@ function CreateNFTs() {
                     })
                   ) : (
                     <button
-                      type="button"
-                      data-bs-toggle="modal"
-                      data-bs-target="#AttributeModal"
-                      className="btn btn-admin text-light"
-                    >
+                      type='button'
+                      data-bs-toggle='modal'
+                      data-bs-target='#AttributeModal'
+                      className='btn btn-admin text-light'>
                       Add Attributes
                     </button>
                   )}
@@ -632,12 +614,11 @@ function CreateNFTs() {
                 </div> */}
               </form>
             </div>
-            <div className="modal-footer justify-content-center">
+            <div className='modal-footer justify-content-center'>
               <button
-                type="button"
-                className="btn btn-admin text-light"
-                onClick={handleCreateNFT}
-              >
+                type='button'
+                className='btn btn-admin text-light'
+                onClick={handleCreateNFT}>
                 Create NFT
               </button>
             </div>
@@ -645,86 +626,80 @@ function CreateNFTs() {
         </div>
       </div>
       <div
-        className="modal fade"
-        id="AttributeModal"
-        tabindex="-1"
-        aria-labelledby="attributeModal"
-        aria-hidden="true"
-        data-keyboard="false"
-        data-backdrop="static"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
+        className='modal fade'
+        id='AttributeModal'
+        tabindex='-1'
+        aria-labelledby='attributeModal'
+        aria-hidden='true'
+        data-keyboard='false'
+        data-backdrop='static'>
+        <div className='modal-dialog modal-dialog-centered'>
+          <div className='modal-content'>
+            <div className='modal-header'>
               <h5
-                className="modal-title text-yellow font-24 font-600"
-                id="exampleModalLabel"
-              >
+                className='modal-title text-yellow font-24 font-600'
+                id='exampleModalLabel'>
                 Properties
               </h5>
               <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+                type='button'
+                className='btn-close'
+                data-bs-dismiss='modal'
+                aria-label='Close'></button>
             </div>
-            <div className="modal-body">
-              <form className="row justify-content-center ">
+            <div className='modal-body'>
+              <form className='row justify-content-center '>
                 {" "}
-                <div className="col-md-6 mb-1">
+                <div className='col-md-6 mb-1'>
                   <input
-                    type="text"
-                    className="form-control col-md-6"
-                    id="attribute-key"
-                    placeholder="e.g. Size"
+                    type='text'
+                    className='form-control col-md-6'
+                    id='attribute-key'
+                    placeholder='e.g. Size'
                     value={currAttrKey}
                     onChange={(e) => setCurrAttrKey(e.target.value)}
                   />
                 </div>
-                <div className="col-md-5 mb-1">
+                <div className='col-md-5 mb-1'>
                   <input
-                    type="text"
-                    className="form-control col-md-6"
-                    id="attribute-value"
-                    placeholder="e.g. M"
+                    type='text'
+                    className='form-control col-md-6'
+                    id='attribute-value'
+                    placeholder='e.g. M'
                     value={currAttrValue}
                     onChange={(e) => setCurrAttrValue(e.target.value)}
                   />
                 </div>
                 <button
-                  type="button"
-                  className="btn btn-admin text-light col-md-1 add_attr"
-                  onClick={handlePropertyAdded}
-                >
+                  type='button'
+                  className='btn btn-admin text-light col-md-1 add_attr'
+                  onClick={handlePropertyAdded}>
                   +
                 </button>
               </form>
-              <div className="row mt-3 attributeAdded_con">
+              <div className='row mt-3 attributeAdded_con'>
                 {attrKeys && attrValues
                   ? attrKeys.map((attrKey, key) => {
                       return attrKey !== "" ? (
-                        <div className="col-lg-6 col-md-6 col-sm-6">
-                          <div className="createProperty">
-                            <div className="nft_attr">
+                        <div className='col-lg-6 col-md-6 col-sm-6'>
+                          <div className='createProperty'>
+                            <div className='nft_attr'>
                               <h5>{attrKey}</h5>
                               <h4>{attrValues[key]}</h4>
                             </div>
                             <button
-                              className="remove-btn btn-main"
+                              className='remove-btn btn-main'
                               onClick={() => {
                                 handlePropertyRemoved(key);
-                              }}
-                            >
-                              <i className="fa fa-trash" aria-hidden="true"></i>
+                              }}>
+                              <i className='fa fa-trash' aria-hidden='true'></i>
                             </button>
                           </div>
                           <button
-                            className="remove-btn btn-main"
+                            className='remove-btn btn-main'
                             onClick={() => {
                               handlePropertyRemoved(key);
-                            }}
-                          ></button>
+                            }}></button>
                         </div>
                       ) : (
                         ""
@@ -733,12 +708,12 @@ function CreateNFTs() {
                   : ""}
               </div>
             </div>
-            <div className="modal-footer justify-content-center">
+            <div className='modal-footer justify-content-center'>
               <button
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#NftModal"
-                className="btn btn-admin text-light"
+                type='button'
+                data-bs-toggle='modal'
+                data-bs-target='#NftModal'
+                className='btn btn-admin text-light'
                 onClick={() => {
                   if (attrKeys.length > 0) {
                     let metaData = [];
@@ -751,8 +726,7 @@ function CreateNFTs() {
                     setAttributes(metaData);
                     console.log("ATTRIBUTES", attributes);
                   }
-                }}
-              >
+                }}>
                 Add Attributes
               </button>
             </div>

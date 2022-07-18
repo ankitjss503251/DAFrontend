@@ -35,6 +35,7 @@ import Offers from "./pages/Offers";
 import AccountSupport from "./pages/AccountSupport";
 import Earnings from "./pages/Earnings";
 import Header from "./menu/header";
+
 // import {DUMMY_COLLECTIONS} from "../dummyJSON";
 
 import { NotificationContainer } from "react-notifications";
