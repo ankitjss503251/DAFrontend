@@ -395,11 +395,11 @@ function NFTlisting(props) {
                             : "Open for Bids"}
                         </td>
                         <td>
-                          {moment(new Date(o.deadline * 1000))
+                          {o.deadline === GENERAL_TIMESTAMP ? "--:--:--" : ( moment(new Date(o.deadline * 1000))
                     .subtract({
                       hours: 5,
                       minutes: 30,
-                    })._d < new Date() ? (
+                    })._d < new Date() )? (
                             "--:--:--"
                           ) : (
                             <Clock

@@ -130,7 +130,6 @@ function Marketplace() {
           salesType: activeSaleType !== -1 ? activeSaleType : "",
         };
         const res = await getNFTs(reqData);
-        console.log("qqqqqqq", res);
         setCardCount(cardCount + res.length);
         if (res.length > 0) {
           setLoadMoreDisabled("");
@@ -140,7 +139,6 @@ function Marketplace() {
             // const brandDet = await getBrandDetailsById(
             //   res[i].collectionData[0].brandID
             // );
-            console.log("brandDetail", res[i].brandData);
             res[i] = {
               ...res[i],
               salesType: orderDet?.salesType,
@@ -154,7 +152,6 @@ function Marketplace() {
               brand: res[i].brandData,
             };
           }
-          console.log("resss", res);
           temp = [...temp, res];
           setAllNFTs(temp);
           setLoader(false);

@@ -114,7 +114,6 @@ const Header = function () {
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState();
   const [chainId, setChainId] = useState();
-  const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [scolns, setSColns] = useState([]);
   const [sNfts, setSNfts] = useState([]);
@@ -203,6 +202,7 @@ const Header = function () {
   const getUserProfile = async () => {
     const profile = await getProfile();
     setUserDetails(profile.data);
+  
   };
 
   useEffect(() => {

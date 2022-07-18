@@ -126,6 +126,7 @@ export const getProfile = async () => {
       .get("content-type")
       ?.includes("application/json");
     const data = isJson && (await response.json());
+   
     return data;
   } catch (e) {
     console.log("error in profile", e);
