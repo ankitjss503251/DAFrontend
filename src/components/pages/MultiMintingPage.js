@@ -1,36 +1,26 @@
 import { useParams } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
-// import React, { useEffect, useState,lazy } from "react";
-import { React, useEffect, useState, lazy } from "react";
-
+import { React, useEffect, useState } from "react";
 import Footer from "../components/footer";
 import MintEventSlider from "../components/MintEventSlider";
 import { useCookies } from "react-cookie";
 import { convertToEth } from "../../helpers/numberFormatter";
-import Cookies from "js-cookie";
 import { BigNumber } from "bignumber.js";
 import evt from "../../events/events";
 import "../components-css/App.css";
-import { getContractAddress } from "ethers/lib/utils";
+import Spinner from "../components/Spinner";
 import BGImg from "../../assets/images/background.jpg";
+import { getMintCollections } from "../../apiServices";
 
-let contractFunctionality = {
-  "0xEecd2Ba92f87E332320ce5cFe62afD2B989cb5e9": "rockstarCall",
-  "0x40ef57815E2a44518d5c82Fb6c322B613044d6B4": "rockstarCall",
-  "0xBf3Bd3E4c3Bf465AA8dBAc067D33c7Ba428c39f2": "rockstarCall",
-  "0x49C2652878a7E18B8158A8de4D07DB28094ae2dA": "rockstarCall",
-  "0xd33ee4CA8BEdC7877d5930A937EAf6C7c12ea736": "rockstarCall",
-  "0x15BC229950E9aa6EA91A4A22ED2f23D2ea7a2475": "rockstarCall",
-  "0x246F32c82E6AeD04bf6931a80282bF90d62B4dB4": "rockstarCall",
-  "0xB6EC620F0155EB1E055564aF30564E5fbFA574a7": "rockstarCall",
-  "0xeB2f90BA7C76176aea69b40e61ED83c5d1117BBE": "rockstarCall",
-  "0x8D2D43445149Eaa7AD68317f9D2d1575893a330b": "rockstarCall",
-  "0x1f46093204744F3815c124D032E70110FA52eeFe": "rockstarCall",
-  "0x5100f7A92C835ad30cd43cE101e9FfaBd761F18a": "rockstarCall",
-};
+async function lazyImport(addr) {
+  let data = await getMintCollections({ address: addr });
+  if (!data || data === []) {
+    NotificationManager.error("data not found", "", 800);
+    return;
+  }
 
-function lazyImport(addr) {
-  let fileName = contractFunctionality[addr];
+  let fileName = data.type;
+  console.log("fileName", fileName);
   if (!fileName) {
     throw new Error("file not found");
   }
@@ -155,14 +145,28 @@ function MultiMintingPage(props) {
     };
     bodyClass();
   }, [isShowPopup]);
+  useEffect(() => {
+    const bodyClass = async () => {
+      var body = document.body;
+      if (loading) {
+        body.classList.add("overflow_hidden");
+      } else {
+        body.classList.remove("overflow_hidden");
+      }
+    };
+    bodyClass();
+  }, [loading]);
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       let { fetchInfo } = await contractCalls;
-      let getcateg = await fetchInfo(params.id, cookies.selected_account);
+      let getcateg = await fetchInfo(params.id);
       setTotalSupply(getcateg[2].toString());
       setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
+      setLoading(false);
     };
+
     setInterval(fetchData, 10000);
     fetchData();
   }, []);
@@ -185,6 +189,7 @@ function MultiMintingPage(props) {
 
   return (
     <div style={bgImgStyle}>
+      {loading ? <Spinner /> : ""}
       <section className="collection_banner pdd_8" style={bgImage}></section>
       <section className="collection_info">
         <div className="container">

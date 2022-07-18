@@ -4,8 +4,8 @@ import Sidebar from "../components/Sidebar";
 import { Link } from "react-router-dom";
 import Deletesvg from "../SVG/deletesvg";
 import { addCategory, getCategory } from "../../apiServices";
-import Loader from "../components/loader";
 import { useCookies } from "react-cookie";
+import Spinner from "../components/Spinner";
 
 function CreateCategories() {
   const [catImg, setCatImg] = useState();
@@ -17,7 +17,7 @@ function CreateCategories() {
   const [isModal, setModal] = useState("");
 
   useEffect(() => {
-    if (cookies.selected_account && localStorage.getItem("Authorization") !== undefined && localStorage.getItem("Authorization") !== null) setCurrentUser(cookies.selected_account);
+    if (cookies.da_selected_account) setCurrentUser(cookies.da_selected_account);
     // else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
@@ -102,7 +102,7 @@ function CreateCategories() {
     <div className="wrapper">
       {/* <!-- Sidebar  --> */}
       <Sidebar />
-      {loading ? <Loader /> : ""}
+      {loading ? <Spinner /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
         {currentUser && (
@@ -151,7 +151,7 @@ function CreateCategories() {
       <div
         className={`modal fade createNft ${isModal}`}
         id="NftModal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >

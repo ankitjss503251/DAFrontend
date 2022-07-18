@@ -12,7 +12,9 @@ export const exportInstance = async (SCAddress, ABI) => {
   }
 };
 export const FetchInstance = async (SCAddress, ABI) => {
-  let provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URL)
+  let provider = new ethers.providers.JsonRpcProvider(
+    process.env.REACT_APP_RPC_URL
+  );
   let a = new ethers.Contract(SCAddress, ABI, provider);
 
   if (a) {
@@ -21,7 +23,6 @@ export const FetchInstance = async (SCAddress, ABI) => {
     return {};
   }
 };
-
 
 export const Register = async (account) => {
   const requestOptions = {
@@ -114,17 +115,22 @@ export const Logout = async () => {
 
 export const getProfile = async () => {
   console.log("get profile is called");
-  const response = await fetch(
-    process.env.REACT_APP_API_BASE_URL + "/user/profile",
-    {
-      headers: { Authorization: getHeaders() },
-    }
-  );
-  const isJson = response.headers
-    .get("content-type")
-    ?.includes("application/json");
-  const data = isJson && (await response.json());
-  return data;
+  try {
+    const response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/user/profile",
+      {
+        headers: { Authorization: getHeaders() },
+      }
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const data = isJson && (await response.json());
+   
+    return data;
+  } catch (e) {
+    console.log("error in profile", e);
+  }
 };
 
 export const getHeaders = () => {
@@ -202,6 +208,32 @@ export const getNFTList = async (data) => {
   try {
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/nft/viewNFTs",
+      requestOptions
+    );
+
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const viewNFTDetails = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/nft/viewNFTDetails",
       requestOptions
     );
 
@@ -661,7 +693,6 @@ export const fetchBidNft = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
     },
     body: JSON.stringify(data),
   };
@@ -771,6 +802,32 @@ export const getOnSaleItems = async (data) => {
       ?.includes("application/json");
     const datas = isJson && (await response.json());
     return datas.data.results[0];
+  } catch (err) {
+    return err;
+  }
+};
+
+export const getMintCollections = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/nft/fetchMintAddress",
+      requestOptions
+    );
+
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    if (datas.statusCode === 200) return datas.data;
+    else return [];
   } catch (err) {
     return err;
   }

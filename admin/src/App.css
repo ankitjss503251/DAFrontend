@@ -1004,3 +1004,83 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   ;
   background-position: 98%;
   }
+
+
+  .popup-box {
+    position: fixed;
+    background: rgba(4, 4, 5, 81%);
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 9900;
+  }
+  
+  .popup-box .box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px;
+    min-width: 400px;
+  }
+  
+  .close-icon {
+    content: "x";
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    /* border-radius: 50%; */
+    line-height: 35px;
+    text-align: center;
+    /* border: 1px solid #999; */
+    font-size: 20px;
+    height: 40px;
+    width: 40px;
+    /* border: 1px solid transparent;
+    -webkit-box-align: center;
+    align-items: center; */
+    cursor: pointer;
+    /* outline: none;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    transition: all 0.12s ease-in-out 0s; */
+    border-radius: 100%;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: rgb(255, 255, 255);
+    /* transform-origin: center center; */
+  }
+  .popup-content {
+    text-align: center;
+    font-style: normal;
+  }
+  
+  .content-btn {
+    margin: auto;
+  }
+  
+  .popup-content1 {
+    text-align: center;
+    font-style: normal;
+  }
+  
+
+  .spinner-container {
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+  }
+  
+  .spinner-container div {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* background: #fff; */
+    padding: 10px;
+    border-radius: 10px;
+  }
+
