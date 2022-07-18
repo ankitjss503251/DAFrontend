@@ -597,7 +597,7 @@ tr:nth-child(even) {
   display: inline-block;
   width: 50px;
   height: 25px;
-  float: right;
+  /* float: right; */
 }
 
 .switch input {
@@ -1230,6 +1230,7 @@ header#myHeader {
 .coll_profileimg {
   position: relative;
   top: -50px;
+  text-align: center;
   /* left: 50%;  
   display: inline-block;
   transform: translate(-50%, -50%); */
