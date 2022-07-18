@@ -128,6 +128,9 @@ const Header = function () {
     async function setCategory() {
       const cat = await getCategory();
       setCatg(cat);
+      
+      //const [primaryWallet] = await onboard.state.get().wallets;
+      //console.log("Active wallets",primaryWallet);
     }
     setCategory();
   }, []);
@@ -207,6 +210,7 @@ const Header = function () {
       if (account && !userDetails) getUserProfile();
     }
     getUserProfileData();
+    
   }, [account, userDetails?.username]);
 
   const connectWallet = async () => {
