@@ -69,9 +69,17 @@ function App() {
 
       <BrowserRouter>
 
-
-
+        {/* {isAdminLogin?null:<Navbar />} */}
+        
         <Routes>
+          
+          <Route path="/" element={<Home />} />
+          {/* <Route
+            path="navbar"
+            model={mode}
+            element={<Navbar />}
+            toggleMode={toggleMode}
+          /> */}
 
           <Route path="sadmin" element={<Login />} />
 

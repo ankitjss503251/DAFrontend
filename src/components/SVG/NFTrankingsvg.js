@@ -12,7 +12,7 @@ function NFTrankingsvg() {
             d='M10.0278 9.33337H1V26H10.0278V9.33337Z'
             stroke='#EF981D'
             stroke-width='2'
-            stroke-linecap='round'
+            strokeLinecap='round'
             stroke-linejoin='round'
         />
         <path
@@ -25,7 +25,7 @@ function NFTrankingsvg() {
             d='M28.0834 14.8889H19.0557V26H28.0834V14.8889Z'
             stroke='#EF981D'
             stroke-width='2'
-            stroke-linecap='round'
+            strokeLinecap='round'
             stroke-linejoin='round'
         />
     </svg>

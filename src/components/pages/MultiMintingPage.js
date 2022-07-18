@@ -130,7 +130,10 @@ function MultiMintingPage(props) {
   evt.on("txn-error", txnError);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const windowScroll = async () => {
+      window.scrollTo(0, 0);
+    }
+    windowScroll();
   }, []);
 
   const bgImage = {
