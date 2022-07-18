@@ -355,7 +355,7 @@ function NFTDetails() {
         return;
       }
     } else {
-      if (item_bid === undefined || item_bid === "" || item_bid === 0) {
+      if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
         NotificationManager.error("Please Enter Minimum Bid", "", 800);
         setLoading(false);
         return;
@@ -384,7 +384,7 @@ function NFTDetails() {
       setLoading(false);
       return;
     } else {
-      NotificationManager.success("Imported successfully");
+      // NotificationManager.success("Imported successfully");
       setLoading(false);
       return;
     }
@@ -1313,7 +1313,7 @@ function NFTDetails() {
                     onChange={(e) => {
                       const re = /[+-]?[0-9]+\.?[0-9]*/;
                       let val = e.target.value;
-
+                      
                       if (e.target.value === "" || re.test(e.target.value)) {
                         const numStr = String(val);
                         if (numStr.includes(".")) {

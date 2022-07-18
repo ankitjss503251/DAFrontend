@@ -316,7 +316,6 @@ export const getNFTs = async (req) => {
 console.log("arrr",arr)
   arr
     ? arr.map((nft, key) => {
-      console.log("arr map", nft.OrderData)
         formattedData[key] = {
           id: nft?._id,
           image: nft?.image,
