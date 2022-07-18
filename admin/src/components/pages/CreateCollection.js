@@ -410,7 +410,6 @@ function CreateCollection() {
           fd.append("link", importedCollectionLink);
 
           res = await createCollection(fd);
-
         } else {
           NotificationManager.error("Collection already imported", "", 800);
           setLoading(false);
@@ -421,21 +420,12 @@ function CreateCollection() {
         fd.append("contractAddress", importedAddress.toLowerCase());
         fd.append("link", importedCollectionLink);
         fd.append("isDeployed", 1);
-
         fd.append("id", selectedCollectionId);
         fd.append("isOnMarketplace", 1);
         fd.append("isImported", 1);
         fd.append("totalSupply", parseInt(originalSupply) - 1);
 
         res = await UpdateCollection(fd);
-
-        let _nfts = await getNFTList({
-          page: 1,
-          limit: 12,
-          collectionID: res._id,
-          searchText: "",
-        });
-        // slowRefresh(1000);
       }
 
       for (let i = 1; i < parseInt(originalSupply); i++) {

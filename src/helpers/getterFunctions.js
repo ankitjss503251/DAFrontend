@@ -309,11 +309,12 @@ export const getNFTs = async (req) => {
   } catch (e) {
     console.log("Error in getNFts API--->", e);
   }
-
+  let count = data.count;
+  data = data.results;
   let arr = [];
   if (data && data.length > 0) arr = data;
   else return [];
-console.log("arrr",arr)
+  console.log("arrr", arr);
   arr
     ? arr.map((nft, key) => {
         formattedData[key] = {
@@ -338,6 +339,7 @@ console.log("arrr",arr)
           collectionData: nft?.CollectionData,
           orderData: nft?.OrderData,
           brandData: nft?.BrandData[0],
+          count: count,
         };
       })
     : (formattedData[0] = {});
@@ -349,7 +351,7 @@ export const getNFTDetails = async (req) => {
   let formattedData = [];
   try {
     let reqBody = {
-      nftID: req.nftID
+      nftID: req.nftID,
     };
 
     data = await viewNFTDetails(reqBody);
@@ -369,7 +371,8 @@ export const getNFTDetails = async (req) => {
           desc: nft.description,
           collectionAddress: nft.collectionAddress,
           ownedBy: nft.ownedBy,
-          like: nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
+          like:
+            nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
           Qty: nft.totalQuantity,
           collection: nft.collectionID,
           assetsInfo: nft?.assetsInfo[0],
