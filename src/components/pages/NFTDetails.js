@@ -986,7 +986,7 @@ function NFTDetails() {
                         : ""}
                     </button>
                   )
-                ) : (
+                ) : owned && owned !== "none" ? (
                   <button
                     type="button"
                     className="title_color buy_now"
@@ -1001,6 +1001,8 @@ function NFTDetails() {
                   >
                     Remove From Sale
                   </button>
+                ) : (
+                  ""
                 )}
                 {!owned && owned !== "none" && haveOffer !== "none" ? (
                   <button
@@ -1334,7 +1336,7 @@ function NFTDetails() {
                     onChange={(e) => {
                       const re = /[+-]?[0-9]+\.?[0-9]*/;
                       let val = e.target.value;
-                      
+
                       if (e.target.value === "" || re.test(e.target.value)) {
                         const numStr = String(val);
                         if (numStr.includes(".")) {
