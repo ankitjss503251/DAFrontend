@@ -444,6 +444,7 @@ function CreateNFTs() {
                       {fileType == "Image" ? (
                         <img
                           alt=""
+                          key={img}
                           ref={uploadedImage}
                           src={"../images/upload.png"}
                           style={{
@@ -469,6 +470,7 @@ function CreateNFTs() {
                         >
                           <source
                             ref={uploadedImage}
+                            key={img}
                             src={img}
                             type="video/mp4"
                           />
@@ -486,6 +488,7 @@ function CreateNFTs() {
                           //enableZoom={false}
                           ref={uploadedImage}
                           className="img-fluid profile_circle_img"
+                          key={img}
                           src={img}
                         >
                           <AmbientLight color={0xffffff} />

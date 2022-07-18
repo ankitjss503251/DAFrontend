@@ -1004,3 +1004,15 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   ;
   background-position: 98%;
   }
+  
+  .clockloader::before,
+::after {
+  position: absolute;
+  content: "";
+  top: calc(var(--clock-radius) * 0.25);
+  width: var(--clock-thickness);
+  background: var(--clock-color);
+  border-radius: 10px;
+  transform-origin: center calc(100% - calc(var(--clock-thickness) / 2));
+  animation: spin infinite linear;
+}
