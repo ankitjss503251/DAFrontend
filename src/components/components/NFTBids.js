@@ -233,7 +233,7 @@ function NFTBids(props) {
                 return;
               }
               try {
-                await createBid(
+                let res = await createBid(
                   currentBid.nftID,
                   currentBid.orderID[0]._id,
                   currentBid.orderID[0].sellerID,
@@ -244,11 +244,16 @@ function NFTBids(props) {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
-                NotificationManager.success(
-                  "Bid Updated Successfully",
-                  "",
-                  800
-                );
+                if (res === true)
+                  NotificationManager.success(
+                    "Bid Updated Successfully",
+                    "",
+                    800
+                  );
+                else {
+                  setLoading(false);
+                  return;
+                }
                 setLoading(false);
                 setReloadContent(!reloadContent);
               } catch (e) {
