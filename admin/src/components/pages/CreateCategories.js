@@ -17,7 +17,7 @@ function CreateCategories() {
   const [isModal, setModal] = useState("");
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    if (cookies.da_selected_account) setCurrentUser(cookies.da_selected_account);
     // else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);

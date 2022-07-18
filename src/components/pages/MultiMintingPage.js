@@ -11,7 +11,6 @@ import Cookies from "js-cookie";
 import { BigNumber } from "bignumber.js";
 import evt from "../../events/events";
 import "../components-css/App.css";
-import { getContractAddress } from "ethers/lib/utils";
 import BGImg from "../../assets/images/background.jpg";
 
 let contractFunctionality = {
@@ -132,7 +131,7 @@ function MultiMintingPage(props) {
   useEffect(() => {
     const windowScroll = async () => {
       window.scrollTo(0, 0);
-    }
+    };
     windowScroll();
   }, []);
 

@@ -107,8 +107,8 @@ function CreateNFTs() {
   };
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-  }, [cookies.selected_account]);
+    if (cookies.da_selected_account) setCurrentUser(cookies.da_selected_account);
+  }, [cookies.da_selected_account]);
 
   useEffect(() => {
     const fetch = async () => {
