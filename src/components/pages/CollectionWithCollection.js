@@ -14,7 +14,7 @@ import {
   getNFTs,
   getCategory,
   getPrice,
-  getUserById
+  getUserById,
 } from "../../helpers/getterFunctions";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 // import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -51,7 +51,7 @@ function CollectionWithCollection() {
   const [brands, setBrands] = useState([]);
 
   const filterToggle = () => {
-    console.log("filter", togglemode);
+    setLoadMoreDisabled("")
     if (togglemode === "filterhide") {
       setTogglemode("filtershow");
       document.getElementsByClassName("filter_btn")[0].classList.add("active");
@@ -63,24 +63,23 @@ function CollectionWithCollection() {
     }
   };
 
-  useEffect( () => {
-   const fetch = async () => {
-     try {
-       const c = await getCategory();
-       setCategory(c);
-     } catch (e) {
-       console.log("Error", e);
-     }
-     try {
-       const b = await getAllBrands();
-       setBrands(b);
-       console.log("brands", b);
-     } catch (e) {
-       console.log("Error", e);
-     }
-   };
-   fetch();
-
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const c = await getCategory();
+        setCategory(c);
+      } catch (e) {
+        console.log("Error", e);
+      }
+      try {
+        const b = await getAllBrands();
+        setBrands(b);
+        console.log("brands", b);
+      } catch (e) {
+        console.log("Error", e);
+      }
+    };
+    fetch();
   }, []);
 
   var bgImgarrow = {
@@ -107,40 +106,35 @@ function CollectionWithCollection() {
   const [grid, setgrid] = useState("col-md-3 mb-4");
 
   useEffect(() => {
-
     const fetch = async () => {
-    setLoader(true);
-    try {
-      const brand = await getBrandDetailsById(brandID);
-      setBrandDetails(brand);
-      const user = await getUserById({
-        page: 1,
-        limit: 4,
-        userID: brand?.createdBy,
-      });
-      setUser(user);
-      const cols = await getCollections({
-        brandID: brandID,
-      });
-      setCollections(cols);
-      let temp = [];
-      let cnt = 0;
-      for (let i = 0; i < cols.length; i++) {
+      setLoader(true);
+      try {
+        const brand = await getBrandDetailsById(brandID);
+        setBrandDetails(brand);
+        const user = await getUserById({
+          page: 1,
+          limit: 4,
+          userID: brand?.createdBy,
+        });
+        setUser(user);
+        const cols = await getCollections({
+          brandID: brandID,
+        });
+        setCollections(cols);
+        let temp = nfts;
         const nft = await getNFTs({
           page: currPage,
-          limit: 12,
-          collectionID: cols[i]?._id,
+          limit: 8,
+          brandID: brandID,
           searchText: searchFor,
           ERCType: ERCType,
         });
         setCardCount(cardCount + nft.length);
         if (nft.length > 0) {
-          for (let j = 0; j < nft.length; j++) {
-            const order = await getPrice({
-              nftID: nft[j].id,
-            });
-            nft[j] = {
-              ...nft[j],
+          for (let i = 0; i < nft.length; i++) {
+            const order = await getPrice(nft[i].orderData);
+            nft[i] = {
+              ...nft[i],
               price:
                 order?.price?.$numberDecimal === undefined
                   ? "--"
@@ -148,28 +142,26 @@ function CollectionWithCollection() {
                       .toFixed(6)
                       .slice(0, -2),
               saleType: order?.salesType,
+              paymentToken: order?.paymentToken,
+              collectionName: cols[i]?.name
             };
-            temp[cnt] = {
-              ...nft[j],
-              collectionName: cols[i]?.name,
-            };
-            console.log("nft", temp[cnt]);
-            cnt++;
+           
           }
+          temp = [...temp, nft]
+          
         }
-        if (nfts && nft.length <= 0) {
+        if (temp && temp.length <= 0) {
           setLoader(false);
           setLoadMoreDisabled("disabled");
           return;
         }
+        setNfts(temp);
+        setLoader(false);
+      } catch (e) {
+        console.log("error in get brandbyID", e);
       }
-      setNfts(temp);
-      setLoader(false);
-    } catch (e) {
-      console.log("error in get brandbyID", e);
-    }
-  }
-  fetch();
+    };
+    fetch();
   }, [currPage, searchFor, ERCType]);
 
   const bgImage = {
@@ -258,7 +250,8 @@ function CollectionWithCollection() {
 
           <ul className='collection_status mt-5 mb-5'>
             <li>
-              <h4>{brandDetails?.nftCount}</h4>
+              {console.log("nfts[0].count", nfts)}
+              <h4>{}</h4>
               <p>items</p>
             </li>
             <li>
@@ -302,9 +295,7 @@ function CollectionWithCollection() {
                     <span className='mr-3'>
                       <ItemSVG />
                     </span>{" "}
-                    <span >
-                      Items
-                      </span>
+                    <span>Items</span>
                   </a>
                 </li>
                 <li classname='item_active'>
@@ -317,9 +308,7 @@ function CollectionWithCollection() {
                     <span className='mr-3'>
                       <ActivitySVG />
                     </span>{" "}
-                   <span>
-                    Activity
-                    </span> 
+                    <span>Activity</span>
                   </a>
                 </li>
               </ul>
@@ -335,116 +324,119 @@ function CollectionWithCollection() {
               id='pills-Items'
               role='tabpanel'
               aria-labelledby='pills-Items-tab'>
-            {nfts?.length > 0 ? 
-             <div className='row'>
-                <div className='col-lg-12  mb-5'>
-                  <div className='market_search_form'>
-                    <form class='d-flex marketplace_form'>
-                      <input
-                        class=' me-2'
-                        type='search'
-                        placeholder='Search item here...'
-                        aria-label='Search'
-                        value={searchFor}
+             
+                <div className='row'>
+                  <div className='col-lg-12  mb-5'>
+                    <div className='market_search_form'>
+                      <form class='d-flex marketplace_form'>
+                        <input
+                          class=' me-2'
+                          type='search'
+                          placeholder='Search item here...'
+                          aria-label='Search'
+                          value={searchFor}
+                          onChange={(e) => {
+                            setNfts([]);
+                            setCurrPage(1);
+                            setCardCount(0);
+                            setSearchFor(e.target.value);
+                            setLoadMoreDisabled("");
+                          }}
+                        />
+                        <button class='market_btn' type='submit'>
+                          <img src='../img/search.svg' alt='' />
+                        </button>
+                      </form>
+                      <select
+                        class='market_select_form form-select'
+                        aria-label='Default select example'
+                        style={bgImgarrow}
+                        value={ERCType}
                         onChange={(e) => {
                           setNfts([]);
                           setCurrPage(1);
                           setCardCount(0);
-                          setSearchFor(e.target.value);
+                          setERCType(parseInt(e.target.value));
                           setLoadMoreDisabled("");
-                        }}
-                      />
-                      <button class='market_btn' type='submit'>
-                        <img src='../img/search.svg' alt='' />
-                      </button>
-                    </form>
-                    <select
-                      class='market_select_form form-select'
-                      aria-label='Default select example'
-                      style={bgImgarrow}
-                      value={ERCType}
-                      onChange={(e) => {
-                        setNfts([]);
-                        setCurrPage(1);
-                        setCardCount(0);
-                        setERCType(parseInt(e.target.value));
-                        setLoadMoreDisabled("");
-                      }}>
-                      <option value='0' selected>
-                        All Items
-                      </option>
-                      <option value='1'>Single Items</option>
-                      <option value='2'>Multiple Items</option>
-                    </select>
+                        }}>
+                        <option value='0' selected>
+                          All Items
+                        </option>
+                        <option value='1'>Single Items</option>
+                        <option value='2'>Multiple Items</option>
+                      </select>
 
-                    <select
-                      class='market_select_form form-select'
-                      aria-label='Default select example'
-                      style={bgImgarrow}>
-                      <option value='1' selected>
-                        Price: Low to High
-                      </option>
-                      <option value='2'>Price: High to Low</option>
-                    </select>
-                    {/* <div className="market_div"> */}
-                    <div id='gridtwo' className='market_grid' onClick={gridtwo}>
-                      <Twogrid />
-                    </div>
-                    <div
-                      id='gridthree'
-                      className='market_grid'
-                      onClick={gridthree}>
-                      <Threegrid />
-                    </div>
-                    {/* </div> */}
-                    <button
-                      type='button'
-                      className='filter_btn'
-                      onClick={filterToggle}>
-                      Adv.Filter
-                    </button>
-                  </div>
-                  {/* <div className='search_qt mt-3'>10,000 items</div> */}
-                </div>
-                <div className={`filter mb-5 ${togglemode}`}>
-                  <div className='filtercol'>
-                    <form>
+                      <select
+                        class='market_select_form form-select'
+                        aria-label='Default select example'
+                        style={bgImgarrow}>
+                        <option value='1' selected>
+                          Price: Low to High
+                        </option>
+                        <option value='2'>Price: High to Low</option>
+                      </select>
+                      {/* <div className="market_div"> */}
+                      <div
+                        id='gridtwo'
+                        className='market_grid'
+                        onClick={gridtwo}>
+                        <Twogrid />
+                      </div>
+                      <div
+                        id='gridthree'
+                        className='market_grid'
+                        onClick={gridthree}>
+                        <Threegrid />
+                      </div>
+                      {/* </div> */}
                       <button
                         type='button'
-                        class='drop_down_tlt'
-                        data-bs-toggle='collapse'
-                        data-bs-target='#demo'>
-                        Status <UpArrow />
+                        className='filter_btn'
+                        onClick={filterToggle}>
+                        Adv.Filter
                       </button>
-                      <div id='demo' class='collapse show'>
-                        <ul className='status_ul'>
-                          <li>
-                            <Link to={"/"} className='filter_border'>
-                              Buy Now
-                            </Link>
-                            <Link to={"/"} className='filter_border'>
-                              On Auction
-                            </Link>
-                          </li>
-                          <li>
-                            <Link to={"/"} className='filter_border'>
-                              Now
-                            </Link>
-                            <Link to={"/"} className='filter_border'>
-                              Offers
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
+                    </div>
+                    {/* <div className='search_qt mt-3'>10,000 items</div> */}
+                  </div>
+                  <div className={`filter mb-5 ${togglemode}`}>
+                    <div className='filtercol'>
+                      <form>
+                        <button
+                          type='button'
+                          class='drop_down_tlt'
+                          data-bs-toggle='collapse'
+                          data-bs-target='#demo'>
+                          Status <UpArrow />
+                        </button>
+                        <div id='demo' class='collapse show'>
+                          <ul className='status_ul'>
+                            <li>
+                              <Link to={"/"} className='filter_border'>
+                                Buy Now
+                              </Link>
+                              <Link to={"/"} className='filter_border'>
+                                On Auction
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to={"/"} className='filter_border'>
+                                Now
+                              </Link>
+                              <Link to={"/"} className='filter_border'>
+                                Offers
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
 
-                      {/* <button
+                        {/* <button
                     type='button'
                     class='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
                   </button> */}
-                      {/* <div id='demo2' class='collapse show'>
+                        {/* <div id='demo2' class='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
@@ -480,122 +472,128 @@ function CollectionWithCollection() {
                       </li>
                     </ul>
                   </div> */}
-                    </form>
-                  </div>
-                  <div className='filtercol'>
-                    <form>
-                      <button
-                        type='button'
-                        class='drop_down_tlt'
-                        data-bs-toggle='collapse'
-                        data-bs-target='#demo3'>
-                        Collections <UpArrow />
-                      </button>
-                      <div id='demo3' class='collapse show'>
-                        <input
-                          type='text'
-                          placeholder='Filter'
-                          className='filter_apply filter-text-left filter_padd'
-                        />
-                      </div>
-                    </form>
-                  </div>
-                  <div className='filtercol'>
-                    <button
-                      type='button'
-                      class='drop_down_tlt mb-4'
-                      data-bs-toggle='collapse'
-                      data-bs-target='#demo4'>
-                      Categories <UpArrow />
-                    </button>
-                    <div id='demo4' class='collapse show'>
-                      <ul>
-                        <li className='sub-items'>
-                          <form action='#' className='checked_form'>
-                            <div class='form-check form-check-inline'>
-                              <input
-                                type='radio'
-                                id='allnfts'
-                                name='radio-group'
-                              />
-                              <label for='allnfts'>All NFTs</label>
-                            </div>
-                            {category
-                              ? category.map((c) => {
-                                  return (
-                                    <div class='form-check form-check-inline'>
-                                      <input
-                                        type='radio'
-                                        id={c.name}
-                                        name='radio-group'
-                                      />
-                                      <label for={c.name}>{c.name}</label>
-                                    </div>
-                                  );
-                                })
-                              : ""}
-                          </form>
-                        </li>
-                      </ul>
+                      </form>
                     </div>
-                  </div>
-                  <div className='filtercol'>
-                    <button
-                      type='button'
-                      class='drop_down_tlt mb-4'
-                      data-bs-toggle='collapse'
-                      data-bs-target='#demo5'>
-                      Brands <UpArrow />
-                    </button>
-                    <div id='demo5' class='collapse show'>
-                      <ul>
-                        <li>
+                    <div className='filtercol'>
+                      <form>
+                        <button
+                          type='button'
+                          class='drop_down_tlt'
+                          data-bs-toggle='collapse'
+                          data-bs-target='#demo3'>
+                          Collections <UpArrow />
+                        </button>
+                        <div id='demo3' class='collapse show'>
                           <input
                             type='text'
                             placeholder='Filter'
-                            className='filter_apply  filter-text-left filter_padd'
+                            className='filter_apply filter-text-left filter_padd'
                           />
-                        </li>
-                        <li>
-                          <form action='#' className='checked_form'>
-                            {brands
-                              ? brands.map((b) => {
-                                  return (
-                                    <div class='form-check form-check-inline'>
-                                      <input
-                                        type='radio'
-                                        id={b.name}
-                                        name='radio-group'
-                                        checked={b.name === brandDetails.name ? "checked" : ""}
-                                      />
-                                      <label for={b.name}>{b.name}</label>
-                                    </div>
-                                  );
-                                })
-                              : ""}
-                          </form>
-                        </li>
-                      </ul>
+                        </div>
+                      </form>
+                    </div>
+                    <div className='filtercol'>
+                      <button
+                        type='button'
+                        class='drop_down_tlt mb-4'
+                        data-bs-toggle='collapse'
+                        data-bs-target='#demo4'>
+                        Categories <UpArrow />
+                      </button>
+                      <div id='demo4' class='collapse show'>
+                        <ul>
+                          <li className='sub-items'>
+                            <form action='#' className='checked_form'>
+                              <div class='form-check form-check-inline'>
+                                <input
+                                  type='radio'
+                                  id='allnfts'
+                                  name='radio-group'
+                                />
+                                <label for='allnfts'>All NFTs</label>
+                              </div>
+                              {category
+                                ? category?.map((c) => {
+                                    return (
+                                      <div class='form-check form-check-inline'>
+                                        <input
+                                          type='radio'
+                                          id={c.name}
+                                          name='radio-group'
+                                        />
+                                        <label for={c.name}>{c.name}</label>
+                                      </div>
+                                    );
+                                  })
+                                : ""}
+                            </form>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div className='filtercol'>
+                      <button
+                        type='button'
+                        class='drop_down_tlt mb-4'
+                        data-bs-toggle='collapse'
+                        data-bs-target='#demo5'>
+                        Brands <UpArrow />
+                      </button>
+                      <div id='demo5' class='collapse show'>
+                        <ul>
+                          <li>
+                            <input
+                              type='text'
+                              placeholder='Filter'
+                              className='filter_apply  filter-text-left filter_padd'
+                            />
+                          </li>
+                          <li>
+                            <form action='#' className='checked_form'>
+                              {brands
+                                ? brands?.map((b) => {
+                                    return (
+                                      <div class='form-check form-check-inline'>
+                                        <input
+                                          type='radio'
+                                          id={b.name}
+                                          name='radio-group'
+                                          checked={
+                                            b.name === brandDetails.name
+                                              ? "checked"
+                                              : ""
+                                          }
+                                        />
+                                        <label for={b.name}>{b.name}</label>
+                                      </div>
+                                    );
+                                  })
+                                : ""}
+                            </form>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-           :""} 
+            
               <div className='row'>
                 {loader ? (
                   <CollectionsNFT cards={cardCount} grid={grid} />
                 ) : nfts?.length > 0 ? (
-                  nfts?.map((card) => {
-                    return (
-                      <div className={grid} key={card.id}>
-                        <CollectionList nft={card} />
-                      </div>
-                    );
+                  nfts.map((oIndex) => {
+                    return oIndex?.map((card, key) => {
+                      return (
+                        <div className={grid} key={key}>
+                          <CollectionList nft={card} />
+                        </div>
+                      );
+                    })
                   })
                 ) : (
                   <h2 className='text-white text-center'>No NFT Found</h2>
                 )}
-                {nfts.length > 6 && (
+                {nfts.length > 0 && (
                   <div class='col-md-12 text-center mt-5'>
                     <button
                       type='button'
@@ -1087,11 +1085,9 @@ function CollectionWithCollection() {
                   </div>
                   <div className='row mt-5'>
                     <div class='col-md-12 text-center '>
-                    <button
-                      type='button'
-                      className={`btn view_all_bdr`}   >
-                      Load More
-                    </button>
+                      <button type='button' className={`btn view_all_bdr`}>
+                        Load More
+                      </button>
                     </div>
                   </div>
                 </div>

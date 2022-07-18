@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import "./App.css";
 import Home1 from "./components/pages/Home";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import CreateCollection1 from "./components/pages/CreateCollection";
 import CreateNFTs1 from "./components/pages/CreateNFTs";
 import Rightarrow from "./components/SVG/rightarrow";
@@ -13,9 +12,11 @@ import CreateCategories1 from "./components/pages/CreateCategories";
 import NotificationPopup from "./components/components/NotificationPopup";
 import Admins1 from "./components/pages/admins";
 import { NotificationContainer } from "react-notifications";
-import ImportCard from "./components/pages/ImportedData/importCard";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
 import withLogin from "./components/components/withLogin";
+
+import Navbar from "./components/Navbar";
+
 const Home = withLogin(Home1);
 const Admins = withLogin(Admins1);
 const CreateCategories = withLogin(CreateCategories1);
@@ -66,6 +67,7 @@ function App() {
 
       <BrowserRouter>
         {/* {isAdminLogin?null:<Navbar />} */}
+
         <Routes>
           <Route path="/" element={<Home />} />
           {/* <Route
@@ -74,26 +76,59 @@ function App() {
             element={<Navbar />}
             toggleMode={toggleMode}
           /> */}
+
           <Route path="sadmin" element={<Login />} />
-          <Route path="admins" element={<Admins />}></Route>
-          <Route path="createcollection" element={<CreateCollection />} />
-          <Route path="createnfts" element={<CreateNFTs />} />
-          <Route path="createbrands" element={<CreateBrands />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="importedNfts/:address" element={<ImportCard />} />
-          <Route path="importedNfts/:address/:id" element={<NftDetail />} />
+
           <Route
-            path="createcategories"
-            showNotificationPopup={showNotificationPopup}
-            element={<CreateCategories />}
-          />
-          <Route
-            path="notificationpopup"
-            notificationpopup={notificationpopup}
-            element={<NotificationPopup />}
-          />
+            element={
+              <>
+                <Navbar />
+                <Outlet />
+              </>
+            }
+          >
+            <Route path="/" element={<Home />} />
+
+            {/* <Route
+
+            path="navbar"
+
+            model={mode}
+
+            element={<Navbar />}
+
+            toggleMode={toggleMode}
+
+          /> */}
+
+            <Route path="admins" element={<Admins />}></Route>
+
+            <Route path="createcollection" element={<CreateCollection />} />
+
+            <Route path="createnfts" element={<CreateNFTs />} />
+
+            <Route path="createbrands" element={<CreateBrands />} />
+
+            <Route path="login" element={<Login />} />
+
+            <Route path="register" element={<Register />} />
+
+            <Route path="importedNfts/:address/:id" element={<NftDetail />} />
+
+            <Route
+              path="createcategories"
+              showNotificationPopup={() => {}}
+              element={<CreateCategories />}
+            />
+
+            <Route
+              path="notificationpopup"
+              notificationpopup={notificationpopup}
+              element={<NotificationPopup />}
+            />
+          </Route>
         </Routes>
+
         <NotificationContainer />
       </BrowserRouter>
     </div>

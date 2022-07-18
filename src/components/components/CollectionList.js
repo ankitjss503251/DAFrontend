@@ -4,11 +4,11 @@ import { Tokens } from "../../helpers/tokensToSymbol";
 
 function CollectionList(props) {
   return (
-    <Link to={`/NFTdetails/${props.nft.id}`}>
+    <Link to={`/NFTdetails/${props.nft?.id}`}>
       <div className='collection_items'>
         <img
           alt=''
-          src={props.nft.image}
+          src={props.nft?.image}
           class='img-fluid width-100'
           style={{ height: "306.52px", borderTopLeftRadius: "inherit", borderTopRightRadius: "inherit" }}
           onError={(e) => e.target.src = "../img/collections/list4.png"}
@@ -16,17 +16,17 @@ function CollectionList(props) {
         <div className='coll_itemstext'>
           <div className='collection_row mb-3'>
             <div className='collection_col'>
-              <span>{props.nft.collectionName} Collection</span>
-              <h6>{props.nft.name?.length > 8 ? props.nft.name?.slice(0,8) + "..." : props.nft.name}</h6>
+              <span>{props.nft?.collectionName} Collection</span>
+              <h6>{props.nft?.name?.length > 8 ? props.nft?.name?.slice(0,8) + "..." : props.nft?.name}</h6>
             </div>
             <div className='collection_col text-end'>
               <span>Price</span>
               <span className='col_proiduct_price d-flex align-items-center'>
                <div className="token_img">
-                {props.nft.paymentToken && <img src={Tokens[props.nft.paymentToken?.toLowerCase()]?.icon} alt="payment token symbol"/> }
+                {props.nft?.paymentToken && <img src={Tokens[props?.nft?.paymentToken?.toLowerCase()]?.icon} alt="payment token symbol"/> }
                </div>
                <div className="ml-3">
-                {props.nft.price}
+                {props.nft?.price}
                </div>
               </span>
               {/* <span>
@@ -39,10 +39,10 @@ function CollectionList(props) {
           </div>
           <div className='collection_row align-items-center'>
             <div className='collection_col'>
-              <Link className='buy_btn' to={`/NFTdetails/${props.nft.id}`}>
-                {props.nft.saleType === 0
+              <Link className='buy_btn' to={`/NFTdetails/${props.nft?.id}`}>
+                {props.nft?.saleType === 0
                   ? "Buy Now"
-                  : props.nft.saleType === 1 || props.nft.saleType === 2
+                  : props.nft?.saleType === 1 || props.nft?.saleType === 2
                   ? "Place Bid"
                   : "View"}
               </Link>
