@@ -25,6 +25,7 @@ const walletConnect = walletConnectModule();
 
 const onboard = Onboard({
   wallets: [walletConnect, injected],
+ 
   chains: [
     {
       id: "0x13881",
@@ -91,12 +92,8 @@ const onboard = Onboard({
           header: "Available Wallets",
         },
       },
-      modals: {
-        accountRequired: {
 
-          enabled: false
-        }
-      }
+
     },
   },
 
@@ -107,6 +104,9 @@ const onboard = Onboard({
   },
 });
 
+
+
+
 const Navbar = (props) => {
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [provider, setProvider] = useState();
@@ -115,9 +115,11 @@ const Navbar = (props) => {
   const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
+  console.log("onboard is--------->",onboard)
 
   useEffect(() => {
     init();
+    console.log('rendered');
   }, []);
 
   const init = async () => {
@@ -137,6 +139,8 @@ const Navbar = (props) => {
         path: "/",
       });
       setCookie("balance", s[0].accounts[0].balance, { path: "/" });
+      
+      
     }
   };
 
@@ -173,6 +177,7 @@ const Navbar = (props) => {
   };
 
   const connectWallet = async () => {
+
     if (window.ethereum) {
       console.log("window ethereum");
     } else {
@@ -191,7 +196,7 @@ const Navbar = (props) => {
       setChainId(primaryWallet.chains[0].id);
       console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
-      const address = wallets[0].accounts[0].address;
+      const address = primaryWallet.accounts[0].address;
       try {
         userAuth(primaryWallet, address);
       } catch (e) {
@@ -373,4 +378,4 @@ const Navbar = (props) => {
   );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

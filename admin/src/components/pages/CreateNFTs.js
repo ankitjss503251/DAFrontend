@@ -430,6 +430,7 @@ function CreateNFTs() {
                         <img
                           alt=''
                           ref={uploadedImage}
+                          key={img}
                           src={"../images/upload.png"}
                           style={{
                             width: "110px",
@@ -453,6 +454,7 @@ function CreateNFTs() {
                           controls>
                           <source
                             ref={uploadedImage}
+                            key={img}
                             src={img}
                             type='video/mp4'
                           />
@@ -470,7 +472,10 @@ function CreateNFTs() {
                           //enableZoom={false}
                           ref={uploadedImage}
                           className='img-fluid profile_circle_img'
-                          src={img}>
+                          key={img}
+                          src={img}
+                          >
+                           
                           <AmbientLight color={0xffffff} />
                           <DirectionLight
                             color={0xffffff}
