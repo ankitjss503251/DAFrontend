@@ -656,6 +656,8 @@ function NFTDetails() {
                 slowRefresh(1000);
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
+                setLoading(false);
+                return;
               }
             }}
           >

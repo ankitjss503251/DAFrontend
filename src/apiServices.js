@@ -806,6 +806,32 @@ export const getOnSaleItems = async (data) => {
   }
 };
 
+export const getMintCollections = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/nft/fetchMintAddress",
+      requestOptions
+    );
+
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    if (datas.statusCode === 200) return datas.data;
+    else return [];
+  } catch (err) {
+    return err;
+  }
+};
+
 // export const getUsersCollections = async () => {
 //   const requestOptions = {
 //     method: "GET",

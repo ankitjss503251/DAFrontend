@@ -1,21 +1,26 @@
 import { useParams } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
-// import React, { useEffect, useState,lazy } from "react";
-import { React, useEffect, useState, lazy } from "react";
-
+import { React, useEffect, useState } from "react";
 import Footer from "../components/footer";
 import MintEventSlider from "../components/MintEventSlider";
 import { useCookies } from "react-cookie";
 import { convertToEth } from "../../helpers/numberFormatter";
-import Cookies from "js-cookie";
 import { BigNumber } from "bignumber.js";
 import evt from "../../events/events";
 import "../components-css/App.css";
+import Spinner from "../components/Spinner";
 import BGImg from "../../assets/images/background.jpg";
-import contractFunctionality from "./mintCollections.json";
+import { getMintCollections } from "../../apiServices";
 
-function lazyImport(addr) {
-  let fileName = contractFunctionality[addr];
+async function lazyImport(addr) {
+  let data = await getMintCollections({ address: addr });
+  if (!data || data === []) {
+    NotificationManager.error("data not found", "", 800);
+    return;
+  }
+
+  let fileName = data.type;
+  console.log("fileName", fileName);
   if (!fileName) {
     throw new Error("file not found");
   }
@@ -38,6 +43,7 @@ function MultiMintingPage(props) {
   const contractCalls = lazyImport(params.id);
   const [currentUser, setCurrentUser] = useState();
   const [collectionDetails, setCollectionDetails] = useState();
+  const [categories, setcategories] = useState();
   const [totalSupply, setTotalSupply] = useState();
   const { id } = useParams();
 
@@ -114,10 +120,7 @@ function MultiMintingPage(props) {
   evt.on("txn-error", txnError);
 
   useEffect(() => {
-    const windowScroll = async () => {
-      window.scrollTo(0, 0);
-    };
-    windowScroll();
+    window.scrollTo(0, 0);
   }, []);
 
   const bgImage = {
@@ -142,14 +145,28 @@ function MultiMintingPage(props) {
     };
     bodyClass();
   }, [isShowPopup]);
+  useEffect(() => {
+    const bodyClass = async () => {
+      var body = document.body;
+      if (loading) {
+        body.classList.add("overflow_hidden");
+      } else {
+        body.classList.remove("overflow_hidden");
+      }
+    };
+    bodyClass();
+  }, [loading]);
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       let { fetchInfo } = await contractCalls;
-      let getcateg = await fetchInfo(params.id, cookies.selected_account);
+      let getcateg = await fetchInfo(params.id);
       setTotalSupply(getcateg[2].toString());
       setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
+      setLoading(false);
     };
+
     setInterval(fetchData, 10000);
     fetchData();
   }, []);
@@ -172,6 +189,7 @@ function MultiMintingPage(props) {
 
   return (
     <div style={bgImgStyle}>
+      {loading ? <Spinner /> : ""}
       <section className="collection_banner pdd_8" style={bgImage}></section>
       <section className="collection_info">
         <div className="container">

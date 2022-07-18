@@ -147,17 +147,16 @@ function CollectionWithCollection() {
                       .toFixed(6)
                       .slice(0, -2),
               saleType: order?.salesType,
-              paymentToken: order?.paymentToken
+              paymentToken: order?.paymentToken,
             };
             temp[cnt] = {
               ...nft[i],
               collectionName: cols[i]?.name,
             };
-            console.log("nft", temp[cnt]);
             cnt++;
           }
         }
-        if (nfts && nft.length <= 0) {
+        if (temp && temp.length <= 0) {
           setLoader(false);
           setLoadMoreDisabled("disabled");
           return;
@@ -258,7 +257,8 @@ function CollectionWithCollection() {
 
           <ul className="collection_status mt-5 mb-5">
             <li>
-              <h4>{brandDetails?.nftCount}</h4>
+              {console.log("nfts[0].count", nfts)}
+              <h4>{}</h4>
               <p>items</p>
             </li>
             <li>
