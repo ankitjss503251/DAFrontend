@@ -64,7 +64,7 @@ function CreateCollection() {
   const [isEdit2, setIsEdit2] = useState(false);
 
   useEffect(() => {
-    if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+    if (cookies.selected_account && localStorage.getItem("Authorization") !== undefined && localStorage.getItem("Authorization") !== null) setCurrentUser(cookies.selected_account);
     // else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
@@ -393,7 +393,6 @@ function CreateCollection() {
       const token = await exportInstance(importedAddress, abi);
       let originalSupply = await token.indicatesID();
 
-
       if (isNew) {
         let collection = await getAllCollections({
           contractAddress: importedAddress.toLowerCase(),
@@ -599,7 +598,7 @@ function CreateCollection() {
                     + Add Collection
                   </button>
                 </div>
-                <div className="add_btn mb-4 d-flex justify-content-end">
+                {/* <div className="add_btn mb-4 d-flex justify-content-end">
                   <button
                     className="btn btn-admin text-light"
                     type="button"
@@ -610,6 +609,7 @@ function CreateCollection() {
                     + Import Collection
                   </button>
                 </div>
+                  */}
               </>
             )}
         <div className="adminbody table-widget text-light box-background ">
@@ -1082,7 +1082,6 @@ function CreateCollection() {
                       id="recipient-name"
                       value={maxSupply}
                       onChange={(e) => {
-                        
                         setMaxSupply(e.target.value);
                       }}
                       onKeyPress={(e) => {
@@ -1594,7 +1593,6 @@ function CreateCollection() {
                       id="recipient-name"
                       value={maxSupply}
                       onChange={(e) => {
-                        
                         setMaxSupply(e.target.value);
                       }}
                       onKeyPress={(e) => {
