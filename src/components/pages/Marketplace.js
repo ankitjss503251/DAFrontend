@@ -186,9 +186,9 @@ function Marketplace() {
           <div className="row">
             <div className="col-lg-12">
               <div className="market_search_form mb-5">
-                <form class="d-flex marketplace_form">
+                <form className="d-flex marketplace_form">
                   <input
-                    class=" me-2"
+                    className=" me-2"
                     type="search"
                     placeholder="Search item here..."
                     aria-label="Search"
@@ -201,12 +201,12 @@ function Marketplace() {
                       setLoadMoreDisabled("");
                     }}
                   />
-                  <button class="market_btn" type="submit">
+                  <button className="market_btn" type="submit">
                     <img src="../img/search.svg" alt="" />
                   </button>
                 </form>
                 <select
-                  class="market_select_form form-select"
+                  className="market_select_form form-select"
                   aria-label="Default select example"
                   style={bgImgarrow}
                   value={ERCType}
@@ -218,18 +218,18 @@ function Marketplace() {
                     setLoadMoreDisabled("");
                   }}
                 >
-                  <option value="0" selected>
+                  <option value="0" defaultValue>
                     All Items
                   </option>
                   <option value="1">Single Items</option>
                   <option value="2">Multiple Items</option>
                 </select>
                 <select
-                  class="market_select_form form-select"
+                  className="market_select_form form-select"
                   aria-label="Default select example"
                   style={bgImgarrow}
                 >
-                  <option value="1" selected>
+                  <option value="1" defaultValue>
                     Price: Low to High
                   </option>
                   <option value="2">Price: High to Low</option>
@@ -256,13 +256,13 @@ function Marketplace() {
                 <form>
                   <button
                     type="button"
-                    class="drop_down_tlt"
+                    className="drop_down_tlt"
                     data-bs-toggle="collapse"
                     data-bs-target="#demo"
                   >
                     Status <UpArrow />
                   </button>
-                  <div id="demo" class="collapse show">
+                  <div id="demo" className="collapse show">
                     <ul className="status_ul d-flex flex-wrap">
                       <li
                         className={`filter_border mr-2 ${
@@ -329,16 +329,16 @@ function Marketplace() {
 
                   {/* <button
                     type='button'
-                    class='drop_down_tlt'
+                    className='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
                   </button> */}
-                  {/* <div id='demo2' class='collapse show'>
+                  {/* <div id='demo2' className='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
-                          class='form-select filter_apply filter-text-left'
+                          className='form-select filter_apply filter-text-left'
                           aria-label='Default select example'>
                           <option selected>$ Australian Dollar (AUD)</option>
                           <option value='1'>One</option>
@@ -347,24 +347,24 @@ function Marketplace() {
                         </select>
                       </li>
                       <li>
-                        <div class='range_input'>
+                        <div className='range_input'>
                           <input
                             type='text'
-                            class='form-control'
+                            className='form-control'
                             id='exampleInputPassword1'
                             placeholder='Min'
                           />
                           <span className='span_class'>to</span>
                           <input
                             type='text'
-                            class='form-control'
+                            className='form-control'
                             id='exampleInputPassword1'
                             placeholder='Max'
                           />
                         </div>
                       </li>
                       <li>
-                        <button type='submit' class='filter_apply'>
+                        <button type='submit' className='filter_apply'>
                           Apply
                         </button>
                       </li>
@@ -376,13 +376,13 @@ function Marketplace() {
                 <form>
                   <button
                     type="button"
-                    class="drop_down_tlt"
+                    className="drop_down_tlt"
                     data-bs-toggle="collapse"
                     data-bs-target="#demo3"
                   >
                     Collections <UpArrow />
                   </button>
-                  <div id="demo3" class="collapse show ">
+                  <div id="demo3" className="collapse show ">
                     <input
                       type="text"
                       placeholder="Filter"
@@ -406,13 +406,14 @@ function Marketplace() {
                     {cols && cols.length > 0 && colsAdv !== ""
                       ? cols.map((i) => {
                           return (
-                            <div class="form-check form-check-inline">
+                            <div className="form-check form-check-inline" >
                               <input
                                 type="radio"
                                 id={i.name}
                                 name="radio-group"
+                                key={i}
                               />
-                              <label for={i.name}>{i.name}</label>
+                              <label htmlFor={i.name}>{i.name}</label>
                             </div>
                           );
                         })
@@ -423,30 +424,31 @@ function Marketplace() {
               <div className="filtercol">
                 <button
                   type="button"
-                  class="drop_down_tlt mb-4"
+                  className="drop_down_tlt mb-4"
                   data-bs-toggle="collapse"
                   data-bs-target="#demo4"
                 >
                   Categories <UpArrow />
                 </button>
-                <div id="demo4" class="collapse show">
+                <div id="demo4" className="collapse show">
                   <ul>
-                    <li className="sub-items">
+                    <li className="sub-items" >
                       <form action="#" className="checked_form">
-                        <div class="form-check form-check-inline">
+                        <div className="form-check form-check-inline">
                           <input type="radio" id="all" name="radio-group" />
-                          <label for="all">All</label>
+                          <label htmlFor="all">All</label>
                         </div>
                         {category.length > 0
                           ? category?.map((c) => {
                               return (
-                                <div class="form-check form-check-inline">
+                                <div className="form-check form-check-inline" >
                                   <input
                                     type="radio"
                                     id={c.name}
                                     name="radio-group"
+                                    key={c.name}
                                   />
-                                  <label for={c.name}>{c.name}</label>
+                                  <label htmlFor={c.name}>{c.name}</label>
                                 </div>
                               );
                             })
@@ -459,13 +461,13 @@ function Marketplace() {
               <div className="filtercol">
                 <button
                   type="button"
-                  class="drop_down_tlt mb-4"
+                  className="drop_down_tlt mb-4"
                   data-bs-toggle="collapse"
                   data-bs-target="#demo5"
                 >
                   Brands <UpArrow />
                 </button>
-                <div id="demo5" class="collapse show">
+                <div id="demo5" className="collapse show">
                   <ul>
                     {/* <li>
                       <input
@@ -479,13 +481,14 @@ function Marketplace() {
                         {brands.length > 0
                           ? brands?.map((b) => {
                               return (
-                                <div class="form-check form-check-inline">
+                                <div className="form-check form-check-inline">
                                   <input
                                     type="radio"
                                     id={b.name}
                                     name="radio-group"
+                                    key={b}
                                   />
-                                  <label for={b.name}>{b.name}</label>
+                                  <label htmlFor={b.name}>{b.name}</label>
                                 </div>
                               );
                             })
@@ -505,7 +508,7 @@ function Marketplace() {
                 
                 return oIndex.map((card, key) => {
                   return (
-                    <div className={grid}>
+                    <div className={grid} key={key}>
                       <div className="items_slide h-100" key={key}>
                         <div className="items_profileimg">
                           <a
@@ -524,6 +527,7 @@ function Marketplace() {
                                     ? card?.brand?.logoImage
                                     : ""
                                 }
+                                key={card}
                                 onError={(e) =>
                                   (e.target.src =
                                     "../img/collections/list4.png")
@@ -536,7 +540,7 @@ function Marketplace() {
                           {card && card.fileType === "Image" ? (
                             <img
                               src={card?.image}
-                              class="img-fluid items_img w-100 my-3"
+                              className="img-fluid items_img w-100 my-3"
                               alt=""
                               onError={(e) => {
                                 console.log("image error is--->", e);
@@ -548,7 +552,7 @@ function Marketplace() {
                           )}
                           {card && card.fileType === "Video" ? (
                             <video
-                              class="img-fluid items_img w-100 my-3"
+                              className="img-fluid items_img w-100 my-3"
                               controls
                             >
                               <source src={card?.image} type="video/mp4" />
@@ -558,8 +562,9 @@ function Marketplace() {
                           )}
 
                           {card && card.fileType === "3D" ? (
+                           
                             <Canvas
-                              class="img-fluid items_img w-100 my-3"
+                              className="img-fluid items_img w-100 my-3"
                               camera={{ position: [10, 100, 100], fov: 1 }}
                             >
                               <pointLight
@@ -641,7 +646,7 @@ function Marketplace() {
           </div>
           {allNFTs?.length > 0 ? (
             <div className="row">
-              <div class="col-md-12 text-center mt-5">
+              <div className="col-md-12 text-center mt-5">
                 <button
                   type="button"
                   className={`btn view_all_bdr ${loadMoreDisabled}`}

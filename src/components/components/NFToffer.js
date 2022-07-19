@@ -306,7 +306,7 @@ function NFToffer(props) {
             <div className="modal-body">
               <div className="tab-content">
                 <div className="mb-3" id="tab_opt_1">
-                  <label htmlfor="item_price" className="form-label">
+                  <label htmlFor="item_price" className="form-label">
                     Price
                   </label>
                   <input
@@ -347,7 +347,7 @@ function NFToffer(props) {
                   />
                 </div>
                 <div className="mb-3" id="tab_opt_2">
-                  <label htmlfor="item_qt" className="form-label">
+                  <label htmlFor="item_qt" className="form-label">
                     Quantity
                   </label>
                   <input
@@ -383,7 +383,7 @@ function NFToffer(props) {
                   />
                 </div>
                 <div id="tab_opt_4" className="mb-3">
-                  <label htmlfor="Payment" className="form-label">
+                  <label htmlFor="Payment" className="form-label">
                     Payment Token
                   </label>
 
@@ -442,7 +442,7 @@ function NFToffer(props) {
                 </div>
 
                 <div id="tab_opt_5" className="mb-3 ">
-                  <label for="item_ex_date" className="form-label">
+                  <label htmlFor="item_ex_date" className="form-label">
                     Expiration date
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}

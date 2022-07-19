@@ -787,7 +787,6 @@ function NFTDetails() {
               ) : (
                 ""
               )}
-
               {NFTDetails && NFTDetails.fileType == "3D" ? (
                 <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
                   <pointLight position={[10, 10, 10]} intensity={1.3} />
@@ -1156,7 +1155,6 @@ function NFTDetails() {
           </div>
         </div>
       </section>
-
       {/* <!-- The Modal --> */}
       <div className={`modal marketplace putOnMarketplace`} id='detailPop'>
         <div className='modal-dialog modal-lg modal-dialog-centered'>
@@ -1169,11 +1167,9 @@ function NFTDetails() {
                 className='btn-close text-light'
                 data-bs-dismiss='modal'></button>
             </div>
-
             {/* <!-- Modal body --> */}
-            <div className='modal-body'>
-              <h3 className='text-light text_16'>Select method</h3>
-
+            <div className="modal-body">
+              <h3 className="text-light text_16">Select method</h3>
               <ul
                 className='d-flex mb-4 justify-content-around g-3'
                 id='pills-tab'
@@ -1331,7 +1327,6 @@ function NFTDetails() {
                   <label htmlFor='Payment' className='form-label'>
                     Payment Token
                   </label>
-
                   {marketplaceSaleType === 0 ? (
                     <>
                       <select
@@ -1344,7 +1339,7 @@ function NFTDetails() {
                           setSelectedTokenFS(event.target.value);
                         }}>
                         {" "}
-                        <option value={"BNB"} selected>
+                        <option value={"BNB"} defaultValue>
                           BNB
                         </option>
                         <option value={"HNTR"}>HNTR</option>
@@ -1361,7 +1356,7 @@ function NFTDetails() {
                           setSelectedToken(event.target.value)
                         }>
                         {" "}
-                        <option value={"BUSD"} selected>
+                        <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>
@@ -1542,7 +1537,7 @@ function NFTDetails() {
                           setSelectedToken(event.target.value)
                         }>
                         {" "}
-                        <option value={"BUSD"} selected>
+                        <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>
