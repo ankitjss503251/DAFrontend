@@ -321,13 +321,14 @@ function NFTDetails() {
       let searchParams = {
         nftID: NFTDetails.id,
         buyerID: localStorage.getItem("userId"),
-        bidStatus: "All",
+        bidStatus: "MakeOffer",
         orderID: "All",
       };
 
       let _data = await fetchOfferNft(searchParams);
 
       if (_data && _data.data.length > 0) {
+        console.log("offer data is------>",_data)
         const b = _data.data[0];
         setHaveOffer(true);
 
@@ -432,7 +433,7 @@ function NFTDetails() {
       currentUser,
       NFTDetails?.type,
       offerQuantity,
-      ethers.utils.parseEther(offerPrice),
+      ethers.utils.parseEther(offerPrice.toString()),
       deadline,
       NFTDetails.id,
       contracts.BUSD
@@ -1526,9 +1527,7 @@ function NFTDetails() {
                           setSelectedTokenFS(event.target.value);
                         }}>
                         {" "}
-                        <option value={"BNB"} selected>
-                          BNB
-                        </option>
+                      
                         {/* <option value={"HNTR"}>HNTR</option> */}
                         <option value={"BUSD"}>BUSD</option>
                       </select>
