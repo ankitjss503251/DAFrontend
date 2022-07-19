@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Footer from "../components/footer";
 import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
@@ -9,7 +9,7 @@ import NFThistory from "../components/NFThistory";
 import {
   getCollections,
   getNFTs,
-  getOrderByNftID,
+  getNFTDetails,
 } from "../../helpers/getterFunctions";
 
 import { useParams } from "react-router-dom";
@@ -22,7 +22,7 @@ import {
 } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
 import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
-
+import { handleRemoveFromSale } from "./../../helpers/sendFunctions";
 import contracts from "../../config/contracts";
 import { GENERAL_DATE } from "../../helpers/constants";
 import { NotificationManager } from "react-notifications";
@@ -33,11 +33,145 @@ import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { fetchBidNft, getNFTList } from "../../apiServices";
+import { fetchBidNft, viewNFTDetails } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
 
-import { useGLTF, OrbitControls } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
+function loadGLTFModel(scene, glbPath, options) {
+  const { receiveShadow, castShadow } = options;
+  return new Promise((resolve, reject) => {
+    const loader = new GLTFLoader();
+    loader.load(
+      glbPath,
+      (gltf) => {
+        const obj = gltf.scene;
+        obj.name = "dinosaur";
+        obj.position.y = 0;
+        obj.position.x = 0;
+        obj.receiveShadow = receiveShadow;
+        obj.castShadow = castShadow;
+        scene.add(obj);
+
+        obj.traverse(function (child) {
+          if (child.isMesh) {
+            child.castShadow = castShadow;
+            child.receiveShadow = receiveShadow;
+          }
+        });
+
+        resolve(obj);
+      },
+      undefined,
+      function (error) {
+        console.log(error);
+        reject(error);
+      }
+    );
+  });
+}
+function easeOutCirc(x) {
+  return Math.sqrt(1 - Math.pow(x - 1, 4));
+}
+
+const Show3DImage = () => {
+  const refContainer = useRef();
+  const [loading, setLoading] = useState(true);
+  const [renderer, setRenderer] = useState();
+
+  useEffect(() => {
+    const { current: container } = refContainer;
+    if (container && !renderer) {
+      const scW = container.clientWidth;
+      const scH = container.clientHeight;
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+      });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(scW, scH);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      container.appendChild(renderer.domElement);
+      setRenderer(renderer);
+
+      const scene = new THREE.Scene();
+      const scale = 2;
+      const camera = new THREE.OrthographicCamera(
+        -scale,
+        scale,
+        scale,
+        -scale,
+        0.01,
+        50000
+      );
+      const target = new THREE.Vector3(-0.5, 1.2, 0);
+      const initialCameraPosition = new THREE.Vector3(
+        20 * Math.sin(0.2 * Math.PI),
+        10,
+        20 * Math.cos(0.2 * Math.PI)
+      );
+      const ambientLight = new THREE.AmbientLight(0xcccccc, 1);
+      scene.add(ambientLight);
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.autoRotate = true;
+      controls.target = target;
+
+      loadGLTFModel(scene, "https://hunter.techdigital.com.au/Parrot.glb", {
+        receiveShadow: false,
+        castShadow: false,
+      }).then(() => {
+        animate();
+        setLoading(false);
+      });
+
+      let req = null;
+      let frame = 0;
+      const animate = () => {
+        req = requestAnimationFrame(animate);
+        frame = frame <= 100 ? frame + 1 : frame;
+
+        if (frame <= 100) {
+          const p = initialCameraPosition;
+          const rotSpeed = -easeOutCirc(frame / 120) * Math.PI * 20;
+
+          camera.position.y = 10;
+          camera.position.x =
+            p.x * Math.cos(rotSpeed) + p.z * Math.sin(rotSpeed);
+          camera.position.z =
+            p.z * Math.cos(rotSpeed) - p.x * Math.sin(rotSpeed);
+          camera.lookAt(target);
+        } else {
+          controls.update();
+        }
+
+        renderer.render(scene, camera);
+      };
+
+      return () => {
+        cancelAnimationFrame(req);
+        renderer.dispose();
+      };
+    }
+  }, []);
+
+  return (
+    <div
+      style={{ height: "350px", width: "350px", position: "relative" }}
+      ref={refContainer}
+    >
+      {loading && (
+        <span style={{ position: "absolute", left: "50%", top: "50%" }}>
+          Loading...
+        </span>
+      )}
+    </div>
+  );
+};
 
 var textColor = {
   textColor: "#EF981D",
@@ -101,16 +235,18 @@ function NFTDetails() {
     const fetch = async () => {
       try {
         const reqData = {
-          page: 1,
-          limit: 12,
           nftID: id,
         };
-        const res = await getNFTs(reqData);
+        const res = await getNFTDetails(reqData);
         if (res.length === 0) {
           window.location.href = "/marketplace";
           return;
         }
         setNFTDetails(res[0]);
+        setOrders(res[0]?.OrderData);
+        if (res[0]?.OrderData.length <= 0) {
+          setOrders([]);
+        }
         setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length - 1]?.address);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
@@ -141,17 +277,13 @@ function NFTDetails() {
         }
 
         if (id) {
-          const _orders = await getOrderByNftID({ nftID: id });
-
-          setOrders(_orders?.results);
-          if (_orders?.results.length <= 0) {
+          const _nft = await getNFTDetails({
+            nftID: id,
+          });
+          setOrders(_nft[0]?.OrderData);
+          if (_nft[0]?.OrderData.length <= 0) {
             setOrders([]);
           }
-          const _nft = await getNFTList({
-            page: 1,
-            limit: 1,
-            nftID: _orders?.results[0]?.nftID,
-          });
           setFirstOrderNFT(_nft[0]);
         }
       } catch (e) {
@@ -210,7 +342,6 @@ function NFTDetails() {
 
   const PutMarketplace = async () => {
     setLoading(true);
-    
 
     if (marketplaceSaleType === 0) {
       if (itemprice === undefined || itemprice === "" || itemprice === 0) {
@@ -218,8 +349,14 @@ function NFTDetails() {
         setLoading(false);
         return;
       }
+    } else if (marketplaceSaleType === 1) {
+      if (datetime === "" || datetime === undefined) {
+        NotificationManager.error("Please Enter Expiration date", "", 800);
+        setLoading(false);
+        return;
+      }
     } else {
-      if (item_bid === undefined || item_bid === "" || item_bid === 0) {
+      if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
         NotificationManager.error("Please Enter Minimum Bid", "", 800);
         setLoading(false);
         return;
@@ -269,7 +406,10 @@ function NFTDetails() {
       return;
     }
 
-    if (offerQuantity === "" ||(offerQuantity === undefined && NFTDetails.type !== 1)) {
+    if (
+      offerQuantity === "" ||
+      (offerQuantity === undefined && NFTDetails.type !== 1)
+    ) {
       NotificationManager.error("Enter Offer Quantity");
       setLoading(false);
       return;
@@ -517,6 +657,8 @@ function NFTDetails() {
                 slowRefresh(1000);
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
+                setLoading(false);
+                return;
               }
             }}
           >
@@ -836,11 +978,28 @@ function NFTDetails() {
                         setIsPlaceBidModal(true);
                       }}
                     >
-                      {haveBid && haveBid !== "none"
-                        ? "Update Bid"
-                        : "Place Bid"}
+                      {haveBid !== "none"
+                        ? haveBid
+                          ? "Update Bid"
+                          : "Place Bid"
+                        : ""}
                     </button>
                   )
+                ) : owned && owned !== "none" ? (
+                  <button
+                    type="button"
+                    className="title_color buy_now"
+                    data-bs-toggle="modal"
+                    data-bs-target="#detailPop"
+                    onClick={async () => {
+                      console.log("orders[0]", orders[0], orders);
+                      setLoading(true);
+                      await handleRemoveFromSale(orders[0]._id, currentUser);
+                      setLoading(false);
+                    }}
+                  >
+                    Remove From Sale
+                  </button>
                 ) : (
                   ""
                 )}
@@ -1050,6 +1209,7 @@ function NFTDetails() {
                   </button>
                 </li>
                 <li className="list-unstyled">
+                  detailPop
                   <button
                     id="btn2"
                     className="navbtn"
@@ -1262,6 +1422,7 @@ function NFTDetails() {
                       value={datetime.toString().substring(0, 16)}
                       onChange={handleChange}
                       className="input_design"
+                      required
                     />
                   </div>
                 ) : (
@@ -1401,9 +1562,9 @@ function NFTDetails() {
                         }}
                       >
                         {" "}
-                        {/* <option value={"BNB"} selected>
+                        <option value={"BNB"} selected>
                           BNB
-                        </option> */}
+                        </option>
                         {/* <option value={"HNTR"}>HNTR</option> */}
                         <option value={"BUSD"}>BUSD</option>
                       </select>

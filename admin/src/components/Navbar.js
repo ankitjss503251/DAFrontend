@@ -93,9 +93,9 @@ const onboard = Onboard({
         },
       },
 
+
     },
   },
-
 
   accountCenter: {
     desktop: {
@@ -123,8 +123,8 @@ const Navbar = (props) => {
   }, []);
 
   const init = async () => {
-    if (cookies["selected_account"] && localStorage.getItem('Authorization') !== undefined && localStorage.getItem('Authorization') !== null) {
-      setAccount(cookies["selected_account"]);
+    if (cookies["da_selected_account"]) {
+      setAccount(cookies["da_selected_account"]);
       const s = await onboard.connectWallet({
         autoSelect: { label: cookies["label"], disableModals: true },
       });
@@ -134,7 +134,7 @@ const Navbar = (props) => {
       setProvider(s[0].provider);
       setLabel(s[0].label);
       setCookie("label", s[0].label, { path: "/" });
-      setCookie("selected_account", s[0].accounts[0].address, { path: "/" });
+      setCookie("da_selected_account", s[0].accounts[0].address, { path: "/" });
       setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
         path: "/",
       });
@@ -145,7 +145,7 @@ const Navbar = (props) => {
   };
 
   const refreshState = () => {
-    removeCookie("selected_account", { path: "/" });
+    removeCookie("da_selected_account", { path: "/" });
     removeCookie("chain_id", { path: "/" });
     removeCookie("balance", { path: "/" });
     removeCookie("label", { path: "/" });
@@ -177,14 +177,17 @@ const Navbar = (props) => {
   };
 
   const connectWallet = async () => {
-    if(window.ethereum){
-      console.log("window ethereum")
-    }else{
-      NotificationManager.error("Non-Ethereum browser detected. You should consider trying MetaMask!")
+
+    if (window.ethereum) {
+      console.log("window ethereum");
+    } else {
+      NotificationManager.error(
+        "Non-Ethereum browser detected. You should consider trying MetaMask!"
+      );
     }
-    console.log("in connect wallet")
+    console.log("in connect wallet");
     const wallets = await onboard.connectWallet();
-    
+
     if (wallets.length !== 0) {
       await onboard.setChain({
         chainId: process.env.REACT_APP_CHAIN_ID,
@@ -219,7 +222,7 @@ const Navbar = (props) => {
             setAccount(primaryWallet.accounts[0].address);
             setLabel(primaryWallet.label);
             window.sessionStorage.setItem("role", res2?.data?.userType);
-            setCookie("selected_account", address, { path: "/" });
+            setCookie("da_selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
@@ -258,7 +261,7 @@ const Navbar = (props) => {
 
             setLabel(primaryWallet.label);
             window.sessionStorage.setItem("role", res?.data?.userType);
-            setCookie("selected_account", address, { path: "/" });
+            setCookie("da_selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
@@ -287,7 +290,7 @@ const Navbar = (props) => {
 
   const disconnectWallet = async () => {
     await onboard.disconnectWallet({ label: label });
-    await Logout(cookies["selected_account"]);
+    await Logout(cookies["da_selected_account"]);
     window.sessionStorage.removeItem("role");
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);

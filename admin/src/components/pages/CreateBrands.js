@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { NotificationManager } from "react-notifications";
 import Sidebar from "../components/Sidebar";
 import { useCookies } from "react-cookie";
-import Loader from "../components/loader";
 import { addBrand, GetBrand } from "../../apiServices";
 import { isEmptyObject } from "jquery";
+import Spinner from "../components/Spinner";
 
 function CreateBrands() {
   const [logoImg, setLogoImg] = useState();
@@ -18,7 +18,7 @@ function CreateBrands() {
   const [isModal, setModal] = useState("");
 
   useEffect(() => {
-    if (cookies.selected_account && localStorage.getItem("Authorization") !== undefined && localStorage.getItem("Authorization") !== null) setCurrentUser(cookies.selected_account);
+    if (cookies.da_selected_account) setCurrentUser(cookies.da_selected_account);
     // else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
@@ -126,7 +126,7 @@ function CreateBrands() {
     <div className="wrapper">
       {/* <!-- Sidebar  --> */}
       <Sidebar />
-      {loading ? <Loader /> : ""}
+      {loading ? <Spinner /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
         {currentUser && (
