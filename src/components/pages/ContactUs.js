@@ -1,6 +1,7 @@
 // import { Link } from 'react-router-dom';
 import React from 'react';
 import Footer from "../components/footer";
+import { Link } from '@reach/router';
 
 var register_bg = {
     backgroundImage: "url(./img/contact/contact_bg.jpg)",
@@ -62,16 +63,16 @@ function ContactUs() {
                                 <h4>Australia Office</h4>
                                 <ul>
                                     <li><i class="fa fa-map-marker"></i> Office Address line, Line 2, line 3, etc.</li>
-                                    <li><a href="tel:60 1234 5678" ><i class="fa fa-phone"></i> +60 1234 5678</a></li>
-                                    <li><a href="mailto:contact@example.com" ><i class="fa fa-envelope"></i> contact@example.com</a></li>
+                                    <li><Link to="tel:60 1234 5678" ><i class="fa fa-phone"></i> +60 1234 5678</Link></li>
+                                    <li><Link to="mailto:contact@example.com" ><i class="fa fa-envelope"></i> contact@example.com</Link></li>
                                 </ul>
                             </div>
                             <div className="contact_details contact_bg">
                             <h4>US Office</h4>
                                 <ul>
                                     <li><i class="fa fa-map-marker"></i> Office Address line, Line 2, line 3, etc.</li>
-                                    <li><a href="tel:60 1234 5678" ><i class="fa fa-phone"></i> +60 1234 5678</a></li>
-                                    <li><a href="mailto:contact@example.com" ><i class="fa fa-envelope"></i> contact@example.com</a></li>
+                                    <li><Link to="tel:60 1234 5678" ><i class="fa fa-phone"></i> +60 1234 5678</Link></li>
+                                    <li><Link to="mailto:contact@example.com" ><i class="fa fa-envelope"></i> contact@example.com</Link></li>
                                 </ul>
                             </div>
                         </div>

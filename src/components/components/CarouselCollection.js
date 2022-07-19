@@ -85,14 +85,14 @@ function CarouselCollection() {
                
                   <div className='collection_slide' key={key}>
                     <Link to={`/collection/${card?._id}`}>
-                      <div class="mint_img">
+                      <div className="mint_img">
                         <img
                           style={{
                             borderTopLeftRadius: "10px",
                             borderTopRightRadius: "10px",
                           }}
                           src={card.logoImg}
-                          class='img-fluid'
+                          className='img-fluid'
                           alt=''
                           onError={(e) =>
                             (e.target.src = "../img/collections/list4.png")

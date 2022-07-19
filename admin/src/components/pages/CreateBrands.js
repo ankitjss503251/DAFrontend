@@ -239,7 +239,7 @@ function CreateBrands() {
                         src={"../images/upload.png"}
                         className="img-fluid profile_circle_img admin_profile_img"
                       />
-                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                      {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                     </div>
                   </div>
                 </div>
@@ -280,7 +280,7 @@ function CreateBrands() {
                         src={"../images/upload.png"}
                         className="img-fluid profile_circle_img admin_profile_img"
                       />
-                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                      {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                     </div>
                   </div>
                 </div>

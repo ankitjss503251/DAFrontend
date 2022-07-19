@@ -882,7 +882,7 @@ function CreateCollection() {
                           />
                         )}
 
-                        {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                        {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
@@ -941,7 +941,7 @@ function CreateCollection() {
                           />
                         )}
 
-                        {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                        {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
@@ -1050,7 +1050,7 @@ function CreateCollection() {
                       Category *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
@@ -1068,7 +1068,7 @@ function CreateCollection() {
                       Brand *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={brand}
                       onChange={(e) => setBrand(e.target.value)}
@@ -1124,7 +1124,7 @@ function CreateCollection() {
                       NFT Type *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={nftType}
                       onChange={(e) => setNftType(e.target.value)}
@@ -1140,7 +1140,7 @@ function CreateCollection() {
                       OffChain
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={isOffChain}
                       onChange={(e) => setIsOffChain(e.target.value)}
@@ -1154,7 +1154,7 @@ function CreateCollection() {
                       Show on Marketplace
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={isOnMarketplace}
                       onChange={(e) => setIsOnMarketplace(e.target.value)}
@@ -1402,7 +1402,7 @@ function CreateCollection() {
                           src={logoImg}
                           className="img-fluid profile_circle_img admin_profile_img"
                         />
-                        {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                        {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
@@ -1443,7 +1443,7 @@ function CreateCollection() {
                           src={coverImg}
                           className="img-fluid profile_circle_img admin_profile_img"
                         />
-                        {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                        {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
@@ -1551,7 +1551,7 @@ function CreateCollection() {
                       Category *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
@@ -1576,7 +1576,7 @@ function CreateCollection() {
                       Brand *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={brand}
                       onChange={(e) => setBrand(e.target.value)}
@@ -1631,7 +1631,7 @@ function CreateCollection() {
                       NFT Type *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={nftType}
                       onChange={(e) => setNftType(e.target.value)}
