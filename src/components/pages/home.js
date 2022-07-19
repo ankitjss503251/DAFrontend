@@ -207,7 +207,7 @@ const Home = () => {
                       className="col-lg-4 col-md-6 col-sm-12 mb-lg-0 mb-xl-0 mb-4"
                       key={key}
                     >
-                      <div className="mint_box" style={mint_bg}>
+                      <div className="mint_box online_rotater" style={mint_bg}>
                         {card.link ? (
                           <a href={card.link}>
                             <div className="mint_img">
@@ -263,7 +263,7 @@ const Home = () => {
                           </div>
                         )}
                         <div className="mint_text p-4">
-                          <div className="logoImg_con">
+                          <div className="logoImg_con rotater_border">
                             <a
                               href={`/collectionwithcollection/${card.brand?._id}`}
                               className="rounded-circle "

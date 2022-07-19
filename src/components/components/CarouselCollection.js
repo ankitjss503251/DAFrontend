@@ -84,26 +84,29 @@ function CarouselCollection() {
                
                   <div className='collection_slide' key={key}>
                     <a href={`/collection/${card?._id}`}>
-                      <img
-                        style={{
-                          borderTopLeftRadius: "10px",
-                          borderTopRightRadius: "10px",
-                        }}
-                        src={card.logoImg}
-                        class='img-fluid w-100'
-                        alt=''
-                        onError={(e) =>
-                          (e.target.src = "../img/collections/list4.png")
-                        }
-                      />
+                      <div class="mint_img">
+                        <img
+                          style={{
+                            borderTopLeftRadius: "10px",
+                            borderTopRightRadius: "10px",
+                          }}
+                          src={card.logoImg}
+                          class='img-fluid'
+                          alt=''
+                          onError={(e) =>
+                            (e.target.src = "../img/collections/list4.png")
+                          }
+                        />
+                      </div>
                     </a>
                     <div className='collection_text text-center'>
                       
                       <div className='coll_profileimg'>
-                        <a href={`/collectionwithcollection/${card?.brand?._id}`}>
+                        <div className="rotater_border profile_img">
+                        <a className="rounded-circle" href={`/collectionwithcollection/${card?.brand?._id}`}>
                           <img
                             alt=''
-                            className='profile_img'
+                            className=''
                             src={card.brand?.logoImage}
                             onError={(e) => {
                               e.target.src = "../img/collections/list4.png";
@@ -115,6 +118,7 @@ function CarouselCollection() {
                                   src={"../img/collections/check.png"}
                                 /> */}
                         </a>
+                        </div>
                       </div>
                       
                       
