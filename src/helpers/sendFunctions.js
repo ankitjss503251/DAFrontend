@@ -265,7 +265,7 @@ export const handleBuyNft=async (
     return false;
   }
 
-  NotificationManager.success("NFT Purchased Successfully")
+  NotificationManager.success("NFT Purchased Successfully");
   slowRefresh(1000);
 };
 
@@ -471,15 +471,7 @@ export const createBid=async (
   bidPrice,
   isOffer=false
 ) => {
-  console.log("__createBid__", nftID,
-    orderID,
-    ownerAccount,
-    buyerAccount,
-    erc721,
-    qty = 1,
-    bidPrice,
-    isOffer = false,
-    bidDeadline);
+  console.log("ownerAccount", ownerAccount);
   let SellerOrder;
   let sellerOrder=[];
   let buyerOrder=[];
@@ -860,20 +852,19 @@ export const handleAcceptBids=async (
 
     try {
       await UpdateOrder({
-        orderID: bidData.orderID,
-        nftID: details?.nftID._id, //to make sure we update the quantity left : NFTid
+        orderID: bidData.orderID[0]?._id,
+        nftID: details?.nftID?._id, //to make sure we update the quantity left : NFTid
         seller: details?.sellerID?.walletAddress, //to make sure we update the quantity left : walletAddress
         qtyBought: Number(bidData.bidQuantity),
         qty_sold: Number(details.quantity_sold)+Number(bidData.bidQuantity),
         buyer: buyerOrder[0]?.toLowerCase(),
-        LazyMintingStatus: LazyMintingStatus,
       });
 
       if(
         Number(details.quantity_sold)+Number(bidData.bidQuantity)>=
         details.total_quantity
       ) {
-        DeleteOrder({orderID: bidData.orderID});
+        DeleteOrder({ orderID: bidData.orderID[0]?._id });
       }
     } catch(e) {
       console.log("error in updating order data",e);

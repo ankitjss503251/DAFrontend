@@ -41,7 +41,7 @@ function CollectionActivity() {
             <li><Link to="/"><i className="fa fa-facebook fa-lg"></i></Link></li>
             <li><Link to="/"><i className="fa fa-twitter fa-lg"></i></Link></li>
             <li><Link to="/"><i className="fa fa-linkedin fa-lg"></i></Link></li>
-            <li><LInk to="/"><i className="fa fa-pinterest fa-lg"></i></LInk></li>
+            <li><Link to="/"><i className="fa fa-pinterest fa-lg"></i></Link></li>
           </ul>
           <div className="coppycode text-center">
             <span><img alt='' src={'../img/favicon.png'} className="img-fluid" /> 0xa1ahjkfga...19cda 
