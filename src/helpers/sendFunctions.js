@@ -464,6 +464,7 @@ export const createBid = async (
   bidPrice,
   isOffer = false
 ) => {
+  console.log("ownerAccount", ownerAccount);
   let SellerOrder;
   let sellerOrder = [];
   let buyerOrder = [];
@@ -776,16 +777,16 @@ export const handleAcceptBids = async (
   );
 
   if (!LazyMintingStatus) {
-    let usrHaveQuantity = await GetOwnerOfToken(
-      sellerOrder[1],
-      sellerOrder[2],
-      isERC721,
-      sellerOrder[0]
-    );
-    if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-      NotificationManager.error("Seller don't own that much quantity");
-      return false;
-    }
+    // let usrHaveQuantity = await GetOwnerOfToken(
+    //   sellerOrder[1],
+    //   sellerOrder[2],
+    //   isERC721,
+    //   sellerOrder[0]
+    // );
+    // if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
+    //   NotificationManager.error("Seller don't own that much quantity");
+    //   return false;
+    // }
   }
 
   if (!approval) {
@@ -844,20 +845,19 @@ export const handleAcceptBids = async (
 
     try {
       await UpdateOrder({
-        orderID: bidData.orderID,
-        nftID: details?.nftID._id, //to make sure we update the quantity left : NFTid
+        orderID: bidData.orderID[0]?._id,
+        nftID: details?.nftID?._id, //to make sure we update the quantity left : NFTid
         seller: details?.sellerID?.walletAddress, //to make sure we update the quantity left : walletAddress
         qtyBought: Number(bidData.bidQuantity),
         qty_sold: Number(details.quantity_sold) + Number(bidData.bidQuantity),
         buyer: buyerOrder[0]?.toLowerCase(),
-        LazyMintingStatus: LazyMintingStatus,
       });
 
       if (
         Number(details.quantity_sold) + Number(bidData.bidQuantity) >=
         details.total_quantity
       ) {
-        DeleteOrder({ orderID: bidData.orderID });
+        DeleteOrder({ orderID: bidData.orderID[0]?._id });
       }
     } catch (e) {
       console.log("error in updating order data", e);
@@ -874,7 +874,7 @@ export const handleAcceptBids = async (
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-  slowRefresh(1000);
+  // slowRefresh(1000);
 };
 
 export const handleAcceptOffers = async (bidData, props, account) => {

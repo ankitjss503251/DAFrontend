@@ -645,7 +645,7 @@ function NFTDetails() {
                 let res = await createBid(
                   orders[0].nftID,
                   orders[0]._id,
-                  orders[0].sellerID?._id,
+                  orders[0].sellerID,
                   currentUser,
                   firstOrderNFT?.type,
                   orders[0].total_quantity,
