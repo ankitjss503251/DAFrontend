@@ -282,8 +282,8 @@ const Home = () => {
                           <a href={card.link}>
                             {" "}
                             <h4 className="mb-2">
-                              {card.name?.length > 8
-                                ? card.name?.slice(0, 8) + "..."
+                              {card.name?.length > 15
+                                ? card.name?.slice(0, 15) + "..."
                                 : card.name}
                             </h4>
                           </a>
