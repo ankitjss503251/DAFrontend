@@ -178,7 +178,7 @@ function NFToffer(props) {
                         <td>
                           {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
                           <span className="nft_time">
-                            {moment(b.createdOn).format("HH:MM:SS")}
+                            {moment(b.createdOn).format("hh:mm:ss a")}
                           </span>
                         </td>
                         <td>
@@ -188,7 +188,7 @@ function NFToffer(props) {
                                 'hours': 5,
                                 'minutes': 30,
                               })
-                              .toISOString()}
+                              }
                           ></Clock>
                         </td>
                         <td className="white_text">
