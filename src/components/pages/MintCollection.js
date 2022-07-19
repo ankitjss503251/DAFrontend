@@ -2,6 +2,7 @@ import React from 'react';
 import Footer from '../components/footer';
 import Minttab from '../components/Minttab';
 
+
 var register_bg = {
     backgroundImage: "url(./img/mint/bg.jpg)",
     backgroundRepeat: "no-repeat",

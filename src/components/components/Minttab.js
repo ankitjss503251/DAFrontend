@@ -56,7 +56,7 @@ function Minttab(props) {
                       <a href={card.link}>
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
-                            <img alt="" src={card.logoImg} class="img-fluid" />
+                            <img alt="" src={card.logoImg} className="img-fluid" />
                             <div className="mint_date">
                               <span>
                                 {moment(card.saleStartTime).format("DD")}
@@ -157,7 +157,7 @@ function Minttab(props) {
                       <a href={card.link}>
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
-                            <img alt="" src={card.logoImg} class="img-fluid" />
+                            <img alt="" src={card.logoImg} className="img-fluid" />
                             {card.saleStartTime !== null ?  <div className="mint_date">
                               <span>
                                 {moment(card.saleStartTime).format("DD")}

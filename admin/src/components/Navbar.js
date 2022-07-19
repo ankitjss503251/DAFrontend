@@ -332,9 +332,9 @@ const Navbar = (props) => {
           <img src={"../images/user.jpg"} alt="" className="img-fluid" />
         </div>
         {props.model}
-        <a className="logo" href="/">
+        <Link className="logo" to="/">
           Digital Arms
-        </a>
+        </Link>
       </div>
       <ul className="p-0 m-0">
         {/* <li className='text-light'>

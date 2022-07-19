@@ -121,7 +121,7 @@ function CreateCategories() {
 
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">Categories</h5>
-          <table class="table table-hover text-light">
+          <table className="table table-hover text-light">
             <thead>
               <tr>
                 <th>Name</th>
@@ -203,14 +203,14 @@ function CreateCategories() {
                       }}
                       onClick={() => imageUploader.current.click()}
                     >
-                      <p className="text-center">Click or Drop here</p>
+                      <p className="text-center">Click here</p>
                       <img
                         alt=""
                         ref={uploadedImage}
                         src={"../images/upload.png"}
                         className="img-fluid profile_circle_img admin_profile_img"
                       />
-                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                      {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                     </div>
                   </div>
                 </div>

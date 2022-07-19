@@ -46,7 +46,7 @@ const fetch = async () => {
                     <span>sfs</span>
                   </div> */}
                 </div>
-                <img alt="" src={card.image} class="img-fluid items_img" />
+                <img alt="" src={card.image} className="img-fluid items_img" />
                 <div className="items_text">
                   <div className="items_info">
                     <div className="items_left">

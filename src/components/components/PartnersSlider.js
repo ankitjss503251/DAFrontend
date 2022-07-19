@@ -6,7 +6,7 @@ function PartnersSlider() {
     <div className='col-md-12'>
         {PartnersLogos.map(partnerlogo =>(
             <div className="partner_logo" key={partnerlogo.id}>
-                <img src={partnerlogo.img} class="img-fluid" alt="" />
+                <img src={partnerlogo.img} className="img-fluid" alt="" />
             </div>
         ))}
     </div>

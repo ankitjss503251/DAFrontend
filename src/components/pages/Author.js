@@ -356,10 +356,10 @@ function Author() {
                   </button>
                 </form>
                 <select
-                  class='market_select_form form-select'
+                  className='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}>
-                  <option value='0' selected>
+                  <option value='0' defaultValue>
                     All Items
                   </option>
                   <option value='1'>Single Items</option>
@@ -370,7 +370,7 @@ function Author() {
                   aria-label="Default select example"
                   style={bgImgarrow}
                 >
-                  <option value="1" selected>
+                  <option value="1" defaultValue>
                     Price: Low to High
                   </option>
                   <option value="2">Price: High to Low</option>
@@ -397,13 +397,13 @@ function Author() {
                 <form>
                   <button
                     type="button"
-                    class="drop_down_tlt"
+                    className="drop_down_tlt"
                     data-bs-toggle="collapse"
                     data-bs-target="#demo"
                   >
                     Status <UpArrow />
                   </button>
-                  <div id="demo" class="collapse show">
+                  <div id="demo" className="collapse show">
                     <ul className="status_ul">
                       <li>
                         <Link to={"/"} className="filter_border">
@@ -426,17 +426,17 @@ function Author() {
 
                   {/* <button
                     type="button"
-                    class="drop_down_tlt"
+                    className="drop_down_tlt"
                     data-bs-toggle="collapse"
                     data-bs-target="#demo2"
                   >
                     Price <UpArrow />
                   </button> */}
-                  {/* <div id="demo2" class="collapse show">
+                  {/* <div id="demo2" className="collapse show">
                     <ul className="status_ul">
                       <li>
                         <select
-                          class="form-select filter_apply filter-text-left"
+                          className="form-select filter_apply filter-text-left"
                           aria-label="Default select example"
                         >
                           <option selected>$ Australian Dollar (AUD)</option>
@@ -446,24 +446,24 @@ function Author() {
                         </select>
                       </li>
                       <li>
-                        <div class="range_input">
+                        <div className="range_input">
                           <input
                             type="text"
-                            class="form-control"
+                            className="form-control"
                             id="exampleInputPassword1"
                             placeholder="Min"
                           />
                           <span className="span_class">to</span>
                           <input
                             type="text"
-                            class="form-control"
+                            className="form-control"
                             id="exampleInputPassword1"
                             placeholder="Max"
                           />
                         </div>
                       </li>
                       <li>
-                        <button type="submit" class="filter_apply">
+                        <button type="submit" className="filter_apply">
                           Apply
                         </button>
                       </li>
@@ -475,13 +475,13 @@ function Author() {
                 <form>
                   <button
                     type="button"
-                    class="drop_down_tlt"
+                    className="drop_down_tlt"
                     data-bs-toggle="collapse"
                     data-bs-target="#demo3"
                   >
                     Collections <UpArrow />
                   </button>
-                  <div id="demo3" class="collapse show">
+                  <div id="demo3" className="collapse show">
                     <input
                       type="text"
                       placeholder="Filter"
@@ -493,30 +493,31 @@ function Author() {
               <div className="filtercol">
                 <button
                   type="button"
-                  class="drop_down_tlt mb-4"
+                  className="drop_down_tlt mb-4"
                   data-bs-toggle="collapse"
                   data-bs-target="#demo4"
                 >
                   Categories <UpArrow />
                 </button>
-                <div id="demo4" class="collapse show">
+                <div id="demo4" className="collapse show">
                   <ul>
                     <li className="sub-items">
                       <form action="#" className="checked_form">
-                        <div class="form-check form-check-inline">
+                        <div className="form-check form-check-inline">
                           <input type="radio" id="allnfts" name="radio-group" />
-                          <label for="allnfts">All NFTs</label>
+                          <label htmlFor="allnfts">All NFTs</label>
                         </div>
                         {category
                           ? category.map((c) => {
                               return (
-                                <div class="form-check form-check-inline">
+                                <div className="form-check form-check-inline" >
                                   <input
                                     type="radio"
                                     id={c.name}
                                     name="radio-group"
+                                    key={c}
                                   />
-                                  <label for={c.name}>{c.name}</label>
+                                  <label htmlFor={c.name}>{c.name}</label>
                                 </div>
                               );
                             })
@@ -529,13 +530,13 @@ function Author() {
               <div className="filtercol">
                 <button
                   type="button"
-                  class="drop_down_tlt mb-4"
+                  className="drop_down_tlt mb-4"
                   data-bs-toggle="collapse"
                   data-bs-target="#demo5"
                 >
                   Brands <UpArrow />
                 </button>
-                <div id="demo5" class="collapse show">
+                <div id="demo5" className="collapse show">
                   <ul>
                     <li>
                       <input
@@ -546,13 +547,13 @@ function Author() {
                     </li>
                     <li>
                       <form action="#" className="checked_form">
-                        <div class="form-check form-check-inline">
+                        <div className="form-check form-check-inline">
                           <input type="radio" id="test1" name="radio-group" />
-                          <label for="test1">Apple</label>
+                          <label htmlFor="test1">Apple</label>
                         </div>
-                        <div class="form-check form-check-inline">
+                        <div className="form-check form-check-inline">
                           <input type="radio" id="test2" name="radio-group" />
-                          <label for="test2">Apple</label>
+                          <label htmlFor="test2">Apple</label>
                         </div>
                       </form>
                     </li>

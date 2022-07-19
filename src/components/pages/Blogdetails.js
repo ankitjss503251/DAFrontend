@@ -89,7 +89,7 @@ function Blogdetails() {
                                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elit cras tellus erat amet dolor nunc ultricies. Phasellus tellus vestibulum eget commodo eu. Ultricies mi commodo nunc facilisi quam lectus nulla amet. Nisl, elementum molestie ipsum adipiscing egestas quam etiam. Vitae tincidunt sapien eros, luctus est sed eleifend enim. Quis placerat sagittis posuere tincidunt. Sit nibh sed morbi dis viverra sed. A egestas nibh gravida pulvinar pretium eget. Mi proin eget convallis habitant amet nunc. Ultricies elementum blandit egestas vitae nullam non. Malesuada sed pretium etiam placerat feugiat malesuada ut et aenean.</p>
                                 </div>
                             </div>
-                            <div class="col-md-12 text-center mt-5"><a class="view_all_bdr" href="/">Load More</a></div>
+                            <div class="col-md-12 text-center mt-5"><Link class="view_all_bdr" to="/">Load More</Link></div>
                         </div>
                         <form className="form_comment mt-5">
                             <h5>Leave a Comment</h5>

@@ -151,9 +151,9 @@ function Marketplacecollection() {
                 id='pills-tab'
                 role='tablist'>
                 {categories?.length > 0 ? (
-                  <li class='nav-item' role='presentation'>
+                  <li className='nav-item' role='presentation'>
                     <button
-                      class={!showTab ? "nav-link active" : "nav-link"}
+                      className={!showTab ? "nav-link active" : "nav-link"}
                       id='all'
                       data-bs-toggle='pill'
                       data-bs-target='#all'
@@ -178,9 +178,9 @@ function Marketplacecollection() {
                 {categories?.length > 0
                   ? categories.map((cat, key) => {
                       return (
-                        <li class='nav-item' role='presentation' key={key}>
+                        <li className='nav-item' role='presentation' key={key}>
                           <button
-                            class='nav-link'
+                            className='nav-link'
                             id={cat.name}
                             data-bs-toggle='pill'
                             data-bs-target={`#${cat.name}`}
@@ -207,9 +207,9 @@ function Marketplacecollection() {
               </ul>
             </div>
           </div>
-          <div class='tab-content' id='pills-tabContent'>
+          <div className='tab-content' id='pills-tabContent'>
             <div
-              class={!showTab ? "tab-pane fade show active" : "tab-pane fade"}
+              className={!showTab ? "tab-pane fade show active" : "tab-pane fade"}
               id='all'
               role='tabpanel'
               aria-labelledby='all'>
@@ -222,7 +222,7 @@ function Marketplacecollection() {
                       <div className='col-lg-4 col-md-6 mb-5' key={key}>
                         <div className='collection_slide'>
                           <Link to={`/collection/${card?._id}`}>
-                            <div class="mint_img">
+                            <div className="mint_img">
                               <img
                                 className='img-fluid w-100'
                                 src={card?.logoImg}
@@ -235,7 +235,7 @@ function Marketplacecollection() {
                           </Link>
                           <div className='collection_text'>
                           <div className='coll_profileimg'>
-                            <div class="rotater_border profile_img">
+                            <div className="rotater_border profile_img">
                               <Link className="rounded-circle"
                                 to={`/collectionwithcollection/${card?.brand?._id}`}>
                                 
@@ -258,16 +258,16 @@ function Marketplacecollection() {
                           </div>
                             
                               <h4 className='collname'>
-                                <Link to={`/collection/${card?._id}`}>
-                                  {card.name?.length > 8
-                                    ? card.name?.slice(0, 8)
-                                    : card.name}
-                                </Link>
+
+                                {card.name?.length > 15
+                                  ? card.name?.slice(0, 15)
+                                  : card.name}
+
                               </h4>
                               <p>
-                                {card.desc?.length > 8
-                                  ? card.desc?.slice(0, 8)
-                                  : card.desc.slice(0, 8)}
+                                {card.desc?.length > 15
+                                  ? card.desc?.slice(0, 15) + "..."
+                                  : card.desc}
                               </p>
                             
                           </div>
@@ -281,7 +281,7 @@ function Marketplacecollection() {
                   </h2>
                 )}
                 {allCollections[0]?.length > 12 ? (
-                  <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <div className='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                     <button
                       type='button'
                       className={`btn view_all_bdr ${loadMoreDisabledAll}`}
@@ -298,7 +298,7 @@ function Marketplacecollection() {
               </div>
             </div>
             <div
-              class={`tab-pane fade ${showTab}`}
+              className={`tab-pane fade ${showTab}`}
               id={`#${activeCat.name}`}
               role='tabpanel'
               aria-labelledby={activeCat.name}>
@@ -311,7 +311,7 @@ function Marketplacecollection() {
                       <div className='col-lg-4 col-md-6 mb-5' key={key}>
                         <div className='collection_slide'>
                           <Link to={`/collection/${card._id}`}>
-                            <div class="mint_img">
+                            <div className="mint_img">
                               <img
                                 className='img-fluid w-100'
                                 src={card.logoImg}
@@ -324,7 +324,7 @@ function Marketplacecollection() {
                           </Link>
                           <div className='collection_text'>
                             <div className='coll_profileimg'>
-                              <div class="rotater_border profile_img">
+                              <div className="rotater_border profile_img">
                                 <Link className="rounded-circle"
                                 to={`/collectionwithcollection/${card.brand._id}`}>
                                   <img
@@ -370,7 +370,7 @@ function Marketplacecollection() {
                   </h2>
                 )}
                 {activeCat[0]?.length > 12 ? (
-                  <div class='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <div className='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
                     <button
                       type='button'
                       className={`btn view_all_bdr ${loadMoreDisabled}`}
