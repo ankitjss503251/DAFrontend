@@ -303,6 +303,7 @@ function NFTDetails() {
       };
 
       let _data = await fetchBidNft(searchParams);
+      console.log("have bids", _data);
       if (_data && _data.data.length > 0) {
         const b = _data.data[0];
         setHaveBid(true);
@@ -321,13 +322,14 @@ function NFTDetails() {
       let searchParams = {
         nftID: NFTDetails.id,
         buyerID: localStorage.getItem("userId"),
-        bidStatus: "All",
+        bidStatus: "MakeOffer",
         orderID: "All",
       };
 
       let _data = await fetchOfferNft(searchParams);
 
       if (_data && _data.data.length > 0) {
+        console.log("offer data is------>",_data)
         const b = _data.data[0];
         setHaveOffer(true);
 
@@ -641,7 +643,7 @@ function NFTDetails() {
                 return;
               }
               try {
-                await createBid(
+                let res = await createBid(
                   orders[0].nftID,
                   orders[0]._id,
                   orders[0].sellerID?._id,
@@ -652,9 +654,13 @@ function NFTDetails() {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
+                if (res === false) {
+                  setLoading(false);
+                  return;
+                }
                 NotificationManager.success("Bid Placed Successfully", "", 800);
                 setLoading(false);
-                slowRefresh(1000);
+                // slowRefresh(1000);
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
                 setLoading(false);
@@ -662,7 +668,7 @@ function NFTDetails() {
               }
             }}
           >
-            {haveBid ? "Update Bid" : "Place Bid"}
+            {haveBid && haveBid !== "none" ? "Update Bid" : "Place Bid"}
           </button>
         </div>
       }
@@ -1209,7 +1215,6 @@ function NFTDetails() {
                   </button>
                 </li>
                 <li className="list-unstyled">
-                  
                   <button
                     id="btn2"
                     className="navbtn"

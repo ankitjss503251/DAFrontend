@@ -55,7 +55,6 @@
     "react-photo-gallery": "^8.0.0",
     "react-pose": "^4.0.10",
     "react-redux": "^7.2.6",
-
     "react-router-dom": "^6.3.0",
     "react-scripts": "4.0.3",
     "react-select": "^4.3.1",
