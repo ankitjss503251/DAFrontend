@@ -5288,3 +5288,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     z-index: var(--onboard-modal-z-index, var(--modal-z-index));
     display: none !important;
 }
+
+
+.no_data_text{
+  font-size: 20px;
+  text-align: center;
+}

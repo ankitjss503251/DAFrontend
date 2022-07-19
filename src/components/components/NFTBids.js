@@ -158,17 +158,17 @@ function NFTBids(props) {
                     if (val.split(".").length > 2) {
                       val = val.replace(/\.+$/, "");
                     }
-                    if (val.length === 1 && val !== "0.") {
-                      val = Number(val);
-                    }
+                    // if (val.length === 1 && val !== "0.") {
+                    //   val = Number(val);
+                    // }
                   }
                 } else {
                   if (val.split(".").length > 2) {
                     val = val.replace(/\.+$/, "");
                   }
-                  if (val.length === 1 && val !== "0.") {
-                    val = Number(val);
-                  }
+                  // if (val.length === 1 && val !== "0.") {
+                  //   val = Number(val);
+                  // }
                 }
                 setPrice(val);
               }
@@ -244,6 +244,10 @@ function NFTBids(props) {
     <div className="row">
       {loading ? <Spinner /> : ""}
       {isUpdateBidModal ? updateBidModal : ""}
+      {bids && bids.length <= 0 ?  <div className="col-md-12">
+       <h4 className="no_data_text text-muted">No Bids Available</h4>
+     </div> :
+      <div className='table-responsive'>
       <div className="col-md-12">
         <div className="nft_list">
           <table className="table text-light">
@@ -427,6 +431,7 @@ function NFTBids(props) {
           </table>
         </div>
       </div>
+      </div>}
     </div>
   );
 }
