@@ -15,7 +15,7 @@ import { getMintCollections } from "../../apiServices";
 async function lazyImport(addr) {
   let data = await getMintCollections({ address: addr });
   if (!data || data === []) {
-    NotificationManager.error("data not found", "", 800);
+    window.location.href = "/";
     return;
   }
 
