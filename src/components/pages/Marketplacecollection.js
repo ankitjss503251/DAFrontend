@@ -257,9 +257,9 @@ function Marketplacecollection() {
                                   : card.name}
                               </h4>
                               <p>
-                                {card.desc?.length > 8
-                                  ? card.desc?.slice(0, 8)
-                                  : card.desc.slice(0, 8)}
+                                {card.desc?.length > 15
+                                  ? card.desc?.slice(0, 15) + "..."
+                                  : card.desc}
                               </p>
                             </a>
                           </div>
