@@ -111,7 +111,7 @@ function NFTBids(props) {
               if (!/^\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (Number(e.target.value) > Number(100)) {
+              if (Number(e.target.value) > Number(currentBid?.total_quantity)) {
                 NotificationManager.error(
                   "Quantity should be less than seller's order",
                   "",
@@ -136,7 +136,10 @@ function NFTBids(props) {
               if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (Number(e.target.value) > Number(currentBid.total_quantity)) {
+              if (
+                Number(e.target.value) >
+                Number(currentBid?.price?.$numberDecimal)
+              ) {
                 NotificationManager.error(
                   "Quantity should be less than seller's order",
                   "",
@@ -172,54 +175,18 @@ function NFTBids(props) {
             }}
           ></input>
 
-          {/* <div className='form-control checkout_input'>
-            <h6 className='enter_price_heading required'>
-              Bid Expiration date
-            </h6>
-          
-            <input
-              className='form-control checkout_input'
-              type='datetime-local'
-              value={(bidDeadline || "").toString().substring(0, 16)}
-              onChange={(ev) => {
-                if (!ev.target["validity"].valid) return;
-                const dt = ev.target["value"] + ":00Z";
-                const ct = moment().toISOString();
-                if (dt < ct) {
-                  NotificationManager.error(
-                    "Expiration date should not be of past date",
-                    "",
-                    800
-                  );
-                  return;
-                }
-                setBidDeadline(dt);
-                console.log("dtt", dt);
-              }}
-            />
-          </div> */}
-
-          {/* <div className='bid_user_calculations'>
-            {checkoutCal?.map(({ key, value }) => {
-              return (
-                <div className='cal_div'>
-                  <span>{key}</span>
-                  <span className='cal_div_value'>{value} MATIC</span>
-                </div>
-              );
-            })}
-          </div> */}
-
-          {/* {Number(willPay) === 0 ? (
-            ""
-          ) : Number(willPay) > Number(userBalance) ? (
-            <p className='disabled_text'>Insufficient Balance in MATIC</p>
-          ) : ( */}
           <button
             className="btn-main mt-2 btn-placeABid"
             onClick={async () => {
               setIsUpdateBidModal(false);
               setLoading(true);
+              console.log(
+                "Number(price)",
+                Number(price) <
+                  Number(convertToEth(currentBid.price?.$numberDecimal)),
+                Number(price),
+                Number(convertToEth(currentBid.price?.$numberDecimal))
+              );
               if (
                 Number(price) <
                 Number(convertToEth(currentBid.price?.$numberDecimal))
@@ -233,7 +200,7 @@ function NFTBids(props) {
                 return;
               }
               try {
-                await createBid(
+                let res = await createBid(
                   currentBid.nftID,
                   currentBid.orderID[0]._id,
                   currentBid.orderID[0].sellerID,
@@ -242,13 +209,17 @@ function NFTBids(props) {
                   currentBid.total_quantity,
                   ethers.utils.parseEther(price.toString()),
                   false
-                  // new Date(bidDeadline).valueOf() / 1000
                 );
-                NotificationManager.success(
-                  "Bid Updated Successfully",
-                  "",
-                  800
-                );
+                if (res === true)
+                  NotificationManager.success(
+                    "Bid Updated Successfully",
+                    "",
+                    800
+                  );
+                else {
+                  setLoading(false);
+                  return;
+                }
                 setLoading(false);
                 setReloadContent(!reloadContent);
               } catch (e) {
@@ -390,11 +361,7 @@ function NFTBids(props) {
                                 className="small_yellow_btn small_btn mb-2"
                                 onClick={() => {
                                   setCurrentBid(b);
-                                  // setBidDeadline(
-                                  //   moment(b.bidDeadline * 1000)
-                                  //     .utc()
-                                  //     .format()
-                                  // );
+
                                   setPrice(
                                     Number(
                                       convertToEth(b?.bidPrice?.$numberDecimal)

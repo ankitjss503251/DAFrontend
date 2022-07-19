@@ -114,7 +114,6 @@ const Header = function () {
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState();
   const [chainId, setChainId] = useState();
-  const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [scolns, setSColns] = useState([]);
   const [sNfts, setSNfts] = useState([]);
@@ -128,6 +127,9 @@ const Header = function () {
     async function setCategory() {
       const cat = await getCategory();
       setCatg(cat);
+      
+      //const [primaryWallet] = await onboard.state.get().wallets;
+      //console.log("Active wallets",primaryWallet);
     }
     setCategory();
   }, []);
@@ -152,7 +154,6 @@ const Header = function () {
         setCookie("balance", s[0].accounts[0].balance?.MATIC, { path: "/" });
       }
     }
-
     setCookies();
   }, []);
 
@@ -168,6 +169,7 @@ const Header = function () {
   };
 
   useEffect(() => {
+    console.log("provider in useEffect", provider);
     async function setProvider() {
       if (provider) {
         provider.on("accountsChanged", (accounts) => {
@@ -181,7 +183,6 @@ const Header = function () {
           }
         });
         provider.on("chainChanged", async (chains) => {
-          console.log("chain changed", chains);
           if (chains !== process.env.REACT_APP_CHAIN_ID) {
             await onboard.setChain({
               chainId: process.env.REACT_APP_CHAIN_ID,
@@ -194,15 +195,14 @@ const Header = function () {
     setProvider();
   }, [provider, account, chainId]);
 
-  function walletConnect(){
-  connectWallet();
-    
+  function walletConnect() {
+    connectWallet();
   }
 
   const getUserProfile = async () => {
     const profile = await getProfile();
-    console.log("profile", profile.data);
     setUserDetails(profile.data);
+  
   };
 
   useEffect(() => {
@@ -210,6 +210,7 @@ const Header = function () {
       if (account && !userDetails) getUserProfile();
     }
     getUserProfileData();
+    
   }, [account, userDetails?.username]);
 
   const connectWallet = async () => {
@@ -220,7 +221,6 @@ const Header = function () {
       });
       const primaryWallet = wallets[0];
       setChainId(primaryWallet.chains[0].id);
-      console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
 
@@ -407,50 +407,51 @@ const Header = function () {
   };
 
   return (
-    <header id='myHeader'>
-      <nav className='navbar navbar-expand-lg'>
-        <div className='nav-container container'>
-          <Link className='navbar-brand' to='/'>
-            <img src={"../img/logo.svg"} className='img-fluid d-block' alt='' />
+    <header id="myHeader">
+      <nav className="navbar navbar-expand-lg">
+        <div className="nav-container container">
+          <Link className="navbar-brand" to="/">
+            <img src={"../img/logo.svg"} className="img-fluid d-block" alt="" />
           </Link>
           <button
-            className='navbar-toggler'
-            type='button'
-            data-bs-toggle='collapse'
-            data-bs-target='#navbarSupportedContent'
-            aria-controls='navbarSupportedContent'
-            aria-expanded='false'
-            aria-label='Toggle navigation'>
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
             {/* <span className='navbar-toggler-icon'></span> */}
-            <img src={menuIcon} alt='' />
+            <img src={menuIcon} alt="" />
           </button>
-          <div className='collapse navbar-collapse' id='navbarSupportedContent'>
-            <div className='d-flex navbar_form'>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <div className="d-flex navbar_form">
               <input
-                className='form-control me-2 '
-                type='search'
-                placeholder='Search item here...'
-                aria-label='Search'
+                className="form-control me-2 "
+                type="search"
+                placeholder="Search item here..."
+                aria-label="Search"
                 value={searchValue}
                 onChange={(e) => {
                   handleSearch(e);
                 }}
                 onKeyPress={(e) => {
                   if (e.key === "Enter") {
-                   if(sNfts.length > 0)
-                   window.location.href = `/marketplace/${searchValue}`;
-                   else
-                   window.location.href = `/marketplacecollection/${searchValue}`;
+                    if (sNfts.length > 0)
+                      window.location.href = `/marketplace/${searchValue}`;
+                    else
+                      window.location.href = `/marketplacecollection/${searchValue}`;
                   }
                 }}
               />
-              <button className="search_btn" type="submit">
-              <Link
-                    to={{
-                        pathname: `/marketplace/${searchValue}`,
-                    }}
-                    >
-                <img src={"../img/search.svg"} alt="" /></Link>
+              <button className='search_btn' type='submit'>
+                <Link
+                  to={{
+                    pathname: `/marketplace/${searchValue}`,
+                  }}>
+                  <img src={"../img/search.svg"} alt='' />
+                </Link>
               </button>
             </div>
             {sNfts.length > 0 || (scolns.length > 0 && searchedText) ? (
@@ -469,8 +470,9 @@ const Header = function () {
                 </ul>
                 {scolns.length > 3 && (
                   <a
-                    className='view_all_bdr search_view_all mb-3'
-                    href={`/marketplaceCollection/${searchedText}`}>
+                    className="view_all_bdr search_view_all mb-3"
+                    href={`/marketplaceCollection/${searchedText}`}
+                  >
                     View All
                   </a>
                 )}
@@ -488,8 +490,9 @@ const Header = function () {
                 </ul>
                 {sNfts.length > 3 && (
                   <a
-                    className='view_all_bdr search_view_all'
-                    href={`/marketplace/${searchedText}`}>
+                    className="view_all_bdr search_view_all"
+                    href={`/marketplace/${searchedText}`}
+                  >
                     View All
                   </a>
                 )}
@@ -498,17 +501,18 @@ const Header = function () {
               ""
             )}
 
-            <ul className='navbar-nav me-auto align-items-center mb-2 mb-lg-0'>
-              <li className='nav-item'>
+            <ul className="navbar-nav me-auto align-items-center mb-2 mb-lg-0">
+              <li className="nav-item">
                 <NavLink
-                  className='nav-link'
-                  aria-current='page'
-                  to='/marketplace'>
+                  className="nav-link"
+                  aria-current="page"
+                  to="/marketplace"
+                >
                   Marketplace
                 </NavLink>
-                <ul className='sub_menu'>
+                <ul className="sub_menu">
                   <li>
-                    <NavLink to={"/marketplace"} className='sub-items'>
+                    <NavLink to={"/marketplace"} className="sub-items">
                       <AllNFTs />
                       All NFTs
                     </NavLink>
@@ -519,7 +523,8 @@ const Header = function () {
                           <li key={key}>
                             <NavLink
                               to={`/marketplacecollection/${c.name}`}
-                              className='sub-items'>
+                              className="sub-items"
+                            >
                               <Firearmsvg />
                               {c.name}
                             </NavLink>
@@ -529,67 +534,68 @@ const Header = function () {
                     : ""}
                 </ul>
               </li>
-              <li className='nav-item'>
-                <NavLink className='nav-link' to={"/marketplacecollection"}>
+              <li className="nav-item">
+                <NavLink className="nav-link" to={"/marketplacecollection"}>
                   Collections
                 </NavLink>
               </li>
               <li className='nav-item'>
-                <NavLink className='nav-link' to='/helpcenter' tabindex='-1'>
+                <NavLink className='nav-link' to='/helpcenter' tabIndex='-1'>
                   Resources
-                  <ul className='sub_menu'>
+                  <ul className="sub_menu">
                     <li>
-                      <NavLink to={"/helpcenter"} className='sub-items'>
+                      <NavLink to={"/helpcenter"} className="sub-items">
                         Help Center
                       </NavLink>
                     </li>
                     <li>
-                      <NavLink to={"/Partners"} className='sub-items'>
+                      <NavLink to={"/Partners"} className="sub-items">
                         Partners
                       </NavLink>
                     </li>
                     <li>
-                      <NavLink to={"/blog"} className='sub-items'>
+                      <NavLink to={"/blog"} className="sub-items">
                         Blog
                       </NavLink>
                     </li>
-                    <ul className='subsocial-icons mt-3'>
+                    <ul className="subsocial-icons mt-3">
                       <li>
                         <NavLink to={""}>
-                          <i className='fa fa-facebook fa-lg'></i>
+                          <i className="fa fa-facebook fa-lg"></i>
                         </NavLink>
                       </li>
                       <li>
                         <NavLink to={""}>
-                          <i className='fa fa-twitter fa-lg'></i>
+                          <i className="fa fa-twitter fa-lg"></i>
                         </NavLink>
                       </li>
                       <li>
                         <NavLink to={""}>
-                          <i className='fa fa-linkedin fa-lg'></i>
+                          <i className="fa fa-linkedin fa-lg"></i>
                         </NavLink>
                       </li>
                       <li>
                         <NavLink to={""}>
-                          <i className='fa fa-pinterest fa-lg'></i>
+                          <i className="fa fa-pinterest fa-lg"></i>
                         </NavLink>
                       </li>
                       <li>
                         <NavLink to={""}>
-                          <i className='fa fa-rss fa-lg'></i>
+                          <i className="fa fa-rss fa-lg"></i>
                         </NavLink>
                       </li>
                     </ul>
                   </ul>
                 </NavLink>
               </li>
-              {!account ? (
+              {console.log("userDetails", userDetails)}
+              {!userDetails ? (
                 <>
-                  <li className='nav-item'>
+                  <li className="nav-item">
                     <button
                       onClick={!account ? connectWallet : disconnectWallet}
                       className='main_btn'
-                      tabindex='-1'>
+                      tabIndex='-1'>
                       {!account
                         ? "Connect Wallet"
                         : account.slice(0, 4) + "..." + account.slice(38, 42)}
@@ -615,33 +621,34 @@ const Header = function () {
                     </div>
                   </li> */}
                   <li className='nav-item'>
-                    <NavLink to='' tabindex='-1' className='profile_pic'>
+                    <NavLink to='' tabIndex='-1' className='profile_pic'>
                       <img
                         src={
                           userDetails?.profileIcon
                             ? userDetails.profileIcon
                             : defaultProfile
                         }
-                        className='img-fluid hunter_fav'
-                        alt='favicon'
+                        className="img-fluid hunter_fav"
+                        alt="favicon"
                       />
                     </NavLink>
-                    <ul className='sub_menu'>
-                      <li className='sub_pdd'>
-                        <span className='Connected'>Connected </span>
-                        <div className='sub_div'>
-                          <div className='profile_pic mr-3'>
+
+                    <ul className="sub_menu">
+                      <li className="sub_pdd">
+                        <span className="Connected">Connected </span>
+                        <div className="sub_div">
+                          <div className="profile_pic mr-3">
                             <img
                               src={
                                 userDetails?.profileIcon
                                   ? userDetails.profileIcon
                                   : defaultProfile
                               }
-                              className='img-fluid hunter_fav'
-                              alt='favicon'
+                              className="img-fluid hunter_fav"
+                              alt="favicon"
                             />
                           </div>
-                          <div className=''>
+                          <div className="">
                             <h6>
                               {userDetails?.username === ""
                                 ? "unnamed"
@@ -656,16 +663,17 @@ const Header = function () {
                         </div>
                       </li>
                       <li>
-                        <NavLink to={"/userprofile"} className='sub-items'>
+                        <NavLink to={"/userprofile"} className="sub-items">
                           <svg
-                            width='20'
-                            height='20'
-                            viewBox='0 0 20 20'
-                            fill='none'
-                            xmlns='http://www.w3.org/2000/svg'>
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
                             <path
-                              d='M10 0C11.3261 0 12.5979 0.526784 13.5355 1.46447C14.4732 2.40215 15 3.67392 15 5C15 6.32608 14.4732 7.59785 13.5355 8.53553C12.5979 9.47322 11.3261 10 10 10C8.67392 10 7.40215 9.47322 6.46447 8.53553C5.52678 7.59785 5 6.32608 5 5C5 3.67392 5.52678 2.40215 6.46447 1.46447C7.40215 0.526784 8.67392 0 10 0ZM10 12.5C15.525 12.5 20 14.7375 20 17.5V20H0V17.5C0 14.7375 4.475 12.5 10 12.5Z'
-                              fill='#EF981D'
+                              d="M10 0C11.3261 0 12.5979 0.526784 13.5355 1.46447C14.4732 2.40215 15 3.67392 15 5C15 6.32608 14.4732 7.59785 13.5355 8.53553C12.5979 9.47322 11.3261 10 10 10C8.67392 10 7.40215 9.47322 6.46447 8.53553C5.52678 7.59785 5 6.32608 5 5C5 3.67392 5.52678 2.40215 6.46447 1.46447C7.40215 0.526784 8.67392 0 10 0ZM10 12.5C15.525 12.5 20 14.7375 20 17.5V20H0V17.5C0 14.7375 4.475 12.5 10 12.5Z"
+                              fill="#EF981D"
                             />
                           </svg>{" "}
                           My Account
@@ -674,33 +682,35 @@ const Header = function () {
                       <li>
                         <NavLink
                           to={`/author/${userDetails?._id}`}
-                          className='sub-items'>
+                          className="sub-items"
+                        >
                           <svg
-                            width='20'
-                            height='20'
-                            viewBox='0 0 20 20'
-                            fill='none'
-                            xmlns='http://www.w3.org/2000/svg'>
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
                             <path
-                              d='M8.57143 5.71429H4.28571V8.57143H8.57143V5.71429ZM0 4.28571C0 3.14907 0.451529 2.05898 1.25526 1.25526C2.05898 0.451529 3.14907 0 4.28571 0H12.8571V20H4.28571C3.14907 20 2.05898 19.5485 1.25526 18.7447C0.451529 17.941 0 16.8509 0 15.7143V4.28571ZM2.85714 5.71429V8.57143C2.85714 8.95031 3.00765 9.31367 3.27556 9.58158C3.54347 9.84949 3.90683 10 4.28571 10H8.57143C8.95031 10 9.31367 9.84949 9.58158 9.58158C9.84949 9.31367 10 8.95031 10 8.57143V5.71429C10 5.33541 9.84949 4.97204 9.58158 4.70413C9.31367 4.43622 8.95031 4.28571 8.57143 4.28571H4.28571C3.90683 4.28571 3.54347 4.43622 3.27556 4.70413C3.00765 4.97204 2.85714 5.33541 2.85714 5.71429ZM3.57143 11.4286C3.38199 11.4286 3.20031 11.5038 3.06635 11.6378C2.9324 11.7717 2.85714 11.9534 2.85714 12.1429C2.85714 12.3323 2.9324 12.514 3.06635 12.6479C3.20031 12.7819 3.38199 12.8571 3.57143 12.8571H9.28571C9.47515 12.8571 9.65684 12.7819 9.79079 12.6479C9.92475 12.514 10 12.3323 10 12.1429C10 11.9534 9.92475 11.7717 9.79079 11.6378C9.65684 11.5038 9.47515 11.4286 9.28571 11.4286H3.57143ZM2.85714 15C2.85714 15.1894 2.9324 15.3711 3.06635 15.5051C3.20031 15.639 3.38199 15.7143 3.57143 15.7143H9.28571C9.47515 15.7143 9.65684 15.639 9.79079 15.5051C9.92475 15.3711 10 15.1894 10 15C10 14.8106 9.92475 14.6289 9.79079 14.4949C9.65684 14.361 9.47515 14.2857 9.28571 14.2857H3.57143C3.38199 14.2857 3.20031 14.361 3.06635 14.4949C2.9324 14.6289 2.85714 14.8106 2.85714 15ZM14.2857 20H15.7143C16.8509 20 17.941 19.5485 18.7447 18.7447C19.5485 17.941 20 16.8509 20 15.7143V14.2857H14.2857V20ZM20 12.8571V7.14286H14.2857V12.8571H20ZM20 5.71429V4.28571C20 3.14907 19.5485 2.05898 18.7447 1.25526C17.941 0.451529 16.8509 0 15.7143 0H14.2857V5.71429H20Z'
-                              fill='#EF981D'
+                              d="M8.57143 5.71429H4.28571V8.57143H8.57143V5.71429ZM0 4.28571C0 3.14907 0.451529 2.05898 1.25526 1.25526C2.05898 0.451529 3.14907 0 4.28571 0H12.8571V20H4.28571C3.14907 20 2.05898 19.5485 1.25526 18.7447C0.451529 17.941 0 16.8509 0 15.7143V4.28571ZM2.85714 5.71429V8.57143C2.85714 8.95031 3.00765 9.31367 3.27556 9.58158C3.54347 9.84949 3.90683 10 4.28571 10H8.57143C8.95031 10 9.31367 9.84949 9.58158 9.58158C9.84949 9.31367 10 8.95031 10 8.57143V5.71429C10 5.33541 9.84949 4.97204 9.58158 4.70413C9.31367 4.43622 8.95031 4.28571 8.57143 4.28571H4.28571C3.90683 4.28571 3.54347 4.43622 3.27556 4.70413C3.00765 4.97204 2.85714 5.33541 2.85714 5.71429ZM3.57143 11.4286C3.38199 11.4286 3.20031 11.5038 3.06635 11.6378C2.9324 11.7717 2.85714 11.9534 2.85714 12.1429C2.85714 12.3323 2.9324 12.514 3.06635 12.6479C3.20031 12.7819 3.38199 12.8571 3.57143 12.8571H9.28571C9.47515 12.8571 9.65684 12.7819 9.79079 12.6479C9.92475 12.514 10 12.3323 10 12.1429C10 11.9534 9.92475 11.7717 9.79079 11.6378C9.65684 11.5038 9.47515 11.4286 9.28571 11.4286H3.57143ZM2.85714 15C2.85714 15.1894 2.9324 15.3711 3.06635 15.5051C3.20031 15.639 3.38199 15.7143 3.57143 15.7143H9.28571C9.47515 15.7143 9.65684 15.639 9.79079 15.5051C9.92475 15.3711 10 15.1894 10 15C10 14.8106 9.92475 14.6289 9.79079 14.4949C9.65684 14.361 9.47515 14.2857 9.28571 14.2857H3.57143C3.38199 14.2857 3.20031 14.361 3.06635 14.4949C2.9324 14.6289 2.85714 14.8106 2.85714 15ZM14.2857 20H15.7143C16.8509 20 17.941 19.5485 18.7447 18.7447C19.5485 17.941 20 16.8509 20 15.7143V14.2857H14.2857V20ZM20 12.8571V7.14286H14.2857V12.8571H20ZM20 5.71429V4.28571C20 3.14907 19.5485 2.05898 18.7447 1.25526C17.941 0.451529 16.8509 0 15.7143 0H14.2857V5.71429H20Z"
+                              fill="#EF981D"
                             />
                           </svg>{" "}
                           My NFTs
                         </NavLink>
                       </li>
                       <li>
-                        <NavLink to={"/Notifications"} className='sub-items'>
+                        <NavLink to={"/Notifications"} className="sub-items">
                           <svg
-                            class='hide'
+                            className='hide'
                             width='24'
                             height='24'
                             viewBox='0 0 24 24'
                             fill='none'
                             xmlns='http://www.w3.org/2000/svg'>
                             <path
-                              d='M12 0C5.38267 0 0 5.38267 0 12V12.0013L6.66667 6.668V10.668H16V13.3347H6.66667V17.3347L0 12.0013C0.00133333 18.6187 5.38267 24 12 24C18.6173 24 24 18.6173 24 12C24 5.38267 18.6173 0 12 0Z'
-                              fill='#EF981D'
+                              d="M12 0C5.38267 0 0 5.38267 0 12V12.0013L6.66667 6.668V10.668H16V13.3347H6.66667V17.3347L0 12.0013C0.00133333 18.6187 5.38267 24 12 24C18.6173 24 24 18.6173 24 12C24 5.38267 18.6173 0 12 0Z"
+                              fill="#EF981D"
                             />
                           </svg>
                           Preferences
@@ -709,17 +719,19 @@ const Header = function () {
                       <li>
                         <NavLink
                           to={""}
-                          className='sub-items'
-                          onClick={disconnectWallet}>
+                          className="sub-items"
+                          onClick={disconnectWallet}
+                        >
                           <svg
-                            width='24'
-                            height='24'
-                            viewBox='0 0 24 24'
-                            fill='none'
-                            xmlns='http://www.w3.org/2000/svg'>
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
                             <path
-                              d='M12 0C5.38267 0 0 5.38267 0 12V12.0013L6.66667 6.668V10.668H16V13.3347H6.66667V17.3347L0 12.0013C0.00133333 18.6187 5.38267 24 12 24C18.6173 24 24 18.6173 24 12C24 5.38267 18.6173 0 12 0Z'
-                              fill='#EF981D'
+                              d="M12 0C5.38267 0 0 5.38267 0 12V12.0013L6.66667 6.668V10.668H16V13.3347H6.66667V17.3347L0 12.0013C0.00133333 18.6187 5.38267 24 12 24C18.6173 24 24 18.6173 24 12C24 5.38267 18.6173 0 12 0Z"
+                              fill="#EF981D"
                             />
                           </svg>{" "}
                           Disconnect
@@ -727,10 +739,10 @@ const Header = function () {
                       </li>
                     </ul>
                   </li>
-                  <li className='nav-item'>
+                  <li className="nav-item">
                     <button
                       className='square_yello'
-                      tabindex='-1'
+                      tabIndex='-1'
                       onClick={disconnectWallet}>
                       <img src='../img/edit.png' alt='edit' />{" "}
                       {account?.slice(0, 4) + "..." + account?.slice(38, 42)}

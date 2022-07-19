@@ -63,7 +63,7 @@ function Partners() {
                     <div className="row">
                         {PartnerWithUs.map(partners=>(
                             <div className="col-md-4 mb-4" key={partners.id}>
-                                <div class="collection_slide" tabindex="-1">
+                                <div class="collection_slide" tabIndex="-1">
                                     <img src={partners.img} class="img-fluid" alt="" />
                                     <div class="collection_text">
                                         <div class="coll_profileimg">

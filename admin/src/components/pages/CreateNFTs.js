@@ -18,12 +18,12 @@ import extendedERC721Abi from "./../../config/abis/extendedERC721.json";
 import { exportInstance } from "../../apiServices";
 import contracts from "./../../config/contracts";
 import { GENERAL_DATE, GENERAL_TIMESTAMP } from "../../helpers/constants";
-import Loader from "../components/loader";
 import "../../App.css";
 import { useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
 import { slowRefresh } from "../../helpers/NotifyStatus";
+import Spinner from "../components/Spinner";
 
 function CreateNFTs() {
   const [nftImg, setNftImg] = useState();
@@ -107,8 +107,8 @@ function CreateNFTs() {
   };
 
   useEffect(() => {
-    if (cookies.selected_account && localStorage.getItem("Authorization") !== undefined && localStorage.getItem("Authorization") !== null) setCurrentUser(cookies.selected_account);
-  }, [cookies.selected_account]);
+    if (cookies.da_selected_account) setCurrentUser(cookies.da_selected_account);
+  }, [cookies.da_selected_account]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -256,7 +256,7 @@ function CreateNFTs() {
       let data = await GetMyCollectionsList(reqBody);
       console.log("dataaaaaaaaa", data)
       if (data && data.results && data.results[0].length > 0) {
-        let res = data?.results[0].filter((d, i) =>console.log("d.isMinted", d));
+        let res = data?.results[0].filter((d, i) => d.isMinted === 1);
         setCollections(res);
       }
     };
@@ -301,7 +301,7 @@ function CreateNFTs() {
   return (
     <div className='wrapper'>
       {/* <!-- Sidebar  --> */}
-      {loading ? <Loader /> : ""}
+      {loading ? <Spinner /> : ""}
       <Sidebar />
 
       {/* <!-- Page Content  --> */}
@@ -430,6 +430,7 @@ function CreateNFTs() {
                         <img
                           alt=''
                           ref={uploadedImage}
+                          key={img}
                           src={"../images/upload.png"}
                           className='img-fluid profile_circle_img admin_profile_img'
                         />
@@ -443,6 +444,7 @@ function CreateNFTs() {
                           controls>
                           <source
                             ref={uploadedImage}
+                            key={img}
                             src={img}
                             type='video/mp4'
                           />
@@ -460,7 +462,10 @@ function CreateNFTs() {
                           //enableZoom={false}
                           ref={uploadedImage}
                           className='img-fluid profile_circle_img'
-                          src={img}>
+                          key={img}
+                          src={img}
+                          >
+                           
                           <AmbientLight color={0xffffff} />
                           <DirectionLight
                             color={0xffffff}

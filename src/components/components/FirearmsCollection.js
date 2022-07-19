@@ -50,7 +50,7 @@ function FirearmsCollection(props) {
                       <img
                         alt=''
                         src={card.image}
-                        class='img-fluid mb-3 nftslide_img'
+                        className='img-fluid mb-3 nftslide_img'
                         onError={(e) =>
                           (e.target.src = "../img/collections/list4.png")
                         }
@@ -62,7 +62,7 @@ function FirearmsCollection(props) {
                           <img
                             alt=''
                             src={"../img/check.png"}
-                            class='img-fluid'
+                            className='img-fluid'
                           />
                         </span>
                         <h3 className='text-left'>{card.name}</h3>
