@@ -8,7 +8,7 @@ function Register() {
               <div className='col-md-12'>
                 <div className='login_form'>
                   <form>
-                  <span class="login100-form-logo">
+                  <span className="login100-form-logo">
                     <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                       width="64.000000pt" height="64.000000pt" viewBox="0 0 64.000000 64.000000"
                       preserveAspectRatio="xMidYMid meet">

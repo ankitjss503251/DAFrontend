@@ -182,41 +182,41 @@ function CollectionWithCollection() {
             <img
               alt=''
               src={brandDetails?.logoImage}
-              class='img-fluid collection_profile'
+              className='img-fluid collection_profile'
               onError={(e) => (e.target.src = "../img/collections/list4.png")}
             />
             {/* <img
               alt=''
               src={"../img/collections/check.png"}
-              class='img-fluid check_img'
+              className='img-fluid check_img'
             /> */}
           </div>
           <h1 className='collection_title text-center'>{brandDetails?.name}</h1>
-          <ul class='collection_social mb-4'>
+          <ul className='collection_social mb-4'>
             <li>
-              <a href='/'>
-                <i class='fa fa-facebook fa-lg'></i>
-              </a>
+              <Link to='/'>
+                <i className='fa fa-facebook fa-lg'></i>
+              </Link>
             </li>
             <li>
-              <a href='/'>
-                <i class='fa fa-twitter fa-lg'></i>
-              </a>
+              <Link to='/'>
+                <i className='fa fa-twitter fa-lg'></i>
+              </Link>
             </li>
             <li>
-              <a href='/'>
-                <i class='fa fa-linkedin fa-lg'></i>
-              </a>
+              <Link to='/'>
+                <i className='fa fa-linkedin fa-lg'></i>
+              </Link>
             </li>
             <li>
-              <a href='/'>
-                <i class='fa fa-pinterest fa-lg'></i>
-              </a>
+              <Link href='/'>
+                <i className='fa fa-pinterest fa-lg'></i>
+              </Link>
             </li>
           </ul>
           {/* <div className='coppycode text-center'>
             <span className='ctc'>
-              <img alt='' src={"../img/favicon.png"} class='img-fluid' />
+              <img alt='' src={"../img/favicon.png"} className='img-fluid' />
               <div className=''>
                 {user?.walletAddress?.slice(0, 8) +
                   "...." +
@@ -270,7 +270,7 @@ function CollectionWithCollection() {
           <div className='collection_description text-center'>
             <p>{brandDetails?.description}</p>
             <span className='top_arrow'>
-              <img alt='' src={"../img/top_arrow.png"} class='img-fluid' />
+              <img alt='' src={"../img/top_arrow.png"} className='img-fluid' />
             </span>
           </div>
 
@@ -285,7 +285,7 @@ function CollectionWithCollection() {
             <div className='col-md-12 text-center item_active'>
               <ul className='author_cart nav' role='tablist'>
                 <li classname='item_active'>
-                  <a
+                  <Link
                     data-bs-toggle='pill'
                     data-bs-target='#pills-Items'
                     role='tab'
@@ -296,10 +296,10 @@ function CollectionWithCollection() {
                       <ItemSVG />
                     </span>{" "}
                     <span>Items</span>
-                  </a>
+                  </Link>
                 </li>
                 <li classname='item_active'>
-                  <a
+                  <Link
                     data-bs-toggle='pill'
                     data-bs-target='#pills-Activity'
                     role='tab'
@@ -309,7 +309,7 @@ function CollectionWithCollection() {
                       <ActivitySVG />
                     </span>{" "}
                     <span>Activity</span>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -328,9 +328,9 @@ function CollectionWithCollection() {
                 <div className='row'>
                   <div className='col-lg-12  mb-5'>
                     <div className='market_search_form'>
-                      <form class='d-flex marketplace_form'>
+                      <form className='d-flex marketplace_form'>
                         <input
-                          class=' me-2'
+                          className=' me-2'
                           type='search'
                           placeholder='Search item here...'
                           aria-label='Search'
@@ -343,12 +343,12 @@ function CollectionWithCollection() {
                             setLoadMoreDisabled("");
                           }}
                         />
-                        <button class='market_btn' type='submit'>
+                        <button className='market_btn' type='submit'>
                           <img src='../img/search.svg' alt='' />
                         </button>
                       </form>
                       <select
-                        class='market_select_form form-select'
+                        className='market_select_form form-select'
                         aria-label='Default select example'
                         style={bgImgarrow}
                         value={ERCType}
@@ -367,7 +367,7 @@ function CollectionWithCollection() {
                       </select>
 
                       <select
-                        class='market_select_form form-select'
+                        className='market_select_form form-select'
                         aria-label='Default select example'
                         style={bgImgarrow}>
                         <option value='1' selected>
@@ -403,12 +403,12 @@ function CollectionWithCollection() {
                       <form>
                         <button
                           type='button'
-                          class='drop_down_tlt'
+                          className='drop_down_tlt'
                           data-bs-toggle='collapse'
                           data-bs-target='#demo'>
                           Status <UpArrow />
                         </button>
-                        <div id='demo' class='collapse show'>
+                        <div id='demo' className='collapse show'>
                           <ul className='status_ul'>
                             <li>
                               <Link to={"/"} className='filter_border'>
@@ -431,16 +431,16 @@ function CollectionWithCollection() {
 
                         {/* <button
                     type='button'
-                    class='drop_down_tlt'
+                    className='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
                   </button> */}
-                        {/* <div id='demo2' class='collapse show'>
+                        {/* <div id='demo2' className='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
-                          class='form-select filter_apply filter-text-left'
+                          className='form-select filter_apply filter-text-left'
                           aria-label='Default select example'>
                           <option selected>$ Australian Dollar (AUD)</option>
                           <option value='1'>One</option>
@@ -449,24 +449,24 @@ function CollectionWithCollection() {
                         </select>
                       </li>
                       <li>
-                        <div class='range_input'>
+                        <div className='range_input'>
                           <input
                             type='text'
-                            class='form-control'
+                            className='form-control'
                             id='exampleInputPassword1'
                             placeholder='Min'
                           />
                           <span className='span_class'>to</span>
                           <input
                             type='text'
-                            class='form-control'
+                            className='form-control'
                             id='exampleInputPassword1'
                             placeholder='Max'
                           />
                         </div>
                       </li>
                       <li>
-                        <button type='submit' class='filter_apply'>
+                        <button type='submit' className='filter_apply'>
                           Apply
                         </button>
                       </li>
@@ -478,12 +478,12 @@ function CollectionWithCollection() {
                       <form>
                         <button
                           type='button'
-                          class='drop_down_tlt'
+                          className='drop_down_tlt'
                           data-bs-toggle='collapse'
                           data-bs-target='#demo3'>
                           Collections <UpArrow />
                         </button>
-                        <div id='demo3' class='collapse show'>
+                        <div id='demo3' className='collapse show'>
                           <input
                             type='text'
                             placeholder='Filter'
@@ -495,16 +495,16 @@ function CollectionWithCollection() {
                     <div className='filtercol'>
                       <button
                         type='button'
-                        class='drop_down_tlt mb-4'
+                        className='drop_down_tlt mb-4'
                         data-bs-toggle='collapse'
                         data-bs-target='#demo4'>
                         Categories <UpArrow />
                       </button>
-                      <div id='demo4' class='collapse show'>
+                      <div id='demo4' className='collapse show'>
                         <ul>
                           <li className='sub-items'>
                             <form action='#' className='checked_form'>
-                              <div class='form-check form-check-inline'>
+                              <div className='form-check form-check-inline'>
                                 <input
                                   type='radio'
                                   id='allnfts'
@@ -515,7 +515,7 @@ function CollectionWithCollection() {
                               {category
                                 ? category?.map((c) => {
                                     return (
-                                      <div class='form-check form-check-inline'>
+                                      <div className='form-check form-check-inline'>
                                         <input
                                           type='radio'
                                           id={c.name}
@@ -534,12 +534,12 @@ function CollectionWithCollection() {
                     <div className='filtercol'>
                       <button
                         type='button'
-                        class='drop_down_tlt mb-4'
+                        className='drop_down_tlt mb-4'
                         data-bs-toggle='collapse'
                         data-bs-target='#demo5'>
                         Brands <UpArrow />
                       </button>
-                      <div id='demo5' class='collapse show'>
+                      <div id='demo5' className='collapse show'>
                         <ul>
                           <li>
                             <input
@@ -553,7 +553,7 @@ function CollectionWithCollection() {
                               {brands
                                 ? brands?.map((b) => {
                                     return (
-                                      <div class='form-check form-check-inline'>
+                                      <div className='form-check form-check-inline'>
                                         <input
                                           type='radio'
                                           id={b.name}
@@ -594,7 +594,7 @@ function CollectionWithCollection() {
                   <h2 className='text-white text-center'>No NFT Found</h2>
                 )}
                 {nfts.length > 0 && (
-                  <div class='col-md-12 text-center mt-5'>
+                  <div className='col-md-12 text-center mt-5'>
                     <button
                       type='button'
                       className={`btn view_all_bdr ${loadMoreDisabled}`}
@@ -615,7 +615,7 @@ function CollectionWithCollection() {
               <div className='row'>
                 <div className='col-md-6 d-md-inline-flex'>
                   <select
-                    class='action_select_form form-select mr-3'
+                    className='action_select_form form-select mr-3'
                     aria-label='Default select example'
                     style={bgImgarrow}>
                     <option selected>Listings</option>
@@ -624,7 +624,7 @@ function CollectionWithCollection() {
                     <option value='3'>Listings Items 3</option>
                   </select>
                   <select
-                    class='action_select_form form-select'
+                    className='action_select_form form-select'
                     aria-label='Default select example'
                     style={bgImgarrow}>
                     <option selected>Hunter Token</option>
@@ -635,7 +635,7 @@ function CollectionWithCollection() {
                 </div>
                 <div className='col-md-6 d-flex justify-content-end'>
                   <select
-                    class='action_select_form form-select'
+                    className='action_select_form form-select'
                     aria-label='Default select example'
                     style={bgImgarrow}>
                     <option selected>Last 90 Days</option>
@@ -652,13 +652,13 @@ function CollectionWithCollection() {
                       <img
                         alt=''
                         src={"../img/collections/graph.png"}
-                        class='img-fluid'
+                        className='img-fluid'
                       />
                     </div>
                   </div>
                   <div className='row mt-5'>
                     <div className='col-md-12'>
-                      <div class='table-responsive'>
+                      <div className='table-responsive'>
                         <table className=' Action_table text-center'>
                           <tr className=''>
                             <th>
@@ -688,7 +688,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -696,7 +696,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -705,7 +705,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -721,7 +721,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -729,7 +729,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -738,7 +738,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -754,7 +754,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -762,7 +762,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -771,7 +771,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -787,7 +787,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -795,7 +795,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -804,7 +804,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -820,7 +820,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -828,7 +828,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -837,7 +837,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -853,7 +853,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -861,7 +861,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -870,7 +870,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -886,7 +886,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -894,7 +894,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -903,7 +903,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -919,7 +919,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -927,7 +927,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -936,7 +936,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -952,7 +952,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -960,7 +960,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -969,7 +969,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -985,7 +985,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -993,7 +993,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -1002,7 +1002,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -1018,7 +1018,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -1026,7 +1026,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -1035,7 +1035,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -1051,7 +1051,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
@@ -1059,7 +1059,7 @@ function CollectionWithCollection() {
                               <img
                                 alt=''
                                 src={"../img/collections/item1.png"}
-                                class='img-fluid'
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
@@ -1068,7 +1068,7 @@ function CollectionWithCollection() {
                                 <img
                                   alt=''
                                   src={"../img/collections/hhh.png"}
-                                  class='img-fluid'
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
@@ -1084,7 +1084,7 @@ function CollectionWithCollection() {
                     </div>
                   </div>
                   <div className='row mt-5'>
-                    <div class='col-md-12 text-center '>
+                    <div className='col-md-12 text-center '>
                       <button type='button' className={`btn view_all_bdr`}>
                         Load More
                       </button>

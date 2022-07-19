@@ -28,16 +28,16 @@ function MintingPage() {
         <section className="collection_info" >
         <div className="container">
           <div className="collection_pick">
-            <img alt='' src={'../img/collections/barrett.png'} class="img-fluid collection_profile" />
-            {/* <img alt='' src={'../img/mint/blue_check.png'} class="img-fluid check_img" /> */}
+            <img alt='' src={'../img/collections/barrett.png'} className="img-fluid collection_profile" />
+            {/* <img alt='' src={'../img/mint/blue_check.png'} className="img-fluid check_img" /> */}
           </div>
           <h1 className="collection_title text-center">Barrett Firarms</h1>
-          <ul class="collection_social mb-4">
-            <li><a href="/"><i class="fa fa-facebook fa-lg"></i></a></li>
-            <li><a href="/"><i class="fa fa-twitter fa-lg"></i></a></li>
-            <li><a href="/"><i class="fa fa-linkedin fa-lg"></i></a></li>
-            <li><a href="/"><i class="fa fa-pinterest fa-lg"></i></a></li>
-            <li><a href="/"><i class="fa fa-rss fa-lg"></i></a></li>
+          <ul className="collection_social mb-4">
+            <li><a href="/"><i className="fa fa-facebook fa-lg"></i></a></li>
+            <li><a href="/"><i className="fa fa-twitter fa-lg"></i></a></li>
+            <li><a href="/"><i className="fa fa-linkedin fa-lg"></i></a></li>
+            <li><a href="/"><i className="fa fa-pinterest fa-lg"></i></a></li>
+            <li><a href="/"><i className="fa fa-rss fa-lg"></i></a></li>
           </ul>
           <ul className="collection_status mt-5 mb-5">
             <li>
@@ -55,7 +55,7 @@ function MintingPage() {
           </ul>
           <div className="collection_description text-center">
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Massa fringilla eget quam fringilla pharetra scelerisque arcu aliquam lacus. Non, tortor et lobortis facilisi nam. Adipiscing non feugiat ultrices natoque a. Imperdiet eget tellus tempor ultricies ipsum vitae. Felis elit nisi nunc sagittis morbi arcu, sed. Diam diam ligula aliquet sollicitudin diam et pellentesque. Tempor turpis nunc turpis ornare facilisis porttitor morbi tellus nullam.</p>
-            <span className="top_arrow"><img alt='' src={'../img/top_arrow.png'} class="img-fluid" /></span>
+            <span className="top_arrow"><img alt='' src={'../img/top_arrow.png'} className="img-fluid" /></span>
           </div>
         </div>
       </section>

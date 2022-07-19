@@ -132,7 +132,7 @@ const LoginHome = () => (
             <Link to={'/collectionwithcollection'}>
             <div className="mint_box" style={mint_bg}>
               <div className="mint_img">
-                <img alt="" src={'../img/mint/mint1.png'} class="img-fluid" />
+                <img alt="" src={'../img/mint/mint1.png'} className="img-fluid" />
                 <div className="mint_date"><span>22</span> mar</div>
               </div>
               <div className="mint_text p-4">
@@ -161,7 +161,7 @@ const LoginHome = () => (
           <Link to={'/collectionwithcollection'}>
             <div className="mint_box" style={mint_bg}>
               <div className="mint_img">
-                <img alt="" src={'../img/mint/head-down.png'} class="img-fluid" />
+                <img alt="" src={'../img/mint/head-down.png'} className="img-fluid" />
                 <div className="mint_date"><span>16</span>May</div>
               </div>
               <div className="mint_text p-4">
@@ -203,7 +203,7 @@ const LoginHome = () => (
           <Link to={'/collectionwithcollection'}>
             <div className="mint_box" style={mint_bg}>
               <div className="mint_img">
-                <img alt="" src={'../img/mint/mint3.png'} class="img-fluid" />
+                <img alt="" src={'../img/mint/mint3.png'} className="img-fluid" />
                 <div className="mint_date"><span>24</span> Aug</div>
               </div>
               <div className="mint_text p-4">
@@ -248,7 +248,7 @@ const LoginHome = () => (
             </div>
             </Link>
           </div>
-          <div class="col-md-12 text-center mt-5">
+          <div className="col-md-12 text-center mt-5">
             <Link to={'/collection'} className="view_all_bdr">View All</Link>
           </div>
         </div>
@@ -260,7 +260,7 @@ const LoginHome = () => (
           <div className="col-lg-12">
             <div className="text-center">
               <h2 className="text-center second_hd color-light mb-5">Hot Collections
-              <div class="border_div"><span class="title_bottom_border"></span></div>
+              <div className="border_div"><span className="title_bottom_border"></span></div>
               </h2>
             </div>
           </div>
@@ -307,7 +307,7 @@ const LoginHome = () => (
           <div className="col-lg-12">
             <div className="text-center">
               <h2 className="text-center second_hd color-light mb-5">New Items
-              <div class="border_div"><span class="title_bottom_border"></span></div>
+              <div className="border_div"><span className="title_bottom_border"></span></div>
               </h2>
             </div>
           </div>
@@ -323,7 +323,7 @@ const LoginHome = () => (
             <div className="col-lg-12">
               <div className="text-center">
                 <h2 className="text-center second_hd color-light mb-5">Top Sellers
-                <div class="border_div"><span class="title_bottom_border"></span></div>
+                <div className="border_div"><span className="title_bottom_border"></span></div>
                 </h2>
               </div>
             </div>
@@ -338,7 +338,7 @@ const LoginHome = () => (
           <div className="col-lg-12">
             <div className="text-center">
               <h2 className="text-center second_hd color-light mb-5">Browse by Category
-              <div class="border_div"><span class="title_bottom_border"></span></div>
+              <div className="border_div"><span className="title_bottom_border"></span></div>
               </h2>
             </div>
           </div>

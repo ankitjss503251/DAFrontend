@@ -132,17 +132,17 @@ function BlogContent() {
         </div>
         <div className="col-md-12 text-center mt-4">
             <nav aria-label="...">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item disabled pageprev">
-                        <span class="page-link">Prev</span>
+                <ul className="pagination justify-content-center">
+                    <li className="page-item disabled pageprev">
+                        <span className="page-link">Prev</span>
                     </li>
-                    <li class="page-item"><Link class="page-link" to="#">1</Link></li>
-                    <li class="page-item active" aria-current="page">
-                    <span class="page-link">2</span>
+                    <li className="page-item"><Link className="page-link" to="#">1</Link></li>
+                    <li className="page-item active" aria-current="page">
+                    <span className="page-link">2</span>
                     </li>
-                    <li class="page-item"><Link class="page-link" to="#">3</Link></li>
-                    <li class="page-item page-next">
-                        <Link class="page-link" to="#">Next</Link>
+                    <li className="page-item"><Link className="page-link" to="#">3</Link></li>
+                    <li className="page-item page-next">
+                        <Link className="page-link" to="#">Next</Link>
                     </li>
                 </ul>
                 </nav>

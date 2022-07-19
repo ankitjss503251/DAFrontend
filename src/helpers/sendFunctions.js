@@ -265,7 +265,7 @@ export const handleBuyNft=async (
     return false;
   }
 
-  NotificationManager.success("NFT Purchased Successfully");
+  NotificationManager.success("NFT Purchased Successfully")
   slowRefresh(1000);
 };
 
@@ -471,6 +471,15 @@ export const createBid=async (
   bidPrice,
   isOffer=false
 ) => {
+  console.log("__createBid__", nftID,
+    orderID,
+    ownerAccount,
+    buyerAccount,
+    erc721,
+    qty = 1,
+    bidPrice,
+    isOffer = false,
+    bidDeadline);
   let SellerOrder;
   let sellerOrder=[];
   let buyerOrder=[];

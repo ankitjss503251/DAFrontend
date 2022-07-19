@@ -584,8 +584,8 @@ function Marketplace() {
                           <div className="items_info ">
                             <div className="items_left">
                               <h3 className="">
-                                {card?.name?.length > 8
-                                  ? card?.name?.slice(0, 8) + "..."
+                                {card?.name?.length > 15
+                                  ? card?.name?.slice(0, 15) + "..."
                                   : card?.name}
                               </h3>
                               {card.paymentToken ? (
