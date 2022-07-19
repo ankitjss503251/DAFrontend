@@ -462,8 +462,7 @@ export const createBid = async (
   erc721,
   qty = 1,
   bidPrice,
-  isOffer = false,
-  bidDeadline
+  isOffer = false
 ) => {
   let SellerOrder;
   let sellerOrder = [];
@@ -624,12 +623,12 @@ export const createOffer = async (
 
     let userTokenBal = await getUsersTokenBalance(buyerOrder[0], buyerOrder[5]);
 
-    let usrHaveQuantity = await GetOwnerOfToken(
-      buyerOrder[1],
-      buyerOrder[2],
-      1,
-      buyerOrder[0]
-    );
+    // let usrHaveQuantity = await GetOwnerOfToken(
+    //   buyerOrder[1],
+    //   buyerOrder[2],
+    //   1,
+    //   buyerOrder[0]
+    // );
 
     if (
       new BigNumber(bidPrice)
