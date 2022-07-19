@@ -798,7 +798,6 @@ function NFTDetails() {
               ) : (
                 ""
               )}
-
               {NFTDetails && NFTDetails.fileType == "3D" ? (
                 <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
                   <pointLight position={[10, 10, 10]} intensity={1.3} />
@@ -1124,7 +1123,6 @@ function NFTDetails() {
                 <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
               </div>
             </div>
-
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">Bids</h3>
               <div className="table-responsive">
@@ -1178,7 +1176,6 @@ function NFTDetails() {
           </div>
         </div>
       </section>
-
       {/* <!-- The Modal --> */}
       <div className={`modal marketplace putOnMarketplace`} id="detailPop">
         <div className="modal-dialog modal-lg modal-dialog-centered">
@@ -1192,11 +1189,9 @@ function NFTDetails() {
                 data-bs-dismiss="modal"
               ></button>
             </div>
-
             {/* <!-- Modal body --> */}
             <div className="modal-body">
               <h3 className="text-light text_16">Select method</h3>
-
               <ul
                 className="d-flex mb-4 justify-content-around g-3"
                 id="pills-tab"
@@ -1237,7 +1232,6 @@ function NFTDetails() {
                   </button>
                 </li>
               </ul>
-
               <div className="tab-content">
                 {marketplaceSaleType === 0 ? (
                   <div className="mb-3" id="tab_opt_1">
@@ -1259,7 +1253,6 @@ function NFTDetails() {
                       onChange={(e) => {
                         const re = /[+-]?[0-9]+\.?[0-9]*/;
                         let val = e.target.value;
-
                         if (e.target.value === "" || re.test(e.target.value)) {
                           const numStr = String(val);
                           if (numStr.includes(".")) {
@@ -1362,12 +1355,10 @@ function NFTDetails() {
                     }}
                   />
                 </div>
-
                 <div id="tab_opt_4" className="mb-3">
                   <label htmlFor="Payment" className="form-label">
                     Payment Token
                   </label>
-
                   {marketplaceSaleType === 0 ? (
                     <>
                       <select
@@ -1381,7 +1372,7 @@ function NFTDetails() {
                         }}
                       >
                         {" "}
-                        <option value={"BNB"} selected>
+                        <option value={"BNB"} defaultValue>
                           BNB
                         </option>
                         <option value={"HNTR"}>HNTR</option>
@@ -1399,7 +1390,7 @@ function NFTDetails() {
                         }
                       >
                         {" "}
-                        <option value={"BUSD"} selected>
+                        <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>
@@ -1414,7 +1405,7 @@ function NFTDetails() {
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"BUSD"} selected>
+                        <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>
@@ -1589,7 +1580,7 @@ function NFTDetails() {
                         }
                       >
                         {" "}
-                        <option value={"BUSD"} selected>
+                        <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>
@@ -1604,7 +1595,7 @@ function NFTDetails() {
                           setSelectedToken(event.target.value)
                         }
                       >
-                        <option value={"BUSD"} selected>
+                        <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>
