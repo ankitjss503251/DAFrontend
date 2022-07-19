@@ -539,7 +539,7 @@ const Header = function () {
                 </NavLink>
               </li>
               <li className='nav-item'>
-                <NavLink className='nav-link' to='/helpcenter' tabindex='-1'>
+                <NavLink className='nav-link' to='/helpcenter' tabIndex='-1'>
                   Resources
                   <ul className='sub_menu'>
                     <li>
@@ -593,7 +593,7 @@ const Header = function () {
                     <button
                       onClick={!account ? connectWallet : disconnectWallet}
                       className='main_btn'
-                      tabindex='-1'>
+                      tabIndex='-1'>
                       {!account
                         ? "Connect Wallet"
                         : account.slice(0, 4) + "..." + account.slice(38, 42)}
@@ -619,7 +619,7 @@ const Header = function () {
                     </div>
                   </li> */}
                   <li className='nav-item'>
-                    <NavLink to='' tabindex='-1' className='profile_pic'>
+                    <NavLink to='' tabIndex='-1' className='profile_pic'>
                       <img
                         src={
                           userDetails?.profileIcon
@@ -696,7 +696,7 @@ const Header = function () {
                       <li>
                         <NavLink to={"/Notifications"} className='sub-items'>
                           <svg
-                            class='hide'
+                            className='hide'
                             width='24'
                             height='24'
                             viewBox='0 0 24 24'
@@ -734,7 +734,7 @@ const Header = function () {
                   <li className='nav-item'>
                     <button
                       className='square_yello'
-                      tabindex='-1'
+                      tabIndex='-1'
                       onClick={disconnectWallet}>
                       <img src='../img/edit.png' alt='edit' />{" "}
                       {account?.slice(0, 4) + "..." + account?.slice(38, 42)}
