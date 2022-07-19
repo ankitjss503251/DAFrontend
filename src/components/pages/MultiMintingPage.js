@@ -85,7 +85,7 @@ function MultiMintingPage(props) {
       setisApprovePopupClass("checkiconCompleted");
       setisMintPopupClass("checkiconCompleted");
       setClosePopupDisabled(false);
-      NotificationManager.success("mint Succeed");
+      NotificationManager.success("mint Succeeded");
     }
   }
   evt.removeAllListeners("txn-status", txnStatus);

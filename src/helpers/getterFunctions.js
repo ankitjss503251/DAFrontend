@@ -199,7 +199,6 @@ export const getUsersTokenBalance = async (account, tokenAddress) => {
 export const getAllOffersByNftId = async (nftId) => {
   let dummyData = await fetchOfferNft({
     nNFTId: nftId,
-
     buyerID: "All",
     bidStatus: "All",
   });

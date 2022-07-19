@@ -252,14 +252,14 @@ function Marketplacecollection() {
                             </a>
                             <a href={`/collection/${card?._id}`}>
                               <h4 className='collname'>
-                                {card.name?.length > 8
-                                  ? card.name?.slice(0, 8)
+                                {card.name?.length > 15
+                                  ? card.name?.slice(0, 15)
                                   : card.name}
                               </h4>
                               <p>
-                                {card.desc?.length > 8
-                                  ? card.desc?.slice(0, 8)
-                                  : card.desc.slice(0, 8)}
+                                {card.desc?.length > 15
+                                  ? card.desc?.slice(0, 15) + "..."
+                                  : card.desc}
                               </p>
                             </a>
                           </div>
