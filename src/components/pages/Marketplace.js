@@ -563,11 +563,11 @@ function Marketplace() {
                           {card && card.fileType === "3D" ? (
                             <Canvas
                               class="img-fluid items_img w-100 my-3"
-                              camera={{ position: [10, 100, 100], fov: 1 }}
+                              camera={{ position: [30, 250, 250], fov: 1 }}
                             >
                               <pointLight
-                                position={[10, 10, 10]}
-                                intensity={1.3}
+                                position={[5, 10, 10]}
+                                intensity={1.1}
                               />
                               <Suspense fallback={null}>
                                 <Model image={card.image} />
