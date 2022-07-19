@@ -440,7 +440,7 @@ function NFTDetails() {
     );
     setLoading(false);
 
-    // slowRefresh(1000);
+    slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
   };
@@ -639,7 +639,7 @@ function NFTDetails() {
                 let res = await createBid(
                   orders[0].nftID,
                   orders[0]._id,
-                  orders[0].sellerID?._id,
+                  orders[0].sellerID,
                   currentUser,
                   firstOrderNFT?.type,
                   orders[0].total_quantity,
@@ -653,7 +653,7 @@ function NFTDetails() {
                 }
                 NotificationManager.success("Bid Placed Successfully", "", 800);
                 setLoading(false);
-                // slowRefresh(1000);
+                slowRefresh(1000);
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
                 setLoading(false);

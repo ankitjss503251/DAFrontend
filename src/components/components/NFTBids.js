@@ -52,7 +52,7 @@ function NFTBids(props) {
       let searchParams = {
         nftID: props.id,
         buyerID: "All",
-        bidStatus: "All",
+        bidStatus: "Bid",
         orderID: "All",
       };
 
