@@ -29,7 +29,7 @@ import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { ItemDescription } from "semantic-ui-react";
 
-function CreateCollection() {
+function CreateCollection(props) { console.log("rerender",props)
   const [logoImg, setLogoImg] = useState("");
   const [coverImg, setCoverImg] = useState("");
   const [title, setTitle] = useState("");
@@ -95,6 +95,7 @@ function CreateCollection() {
       setCategory(_cat[0]._id);
     };
     fetch();
+    console.log('create collection')
   }, []);
 
   function handleChange(ev) {
@@ -1731,4 +1732,4 @@ function CreateCollection() {
   );
 }
 
-export default CreateCollection;
+export default React.memo(CreateCollection);

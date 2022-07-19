@@ -1,8 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useState,Suspense } from "react";
 import "./App.css";
 import Home1 from "./components/pages/Home";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route,Outlet } from "react-router-dom";
 import CreateCollection1 from "./components/pages/CreateCollection";
 import CreateNFTs1 from "./components/pages/CreateNFTs";
 import Rightarrow from "./components/SVG/rightarrow";
@@ -15,6 +15,7 @@ import Admins1 from "./components/pages/admins";
 import { NotificationContainer } from "react-notifications";
 import ImportCard from "./components/pages/ImportedData/importCard";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
+import Navbar from "./components/Navbar";
 import withLogin from "./components/components/withLogin";
 const Home = withLogin(Home1);
 const Admins = withLogin(Admins1);
@@ -30,18 +31,19 @@ const instaImg = {
   backgroundPosition: "center",
 };
 
-function App() {
+function App(props) {
   const [mode, setMode] = useState("Darkmode");
   const [notificationpopup, setNotificationPopup] = useState(null);
-  const showNotificationPopup = (message, title) => {
-    setNotificationPopup({
-      msg: message,
-      tlt: title,
-    });
-    setTimeout(() => {
-      setNotificationPopup(null);
-    }, 2000);
-  };
+  const [isAdminLogin,setIsAdminLogin] = useState();
+  // const showNotificationPopup = (message, title) => {
+  //   setNotificationPopup({
+  //     msg: message,
+  //     tlt: title,
+  //   });
+  //   // setTimeout(() => {
+  //   //   setNotificationPopup(null);
+  //   // }, 2000);
+  // };
 
   const toggleMode = () => {
     if (mode === "Darkmode") {
@@ -55,7 +57,7 @@ function App() {
     <div style={instaImg} className={mode}>
       <div className="btn_hidden">
         <div className="define_mode">
-          <button type="button" onClick={toggleMode}>
+          <button type="button" onClick={()=>{}}>
             <Rightarrow />{" "}
             <span className="mode_text">
               {mode === "Darkmode" ? "Light Mode" : "Dark Mode"}
@@ -63,10 +65,12 @@ function App() {
           </button>
         </div>
       </div>
-
+      <Suspense fallback={null}>
       <BrowserRouter>
-        {/* {isAdminLogin?null:<Navbar />} */}
+       
         <Routes>
+          <Route path="sadmin" element={<Login />} />
+          <Route element={<><Navbar /><Outlet/></>}>  
           <Route path="/" element={<Home />} />
           {/* <Route
             path="navbar"
@@ -74,7 +78,6 @@ function App() {
             element={<Navbar />}
             toggleMode={toggleMode}
           /> */}
-          <Route path="sadmin" element={<Login />} />
           <Route path="admins" element={<Admins />}></Route>
           <Route path="createcollection" element={<CreateCollection />} />
           <Route path="createnfts" element={<CreateNFTs />} />
@@ -85,7 +88,7 @@ function App() {
           <Route path="importedNfts/:address/:id" element={<NftDetail />} />
           <Route
             path="createcategories"
-            showNotificationPopup={showNotificationPopup}
+            showNotificationPopup={()=>{}}
             element={<CreateCategories />}
           />
           <Route
@@ -93,9 +96,11 @@ function App() {
             notificationpopup={notificationpopup}
             element={<NotificationPopup />}
           />
+          </Route>
         </Routes>
         <NotificationContainer />
       </BrowserRouter>
+      </Suspense>
     </div>
   );
 }

@@ -30,7 +30,7 @@ export default function withLogin(Component,callback=()=>{})
         callback();
         //if(!state.is_admin)
           // return <Login next={window.location.pathname}/>
-        return <><Navbar isAdmin={isSuperAdmin()} /><Component {...props} isAdmin={isSuperAdmin()} /></>;
+        return <><Component {...props} isAdmin={isSuperAdmin()} /></>;
     }
     
 }
