@@ -85,14 +85,14 @@ function CarouselCollection() {
                
                   <div className='collection_slide' key={key}>
                     <Link to={`/collection/${card?._id}`}>
-                      <div class="mint_img">
+                      <div className="mint_img">
                         <img
                           style={{
                             borderTopLeftRadius: "10px",
                             borderTopRightRadius: "10px",
                           }}
                           src={card.logoImg}
-                          class='img-fluid'
+                          className='img-fluid'
                           alt=''
                           onError={(e) =>
                             (e.target.src = "../img/collections/list4.png")
@@ -124,11 +124,13 @@ function CarouselCollection() {
                       
                       
                         <h4 className='collname'>
-                          <Link to={`/collection/${card?._id}`}>
-                            {card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}
-                          </Link>
+
+                          <a href={`/collection/${card?._id}`}>
+                            {card?.name?.length > 15 ? card?.name?.slice(0,15) + "..." : card?.name}
+                          </a>
+
                         </h4>
-                        <p>{card.desc ? (card.desc?.length > 8 ? card.desc?.slice(0,8) + "..." : card.desc) : "-"}</p>
+                        <p>{card.desc ? (card.desc?.length > 20 ? card.desc?.slice(0,20) + "..." : card.desc) : "-"}</p>
                       
                     </div>
                   </div>

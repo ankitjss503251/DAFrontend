@@ -44,7 +44,7 @@ const MintLivetab = (props) => {
                       <a href={`/multimintingpage/${card._id}`}>
                         <div className="mint_box" style={mint_bg}>
                           <div className="mint_img">
-                            <img alt="" src={card.logoImg} class="img-fluid" />
+                            <img alt="" src={card.logoImg} className="img-fluid" />
                             {/* <div className='mint_date'>
                             <span>16</span>May
                           </div> */}

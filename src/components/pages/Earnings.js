@@ -1,5 +1,6 @@
 import React from 'react';
 import Sidebar from '../components/Sidebar';
+import { Link } from '@reach/router';
 // import LogInHeader from '../menu/LogInHeader';
 
 const bgImgStyle = {
