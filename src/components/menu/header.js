@@ -141,6 +141,7 @@ const Header = function () {
         const s = await onboard.connectWallet({
           autoSelect: { label: cookies["label"], disableModals: true },
         });
+        console.log("onboard is------->",s)
         await onboard.setChain({
           chainId: process.env.REACT_APP_CHAIN_ID,
         });
