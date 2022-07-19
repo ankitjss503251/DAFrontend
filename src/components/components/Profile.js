@@ -237,13 +237,13 @@ function Profile() {
       <div className="row">
         <div className="col-lg-6 col-md-8 order-md-0 order-sm-2">
           <form action="/action_page.php">
-            <div class="mb-3 mt-3">
-              <label HTMLfor="user" class="form-label">
+            <div className="mb-3 mt-3">
+              <label HTMLfor="user" className="form-label">
                 Username
               </label>
               <input
                 type="text"
-                class="form-control profile_input"
+                className="form-control profile_input"
                 id="user"
                 placeholder="Digital Arms Dealer"
                 name="user"
@@ -253,12 +253,12 @@ function Profile() {
                 value={uname}
               />
             </div>
-            <div class="mb-3 mt-3">
-              <label HTMLfor="comment" class="form-label">
+            <div className="mb-3 mt-3">
+              <label HTMLfor="comment" className="form-label">
                 Bio
               </label>
               <textarea
-                class="form-control profile_textarea"
+                className="form-control profile_textarea"
                 placeholder="Describe yourself here..."
                 rows="5"
                 id="comment"
@@ -269,11 +269,11 @@ function Profile() {
                 }}
               ></textarea>
             </div>
-            <div class="mb-3 mt-3">
+            <div className="mb-3 mt-3">
               <label for="email">Email Address</label>
               <input
                 type="email"
-                class="form-control profile_input"
+                className="form-control profile_input"
                 id="email"
                 placeholder="User_Account@email.com"
                 onChange={(r) => {
@@ -283,12 +283,12 @@ function Profile() {
                 name="email"
               />
             </div>
-            <div class="mb-3 mt-3">
+            <div className="mb-3 mt-3">
               <label for="links">Links</label>
               <div className="add_links_input">
                 <input
                   type="url"
-                  class="form-control"
+                  className="form-control"
                   id="Twitter"
                   name="Your Twitter Handle"
                   placeholder="Your Twitter Handle"
@@ -300,7 +300,7 @@ function Profile() {
                 />
                 <input
                   type="url"
-                  class="form-control"
+                  className="form-control"
                   id="Instagram"
                   name="You Instagram handle"
                   placeholder="You Instagram handle"
@@ -312,7 +312,7 @@ function Profile() {
                 />
                 <input
                   type="url"
-                  class="form-control"
+                  className="form-control"
                   id="address"
                   name="Your Site address"
                   placeholder="Your Site address"
@@ -321,7 +321,7 @@ function Profile() {
                 />
               </div>
             </div>
-            <div class="mb-3 mt-3">
+            <div className="mb-3 mt-3">
               <label for="Wallet">Wallet Address</label>
               <div className="copy_input">
                 <textarea
@@ -351,14 +351,14 @@ function Profile() {
             <div className="mt-5">
               <button
                 type="button"
-                class="yellow_btn mr-3"
+                className="yellow_btn mr-3"
                 onClick={() => {
                   handleUpdateProfile();
                 }}
               >
                 Save
               </button>
-              {/*<button type="submit" class="yellow_btn yellow_dark">Save</button>*/}
+              {/*<button type="submit" className="yellow_btn yellow_dark">Save</button>*/}
             </div>
           </form>
         </div>
@@ -379,15 +379,15 @@ function Profile() {
 
                 <div className="overlat_btn">
                   <div className="upload-btn-wrapper img_edit_btn">
-                    <button class="btn">
-                      <i class="fa fa-edit fa-lg"></i>
+                    <button className="btn">
+                      <i className="fa fa-edit fa-lg"></i>
                     </button>
                     <input type="file" name="myfile" />
                   </div>
                 </div>
               </div>
               <div className="profile_image">
-                {/* <img alt='' src={'../img/profile/profile1.png'} class="img-fluid profile_circle_img" /> */}
+                {/* <img alt='' src={'../img/profile/profile1.png'} className="img-fluid profile_circle_img" /> */}
                 <div
                   style={{
                     display: "flex",
@@ -426,9 +426,9 @@ function Profile() {
                       }}
                       className="img-fluid profile_circle_img"
                     />
-                    <div class="overlat_btn">
-                      <button type="" class="img_edit_btn">
-                        <i class="fa fa-edit fa-lg"></i>
+                    <div className="overlat_btn">
+                      <button type="" className="img_edit_btn">
+                        <i className="fa fa-edit fa-lg"></i>
                       </button>
                     </div>
                   </div>

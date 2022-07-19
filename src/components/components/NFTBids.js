@@ -91,7 +91,7 @@ function NFTBids(props) {
                     "..." +
                     currentUser?.slice(34, 42)}
                 </span>
-                <span class="badge badge-success">Connected</span>
+                <span className="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
             </div>

@@ -197,41 +197,41 @@ function MultiMintingPage(props) {
             <img
               alt=""
               src={collectionDetails?.logoImage}
-              class="img-fluid collection_profile"
+              className="img-fluid collection_profile"
             />
             {/* <img
               alt=""
               src={"../img/mint/blue_check.png"}
-              class="img-fluid check_img"
+              className="img-fluid check_img"
             /> */}
           </div>
           <h1 className="collection_title text-center">
             {collectionDetails?.name}
           </h1>
-          <ul class="collection_social mb-4">
+          <ul className="collection_social mb-4">
             <li>
               <a href="/">
-                <i class="fa fa-facebook fa-lg"></i>
+                <i className="fa fa-facebook fa-lg"></i>
               </a>
             </li>
             <li>
               <a href="/">
-                <i class="fa fa-twitter fa-lg"></i>
+                <i className="fa fa-twitter fa-lg"></i>
               </a>
             </li>
             <li>
               <a href="/">
-                <i class="fa fa-linkedin fa-lg"></i>
+                <i className="fa fa-linkedin fa-lg"></i>
               </a>
             </li>
             <li>
               <a href="/">
-                <i class="fa fa-pinterest fa-lg"></i>
+                <i className="fa fa-pinterest fa-lg"></i>
               </a>
             </li>
             <li>
               <a href="/">
-                <i class="fa fa-rss fa-lg"></i>
+                <i className="fa fa-rss fa-lg"></i>
               </a>
             </li>
           </ul>
@@ -252,7 +252,7 @@ function MultiMintingPage(props) {
           <div className="collection_description text-center">
             <p>{collectionDetails?.description}</p>
             <span className="top_arrow">
-              <img alt="" src={"../img/top_arrow.png"} class="img-fluid" />
+              <img alt="" src={"../img/top_arrow.png"} className="img-fluid" />
             </span>
           </div>
         </div>

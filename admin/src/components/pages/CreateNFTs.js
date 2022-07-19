@@ -324,7 +324,7 @@ function CreateNFTs() {
           <h5 className='admintitle font-600 font-24 text-yellow'>NFTs</h5>
           <br />
           {nfts && nfts.length > 0 ? (
-            <table class='table table-hover text-light'>
+            <table className='table table-hover text-light'>
               <thead>
                 <tr>
                   <th>NFT Image</th>
@@ -432,12 +432,7 @@ function CreateNFTs() {
                           ref={uploadedImage}
                           key={img}
                           src={"../images/upload.png"}
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className='img-fluid profile_circle_img'
+                          className='img-fluid profile_circle_img admin_profile_img'
                         />
                       ) : (
                         ""
@@ -445,12 +440,7 @@ function CreateNFTs() {
 
                       {fileType == "Video" ? (
                         <video
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className='img-fluid profile_circle_img'
+                          className='img-fluid profile_circle_img admin_profile_img'
                           controls>
                           <source
                             ref={uploadedImage}
@@ -511,7 +501,7 @@ function CreateNFTs() {
                     Choose Collection *
                   </label>
                   <select
-                    class='form-select'
+                    className='form-select'
                     aria-label='Default select example'
                     value={collection}
                     onChange={(e) => {
@@ -595,7 +585,7 @@ function CreateNFTs() {
                     Brand *
                   </label>
                   <select
-                    class="form-select"
+                    className="form-select"
                     aria-label="Default select example"
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}

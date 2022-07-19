@@ -26,7 +26,7 @@ function HelpCenterQuery() {
                         </ul>
                     </div>
                     <div className="col-md-6">
-                        <form class="d-flex navbar_form width_search">
+                        <form className="d-flex navbar_form width_search">
                             <input className="form-control me-2" type="search" placeholder="Search item here..." aria-label="Search" />
                             <button className="search_btn" type="submit"><img src="../img/search.svg" alt="" /></button>
                         </form>
