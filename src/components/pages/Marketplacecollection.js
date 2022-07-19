@@ -6,6 +6,7 @@ import { NotificationManager } from "react-notifications";
 import BGImg from "./../../assets/images/background.jpg";
 import MarketplaceBGIamge from "../../assets/marketplace-bg.jpg";
 import CollectionSkeletonCard from "../components/Skeleton/CollectionSkeletonCard";
+import { Link } from "@reach/router";
 
 function Marketplacecollection() {
   var register_bg = {
@@ -220,48 +221,55 @@ function Marketplacecollection() {
                     return oIndex.map((card, key) => (
                       <div className='col-lg-4 col-md-6 mb-5' key={key}>
                         <div className='collection_slide'>
-                          <a href={`/collection/${card?._id}`}>
-                            <img
-                              className='img-fluid w-100'
-                              src={card?.logoImg}
-                              onError={(e) => {
-                                e.target.src = "../img/collections/list4.png";
-                              }}
-                              alt=''
-                            />
-                          </a>
+                          <Link to={`/collection/${card?._id}`}>
+                            <div class="mint_img">
+                              <img
+                                className='img-fluid w-100'
+                                src={card?.logoImg}
+                                onError={(e) => {
+                                  e.target.src = "../img/collections/list4.png";
+                                }}
+                                alt=''
+                              />
+                            </div>
+                          </Link>
                           <div className='collection_text'>
-                            <a
-                              href={`/collectionwithcollection/${card?.brand?._id}`}>
-                              <div className='coll_profileimg'>
-                                <img
-                                  alt=''
-                                  className='profile_img'
-                                  src={card.brand?.logoImage}
-                                  onError={(e) => {
-                                    e.target.src =
-                                      "../img/collections/list4.png";
-                                  }}
-                                />
-                                {/* <img
-                                  alt=''
-                                  className='check_img'
-                                  src={"../img/collections/check.png"}
-                                /> */}
-                              </div>
-                            </a>
-                            <a href={`/collection/${card?._id}`}>
+                          <div className='coll_profileimg'>
+                            <div class="rotater_border profile_img">
+                              <Link className="rounded-circle"
+                                to={`/collectionwithcollection/${card?.brand?._id}`}>
+                                
+                                  <img
+                                    alt=''
+                                    className=''
+                                    src={card.brand?.logoImage}
+                                    onError={(e) => {
+                                      e.target.src =
+                                        "../img/collections/list4.png";
+                                    }}
+                                  />
+                                  {/* <img
+                                    alt=''
+                                    className='check_img'
+                                    src={"../img/collections/check.png"}
+                                  /> */}
+                              </Link>
+                            </div>
+                          </div>
+                            
                               <h4 className='collname'>
-                                {card.name?.length > 8
-                                  ? card.name?.slice(0, 8)
-                                  : card.name}
+                                <Link to={`/collection/${card?._id}`}>
+                                  {card.name?.length > 8
+                                    ? card.name?.slice(0, 8)
+                                    : card.name}
+                                </Link>
                               </h4>
                               <p>
                                 {card.desc?.length > 8
                                   ? card.desc?.slice(0, 8)
                                   : card.desc.slice(0, 8)}
                               </p>
-                            </a>
+                            
                           </div>
                         </div>
                       </div>
@@ -302,48 +310,54 @@ function Marketplacecollection() {
                     return oIndex.map((card, key) => (
                       <div className='col-lg-4 col-md-6 mb-5' key={key}>
                         <div className='collection_slide'>
-                          <a href={`/collection/${card._id}`}>
-                            <img
-                              className='img-fluid w-100'
-                              src={card.logoImg}
-                              alt=''
-                              onError={(e) => {
-                                e.target.src = "../img/collections/list4.png";
-                              }}
-                            />
-                          </a>
-                          <div className='collection_text'>
-                            <a
-                              href={`/collectionwithcollection/${card.brand._id}`}>
-                              <div className='coll_profileimg'>
-                                <img
-                                  alt=''
-                                  className='profile_img'
-                                  src={card.brand.logoImage}
-                                  onError={(e) => {
-                                    e.target.src =
-                                      "../img/collections/list4.png";
-                                  }}
-                                />
-                                {/* <img
+                          <Link to={`/collection/${card._id}`}>
+                            <div class="mint_img">
+                              <img
+                                className='img-fluid w-100'
+                                src={card.logoImg}
                                 alt=''
-                                className='check_img'
-                                src={"../img/collections/check.png"}
-                              /> */}
+                                onError={(e) => {
+                                  e.target.src = "../img/collections/list4.png";
+                                }}
+                              />
+                            </div>
+                          </Link>
+                          <div className='collection_text'>
+                            <div className='coll_profileimg'>
+                              <div class="rotater_border profile_img">
+                                <Link className="rounded-circle"
+                                to={`/collectionwithcollection/${card.brand._id}`}>
+                                  <img
+                                    alt=''
+                                    className=''
+                                    src={card.brand.logoImage}
+                                    onError={(e) => {
+                                      e.target.src =
+                                        "../img/collections/list4.png";
+                                    }}
+                                  />
+                                  {/* <img
+                                  alt=''
+                                  className='check_img'
+                                  src={"../img/collections/check.png"}
+                                  /> */}
+                                </Link>
                               </div>
-                            </a>
-                            <a href={`/collection/${card._id}`}>
-                              <h4 className='collname'>
+                            </div>
+                            
+                            <h4 className='collname'>
+                              <Link to={`/collection/${card._id}`}>
                                 {card.name?.length > 8
                                   ? card.name?.slice(0, 8)
                                   : card.name}
-                              </h4>
-                              <p>
-                                {card.desc?.length > 8
-                                  ? card.desc?.slice(0, 8)
-                                  : card.desc.slice(0, 8)}
-                              </p>
-                            </a>
+                              </Link>
+                            </h4>
+                            <p>
+                              {card.desc?.length > 8
+                                ? card.desc?.slice(0, 8)
+                                : card.desc.slice(0, 8)}
+                            </p>
+                            
                           </div>
                           :
                         </div>

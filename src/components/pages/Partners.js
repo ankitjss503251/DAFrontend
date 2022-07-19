@@ -6,6 +6,7 @@ import {PartnerWithUs} from "../../Data/dummyJSON";
 // import collection from './collection';
 import Arrow from '../SVG/Arrow';
 import { PartnersLogos } from '../../Data/dummyJSON';
+import { Link } from '@reach/router';
 
 var bgImgStyle = {
     backgroundImage: "url(./img/background.jpg)",
@@ -66,7 +67,11 @@ function Partners() {
                                     <img src={partners.img} class="img-fluid" alt="" />
                                     <div class="collection_text">
                                         <div class="coll_profileimg">
-                                            <img alt="" class="profile_img" src={partners.profile_img} />
+                                            <div class="rotater_border profile_img">
+                                                <Link to={""} class="rounded-circle">
+                                                    <img alt="" class="" src={partners.profile_img} />
+                                                </Link>
+                                            </div>
                                         </div>
                                         <h3 class="collname">{partners.Heading} <img alt="" class="" src="../img/collections/check.png" /></h3>
                                         <p><span className='text-light'>by</span> {partners.Subheading} <img alt="" class="" src="../img/collections/check.png" /></p>

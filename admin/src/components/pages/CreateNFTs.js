@@ -431,12 +431,7 @@ function CreateNFTs() {
                           alt=''
                           ref={uploadedImage}
                           src={"../images/upload.png"}
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className='img-fluid profile_circle_img'
+                          className='img-fluid profile_circle_img admin_profile_img'
                         />
                       ) : (
                         ""
@@ -444,12 +439,7 @@ function CreateNFTs() {
 
                       {fileType == "Video" ? (
                         <video
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className='img-fluid profile_circle_img'
+                          className='img-fluid profile_circle_img admin_profile_img'
                           controls>
                           <source
                             ref={uploadedImage}
