@@ -21,13 +21,13 @@ import contracts from "../../config/contracts";
 import degnrABI from "./../../config/abis/dgnr8.json";
 import { ethers } from "ethers";
 import { NotificationManager } from "react-notifications";
-import Loader from "../components/loader";
 import { convertToEth } from "../../helpers/numberFormatter";
 import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { ItemDescription } from "semantic-ui-react";
+import Spinner from "../components/Spinner";
 
 function CreateCollection(props) { console.log("rerender",props)
   const [logoImg, setLogoImg] = useState("");
@@ -64,10 +64,11 @@ function CreateCollection(props) { console.log("rerender",props)
   const [isEdit2, setIsEdit2] = useState(false);
 
   useEffect(() => {
-    if (cookies.selected_account && localStorage.getItem("Authorization") !== undefined && localStorage.getItem("Authorization") !== null) setCurrentUser(cookies.selected_account);
+    if (cookies.da_selected_account)
+      setCurrentUser(cookies.da_selected_account);
     // else NotificationManager.error("Connect Your Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cookies.selected_account]);
+  }, [cookies.da_selected_account]);
 
   useEffect(() => {
     if (currentUser) {
@@ -330,7 +331,8 @@ function CreateCollection(props) { console.log("rerender",props)
         } catch (e) {
           console.log(e);
           setLoading(false);
-          NotificationManager.error(e.message, "", 1500);
+          NotificationManager.error(e.message, "", 900);
+          slowRefresh(1000);
         }
 
         if (res1 !== undefined) {
@@ -351,7 +353,7 @@ function CreateCollection(props) { console.log("rerender",props)
           fd.append("brandID", brand);
           fd.append("isDeployed", isOffChain === "Yes" ? 1 : 0);
           fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
-          fd.append("isMinted", 1);
+          fd.append("isMinted", isOffChain === "Yes" ? 0 : 1);
           fd.append("isImported", 0);
           //fd.append("chainID", chain);
           fd.append("link", importedCollectionLink);
@@ -367,8 +369,9 @@ function CreateCollection(props) { console.log("rerender",props)
           try {
             await createCollection(fd);
           } catch (e) {
-            NotificationManager.error(e.message, "", 1800);
             setLoading(false);
+            NotificationManager.error(e.message, "", 800);
+            slowRefresh(1000);
           }
 
           NotificationManager.success(
@@ -377,10 +380,7 @@ function CreateCollection(props) { console.log("rerender",props)
             1800
           );
           setLoading(false);
-
-          setTimeout(() => {
-            window.location.href = "/createcollection";
-          }, 1000);
+          slowRefresh(1000);
         }
       }
     }
@@ -411,27 +411,6 @@ function CreateCollection(props) { console.log("rerender",props)
           fd.append("link", importedCollectionLink);
 
           res = await createCollection(fd);
-
-          try {
-            let _nfts = await getNFTList({
-              page: 1,
-              limit: 12,
-              collectionID: res._id,
-              searchText: "",
-            });
-
-            await importCollection({
-              address: importedAddress,
-              totalSupply:
-                parseInt(originalSupply) - 1 ? parseInt(originalSupply) - 1 : 0,
-              name: title,
-              link: importedCollectionLink,
-            });
-          } catch (e) {
-            setLoading(false);
-            console.log("error", e);
-            return;
-          }
         } else {
           NotificationManager.error("Collection already imported", "", 800);
           setLoading(false);
@@ -442,21 +421,12 @@ function CreateCollection(props) { console.log("rerender",props)
         fd.append("contractAddress", importedAddress.toLowerCase());
         fd.append("link", importedCollectionLink);
         fd.append("isDeployed", 1);
-
         fd.append("id", selectedCollectionId);
         fd.append("isOnMarketplace", 1);
         fd.append("isImported", 1);
         fd.append("totalSupply", parseInt(originalSupply) - 1);
 
         res = await UpdateCollection(fd);
-
-        let _nfts = await getNFTList({
-          page: 1,
-          limit: 12,
-          collectionID: res._id,
-          searchText: "",
-        });
-        // slowRefresh(1000);
       }
 
       for (let i = 1; i < parseInt(originalSupply); i++) {
@@ -486,7 +456,7 @@ function CreateCollection(props) { console.log("rerender",props)
       }
       NotificationManager.success("Imported successfully");
       setLoading(false);
-      slowRefresh(1000);
+      // slowRefresh(1000);
       return;
     } catch (e) {
       console.log("error", e);
@@ -518,6 +488,7 @@ function CreateCollection(props) { console.log("rerender",props)
       };
       const res1 = await getAllCollections(reqData);
       const res2 = res1.results[0][0];
+      console.log("edit collection res", res2);
       setLogoImg(res2.logoImage);
       setCoverImg(res2.coverImage);
       setTitle(res2.name);
@@ -578,7 +549,7 @@ function CreateCollection(props) { console.log("rerender",props)
     <div className="wrapper">
       {/* <!-- Sidebar  --> */}
       <Sidebar />
-      {loading ? <Loader /> : ""}
+      {loading ? <Spinner /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
         {isSuperAdmin()
@@ -1179,7 +1150,7 @@ function CreateCollection(props) { console.log("rerender",props)
                       }}
                     />
                   </div>
-                  <div className="col-md-6 mb-1">
+                  {/*  <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
                       NFT Type *
                     </label>
@@ -1193,7 +1164,7 @@ function CreateCollection(props) { console.log("rerender",props)
                       <option value="1">Single</option>;
                       <option value="2">Multiple</option>;
                     </select>
-                  </div>
+                    </div>*/}
 
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
