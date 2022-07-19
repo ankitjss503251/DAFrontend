@@ -432,7 +432,7 @@ function NFTDetails() {
       currentUser,
       NFTDetails?.type,
       offerQuantity,
-      ethers.utils.parseEther(offerPrice),
+      ethers.utils.parseEther(offerPrice.toString()),
       deadline,
       NFTDetails.id,
       contracts.BUSD
@@ -1209,7 +1209,7 @@ function NFTDetails() {
                   </button>
                 </li>
                 <li className="list-unstyled">
-                  detailPop
+                  
                   <button
                     id="btn2"
                     className="navbtn"
@@ -1562,9 +1562,7 @@ function NFTDetails() {
                         }}
                       >
                         {" "}
-                        <option value={"BNB"} selected>
-                          BNB
-                        </option>
+                      
                         {/* <option value={"HNTR"}>HNTR</option> */}
                         <option value={"BUSD"}>BUSD</option>
                       </select>

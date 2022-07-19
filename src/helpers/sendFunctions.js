@@ -296,6 +296,7 @@ export const handleApproveToken = async (userAddress, tokenAddress) => {
 };
 
 export const putOnMarketplace = async (account, orderData) => {
+  console.log("in put on marketplace buttong")
   if (!account) {
     return false;
   }
@@ -303,18 +304,23 @@ export const putOnMarketplace = async (account, orderData) => {
   let _deadline = GENERAL_TIMESTAMP;
   let _price;
   let sellerOrder;
+  
   try {
     if (orderData.chosenType === 0) {
       _deadline = GENERAL_TIMESTAMP;
-      _price = ethers.utils.parseEther(orderData.price).toString();
+     
+      _price = ethers.utils.parseEther((orderData.price).toString()).toString();
     } else if (orderData.chosenType === 1) {
       let endTime = new Date(orderData.endTime).valueOf() / 1000;
       _deadline = endTime;
-      _price = ethers.utils.parseEther(orderData.minimumBid).toString();
+     
+      _price = ethers.utils.parseEther((orderData.price).toString()).toString();
     } else if (orderData.chosenType === 2) {
       _deadline = GENERAL_TIMESTAMP;
-      _price = ethers.utils.parseEther(orderData.minimumBid).toString();
+      
+      _price = ethers.utils.parseEther((orderData.price).toString()).toString();
     }
+  
     sellerOrder = [
       account,
       orderData.collection,
@@ -330,7 +336,7 @@ export const putOnMarketplace = async (account, orderData) => {
       [],
       orderData.salt,
     ];
-
+       console.log("seller Order is----------------->",sellerOrder)
     // let usrHaveQuantity = await GetOwnerOfToken(
     //   sellerOrder[1],
     //   sellerOrder[2],
@@ -921,7 +927,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         break;
       case 6:
         buyerOrder.push(amount);
-        sellerOrder.push(Number(bidData.bidPrice.$numberDecimal));
+        sellerOrder.push(bidData.bidPrice.$numberDecimal);
         break;
       case 7:
         buyerOrder.push(bidData.bidDeadline);
@@ -945,6 +951,8 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         buyerOrder.push([]);
     }
   }
+  
+  console.log("seller and buyer order is-------------->",sellerOrder,buyerOrder)
 
   let sellerSignature = bidData.buyerSignature;
   let buyerSignature = bidData.buyerSignature;
