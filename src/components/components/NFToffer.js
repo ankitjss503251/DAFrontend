@@ -74,7 +74,7 @@ function NFToffer(props) {
 
     if (
       offerQuantity == "" ||
-      (offerQuantity == undefined && NFTDetails.type !== 1)
+      (offerQuantity == undefined && NFTDetails?.type !== 1)
     ) {
       NotificationManager.error("Enter Offer Quantity");
       setLoading(false);
@@ -131,7 +131,10 @@ function NFToffer(props) {
   return (
     <div className="row">
       {loading ? <Spinner /> : ""}
-      <div className="col-md-12">
+      {offer && offer.length <= 0 ?  <div className="col-md-12">
+       <h4 className="no_data_text text-muted">No Offers Available</h4>
+     </div> : <div className="table-responsive">
+     <div className="col-md-12">
         <div className="nft_list">
           <table className="table text-light fixed_header">
             <thead>
@@ -182,8 +185,8 @@ function NFToffer(props) {
                           <Clock
                             deadline={moment(new Date(b.bidDeadline * 1000))
                               .subtract({
-                                hours: 5,
-                                minutes: 30,
+                                'hours': 5,
+                                'minutes': 30,
                               })
                               .toISOString()}
                           ></Clock>
@@ -233,7 +236,12 @@ function NFToffer(props) {
                             >
                               <button
                                 disabled={
-                                  new Date(b.bidDeadline * 1000) < new Date()
+                                  moment(
+                                    new Date(b.bidDeadline * 1000)
+                                  ).subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })._d < new Date()
                                 }
                                 className="small_yellow_btn small_btn mr-3"
                                 data-bs-toggle="modal"
@@ -253,7 +261,12 @@ function NFToffer(props) {
                               </button>
                               <button
                                 disabled={
-                                  new Date(b.bidDeadline * 1000) < new Date()
+                                  moment(
+                                    new Date(b.bidDeadline * 1000)
+                                  ).subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })._d < new Date()
                                 }
                                 className="small_border_btn small_btn"
                                 onClick={async () => {
@@ -287,6 +300,8 @@ function NFToffer(props) {
           </table>
         </div>
       </div>
+      </div>}
+     
 
       {/*update offer modal*/}
       <div className="modal marketplace" id="brandModal">

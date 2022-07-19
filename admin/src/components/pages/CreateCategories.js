@@ -203,7 +203,7 @@ function CreateCategories() {
                       }}
                       onClick={() => imageUploader.current.click()}
                     >
-                      <p className="text-center">Click or Drop here</p>
+                      <p className="text-center">Click here</p>
                       <img
                         alt=""
                         ref={uploadedImage}

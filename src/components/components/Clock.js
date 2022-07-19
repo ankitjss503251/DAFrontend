@@ -19,6 +19,7 @@ class Clock extends Component {
   }
   getTimeUntil(deadline) {
     let time = Date.parse(deadline) - Date.parse(new Date());
+
     if (time < 0) {
       this.setState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     } else {
@@ -27,6 +28,7 @@ class Clock extends Component {
       const hours = Math.floor((time / (1000 * 60 * 60)) % 24);
       const days = Math.floor(time / (1000 * 60 * 60 * 24));
       this.setState({ days, hours, minutes, seconds });
+      console.log("state", this.state);
     }
   }
   componentWillUnmount() {

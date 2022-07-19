@@ -1098,26 +1098,26 @@ function NFTDetails() {
             </div>
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>Listings</h3>
-              <div className='table-responsive'>
+              {/* <div className='table-responsive'> */}
                 <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
-              </div>
+              {/* </div> */}
             </div>
 
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>Bids</h3>
-              <div className='table-responsive'>
+           
                 <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
-              </div>
+             
             </div>
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>Offers</h3>
-              <div className='table-responsive'>
+            
                 <NFToffer
                   id={NFTDetails.id}
                   NftDetails={NFTDetails}
                   collectionAddress={collection?.contractAddress}
                 />
-              </div>
+             
             </div>
             <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>History</h3>

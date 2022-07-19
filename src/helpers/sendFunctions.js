@@ -466,6 +466,15 @@ export const createBid = async (
   isOffer = false,
   bidDeadline
 ) => {
+  console.log("__createBid__", nftID,
+    orderID,
+    ownerAccount,
+    buyerAccount,
+    erc721,
+    qty = 1,
+    bidPrice,
+    isOffer = false,
+    bidDeadline);
   let SellerOrder;
   let sellerOrder = [];
   let buyerOrder = [];
