@@ -20,8 +20,8 @@ function AccountSupport() {
                     <Sidebar />
                 </div>
                 <div className="col-md-9">
-                    <div class="profile_area pdd_8">
-                        <h1 class="profile_h1">Account Support</h1>
+                    <div className="profile_area pdd_8">
+                        <h1 className="profile_h1">Account Support</h1>
                     </div>
                 </div>
             </div>

@@ -70,7 +70,7 @@ function FirearmsCollection(props) {
                           <img
                             alt=''
                             src={"../img/favicon.png"}
-                            class='img-fluid'
+                            className='img-fluid'
                           />
                           {card.price} 
                         </p> */}

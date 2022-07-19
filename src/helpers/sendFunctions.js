@@ -307,6 +307,7 @@ export const putOnMarketplace = async (account, orderData) => {
     if (orderData.chosenType === 0) {
       _deadline = GENERAL_TIMESTAMP;
       _price = ethers.utils.parseEther(orderData.price).toString();
+      console.log("_price", _price, typeof _price, typeof orderData);
     } else if (orderData.chosenType === 1) {
       let endTime = new Date(orderData.endTime).valueOf() / 1000;
       _deadline = endTime;
@@ -874,7 +875,7 @@ export const handleAcceptBids = async (
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-  // slowRefresh(1000);
+  slowRefresh(1000);
 };
 
 export const handleAcceptOffers = async (bidData, props, account) => {
