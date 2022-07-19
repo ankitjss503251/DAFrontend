@@ -1,3 +1,4 @@
+
 import React, { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -11,6 +12,7 @@ const Relatedcollection = (props) => {
          else
          setCnt(0)
   },[viewAll])
+
 
   return (
     <div className='row mb-5 justify-content-center'>
@@ -54,31 +56,38 @@ const Relatedcollection = (props) => {
             return (
               
               <div className='col-md-4 mb-4'>
-                    <a href={`/collection/${card._id}`}>
+                    <Link to={`/collection/${card._id}`}>
                 <div className='collection_slide'>
-                  <img
-                    src={card.coverImg}
-                    class='img-fluid'
-                    alt=''
-                  />
+                  <div className="mint_img">
+                    <img
+                      src={card.coverImg}
+                      class='img-fluid'
+                      alt=''
+                    />
+                  </div>
                   <div className='collection_text'>
                     <div className='coll_profileimg'>
-                      <img
-                        alt=''
-                        className='profile_img'
-                        src={card.logoImg}
-                      />
-                      {/* <img
-                        alt=''
-                        className='check_img'
-                        src={"../img/collections/check.png"}
-                      /> */}
+                      <div class="rotater_border profile_img">
+                        <Link to="" class="rounded-circle">
+                          <img
+                            alt=''
+                            className=''
+                            src={card.logoImg}
+                          />
+                          
+                          {/* <img
+                            alt=''
+                            className='check_img'
+                            src={"../img/collections/check.png"}
+                          /> */}
+                        </Link>
+                      </div>
                     </div>
                     <h3 className='collname'>{card.name}</h3>
                     <p>ERC-721</p>
                   </div>
                 </div>
-                </a>
+                </Link>
               </div>
             
             );

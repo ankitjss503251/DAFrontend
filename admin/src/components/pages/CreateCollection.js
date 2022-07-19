@@ -864,36 +864,21 @@ function CreateCollection() {
                             alt=""
                             ref={uploadedImage}
                             src={logoImg}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         ) : logoImg && !isEdit1 ? (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={URL.createObjectURL(logoImg)}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         ) : (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={"../images/upload.png"}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         )}
 
@@ -938,36 +923,21 @@ function CreateCollection() {
                             alt=""
                             ref={uploadedImage}
                             src={coverImg}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         ) : coverImg && !isEdit2 ? (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={URL.createObjectURL(coverImg)}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         ) : (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={"../images/upload.png"}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         )}
 
@@ -1430,12 +1400,7 @@ function CreateCollection() {
                           alt=""
                           ref={uploadedImage}
                           src={logoImg}
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className="img-fluid profile_circle_img"
+                          className="img-fluid profile_circle_img admin_profile_img"
                         />
                         {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
@@ -1476,12 +1441,7 @@ function CreateCollection() {
                           alt=""
                           ref={uploadedImage2}
                           src={coverImg}
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className="img-fluid profile_circle_img"
+                          className="img-fluid profile_circle_img admin_profile_img"
                         />
                         {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
