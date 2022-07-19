@@ -264,7 +264,7 @@ export const handleBuyNft = async (
     return false;
   }
 
-  NotificationManager.success("NFT Purchased Successfully");
+  NotificationManager.success("NFT Purchased Successfully")
   slowRefresh(1000);
 };
 
@@ -307,6 +307,7 @@ export const putOnMarketplace = async (account, orderData) => {
     if (orderData.chosenType === 0) {
       _deadline = GENERAL_TIMESTAMP;
       _price = ethers.utils.parseEther(orderData.price).toString();
+      console.log("_price", _price, typeof _price, typeof orderData)
     } else if (orderData.chosenType === 1) {
       let endTime = new Date(orderData.endTime).valueOf() / 1000;
       _deadline = endTime;
@@ -624,12 +625,12 @@ export const createOffer = async (
 
     let userTokenBal = await getUsersTokenBalance(buyerOrder[0], buyerOrder[5]);
 
-    let usrHaveQuantity = await GetOwnerOfToken(
-      buyerOrder[1],
-      buyerOrder[2],
-      1,
-      buyerOrder[0]
-    );
+    // let usrHaveQuantity = await GetOwnerOfToken(
+    //   buyerOrder[1],
+    //   buyerOrder[2],
+    //   1,
+    //   buyerOrder[0]
+    // );
 
     if (
       new BigNumber(bidPrice)

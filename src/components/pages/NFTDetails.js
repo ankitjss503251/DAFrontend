@@ -603,17 +603,13 @@ function NFTDetails() {
                     if (val.split(".").length > 2) {
                       val = val.replace(/\.+$/, "");
                     }
-                    if (val.length === 1 && val !== "0.") {
-                      val = Number(val);
-                    }
+                   
                   }
                 } else {
                   if (val.split(".").length > 2) {
                     val = val.replace(/\.+$/, "");
                   }
-                  if (val.length === 1 && val !== "0.") {
-                    val = Number(val);
-                  }
+                  
                 }
                 setPrice(val);
               }
@@ -1243,18 +1239,15 @@ function NFTDetails() {
                               if (val.split(".").length > 2) {
                                 val = val.replace(/\.+$/, "");
                               }
-                              if (val.length === 1 && val !== "0.") {
-                                val = Number(val);
-                              }
+                            
                             }
                           } else {
                             if (val.split(".").length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
-                            if (val.length === 1 && val !== "0.") {
-                              val = Number(val);
-                            }
+                           
                           }
+                          console.log("valll", val, typeof val)
                           setItemprice(val);
                         }
                       }}
@@ -1320,17 +1313,13 @@ function NFTDetails() {
                             if (val.split(".").length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
-                            if (val.length === 1 && val !== "0.") {
-                              val = Number(val);
-                            }
+                           
                           }
                         } else {
                           if (val.split(".").length > 2) {
                             val = val.replace(/\.+$/, "");
                           }
-                          if (val.length === 1 && val !== "0.") {
-                            val = Number(val);
-                          }
+                         
                         }
                         setItem_bid(val);
                       }
@@ -1470,17 +1459,13 @@ function NFTDetails() {
                             if (val.split(".").length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
-                            if (val.length === 1 && val !== "0.") {
-                              val = Number(val);
-                            }
+                           
                           }
                         } else {
                           if (val.split(".").length > 2) {
                             val = val.replace(/\.+$/, "");
                           }
-                          if (val.length === 1 && val !== "0.") {
-                            val = Number(val);
-                          }
+                         
                         }
                         setOfferPrice(val);
                       }

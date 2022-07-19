@@ -150,17 +150,13 @@ function NFTlisting(props) {
                     if (val.split(".").length > 2) {
                       val = val.replace(/\.+$/, "");
                     }
-                    if (val.length === 1 && val !== "0.") {
-                      val = Number(val);
-                    }
+                  
                   }
                 } else {
                   if (val.split(".").length > 2) {
                     val = val.replace(/\.+$/, "");
                   }
-                  if (val.length === 1 && val !== "0.") {
-                    val = Number(val);
-                  }
+                
                 }
                 setPrice(val);
               }

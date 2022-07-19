@@ -115,7 +115,7 @@ function NFToffer(props) {
 
     const dt = ev.target["value"] + ":00Z";
 
-    const ct = moment().toISOString();
+    const ct = moment().add({'hours': 5, 'minutes': 30}).toISOString();
 
     if (dt < ct) {
       NotificationManager.error(
@@ -333,17 +333,13 @@ function NFToffer(props) {
                             if (val.split(".").length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
-                            if (val.length === 1 && val !== "0.") {
-                              val = Number(val);
-                            }
+                           
                           }
                         } else {
                           if (val.split(".").length > 2) {
                             val = val.replace(/\.+$/, "");
                           }
-                          if (val.length === 1 && val !== "0.") {
-                            val = Number(val);
-                          }
+                         
                         }
                         setOfferPrice(val);
                       }
