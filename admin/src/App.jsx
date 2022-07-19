@@ -16,8 +16,6 @@ import NftDetail from "./components/pages/ImportedData/nftDetail";
 import Navbar from "./components/Navbar";
 import withLogin from "./components/components/withLogin";
 
-import Navbar from "./components/Navbar";
-
 const Home = withLogin(Home1);
 const Admins = withLogin(Admins1);
 const CreateCategories = withLogin(CreateCategories1);
@@ -66,47 +64,20 @@ function App(props) {
           </button>
         </div>
       </div>
-      <Suspense fallback={null}>
-      <BrowserRouter>
-<<<<<<< HEAD
-       
+     
+      <BrowserRouter basename='/admin'>
         <Routes>
-          <Route path="sadmin" element={<Login />} />
-          <Route element={<><Navbar /><Outlet/></>}>  
-          <Route path="/" element={<Home />} />
-=======
-        <Routes>
->>>>>>> bdaf2ff5ab051c8f1c6a943b4d3272b2cdd78d21
           {/* <Route
             path="navbar"
             model={mode}
             element={<Navbar />}
             toggleMode={toggleMode}
           /> */}
-<<<<<<< HEAD
-          <Route path="admins" element={<Admins />}></Route>
-          <Route path="createcollection" element={<CreateCollection />} />
-          <Route path="createnfts" element={<CreateNFTs />} />
-          <Route path="createbrands" element={<CreateBrands />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="importedNfts/:address" element={<ImportCard />} />
-          <Route path="importedNfts/:address/:id" element={<NftDetail />} />
-          <Route
-            path="createcategories"
-            showNotificationPopup={()=>{}}
-            element={<CreateCategories />}
-          />
-          <Route
-            path="notificationpopup"
-            notificationpopup={notificationpopup}
-            element={<NotificationPopup />}
-          />
-=======
-
+          
           <Route path="sadmin" element={<Login />} />
 
           <Route
+          
             element={
               <>
                 <Navbar />
@@ -114,7 +85,7 @@ function App(props) {
               </>
             }
           >
-            <Route path="/" element={<Home />} />
+            <Route index  element={<Home />} />
             {/* <Route
 
      path="navbar"
@@ -152,13 +123,12 @@ function App(props) {
               notificationpopup={notificationpopup}
               element={<NotificationPopup />}
             />
->>>>>>> bdaf2ff5ab051c8f1c6a943b4d3272b2cdd78d21
           </Route>
         </Routes>
 
         <NotificationContainer />
       </BrowserRouter>
-      </Suspense>
+   
     </div>
   );
 }

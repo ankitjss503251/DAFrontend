@@ -40,7 +40,7 @@ function Sidebar() {
           </li>
         ) : null}
        
-        {"admin" === "admin" ? (
+        {localStorage.getItem('role') === "admin" ? (
           <>
             <li>
               <Link
