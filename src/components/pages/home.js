@@ -171,7 +171,7 @@ const Home = () => {
                   </div>
                   <h4>#3 Sell NFT’s </h4>
                   <p className="textdes">
-                    List your NFT’s on the secondary market place
+                    List your NFT’s on the secondary marketplace
                   </p>
                 </div>
               </div>
