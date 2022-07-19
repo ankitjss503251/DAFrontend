@@ -971,7 +971,7 @@ function NFTDetails() {
                         : ""}
                     </button>
                   )
-                ) : (
+                ) : owned && owned !== "none" ? (
                   <button
                     type='button'
                     className='title_color buy_now'
@@ -985,6 +985,8 @@ function NFTDetails() {
                     }}>
                     Remove From Sale
                   </button>
+                ) : (
+                  ""
                 )}
                 {!owned && owned !== "none" && haveOffer !== "none" ? (
                   <button

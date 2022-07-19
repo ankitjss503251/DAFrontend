@@ -455,7 +455,7 @@ function CreateCollection() {
       }
       NotificationManager.success("Imported successfully");
       setLoading(false);
-      slowRefresh(1000);
+      // slowRefresh(1000);
       return;
     } catch (e) {
       console.log("error", e);
@@ -1149,7 +1149,7 @@ function CreateCollection() {
                       }}
                     />
                   </div>
-                  <div className="col-md-6 mb-1">
+                  {/*  <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
                       NFT Type *
                     </label>
@@ -1163,7 +1163,7 @@ function CreateCollection() {
                       <option value="1">Single</option>;
                       <option value="2">Multiple</option>;
                     </select>
-                  </div>
+                    </div>*/}
 
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
