@@ -13,7 +13,7 @@ import {
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import Clock from "./Clock";
-import {GENERAL_TIMESTAMP} from "../../helpers/constants";
+import { GENERAL_TIMESTAMP} from "../../helpers/constants";
 import {Tokens} from "../../helpers/tokensToSymbol";
 import {ethers} from "ethers";
 import Spinner from "./Spinner";
@@ -365,11 +365,12 @@ function NFTlisting(props) {
                            :"Open for Bids"}
                      </td>
                      <td>
+                    
                        {moment(new Date(o.deadline*1000))
                          .subtract({
                            hours: 5,
                            minutes: 30,
-                         })._d<new Date()? (
+                         })._d<new Date() || o.deadline === GENERAL_TIMESTAMP ? (
                          "--:--:--"
                        ):(
                          <Clock

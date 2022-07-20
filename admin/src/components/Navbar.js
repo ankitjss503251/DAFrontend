@@ -107,11 +107,10 @@ const onboard = Onboard({
   },
 });
  
-
-evt.removeAllListeners("wallet-connect", walletConnect);
 evt.on("wallet-connect",()=>{
   console.log("1111");
-});  
+}); 
+
 
 const Navbar = (props) => {
   const [cookies, setCookie, removeCookie] = useCookies([]);
@@ -180,6 +179,10 @@ const Navbar = (props) => {
       });
     }
   }, [provider, account, chainId]);
+
+  function walletConnect() {
+    connectWallet();
+  }
 
   const getUserProfile = async () => {
     const profile = await getProfile();
@@ -307,6 +310,9 @@ const Navbar = (props) => {
     slowRefresh(1000);
   };
    
+
+  evt.removeAllListeners("wallet-connect", walletConnect);
+ 
 
   return (
     <div className="admin-navbar d-flex w-100">

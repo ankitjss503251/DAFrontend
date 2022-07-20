@@ -11,14 +11,12 @@ const instaImg = {
 };
 
 
-
+evt.setMaxListeners(1);
 function LandingPage() {
   // evt.setMaxListeners(1);
-
   const connectWalletEvent = () => {
     evt.emit("wallet-connect");
-    
-  }; 
+  };
 
   return (
     <div className='wrapper'>
