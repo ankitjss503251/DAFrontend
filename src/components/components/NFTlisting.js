@@ -328,104 +328,102 @@ function NFTlisting(props) {
                ? orders.map((o,i) => {
                  return (
                    <tr>
-                     <td className='d-flex justify-content-start align-items-center mb-0'>
-                       <span className='yellow_dot circle_dot'></span>
+                     <td className="d-flex justify-content-start align-items-center mb-0">
+                       <span className="yellow_dot circle_dot"></span>
                        <span>
-                         {o.sellerID&&o.sellerID.walletAddress
-                           ? o.sellerID.walletAddress.slice(0,3)+
-                           "..."+
-                           o.sellerID.walletAddress.slice(39,41)
-                           :""}
+                         {o.sellerID && o.sellerID.walletAddress
+                           ? o.sellerID.walletAddress.slice(0, 3) +
+                             "..." +
+                             o.sellerID.walletAddress.slice(39, 41)
+                           : ""}
                        </span>
                      </td>
                      <td>
                        <img
-                         alt=''
+                         alt=""
                          src={Tokens[o.paymentToken.toLowerCase()].icon}
-                         className='img-fluid hunter_fav'
+                         className="img-fluid hunter_fav"
                        />{" "}
-                       {o.price&&o.price.$numberDecimal
-                         ? Number(
-                           convertToEth(o.price.$numberDecimal)
-                         ).toFixed(4)
-                         :"0"}{" "}
+                       {o.price && o.price.$numberDecimal
+                         ? Number(convertToEth(o.price.$numberDecimal)).toFixed(
+                             4
+                           )
+                         : "0"}{" "}
                        {Tokens[o.paymentToken.toLowerCase()].symbolName}
                      </td>
                      <td>
                        {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
-                       <span className='nft_time'>
+                       <span className="nft_time">
                          {moment(o.createdOn).format("LT")}
                        </span>
                      </td>
                      <td>
-                       {o.salesType===0
+                       {o.salesType === 0
                          ? "Fixed Sale"
-                         :o.salesType===1
-                           ? "Auction"
-                           :"Open for Bids"}
+                         : o.salesType === 1 && o.deadline !== GENERAL_TIMESTAMP
+                         ? "Auction"
+                         : "Open for Bids"}
                      </td>
                      <td>
-                       {moment(new Date(o.deadline*1000))
-                         .subtract({
-                           hours: 5,
-                           minutes: 30,
-                         })._d<new Date()? (
+                       {moment(new Date(o.deadline * 1000)).subtract({
+                         hours: 5,
+                         minutes: 30,
+                       })._d < new Date() ||
+                       o.deadline === GENERAL_TIMESTAMP ? (
                          "--:--:--"
-                       ):(
+                       ) : (
                          <Clock
-                           deadline={moment(new Date(o.deadline*1000))
+                           deadline={moment(new Date(o.deadline * 1000))
                              .subtract({
                                hours: 5,
                                minutes: 30,
                              })
-                             .toISOString()}></Clock>
+                             .toISOString()}
+                         ></Clock>
                        )}
                      </td>
-                     <td className='blue_text'>
-                       {moment(new Date(o.deadline*1000))
-                         .subtract({
-                           hours: 5,
-                           minutes: 30,
-                         })._d>new Date()
+                     <td className="blue_text">
+                       {moment(new Date(o.deadline * 1000)).subtract({
+                         hours: 5,
+                         minutes: 30,
+                       })._d > new Date()
                          ? "Active"
-                         :"Ended"}
+                         : "Ended"}
                      </td>
                      <td>
-                       <div className='text-center'>
-                         {o.sellerID?.walletAddress?.toLowerCase()===
-                           currentUser?.toLowerCase()? (
+                       <div className="text-center">
+                         {o.sellerID?.walletAddress?.toLowerCase() ===
+                         currentUser?.toLowerCase() ? (
                            <button
                              to={"/"}
-                             className='small_yellow_btn small_btn mr-3'
+                             className="small_yellow_btn small_btn mr-3"
                              onClick={async () => {
                                setLoading(true);
-                               await handleRemoveFromSale(
-                                 o._id,
-                                 currentUser
-                               );
+                               await handleRemoveFromSale(o._id, currentUser);
                                setLoading(false);
-                             }}>
+                             }}
+                           >
                              Remove From Sale
                            </button>
-                         ):(
+                         ) : (
                            <button
                              to={"/"}
                              disabled={
-                               moment(new Date(o.deadline*1000))
-                                 .subtract({
+                               moment(new Date(o.deadline * 1000)).subtract({
+                                 hours: 5,
+                                 minutes: 30,
+                               })._d < new Date()
+                                 ? true
+                                 : false
+                             }
+                             className="small_border_btn small_btn"
+                             onClick={async () => {
+                               console.log("current order", o);
+                               if (
+                                 moment(new Date(o.deadline * 1000)).subtract({
                                    hours: 5,
                                    minutes: 30,
-                                 })._d<new Date()? true:false
-                             }
-                             className='small_border_btn small_btn'
-                             onClick={async () => {
-                               console.log("current order",o);
-                               if(
-                                 moment(new Date(o.deadline*1000))
-                                   .subtract({
-                                     hours: 5,
-                                     minutes: 30,
-                                   })._d<new Date()
+                                 })._d < new Date()
                                ) {
                                  NotificationManager.error(
                                    "Auction Ended",
@@ -434,19 +432,19 @@ function NFTlisting(props) {
                                  );
                                  return;
                                }
-                               if(currentUser) {
-                                 o.salesType===0
+                               if (currentUser) {
+                                 o.salesType === 0
                                    ? setPrice(
-                                     Number(
-                                       convertToEth(o.price.$numberDecimal)
-                                     ).toFixed(4)
-                                   )
-                                   :setPrice("");
-                                 props.NftDetails.type===1&&
+                                       Number(
+                                         convertToEth(o.price.$numberDecimal)
+                                       ).toFixed(4)
+                                     )
+                                   : setPrice("");
+                                 props.NftDetails.type === 1 &&
                                    setCurrentOrder(o);
-                                 o.salesType===0
+                                 o.salesType === 0
                                    ? setIsBuyNowModal(true)
-                                   :setIsPlaceBidModal(true);
+                                   : setIsPlaceBidModal(true);
                                } else {
                                  NotificationManager.error(
                                    "wallet not connected",
@@ -455,12 +453,13 @@ function NFTlisting(props) {
                                  );
                                  return;
                                }
-                             }}>
-                             {o.salesType===0
+                             }}
+                           >
+                             {o.salesType === 0
                                ? "Buy Now"
-                               :haveBid
-                                 ? "Update Bid"
-                                 :"Place Bid"}
+                               : haveBid
+                               ? "Update Bid"
+                               : "Place Bid"}
                            </button>
                          )}
                        </div>
