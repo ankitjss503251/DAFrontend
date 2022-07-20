@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { NotificationManager } from "react-notifications";
 import Sidebar from "../components/Sidebar";
 import { useCookies } from "react-cookie";
-import Loader from "../components/loader";
 import { addBrand, GetBrand } from "../../apiServices";
 import { isEmptyObject } from "jquery";
+import Spinner from "../components/Spinner";
 
 function CreateBrands() {
   const [logoImg, setLogoImg] = useState();
@@ -18,7 +18,7 @@ function CreateBrands() {
   const [isModal, setModal] = useState("");
 
   useEffect(() => {
-    if (cookies.selected_account && localStorage.getItem("Authorization") !== undefined && localStorage.getItem("Authorization") !== null) setCurrentUser(cookies.selected_account);
+    if (cookies.da_selected_account) setCurrentUser(cookies.da_selected_account);
     // else NotificationManager.error("Connect Yout Metamask", "", 800);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
@@ -126,7 +126,7 @@ function CreateBrands() {
     <div className="wrapper">
       {/* <!-- Sidebar  --> */}
       <Sidebar />
-      {loading ? <Loader /> : ""}
+      {loading ? <Spinner /> : ""}
       {/* <!-- Page Content  --> */}
       <div id="content">
         {currentUser && (
@@ -145,7 +145,7 @@ function CreateBrands() {
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">Brand</h5>
       
-          <table class="table table-hover text-light">
+          <table className="table table-hover text-light">
             <thead>
               <tr>
                 <th>Customer</th>
@@ -153,22 +153,21 @@ function CreateBrands() {
                 <th>Description</th>
               </tr>
             </thead>
-            <br></br>
+         
             {myBrand &&
             myBrand !== undefined &&
             myBrand !== "" &&
             !isEmptyObject(myBrand) &&
             myBrand.length > 0
               ? myBrand.map((data, index) => (
-                  <tbody>
+                  <tbody key={index}>
                     <tr>
-                      <td>
-                        <img
+                      <td><img
                           src={data.logoImage}
                           className="profile_i"
                           alt=""
-                        />
-                      </td>
+                         
+                        /></td>
                       <td>{data.name ? data.name?.length > 8 ? data.name?.slice(0,8) + "..." : data.name : "-"}</td>
                       <td>{data.description ? data.description?.length > 15 ? data.description?.slice(0,15) : data.description : '-'}</td>
                     </tr>
@@ -204,7 +203,7 @@ function CreateBrands() {
             <div className="modal-body">
               <form className="row">
                 <div className="mb-1 col-md-4">
-                  <label for="recipient-name" className="col-form-label">
+                  <label htmlFor="recipient-name" className="col-form-label">
                     Upload Logo *
                   </label>
                   <div
@@ -250,7 +249,7 @@ function CreateBrands() {
                   </div>
                 </div>
                 <div className="mb-1 col-md-8">
-                  <label for="recipient-name" className="col-form-label">
+                  <label htmlFor="recipient-name" className="col-form-label">
                     Upload Cover Image *
                   </label>
                   <div
@@ -296,7 +295,7 @@ function CreateBrands() {
                   </div>
                 </div>
                 <div className="col-md-12 mb-1">
-                  <label for="recipient-name" className="col-form-label">
+                  <label htmlFor="recipient-name" className="col-form-label">
                     Title *
                   </label>
                   <input
@@ -308,7 +307,7 @@ function CreateBrands() {
                   />
                 </div>
                 <div className="col-md-12 mb-1">
-                  <label for="message-text" className="col-form-label">
+                  <label htmlFor="message-text" className="col-form-label">
                     Description *
                   </label>
                   <textarea

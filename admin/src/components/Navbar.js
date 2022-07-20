@@ -25,6 +25,7 @@ const walletConnect = walletConnectModule();
 
 const onboard = Onboard({
   wallets: [walletConnect, injected],
+ 
   chains: [
     {
       id: "0x13881",
@@ -91,6 +92,8 @@ const onboard = Onboard({
           header: "Available Wallets",
         },
       },
+
+
     },
   },
 
@@ -101,6 +104,9 @@ const onboard = Onboard({
   },
 });
 
+
+
+
 const Navbar = (props) => {
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [provider, setProvider] = useState();
@@ -109,14 +115,16 @@ const Navbar = (props) => {
   const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
+  console.log("onboard is--------->",onboard)
 
   useEffect(() => {
     init();
+    console.log('rendered');
   }, []);
 
   const init = async () => {
-    if (cookies["selected_account"] && localStorage.getItem('Authorization') !== undefined && localStorage.getItem('Authorization') !== null) {
-      setAccount(cookies["selected_account"]);
+    if (cookies["da_selected_account"]) {
+      setAccount(cookies["da_selected_account"]);
       const s = await onboard.connectWallet({
         autoSelect: { label: cookies["label"], disableModals: true },
       });
@@ -126,16 +134,18 @@ const Navbar = (props) => {
       setProvider(s[0].provider);
       setLabel(s[0].label);
       setCookie("label", s[0].label, { path: "/" });
-      setCookie("selected_account", s[0].accounts[0].address, { path: "/" });
+      setCookie("da_selected_account", s[0].accounts[0].address, { path: "/" });
       setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
         path: "/",
       });
       setCookie("balance", s[0].accounts[0].balance, { path: "/" });
+      
+      
     }
   };
 
   const refreshState = () => {
-    removeCookie("selected_account", { path: "/" });
+    removeCookie("da_selected_account", { path: "/" });
     removeCookie("chain_id", { path: "/" });
     removeCookie("balance", { path: "/" });
     removeCookie("label", { path: "/" });
@@ -167,6 +177,7 @@ const Navbar = (props) => {
   };
 
   const connectWallet = async () => {
+
     if (window.ethereum) {
       console.log("window ethereum");
     } else {
@@ -185,7 +196,7 @@ const Navbar = (props) => {
       setChainId(primaryWallet.chains[0].id);
       console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
-      const address = wallets[0].accounts[0].address;
+      const address = primaryWallet.accounts[0].address;
       try {
         userAuth(primaryWallet, address);
       } catch (e) {
@@ -211,7 +222,7 @@ const Navbar = (props) => {
             setAccount(primaryWallet.accounts[0].address);
             setLabel(primaryWallet.label);
             window.sessionStorage.setItem("role", res2?.data?.userType);
-            setCookie("selected_account", address, { path: "/" });
+            setCookie("da_selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
@@ -250,7 +261,7 @@ const Navbar = (props) => {
 
             setLabel(primaryWallet.label);
             window.sessionStorage.setItem("role", res?.data?.userType);
-            setCookie("selected_account", address, { path: "/" });
+            setCookie("da_selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
@@ -279,7 +290,7 @@ const Navbar = (props) => {
 
   const disconnectWallet = async () => {
     await onboard.disconnectWallet({ label: label });
-    await Logout(cookies["selected_account"]);
+    await Logout(cookies["da_selected_account"]);
     window.sessionStorage.removeItem("role");
     refreshState();
     NotificationManager.success("User Logged out Successfully", "", 800);
@@ -367,4 +378,4 @@ const Navbar = (props) => {
   );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

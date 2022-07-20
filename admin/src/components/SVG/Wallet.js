@@ -8,7 +8,7 @@ function Wallet() {
         <path d="M21.5334 14.5166C22.2238 14.5166 22.7834 13.957 22.7834 13.2666C22.7834 12.5762 22.2238 12.0166 21.5334 12.0166C20.8431 12.0166 20.2834 12.5762 20.2834 13.2666C20.2834 13.957 20.8431 14.5166 21.5334 14.5166Z" fill="white"/>
         </g>
         <defs>
-        <filter id="filter0_d_58_2369" x="0" y="0" width="33.7834" height="31.334" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <filter id="filter0_d_58_2369" x="0" y="0" width="33.7834" height="31.334" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood flood-opacity="0" result="BackgroundImageFix"/>
         <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
         <feOffset dy="4"/>

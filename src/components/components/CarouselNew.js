@@ -23,6 +23,7 @@ function ItemsList() {
           limit: 12,
         };
         const res = await getNFTs(reqData);
+        console.log("res", res);
         for (let i = 0; i < res.length; i++) {
           const orderDet = await getPrice(res[i].orderData);
           const brandDet = res[i].brandData;

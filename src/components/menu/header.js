@@ -114,7 +114,6 @@ const Header = function () {
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState();
   const [chainId, setChainId] = useState();
-  const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [scolns, setSColns] = useState([]);
   const [sNfts, setSNfts] = useState([]);
@@ -128,6 +127,9 @@ const Header = function () {
     async function setCategory() {
       const cat = await getCategory();
       setCatg(cat);
+      
+      //const [primaryWallet] = await onboard.state.get().wallets;
+      //console.log("Active wallets",primaryWallet);
     }
     setCategory();
   }, []);
@@ -152,7 +154,6 @@ const Header = function () {
         setCookie("balance", s[0].accounts[0].balance?.MATIC, { path: "/" });
       }
     }
-
     setCookies();
   }, []);
 
@@ -168,6 +169,7 @@ const Header = function () {
   };
 
   useEffect(() => {
+    console.log("provider in useEffect", provider);
     async function setProvider() {
       if (provider) {
         provider.on("accountsChanged", (accounts) => {
@@ -181,7 +183,6 @@ const Header = function () {
           }
         });
         provider.on("chainChanged", async (chains) => {
-          console.log("chain changed", chains);
           if (chains !== process.env.REACT_APP_CHAIN_ID) {
             await onboard.setChain({
               chainId: process.env.REACT_APP_CHAIN_ID,
@@ -200,8 +201,8 @@ const Header = function () {
 
   const getUserProfile = async () => {
     const profile = await getProfile();
-    console.log("profile", profile.data);
     setUserDetails(profile.data);
+  
   };
 
   useEffect(() => {
@@ -209,6 +210,7 @@ const Header = function () {
       if (account && !userDetails) getUserProfile();
     }
     getUserProfileData();
+    
   }, [account, userDetails?.username]);
 
   const connectWallet = async () => {
@@ -219,7 +221,6 @@ const Header = function () {
       });
       const primaryWallet = wallets[0];
       setChainId(primaryWallet.chains[0].id);
-      console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
 
@@ -444,13 +445,12 @@ const Header = function () {
                   }
                 }}
               />
-              <button className="search_btn" type="submit">
+              <button className='search_btn' type='submit'>
                 <Link
                   to={{
                     pathname: `/marketplace/${searchValue}`,
-                  }}
-                >
-                  <img src={"../img/search.svg"} alt="" />
+                  }}>
+                  <img src={"../img/search.svg"} alt='' />
                 </Link>
               </button>
             </div>
@@ -539,8 +539,8 @@ const Header = function () {
                   Collections
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/helpcenter" tabindex="-1">
+              <li className='nav-item'>
+                <NavLink className='nav-link' to='/helpcenter' tabIndex='-1'>
                   Resources
                   <ul className="sub_menu">
                     <li>
@@ -594,9 +594,8 @@ const Header = function () {
                   <li className="nav-item">
                     <button
                       onClick={!account ? connectWallet : disconnectWallet}
-                      className="main_btn"
-                      tabindex="-1"
-                    >
+                      className='main_btn'
+                      tabIndex='-1'>
                       {!account
                         ? "Connect Wallet"
                         : account.slice(0, 4) + "..." + account.slice(38, 42)}
@@ -621,8 +620,8 @@ const Header = function () {
                       <span className='cartqt'>9</span>
                     </div>
                   </li> */}
-                  <li className="nav-item">
-                    <NavLink to="" tabindex="-1" className="profile_pic">
+                  <li className='nav-item'>
+                    <NavLink to='' tabIndex='-1' className='profile_pic'>
                       <img
                         src={
                           userDetails?.profileIcon
@@ -703,13 +702,12 @@ const Header = function () {
                       <li>
                         <NavLink to={"/Notifications"} className="sub-items">
                           <svg
-                            class="hide"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
+                            className='hide'
+                            width='24'
+                            height='24'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            xmlns='http://www.w3.org/2000/svg'>
                             <path
                               d="M12 0C5.38267 0 0 5.38267 0 12V12.0013L6.66667 6.668V10.668H16V13.3347H6.66667V17.3347L0 12.0013C0.00133333 18.6187 5.38267 24 12 24C18.6173 24 24 18.6173 24 12C24 5.38267 18.6173 0 12 0Z"
                               fill="#EF981D"
@@ -743,11 +741,10 @@ const Header = function () {
                   </li>
                   <li className="nav-item">
                     <button
-                      className="square_yello"
-                      tabindex="-1"
-                      onClick={disconnectWallet}
-                    >
-                      <img src="../img/edit.png" alt="edit" />{" "}
+                      className='square_yello'
+                      tabIndex='-1'
+                      onClick={disconnectWallet}>
+                      <img src='../img/edit.png' alt='edit' />{" "}
                       {account?.slice(0, 4) + "..." + account?.slice(38, 42)}
                     </button>
                   </li>
