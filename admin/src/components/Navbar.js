@@ -20,6 +20,9 @@ import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
 import Logo from "./../logo.svg";
 import PopupModal from "./components/popupModal";
+import evt from "./components/Events";
+
+
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
 
@@ -103,9 +106,12 @@ const onboard = Onboard({
     },
   },
 });
+ 
 
-
-
+evt.removeAllListeners("wallet-connect", walletConnect);
+evt.on("wallet-connect",()=>{
+  console.log("1111");
+});  
 
 const Navbar = (props) => {
   const [cookies, setCookie, removeCookie] = useCookies([]);
@@ -115,7 +121,11 @@ const Navbar = (props) => {
   const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
-  console.log("onboard is--------->",onboard)
+ 
+  
+  
+ 
+
 
   useEffect(() => {
     init();
@@ -175,7 +185,7 @@ const Navbar = (props) => {
     const profile = await getProfile();
     setUserDetails(profile.data);
   };
-
+  
   const connectWallet = async () => {
 
     if (window.ethereum) {
@@ -296,6 +306,7 @@ const Navbar = (props) => {
     NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
+   
 
   return (
     <div className="admin-navbar d-flex w-100">

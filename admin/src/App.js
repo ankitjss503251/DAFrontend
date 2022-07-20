@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 import "./App.css";
 import Home1 from "./components/pages/Home";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
@@ -16,6 +17,7 @@ import NftDetail from "./components/pages/ImportedData/nftDetail";
 import withLogin from "./components/components/withLogin";
 
 import Navbar from "./components/Navbar";
+import LandingPage from "./LandingPage";
 
 const Home = withLogin(Home1);
 const Admins = withLogin(Admins1);
@@ -34,6 +36,9 @@ const instaImg = {
 function App() {
   const [mode, setMode] = useState("Darkmode");
   const [notificationpopup, setNotificationPopup] = useState(null);
+  const [currentUser, setCurrentUser] = useState("");
+  const [cookies, setCookies, removeCookies] = useCookies([]);
+
   const showNotificationPopup = (message, title) => {
     setNotificationPopup({
       msg: message,
@@ -51,6 +56,12 @@ function App() {
       setMode("Darkmode");
     }
   };
+
+
+  useEffect(() => {
+    if (cookies["da_selected_account"])
+      setCurrentUser(cookies["da_selected_account"]);
+  }, [cookies]);
 
   return (
     <div style={instaImg} className={mode}>
@@ -75,54 +86,59 @@ function App() {
           /> */}
 
           <Route path="sadmin" element={<Login />} />
-
-          <Route
-            element={
-              <>
+          {
+            !currentUser ? <Route path="/" element={<LandingPage />} /> : <Route
+            element={<>
                 <Navbar />
                 <Outlet />
-              </>
-            }
-          >
-            <Route path="/" element={<Home />} />
-            {/* <Route
+              </>} > 
+               
+        
+        
+          currentUser ? <Route path="/" element={<Home />} /> 
+        
+                    
+                    {/* <Route
+        
+             path="navbar"
+        
+                    model={mode}
+        
+                    element={<Navbar />}
+        
+                    toggleMode={toggleMode}
+        
+                  /> */}
+        
+                    <Route path="admins" element={<Admins />}></Route>
+        
+                    <Route path="createcollection" element={<CreateCollection />} />
+        
+                    <Route path="createnfts" element={<CreateNFTs />} />
+        
+                    <Route path="createbrands" element={<CreateBrands />} />
+        
+                    <Route path="login" element={<Login />} />
+        
+                    <Route path="register" element={<Register />} />
+        
+                    <Route path="importedNfts/:address/:id" element={<NftDetail />} />
+        
+                    <Route
+                      path="createcategories"
+                      showNotificationPopup={() => {}}
+                      element={<CreateCategories />}
+                    />
+        
+                    <Route
+                      path="notificationpopup"
+                      notificationpopup={notificationpopup}
+                      element={<NotificationPopup />}
+                    />
+                  </Route>
 
-     path="navbar"
-
-            model={mode}
-
-            element={<Navbar />}
-
-            toggleMode={toggleMode}
-
-          /> */}
-
-            <Route path="admins" element={<Admins />}></Route>
-
-            <Route path="createcollection" element={<CreateCollection />} />
-
-            <Route path="createnfts" element={<CreateNFTs />} />
-
-            <Route path="createbrands" element={<CreateBrands />} />
-
-            <Route path="login" element={<Login />} />
-
-            <Route path="register" element={<Register />} />
-
-            <Route path="importedNfts/:address/:id" element={<NftDetail />} />
-
-            <Route
-              path="createcategories"
-              showNotificationPopup={() => {}}
-              element={<CreateCategories />}
-            />
-
-            <Route
-              path="notificationpopup"
-              notificationpopup={notificationpopup}
-              element={<NotificationPopup />}
-            />
-          </Route>
+          }
+            
         </Routes>
 
         <NotificationContainer />
