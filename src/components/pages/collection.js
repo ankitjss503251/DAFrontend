@@ -201,24 +201,24 @@ function Collection() {
           </h1>
           <ul className="collection_social mb-4">
             <li>
-              <Link to={"/"}>
-                <i className="fa fa-facebook fa-lg"></i>
-              </Link>
+     <li>              <a href={"/"}>
+                <i class="fa fa-facebook fa-lg"></i>
+              </a>
             </li>
             <li>
-              <Link to={"/"}>
-                <i className="fa fa-twitter fa-lg"></i>
-              </Link>
+              <a href={"/"}>
+                <i class="fa fa-twitter fa-lg"></i>
+              </a>
             </li>
             <li>
-              <Link to={"/"}>
-                <i className="fa fa-linkedin fa-lg"></i>
-              </Link>
+              <a href={"/"}>
+                <i class="fa fa-linkedin fa-lg"></i>
+              </a>
             </li>
             <li>
-              <Link to={"/"}>
-                <i className="fa fa-pinterest fa-lg"></i>
-              </Link>
+              <a href={"/"}>
+                <i class="fa fa-pinterest fa-lg"></i>
+              </a>
             </li>
           </ul>
 
