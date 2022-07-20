@@ -132,43 +132,45 @@ function Marketplacecollection() {
       (allCollections.length > 0 && loadMoreDisabledAll)
         ? NotificationManager.info("No more items to load")
         : ""} */}
-      <section className='register_hd pdd_12' style={register_bg}>
-        <div className='container'>
-          <div className='row'>
-            <div className='col-md-12'>
+      <section className="register_hd pdd_12" style={register_bg}>
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
               <h1>Marketplace</h1>
             </div>
           </div>
         </div>
       </section>
 
-      <section className='marketplace-tab pdd_8' style={bgImgStyle}>
-        <div className='container'>
-          <div className='row'>
-            <div className='col-md-12'>
+      <section className="marketplace-tab pdd_8" style={bgImgStyle}>
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
               <ul
-                className='tab_btn mb-5 nav nav-pills1'
-                id='pills-tab'
-                role='tablist'>
+                className="tab_btn mb-5 nav nav-pills1"
+                id="pills-tab"
+                role="tablist"
+              >
                 {categories?.length > 0 ? (
-                  <li className='nav-item' role='presentation'>
+                  <li className="nav-item" role="presentation">
                     <button
                       className={!showTab ? "nav-link active" : "nav-link"}
-                      id='all'
-                      data-bs-toggle='pill'
-                      data-bs-target='#all'
-                      type='button'
-                      role='tab'
-                      aria-controls='#all'
-                      aria-selected='true'
+                      id="all"
+                      data-bs-toggle="pill"
+                      data-bs-target="#all"
+                      type="button"
+                      role="tab"
+                      aria-controls="#all"
+                      aria-selected="true"
                       onClick={() => {
-                        setLoadMoreDisabledAll("")
+                        setLoadMoreDisabledAll("");
                         setLoadMoreDisabled("");
                         setShowTab("");
                         setAllCollections([]);
                         setCardCount(0);
                         setCurrPageAll(1);
-                      }}>
+                      }}
+                    >
                       All
                     </button>
                   </li>
@@ -178,26 +180,27 @@ function Marketplacecollection() {
                 {categories?.length > 0
                   ? categories.map((cat, key) => {
                       return (
-                        <li className='nav-item' role='presentation' key={key}>
+                        <li className="nav-item" role="presentation" key={key}>
                           <button
-                            className='nav-link'
+                            className="nav-link"
                             id={cat.name}
-                            data-bs-toggle='pill'
+                            data-bs-toggle="pill"
                             data-bs-target={`#${cat.name}`}
-                            type='button'
-                            role='tab'
+                            type="button"
+                            role="tab"
                             aria-controls={`#${cat.name}`}
-                            aria-selected='true'
+                            aria-selected="true"
                             onClick={() => {
                               setLoader(true);
                               setCurrPage(1);
                               setActiveCat([]);
                               setCardCount(0);
                               handleCategoryChange(cat);
-                              setLoadMoreDisabledAll("")
+                              setLoadMoreDisabledAll("");
                               setLoadMoreDisabled("");
                               setShowTab("show active");
-                            }}>
+                            }}
+                          >
                             {cat.name}
                           </button>
                         </li>
@@ -207,41 +210,45 @@ function Marketplacecollection() {
               </ul>
             </div>
           </div>
-          <div className='tab-content' id='pills-tabContent'>
+          <div className="tab-content" id="pills-tabContent">
             <div
-              className={!showTab ? "tab-pane fade show active" : "tab-pane fade"}
-              id='all'
-              role='tabpanel'
-              aria-labelledby='all'>
-              <div className='row'>
+              className={
+                !showTab ? "tab-pane fade show active" : "tab-pane fade"
+              }
+              id="all"
+              role="tabpanel"
+              aria-labelledby="all"
+            >
+              <div className="row">
                 {loader ? (
                   <CollectionSkeletonCard cards={cardCount} />
                 ) : allCollections?.length > 0 ? (
                   allCollections.map((oIndex) => {
                     return oIndex.map((card, key) => (
-                      <div className='col-lg-4 col-md-6 mb-5' key={key}>
-                        <div className='collection_slide'>
-                          <Link to={`/collection/${card?._id}`}>
+                      <div className="col-lg-4 col-md-6 mb-5" key={key}>
+                        <div className="collection_slide">
+                          <a href={`/collection/${card?._id}`}>
                             <div className="mint_img">
                               <img
-                                className='img-fluid w-100'
+                                className="img-fluid w-100"
                                 src={card?.logoImg}
                                 onError={(e) => {
                                   e.target.src = "../img/collections/list4.png";
                                 }}
-                                alt=''
+                                alt=""
                               />
                             </div>
-                          </Link>
-                          <div className='collection_text'>
-                          <div className='coll_profileimg'>
-                            <div className="rotater_border profile_img">
-                              <Link className="rounded-circle"
-                                to={`/collectionwithcollection/${card?.brand?._id}`}>
-                                
+                          </a>
+                          <div className="collection_text">
+                            <div className="coll_profileimg">
+                              <div className="rotater_border profile_img">
+                                <a
+                                  className="rounded-circle"
+                                  href={`/collectionwithcollection/${card?.brand?._id}`}
+                                >
                                   <img
-                                    alt=''
-                                    className=''
+                                    alt=""
+                                    className=""
                                     src={card.brand?.logoImage}
                                     onError={(e) => {
                                       e.target.src =
@@ -253,42 +260,40 @@ function Marketplacecollection() {
                                     className='check_img'
                                     src={"../img/collections/check.png"}
                                   /> */}
-                              </Link>
+                                </a>
+                              </div>
                             </div>
-                          </div>
-                            
-                              <h4 className='collname'>
-                                <Link to={`/collection/${card?._id}`}>
-                                  {card.name?.length > 8
-                                    ? card.name?.slice(0, 8)
-                                    : card.name}
-                                </Link>
-                              </h4>
-                              <p>
-                                {card.desc?.length > 8
-                                  ? card.desc?.slice(0, 8)
-                                  : card.desc.slice(0, 8)}
-                              </p>
-                            
+
+                            <h4 className="collname">
+                              {card.name?.length > 15
+                                ? card.name?.slice(0, 15)
+                                : card.name}
+                            </h4>
+                            <p>
+                              {card.desc?.length > 15
+                                ? card.desc?.slice(0, 15) + "..."
+                                : card.desc}
+                            </p>
                           </div>
                         </div>
                       </div>
                     ));
                   })
                 ) : (
-                  <h2 className='text-white text-center'>
+                  <h2 className="text-white text-center">
                     No Collection Found
                   </h2>
                 )}
                 {allCollections[0]?.length > 12 ? (
-                  <div className='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <div className="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
                     <button
-                      type='button'
+                      type="button"
                       className={`btn view_all_bdr ${loadMoreDisabledAll}`}
                       onClick={() => {
                         setCurrPageAll(currPageAll + 1);
                         setLoadMore(!loadMore);
-                      }}>
+                      }}
+                    >
                       Load More
                     </button>
                   </div>
@@ -300,36 +305,39 @@ function Marketplacecollection() {
             <div
               className={`tab-pane fade ${showTab}`}
               id={`#${activeCat.name}`}
-              role='tabpanel'
-              aria-labelledby={activeCat.name}>
-              <div className='row'>
+              role="tabpanel"
+              aria-labelledby={activeCat.name}
+            >
+              <div className="row">
                 {loader ? (
                   <CollectionSkeletonCard cards={cardCount} />
                 ) : activeCat?.length > 0 ? (
                   activeCat.map((oIndex) => {
                     return oIndex.map((card, key) => (
-                      <div className='col-lg-4 col-md-6 mb-5' key={key}>
-                        <div className='collection_slide'>
-                          <Link to={`/collection/${card._id}`}>
+                      <div className="col-lg-4 col-md-6 mb-5" key={key}>
+                        <div className="collection_slide">
+                          <a href={`/collection/${card._id}`}>
                             <div className="mint_img">
                               <img
-                                className='img-fluid w-100'
+                                className="img-fluid w-100"
                                 src={card.logoImg}
-                                alt=''
+                                alt=""
                                 onError={(e) => {
                                   e.target.src = "../img/collections/list4.png";
                                 }}
                               />
                             </div>
-                          </Link>
-                          <div className='collection_text'>
-                            <div className='coll_profileimg'>
+                          </a>
+                          <div className="collection_text">
+                            <div className="coll_profileimg">
                               <div className="rotater_border profile_img">
-                                <Link className="rounded-circle"
-                                to={`/collectionwithcollection/${card.brand._id}`}>
+                                <a
+                                  className="rounded-circle"
+                                  href={`/collectionwithcollection/${card.brand._id}`}
+                                >
                                   <img
-                                    alt=''
-                                    className=''
+                                    alt=""
+                                    className=""
                                     src={card.brand.logoImage}
                                     onError={(e) => {
                                       e.target.src =
@@ -341,23 +349,22 @@ function Marketplacecollection() {
                                   className='check_img'
                                   src={"../img/collections/check.png"}
                                   /> */}
-                                </Link>
+                                </a>
                               </div>
                             </div>
-                            
-                            <h4 className='collname'>
-                              <Link to={`/collection/${card._id}`}>
+
+                            <h4 className="collname">
+                              <a href={`/collection/${card._id}`}>
                                 {card.name?.length > 8
                                   ? card.name?.slice(0, 8)
                                   : card.name}
-                              </Link>
+                              </a>
                             </h4>
                             <p>
                               {card.desc?.length > 8
                                 ? card.desc?.slice(0, 8)
                                 : card.desc.slice(0, 8)}
                             </p>
-                            
                           </div>
                           :
                         </div>
@@ -365,19 +372,20 @@ function Marketplacecollection() {
                     ));
                   })
                 ) : (
-                  <h2 className='text-white text-center'>
+                  <h2 className="text-white text-center">
                     No Collection Found
                   </h2>
                 )}
                 {activeCat[0]?.length > 12 ? (
-                  <div className='col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5'>
+                  <div className="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
                     <button
-                      type='button'
+                      type="button"
                       className={`btn view_all_bdr ${loadMoreDisabled}`}
                       onClick={() => {
                         setCurrPage(currPage + 1);
                         setLoadMore(!loadMore);
-                      }}>
+                      }}
+                    >
                       Load More
                     </button>
                   </div>

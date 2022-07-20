@@ -424,7 +424,7 @@ function CreateNFTs() {
                         position: "relative",
                       }}
                       onClick={() => imageUploader.current.click()}>
-                      <p className='text-center'>Click or Drop here</p>
+                      <p className='text-center'>Click here</p>
 
                       {fileType == "Image" ? (
                         <img

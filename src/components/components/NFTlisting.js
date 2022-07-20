@@ -147,17 +147,13 @@ function NFTlisting(props) {
                     if(val.split(".").length>2) {
                       val=val.replace(/\.+$/,"");
                     }
-                    if(val.length===1&&val!=="0.") {
-                      val=Number(val);
-                    }
+                  
                   }
                 } else {
                   if(val.split(".").length>2) {
                     val=val.replace(/\.+$/,"");
                   }
-                  if(val.length===1&&val!=="0.") {
-                    val=Number(val);
-                  }
+                
                 }
                 setPrice(val);
               }
@@ -307,170 +303,178 @@ function NFTlisting(props) {
       {loading? <Spinner />:""}
       {isPlaceBidModal? placeBidModal:""}
       {isBuyNowModal? buyNowModal:""}
-      <div className='col-md-12'>
-        <div className='nft_list'>
-          <table className='table text-light'>
-            <thead>
-              <tr>
-                <th scope='col'>FROM</th>
-                <th scope='col'>PRICE</th>
-                <th scope='col'>DATE</th>
-                <th scope='col'>SALE TYPE</th>
-                <th scope='col'>ENDS IN</th>
-                <th scope='col'>STATUS</th>
-                <th className='text-center'>ACTION</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders&&orders.length>0
-                ? orders.map((o,i) => {
-                  return (
-                    <tr>
-                      <td className='d-flex justify-content-start align-items-center mb-0'>
-                        <span className='yellow_dot circle_dot'></span>
-                        <span>
-                          {o.sellerID&&o.sellerID.walletAddress
-                            ? o.sellerID.walletAddress.slice(0,3)+
-                            "..."+
-                            o.sellerID.walletAddress.slice(39,41)
-                            :""}
-                        </span>
-                      </td>
-                      <td>
-                        <img
-                          alt=''
-                          src={Tokens[o.paymentToken.toLowerCase()].icon}
-                          className='img-fluid hunter_fav'
-                        />{" "}
-                        {o.price&&o.price.$numberDecimal
-                          ? Number(
-                            convertToEth(o.price.$numberDecimal)
-                          ).toFixed(4)
-                          :"0"}{" "}
-                        {Tokens[o.paymentToken.toLowerCase()].symbolName}
-                      </td>
-                      <td>
-                        {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
-                        <span className='nft_time'>
-                          {moment(o.createdOn).format("LT")}
-                        </span>
-                      </td>
-                      <td>
-                        {o.salesType===0
-                          ? "Fixed Sale"
-                          :o.salesType===1
-                            ? "Auction"
-                            :"Open for Bids"}
-                      </td>
-                      <td>
-                        {moment(new Date(o.deadline*1000))
-                          .subtract({
-                            hours: 5,
-                            minutes: 30,
-                          })._d<new Date()? (
-                          "--:--:--"
-                        ):(
-                          <Clock
-                            deadline={moment(new Date(o.deadline*1000))
-                              .subtract({
-                                hours: 5,
-                                minutes: 30,
-                              })
-                              .toISOString()}></Clock>
-                        )}
-                      </td>
-                      <td className='blue_text'>
-                        {moment(new Date(o.deadline*1000))
-                          .subtract({
-                            hours: 5,
-                            minutes: 30,
-                          })._d>new Date()
-                          ? "Active"
-                          :"Ended"}
-                      </td>
-                      <td>
-                        <div className='text-center'>
-                          {o.sellerID?.walletAddress?.toLowerCase()===
-                            currentUser?.toLowerCase()? (
-                            <button
-                              to={"/"}
-                              className='small_yellow_btn small_btn mr-3'
-                              onClick={async () => {
-                                setLoading(true);
-                                await handleRemoveFromSale(
-                                  o._id,
-                                  currentUser
-                                );
-                                setLoading(false);
-                              }}>
-                              Remove From Sale
-                            </button>
-                          ):(
-                            <button
-                              to={"/"}
-                              disabled={
-                                moment(new Date(o.deadline*1000))
-                                  .subtract({
-                                    hours: 5,
-                                    minutes: 30,
-                                  })._d<new Date()? true:false
-                              }
-                              className='small_border_btn small_btn'
-                              onClick={async () => {
-                                console.log("current order",o);
-                                if(
-                                  moment(new Date(o.deadline*1000))
-                                    .subtract({
-                                      hours: 5,
-                                      minutes: 30,
-                                    })._d<new Date()
-                                ) {
-                                  NotificationManager.error(
-                                    "Auction Ended",
-                                    "",
-                                    800
-                                  );
-                                  return;
-                                }
-                                if(currentUser) {
-                                  o.salesType===0
-                                    ? setPrice(
-                                      Number(
-                                        convertToEth(o.price.$numberDecimal)
-                                      ).toFixed(4)
-                                    )
-                                    :setPrice("");
-                                  props.NftDetails.type===1&&
-                                    setCurrentOrder(o);
-                                  o.salesType===0
-                                    ? setIsBuyNowModal(true)
-                                    :setIsPlaceBidModal(true);
-                                } else {
-                                  NotificationManager.error(
-                                    "wallet not connected",
-                                    "",
-                                    800
-                                  );
-                                  return;
-                                }
-                              }}>
-                              {o.salesType===0
-                                ? "Buy Now"
-                                :haveBid
-                                  ? "Update Bid"
-                                  :"Place Bid"}
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-                :""}
-            </tbody>
-          </table>
-        </div>
-      </div>
+
+      {orders && orders.length <= 0 ?
+       <div className="col-md-12">
+       <h4 className="no_data_text text-muted">No Listings Available</h4>
+     </div> :
+     <div className='table-responsive'>
+     <div className='col-md-12'>
+       <div className='nft_list'>
+         <table className='table text-light'>
+           <thead>
+             <tr>
+               <th scope='col'>FROM</th>
+               <th scope='col'>PRICE</th>
+               <th scope='col'>DATE</th>
+               <th scope='col'>SALE TYPE</th>
+               <th scope='col'>ENDS IN</th>
+               <th scope='col'>STATUS</th>
+               <th className='text-center'>ACTION</th>
+             </tr>
+           </thead>
+           <tbody>
+             {orders&&orders.length>0
+               ? orders.map((o,i) => {
+                 return (
+                   <tr>
+                     <td className="d-flex justify-content-start align-items-center mb-0">
+                       <span className="yellow_dot circle_dot"></span>
+                       <span>
+                         {o.sellerID && o.sellerID.walletAddress
+                           ? o.sellerID.walletAddress.slice(0, 3) +
+                             "..." +
+                             o.sellerID.walletAddress.slice(39, 41)
+                           : ""}
+                       </span>
+                     </td>
+                     <td>
+                       <img
+                         alt=""
+                         src={Tokens[o.paymentToken.toLowerCase()].icon}
+                         className="img-fluid hunter_fav"
+                       />{" "}
+                       {o.price && o.price.$numberDecimal
+                         ? Number(convertToEth(o.price.$numberDecimal)).toFixed(
+                             4
+                           )
+                         : "0"}{" "}
+                       {Tokens[o.paymentToken.toLowerCase()].symbolName}
+                     </td>
+                     <td>
+                       {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
+                       <span className="nft_time">
+                         {moment(o.createdOn).format("LT")}
+                       </span>
+                     </td>
+                     <td>
+                       {o.salesType === 0
+                         ? "Fixed Sale"
+                         : o.salesType === 1 && o.deadline !== GENERAL_TIMESTAMP
+                         ? "Auction"
+                         : "Open for Bids"}
+                     </td>
+                     <td>
+                       {moment(new Date(o.deadline * 1000)).subtract({
+                         hours: 5,
+                         minutes: 30,
+                       })._d < new Date() ||
+                       o.deadline === GENERAL_TIMESTAMP ? (
+                         "--:--:--"
+                       ) : (
+                         <Clock
+                           deadline={moment(new Date(o.deadline * 1000))
+                             .subtract({
+                               hours: 5,
+                               minutes: 30,
+                             })
+                             .toISOString()}
+                         ></Clock>
+                       )}
+                     </td>
+                     <td className="blue_text">
+                       {moment(new Date(o.deadline * 1000)).subtract({
+                         hours: 5,
+                         minutes: 30,
+                       })._d > new Date()
+                         ? "Active"
+                         : "Ended"}
+                     </td>
+                     <td>
+                       <div className="text-center">
+                         {o.sellerID?.walletAddress?.toLowerCase() ===
+                         currentUser?.toLowerCase() ? (
+                           <button
+                             to={"/"}
+                             className="small_yellow_btn small_btn mr-3"
+                             onClick={async () => {
+                               setLoading(true);
+                               await handleRemoveFromSale(o._id, currentUser);
+                               setLoading(false);
+                             }}
+                           >
+                             Remove From Sale
+                           </button>
+                         ) : (
+                           <button
+                             to={"/"}
+                             disabled={
+                               moment(new Date(o.deadline * 1000)).subtract({
+                                 hours: 5,
+                                 minutes: 30,
+                               })._d < new Date()
+                                 ? true
+                                 : false
+                             }
+                             className="small_border_btn small_btn"
+                             onClick={async () => {
+                               console.log("current order", o);
+                               if (
+                                 moment(new Date(o.deadline * 1000)).subtract({
+                                   hours: 5,
+                                   minutes: 30,
+                                 })._d < new Date()
+                               ) {
+                                 NotificationManager.error(
+                                   "Auction Ended",
+                                   "",
+                                   800
+                                 );
+                                 return;
+                               }
+                               if (currentUser) {
+                                 o.salesType === 0
+                                   ? setPrice(
+                                       Number(
+                                         convertToEth(o.price.$numberDecimal)
+                                       ).toFixed(4)
+                                     )
+                                   : setPrice("");
+                                 props.NftDetails.type === 1 &&
+                                   setCurrentOrder(o);
+                                 o.salesType === 0
+                                   ? setIsBuyNowModal(true)
+                                   : setIsPlaceBidModal(true);
+                               } else {
+                                 NotificationManager.error(
+                                   "wallet not connected",
+                                   "",
+                                   800
+                                 );
+                                 return;
+                               }
+                             }}
+                           >
+                             {o.salesType === 0
+                               ? "Buy Now"
+                               : haveBid
+                               ? "Update Bid"
+                               : "Place Bid"}
+                           </button>
+                         )}
+                       </div>
+                     </td>
+                   </tr>
+                 );
+               })
+               :""}
+           </tbody>
+         </table>
+       </div>
+     </div>
+     </div>
+    }
+     
     </div>
   );
 }

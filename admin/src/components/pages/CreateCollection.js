@@ -101,7 +101,7 @@ function CreateCollection() {
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
     const dt = ev.target["value"] + ":00Z";
-    const ct = moment().toISOString();
+    const ct = moment().add({'hours': 5, 'minutes': 30}).toISOString();
     if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
@@ -455,7 +455,7 @@ function CreateCollection() {
       }
       NotificationManager.success("Imported successfully");
       setLoading(false);
-      // slowRefresh(1000);
+      slowRefresh(1000);
       return;
     } catch (e) {
       console.log("error", e);
@@ -858,7 +858,7 @@ function CreateCollection() {
                         }}
                         onClick={() => imageUploader.current.click()}
                       >
-                        <p className="text-center">Click or Drop here</p>
+                        <p className="text-center">Click here</p>
                         {isEdit1 && logoImg ? (
                           <img
                             alt=""
@@ -916,7 +916,7 @@ function CreateCollection() {
                         }}
                         onClick={() => imageUploader2.current.click()}
                       >
-                        <p className="text-center">Click or Drop here</p>
+                        <p className="text-center">Click here</p>
 
                         {isEdit2 && coverImg ? (
                           <img
@@ -1395,7 +1395,7 @@ function CreateCollection() {
                         }}
                         onClick={() => imageUploader.current.click()}
                       >
-                        <p className="text-center">Click or Drop here</p>
+                        <p className="text-center">Click here</p>
                         <img
                           alt=""
                           ref={uploadedImage}
@@ -1436,7 +1436,7 @@ function CreateCollection() {
                         }}
                         onClick={() => imageUploader2.current.click()}
                       >
-                        <h4 className="text-center">Click or Drop here</h4>
+                        <h4 className="text-center">Click here</h4>
                         <img
                           alt=""
                           ref={uploadedImage2}

@@ -5289,6 +5289,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     z-index: var(--onboard-modal-z-index, var(--modal-z-index));
     display: none !important;
 }
+<<<<<<< HEAD
 @media screen and (max-width:1399px) {
   .follow_btns .white_btn {margin-bottom:10px;}
 }
@@ -5320,4 +5321,41 @@ section.collection_info .justify-content-end {
     height: 140px;
     object-fit: cover;
   }
+=======
+
+
+.no_data_text{
+  font-size: 20px;
+  text-align: center;
+}
+
+@media screen and (max-width:1399px) {
+
+  .follow_btns .white_btn {margin-bottom:10px;}
+
+}
+
+@media screen and (max-width:767px) {
+
+section.collection_info .justify-content-end {
+
+  justify-content: center !important;
+
+  margin-top: 20px;
+
+}
+
+}
+
+@media screen and (max-width:390px) {
+
+  .follow_btns button.white_btn.mr10 {margin-right:0px;}
+
+.follow_btns {
+
+  text-align: center;
+
+}
+
+>>>>>>> 0437586cd2a2725264749ccd874de84c17181f1d
 }
