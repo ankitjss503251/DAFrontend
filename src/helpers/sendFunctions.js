@@ -266,7 +266,7 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
-  slowRefresh(1000);
+  // slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {

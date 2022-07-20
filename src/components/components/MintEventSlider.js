@@ -11,8 +11,8 @@ import { onboard } from "../menu/header";
 import BigNumber from "bignumber.js";
 import { useCookies } from "react-cookie";
 import DevTeam from "./../../assets/images/devTeam.png";
-import { MAX_WHITELIST_BUY_PER_USER } from "../../helpers/constants";
-import Spinner from "../components/Spinner";
+import {MAX_WHITELIST_BUY_PER_USER} from "../../helpers/constants"
+import Spinner from "../components/Spinner"
 
 evt.setMaxListeners(1);
 function MintEventSlider(props) {
@@ -51,9 +51,10 @@ function MintEventSlider(props) {
   const [currQty, setCurrQty] = useState(1);
   const [price, setPrice] = useState();
   const [loading, setLoading] = useState(false);
-  const [maxNFT, setMaxNFT] = useState(5);
+  const [maxNFT,setMaxNFT] =useState(5);
 
   useEffect(() => {
+  
     const bodyClass = async () => {
       var body = document.body;
       if (loading) {
@@ -66,20 +67,24 @@ function MintEventSlider(props) {
   }, [loading]);
   const fetchData = async () => {
     // setLoading(true)
-    let { fetchInfo, fetchUserBal } = await contract;
+    let { fetchInfo,
+      fetchUserBal} = await contract;
     let getcateg = await fetchInfo(props.id);
     console.log(props.id);
-    if (cookies.selected_account) {
-      let bal = await fetchUserBal(cookies.selected_account, props.id);
-      console.log("THIS IS BALANCE", parseInt(bal));
-      if (MAX_WHITELIST_BUY_PER_USER > parseInt(bal)) {
-        setMaxNFT(MAX_WHITELIST_BUY_PER_USER - parseInt(bal));
-        console.log("max NFT set To:", maxNFT);
-      } else {
-        setMaxNFT(1);
-      }
+    if(cookies.selected_account){
+      let bal=await fetchUserBal(cookies.selected_account,props.id)
+      console.log("THIS IS BALANCE",parseInt(bal));
+      if(MAX_WHITELIST_BUY_PER_USER>parseInt(bal)){
+          setMaxNFT(MAX_WHITELIST_BUY_PER_USER-parseInt(bal));
+          console.log("max NFT set To:",maxNFT);
+        }
+        else{
+          setMaxNFT(1);
+          
+        }
+      
     }
-
+    
     setPrice(convertToEth(new BigNumber(getcateg[0].toString())));
     //  setLoading(false)
   };
@@ -90,18 +95,19 @@ function MintEventSlider(props) {
   const connectWalletEvent = () => {
     evt.emit("wallet-connect");
   };
-
   const mintFunction = async (qty, price, user) => {
     let { testMint } = await contract;
     let result = await testMint(props.id, qty, price, user);
     console.log(result);
+    
   };
-
+ 
   return (
     <Slider {...settings}>
+      
       <div className="mintevent text-center">
-        {/* {loading ? <Spinner /> : ""} */}
-
+      {/* {loading ? <Spinner /> : ""} */}
+     
         <div className="start_btn stamintFunctionbtn">
           Start
           <span>Live</span>
