@@ -24,6 +24,7 @@ import {
   acceptBid,
   createOfferNFT,
   updateBidNft,
+  acceptOffer,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
 import contracts from "./../config/contracts";
@@ -213,7 +214,7 @@ export const handleBuyNft = async (
   try {
     if (isERC721) {
       await UpdateOrder({
-        orderId: id,
+        orderID: id,
         nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
         seller: details.sellerID.walletAddress?.toLowerCase(), //to make sure we update the quantity left : walletAddress
         qtyBought: Number(qty),
@@ -231,7 +232,7 @@ export const handleBuyNft = async (
       DeleteOrder({ orderID: id });
     } else {
       await UpdateOrder({
-        orderId: id,
+        orderID: id,
         nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
         seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
         qtyBought: Number(qty),
@@ -265,7 +266,7 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
-  slowRefresh(1000);
+  // slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -296,6 +297,7 @@ export const handleApproveToken = async (userAddress, tokenAddress) => {
 };
 
 export const putOnMarketplace = async (account, orderData) => {
+  console.log("in put on marketplace buttong");
   if (!account) {
     return false;
   }
@@ -303,18 +305,23 @@ export const putOnMarketplace = async (account, orderData) => {
   let _deadline = GENERAL_TIMESTAMP;
   let _price;
   let sellerOrder;
+
   try {
     if (orderData.chosenType === 0) {
       _deadline = GENERAL_TIMESTAMP;
-      _price = ethers.utils.parseEther(orderData.price).toString();
+
+      _price = ethers.utils.parseEther(orderData.price.toString()).toString();
     } else if (orderData.chosenType === 1) {
       let endTime = new Date(orderData.endTime).valueOf() / 1000;
       _deadline = endTime;
-      _price = ethers.utils.parseEther(orderData.minimumBid).toString();
+
+      _price = ethers.utils.parseEther(orderData.price.toString()).toString();
     } else if (orderData.chosenType === 2) {
       _deadline = GENERAL_TIMESTAMP;
-      _price = ethers.utils.parseEther(orderData.minimumBid).toString();
+
+      _price = ethers.utils.parseEther(orderData.price.toString()).toString();
     }
+
     sellerOrder = [
       account,
       orderData.collection,
@@ -330,7 +337,7 @@ export const putOnMarketplace = async (account, orderData) => {
       [],
       orderData.salt,
     ];
-
+    console.log("seller Order is----------------->", sellerOrder);
     // let usrHaveQuantity = await GetOwnerOfToken(
     //   sellerOrder[1],
     //   sellerOrder[2],
@@ -462,9 +469,9 @@ export const createBid = async (
   erc721,
   qty = 1,
   bidPrice,
-  isOffer = false,
-  bidDeadline
+  isOffer = false
 ) => {
+  console.log("ownerAccount", ownerAccount);
   let SellerOrder;
   let sellerOrder = [];
   let buyerOrder = [];
@@ -624,12 +631,12 @@ export const createOffer = async (
 
     let userTokenBal = await getUsersTokenBalance(buyerOrder[0], buyerOrder[5]);
 
-    let usrHaveQuantity = await GetOwnerOfToken(
-      buyerOrder[1],
-      buyerOrder[2],
-      1,
-      buyerOrder[0]
-    );
+    // let usrHaveQuantity = await GetOwnerOfToken(
+    //   buyerOrder[1],
+    //   buyerOrder[2],
+    //   1,
+    //   buyerOrder[0]
+    // );
 
     if (
       new BigNumber(bidPrice)
@@ -845,20 +852,19 @@ export const handleAcceptBids = async (
 
     try {
       await UpdateOrder({
-        orderID: bidData.orderID,
-        nftID: details?.nftID._id, //to make sure we update the quantity left : NFTid
+        orderID: bidData.orderID[0]?._id,
+        nftID: details?.nftID?._id, //to make sure we update the quantity left : NFTid
         seller: details?.sellerID?.walletAddress, //to make sure we update the quantity left : walletAddress
         qtyBought: Number(bidData.bidQuantity),
         qty_sold: Number(details.quantity_sold) + Number(bidData.bidQuantity),
         buyer: buyerOrder[0]?.toLowerCase(),
-        LazyMintingStatus: LazyMintingStatus,
       });
 
       if (
         Number(details.quantity_sold) + Number(bidData.bidQuantity) >=
         details.total_quantity
       ) {
-        DeleteOrder({ orderID: bidData.orderID });
+        DeleteOrder({ orderID: bidData.orderID[0]?._id });
       }
     } catch (e) {
       console.log("error in updating order data", e);
@@ -921,7 +927,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         break;
       case 6:
         buyerOrder.push(amount);
-        sellerOrder.push(Number(bidData.bidPrice.$numberDecimal));
+        sellerOrder.push(bidData.bidPrice.$numberDecimal);
         break;
       case 7:
         buyerOrder.push(bidData.bidDeadline);
@@ -945,6 +951,12 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         buyerOrder.push([]);
     }
   }
+
+  console.log(
+    "seller and buyer order is-------------->",
+    sellerOrder,
+    buyerOrder
+  );
 
   let sellerSignature = bidData.buyerSignature;
   let buyerSignature = bidData.buyerSignature;
@@ -1030,12 +1042,15 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     try {
       let reqParams = {
         bidID: bidData._id,
-        erc721: erc721,
-        status: erc721 ? 2 : 1,
-        qty_sold: bidData.bidQuantity,
+        nftID: bidData?.nftID, //to make sure we update the quantity left : NFTid
+        seller: account, //to make sure we update the quantity left : walletAddress
+        qtyBought: 1,
+        qty_sold: 1,
+        buyer: bidData.bidderID._id,
+        erc721: 1,
       };
 
-      await acceptBid(reqParams);
+      await acceptOffer(reqParams);
     } catch (e) {
       console.log("error in api", e);
       return false;

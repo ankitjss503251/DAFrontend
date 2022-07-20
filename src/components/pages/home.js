@@ -171,7 +171,7 @@ const Home = () => {
                   </div>
                   <h4>#3 Sell NFT’s </h4>
                   <p className="textdes">
-                    List your NFT’s on the secondary market place
+                    List your NFT’s on the secondary marketplace
                   </p>
                 </div>
               </div>
@@ -209,7 +209,7 @@ const Home = () => {
                     >
                       <div className="mint_box online_rotater" style={mint_bg}>
                         {card.link ? (
-                          <a href={card.link}>
+                          <Link to={card.link}>
                             <div className="mint_img">
                               <img
                                 alt=""
@@ -235,7 +235,7 @@ const Home = () => {
                                 ""
                               )}
                             </div>
-                          </a>
+                          </Link>
                         ) : (
                           <div className="mint_img">
                             <img
@@ -264,8 +264,8 @@ const Home = () => {
                         )}
                         <div className="mint_text p-4">
                           <div className="logoImg_con rotater_border">
-                            <a
-                              href={`/collectionwithcollection/${card.brand?._id}`}
+                            <Link
+                              to={`/collectionwithcollection/${card.brand?._id}`}
                               className="rounded-circle "
                             >
                               <img
@@ -277,16 +277,16 @@ const Home = () => {
                                     "../img/collections/list4.png")
                                 }
                               />
-                            </a>
+                            </Link>
                           </div>
-                          <a href={card.link}>
+                          <Link to={card.link}>
                             {" "}
                             <h4 className="mb-2">
-                              {card.name?.length > 8
-                                ? card.name?.slice(0, 8) + "..."
+                              {card.name?.length > 15
+                                ? card.name?.slice(0, 15) + "..."
                                 : card.name}
                             </h4>
-                          </a>
+                          </Link>
                           <ul className="m-0 p-0">
                             <li>
                               <span>

@@ -101,7 +101,7 @@ function CreateCollection() {
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
     const dt = ev.target["value"] + ":00Z";
-    const ct = moment().toISOString();
+    const ct = moment().add({'hours': 5, 'minutes': 30}).toISOString();
     if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
@@ -455,7 +455,7 @@ function CreateCollection() {
       }
       NotificationManager.success("Imported successfully");
       setLoading(false);
-      // slowRefresh(1000);
+      slowRefresh(1000);
       return;
     } catch (e) {
       console.log("error", e);
@@ -858,46 +858,31 @@ function CreateCollection() {
                         }}
                         onClick={() => imageUploader.current.click()}
                       >
-                        <p className="text-center">Click or Drop here</p>
+                        <p className="text-center">Click here</p>
                         {isEdit1 && logoImg ? (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={logoImg}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         ) : logoImg && !isEdit1 ? (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={URL.createObjectURL(logoImg)}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         ) : (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={"../images/upload.png"}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         )}
 
-                        {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                        {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
@@ -931,47 +916,32 @@ function CreateCollection() {
                         }}
                         onClick={() => imageUploader2.current.click()}
                       >
-                        <p className="text-center">Click or Drop here</p>
+                        <p className="text-center">Click here</p>
 
                         {isEdit2 && coverImg ? (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={coverImg}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         ) : coverImg && !isEdit2 ? (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={URL.createObjectURL(coverImg)}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         ) : (
                           <img
                             alt=""
                             ref={uploadedImage}
                             src={"../images/upload.png"}
-                            style={{
-                              width: "110px",
-                              height: "110px",
-                              margin: "auto",
-                            }}
-                            className="img-fluid profile_circle_img"
+                            className="img-fluid profile_circle_img admin_profile_img"
                           />
                         )}
 
-                        {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                        {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
@@ -1080,7 +1050,7 @@ function CreateCollection() {
                       Category *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
@@ -1098,7 +1068,7 @@ function CreateCollection() {
                       Brand *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={brand}
                       onChange={(e) => setBrand(e.target.value)}
@@ -1154,7 +1124,7 @@ function CreateCollection() {
                       NFT Type *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={nftType}
                       onChange={(e) => setNftType(e.target.value)}
@@ -1170,7 +1140,7 @@ function CreateCollection() {
                       OffChain
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={isOffChain}
                       onChange={(e) => setIsOffChain(e.target.value)}
@@ -1184,7 +1154,7 @@ function CreateCollection() {
                       Show on Marketplace
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={isOnMarketplace}
                       onChange={(e) => setIsOnMarketplace(e.target.value)}
@@ -1425,19 +1395,14 @@ function CreateCollection() {
                         }}
                         onClick={() => imageUploader.current.click()}
                       >
-                        <p className="text-center">Click or Drop here</p>
+                        <p className="text-center">Click here</p>
                         <img
                           alt=""
                           ref={uploadedImage}
                           src={logoImg}
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className="img-fluid profile_circle_img"
+                          className="img-fluid profile_circle_img admin_profile_img"
                         />
-                        {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                        {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
@@ -1471,19 +1436,14 @@ function CreateCollection() {
                         }}
                         onClick={() => imageUploader2.current.click()}
                       >
-                        <h4 className="text-center">Click or Drop here</h4>
+                        <h4 className="text-center">Click here</h4>
                         <img
                           alt=""
                           ref={uploadedImage2}
                           src={coverImg}
-                          style={{
-                            width: "110px",
-                            height: "110px",
-                            margin: "auto",
-                          }}
-                          className="img-fluid profile_circle_img"
+                          className="img-fluid profile_circle_img admin_profile_img"
                         />
-                        {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                        {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                       </div>
                     </div>
                   </div>
@@ -1591,7 +1551,7 @@ function CreateCollection() {
                       Category *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
@@ -1616,7 +1576,7 @@ function CreateCollection() {
                       Brand *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={brand}
                       onChange={(e) => setBrand(e.target.value)}
@@ -1671,7 +1631,7 @@ function CreateCollection() {
                       NFT Type *
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                       value={nftType}
                       onChange={(e) => setNftType(e.target.value)}

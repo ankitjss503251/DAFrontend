@@ -9,7 +9,7 @@ function CollectionList(props) {
         <img
           alt=''
           src={props.nft?.image}
-          class='img-fluid width-100'
+          className='img-fluid width-100'
           style={{ height: "306.52px", borderTopLeftRadius: "inherit", borderTopRightRadius: "inherit" }}
           onError={(e) => e.target.src = "../img/collections/list4.png"}
         />

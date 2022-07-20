@@ -52,7 +52,7 @@ function NFTBids(props) {
       let searchParams = {
         nftID: props.id,
         buyerID: "All",
-        bidStatus: "All",
+        bidStatus: "Bid",
         orderID: "All",
       };
 
@@ -91,7 +91,7 @@ function NFTBids(props) {
                     "..." +
                     currentUser?.slice(34, 42)}
                 </span>
-                <span class="badge badge-success">Connected</span>
+                <span className="badge badge-success">Connected</span>
               </div>
               <span className="pgn">Polygon</span>
             </div>
@@ -111,7 +111,7 @@ function NFTBids(props) {
               if (!/^\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (Number(e.target.value) > Number(100)) {
+              if (Number(e.target.value) > Number(currentBid?.total_quantity)) {
                 NotificationManager.error(
                   "Quantity should be less than seller's order",
                   "",
@@ -123,7 +123,7 @@ function NFTBids(props) {
             }}
           ></input>
           <h6 className="enter_price_heading required">
-            Please Enter the Bid Price
+            Please Enter the Bid Amount
           </h6>
 
           <input
@@ -136,7 +136,10 @@ function NFTBids(props) {
               if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (Number(e.target.value) > Number(currentBid.total_quantity)) {
+              if (
+                Number(e.target.value) >
+                Number(currentBid?.price?.$numberDecimal)
+              ) {
                 NotificationManager.error(
                   "Quantity should be less than seller's order",
                   "",
@@ -155,71 +158,35 @@ function NFTBids(props) {
                     if (val.split(".").length > 2) {
                       val = val.replace(/\.+$/, "");
                     }
-                    if (val.length === 1 && val !== "0.") {
-                      val = Number(val);
-                    }
+                    // if (val.length === 1 && val !== "0.") {
+                    //   val = Number(val);
+                    // }
                   }
                 } else {
                   if (val.split(".").length > 2) {
                     val = val.replace(/\.+$/, "");
                   }
-                  if (val.length === 1 && val !== "0.") {
-                    val = Number(val);
-                  }
+                  // if (val.length === 1 && val !== "0.") {
+                  //   val = Number(val);
+                  // }
                 }
                 setPrice(val);
               }
             }}
           ></input>
 
-          {/* <div className='form-control checkout_input'>
-            <h6 className='enter_price_heading required'>
-              Bid Expiration date
-            </h6>
-          
-            <input
-              className='form-control checkout_input'
-              type='datetime-local'
-              value={(bidDeadline || "").toString().substring(0, 16)}
-              onChange={(ev) => {
-                if (!ev.target["validity"].valid) return;
-                const dt = ev.target["value"] + ":00Z";
-                const ct = moment().toISOString();
-                if (dt < ct) {
-                  NotificationManager.error(
-                    "Expiration date should not be of past date",
-                    "",
-                    800
-                  );
-                  return;
-                }
-                setBidDeadline(dt);
-                console.log("dtt", dt);
-              }}
-            />
-          </div> */}
-
-          {/* <div className='bid_user_calculations'>
-            {checkoutCal?.map(({ key, value }) => {
-              return (
-                <div className='cal_div'>
-                  <span>{key}</span>
-                  <span className='cal_div_value'>{value} MATIC</span>
-                </div>
-              );
-            })}
-          </div> */}
-
-          {/* {Number(willPay) === 0 ? (
-            ""
-          ) : Number(willPay) > Number(userBalance) ? (
-            <p className='disabled_text'>Insufficient Balance in MATIC</p>
-          ) : ( */}
           <button
             className="btn-main mt-2 btn-placeABid"
             onClick={async () => {
               setIsUpdateBidModal(false);
               setLoading(true);
+              console.log(
+                "Number(price)",
+                Number(price) <
+                  Number(convertToEth(currentBid.price?.$numberDecimal)),
+                Number(price),
+                Number(convertToEth(currentBid.price?.$numberDecimal))
+              );
               if (
                 Number(price) <
                 Number(convertToEth(currentBid.price?.$numberDecimal))
@@ -242,7 +209,6 @@ function NFTBids(props) {
                   currentBid.total_quantity,
                   ethers.utils.parseEther(price.toString()),
                   false
-                  // new Date(bidDeadline).valueOf() / 1000
                 );
                 if (res === true)
                   NotificationManager.success(
@@ -278,193 +244,200 @@ function NFTBids(props) {
     <div className="row">
       {loading ? <Spinner /> : ""}
       {isUpdateBidModal ? updateBidModal : ""}
-      <div className="col-md-12">
-        <div className="nft_list">
-          <table className="table text-light">
-            <thead>
-              <tr>
-                <th scope="col">FROM</th>
-                <th scope="col">PRICE</th>
-                <th scope="col">DATE</th>
-                <th scope="col">SALE TYPE</th>
-                <th scope="col">ENDS IN</th>
-                <th scope="col">STATUS</th>
-                <th className="text-center">ACTION</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bids && bids.length > 0
-                ? bids.map((b, i) => {
-                    const bidOwner = b?.owner?.walletAddress?.toLowerCase();
-                    const bidder = b?.bidderID?.walletAddress?.toLowerCase();
-                    return (
-                      <tr>
-                        <td className="d-flex justify-content-start align-items-center mb-0">
-                          <span className="blue_dot circle_dot"></span>
-                          <span>
-                            {b?.bidderID?.walletAddress
-                              ? b?.bidderID?.walletAddress?.slice(0, 3) +
-                                "..." +
-                                b?.bidderID?.walletAddress?.slice(39, 41)
-                              : ""}
-                          </span>
-                        </td>
-                        <td>
-                          <img
-                            alt=""
-                            src={
-                              b?.orderID?.length > 0
-                                ? Tokens[
-                                    b?.orderID[0]?.paymentToken?.toLowerCase()
-                                  ]?.icon
-                                : "-"
-                            }
-                            className="img-fluid hunter_fav"
-                          />{" "}
-                          {Number(
-                            convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}{" "}
-                          {Tokens[b?.orderID[0]?.paymentToken]?.symbolName}
-                        </td>
-                        <td>
-                          {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
-                          <span className="nft_time">
-                            {moment(b.createdOn).format("LT")}
-                          </span>
-                        </td>
-                        <td>Auction</td>
-                        <td>
-                          {/* <Clock
+      {bids && bids.length <= 0 ? (
+        <div className="col-md-12">
+          <h4 className="no_data_text text-muted">No Bids Available</h4>
+        </div>
+      ) : (
+        <div className="table-responsive">
+          <div className="col-md-12">
+            <div className="nft_list">
+              <table className="table text-light">
+                <thead>
+                  <tr>
+                    <th scope="col">FROM</th>
+                    <th scope="col">PRICE</th>
+                    <th scope="col">DATE</th>
+                    <th scope="col">SALE TYPE</th>
+                    <th scope="col">ENDS IN</th>
+                    <th scope="col">STATUS</th>
+                    <th className="text-center">ACTION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bids && bids.length > 0
+                    ? bids.map((b, i) => {
+                        const bidOwner = b?.owner?.walletAddress?.toLowerCase();
+                        const bidder =
+                          b?.bidderID?.walletAddress?.toLowerCase();
+                        return (
+                          <tr>
+                            <td className="d-flex justify-content-start align-items-center mb-0">
+                              <span className="blue_dot circle_dot"></span>
+                              <span>
+                                {b?.bidderID?.walletAddress
+                                  ? b?.bidderID?.walletAddress?.slice(0, 3) +
+                                    "..." +
+                                    b?.bidderID?.walletAddress?.slice(39, 41)
+                                  : ""}
+                              </span>
+                            </td>
+                            <td>
+                              <img
+                                alt=""
+                                src={
+                                  b?.orderID?.length > 0
+                                    ? Tokens[
+                                        b?.orderID[0]?.paymentToken?.toLowerCase()
+                                      ]?.icon
+                                    : "-"
+                                }
+                                className="img-fluid hunter_fav"
+                              />{" "}
+                              {Number(
+                                convertToEth(b?.bidPrice?.$numberDecimal)
+                              ).toFixed(4)}{" "}
+                              {Tokens[b?.orderID[0]?.paymentToken]?.symbolName}
+                            </td>
+                            <td>
+                              {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
+                              <span className="nft_time">
+                                {moment(b.createdOn).format("LT")}
+                              </span>
+                            </td>
+                            <td>Auction</td>
+                            <td>
+                              {/* <Clock
                             deadline={moment(new Date(b.bidDeadline * 1000))
                               .subtract({
                                 hours: 5,
                                 minutes: 30,
                               })
                               .toISOString()}></Clock> */}
-                          --:--:--
-                        </td>
-                        <td className="blue_text">
-                          {new Date(b.bidDeadline * 1000) < new Date()
-                            ? "Ended"
-                            : "Active"}
-                        </td>
-                        <td className="text-center">
-                          {bidOwner === currentUser?.toLowerCase() ? (
-                            <div className="d-flex flex-column justify-content-center align-items-center">
-                              <button
-                                to={"/"}
-                                className="small_yellow_btn small_btn mb-3"
-                                onClick={async () => {
-                                  setLoading(true);
-                                  await handleAcceptBids(
-                                    b,
-                                    props.NftDetails.type
-                                  );
-                                  setLoading(false);
-                                  setReloadContent(!reloadContent);
-                                }}
-                              >
-                                Accept
-                              </button>
-                              <button
-                                to={"/"}
-                                className="small_border_btn small_btn"
-                                onClick={async () => {
-                                  await handleUpdateBidStatus(
-                                    b._id,
-                                    "Rejected"
-                                  );
-                                  setReloadContent(!reloadContent);
-                                }}
-                              >
-                                Reject
-                              </button>
-                            </div>
-                          ) : bidOwner !== currentUser?.toLowerCase() &&
-                            bidder === currentUser?.toLowerCase() ? (
-                            <div className="d-flex flex-column justify-content-center align-items-center ">
-                              <button
-                                disabled={
-                                  moment(
-                                    new Date(b.bidDeadline * 1000)
-                                  ).subtract({
-                                    hours: 5,
-                                    minutes: 30,
-                                  })._d < new Date()
-                                }
-                                className="small_yellow_btn small_btn mb-2"
-                                onClick={() => {
-                                  setCurrentBid(b);
-                                  // setBidDeadline(
-                                  //   moment(b.bidDeadline * 1000)
-                                  //     .utc()
-                                  //     .format()
-                                  // );
-                                  setPrice(
-                                    Number(
-                                      convertToEth(b?.bidPrice?.$numberDecimal)
-                                    )
-                                  );
-                                  setIsUpdateBidModal(true);
-                                  console.log(
-                                    "current bid--->",
-                                    b,
-                                    moment(b.bidDeadline * 1000)
-                                      .utc()
-                                      .format()
-                                  );
-                                }}
-                              >
-                                Update Bid
-                              </button>
-                              <button
-                                disabled={
-                                  moment(
-                                    new Date(b.bidDeadline * 1000)
-                                  ).subtract({
-                                    hours: 5,
-                                    minutes: 30,
-                                  })._d < new Date()
-                                }
-                                className="small_border_btn small_btn"
-                                onClick={async () => {
-                                  await handleUpdateBidStatus(
-                                    b._id,
-                                    "Cancelled"
-                                  );
-                                  slowRefresh(1000);
-                                }}
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          ) : bidder === currentUser?.toLowerCase() ? (
-                            <button
-                              to={"/"}
-                              className="small_border_btn small_btn"
-                              disabled={
-                                moment(new Date(b.bidDeadline * 1000)).subtract(
-                                  {
-                                    hours: 5,
-                                    minutes: 30,
+                              --:--:--
+                            </td>
+                            <td className="blue_text">
+                              {new Date(b.bidDeadline * 1000) < new Date()
+                                ? "Ended"
+                                : "Active"}
+                            </td>
+                            <td className="text-center">
+                              {bidOwner === currentUser?.toLowerCase() ? (
+                                <div className="d-flex flex-column justify-content-center align-items-center">
+                                  <button
+                                    to={"/"}
+                                    className="small_yellow_btn small_btn mb-3"
+                                    onClick={async () => {
+                                      setLoading(true);
+                                      await handleAcceptBids(
+                                        b,
+                                        props.NftDetails.type
+                                      );
+                                      setLoading(false);
+                                      setReloadContent(!reloadContent);
+                                    }}
+                                  >
+                                    Accept
+                                  </button>
+                                  <button
+                                    to={"/"}
+                                    className="small_border_btn small_btn"
+                                    onClick={async () => {
+                                      await handleUpdateBidStatus(
+                                        b._id,
+                                        "Rejected"
+                                      );
+                                      setReloadContent(!reloadContent);
+                                    }}
+                                  >
+                                    Reject
+                                  </button>
+                                </div>
+                              ) : bidOwner !== currentUser?.toLowerCase() &&
+                                bidder === currentUser?.toLowerCase() ? (
+                                <div className="d-flex flex-column justify-content-center align-items-center ">
+                                  <button
+                                    disabled={
+                                      moment(
+                                        new Date(b.bidDeadline * 1000)
+                                      ).subtract({
+                                        hours: 5,
+                                        minutes: 30,
+                                      })._d < new Date()
+                                    }
+                                    className="small_yellow_btn small_btn mb-2"
+                                    onClick={() => {
+                                      setCurrentBid(b);
+
+                                      setPrice(
+                                        Number(
+                                          convertToEth(
+                                            b?.bidPrice?.$numberDecimal
+                                          )
+                                        )
+                                      );
+                                      setIsUpdateBidModal(true);
+                                      console.log(
+                                        "current bid--->",
+                                        b,
+                                        moment(b.bidDeadline * 1000)
+                                          .utc()
+                                          .format()
+                                      );
+                                    }}
+                                  >
+                                    Update Bid
+                                  </button>
+                                  <button
+                                    disabled={
+                                      moment(
+                                        new Date(b.bidDeadline * 1000)
+                                      ).subtract({
+                                        hours: 5,
+                                        minutes: 30,
+                                      })._d < new Date()
+                                    }
+                                    className="small_border_btn small_btn"
+                                    onClick={async () => {
+                                      await handleUpdateBidStatus(
+                                        b._id,
+                                        "Cancelled"
+                                      );
+                                      slowRefresh(1000);
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : bidder === currentUser?.toLowerCase() ? (
+                                <button
+                                  to={"/"}
+                                  className="small_border_btn small_btn"
+                                  disabled={
+                                    moment(
+                                      new Date(b.bidDeadline * 1000)
+                                    ).subtract({
+                                      hours: 5,
+                                      minutes: 30,
+                                    })._d < new Date()
                                   }
-                                )._d < new Date()
-                              }
-                            >
-                              Place Bid
-                            </button>
-                          ) : (
-                            ""
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })
-                : ""}
-            </tbody>
-          </table>
+                                >
+                                  Place Bid
+                                </button>
+                              ) : (
+                                ""
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    : ""}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

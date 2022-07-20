@@ -121,7 +121,7 @@ const LogInHeader = function () {
                       </svg> My NFTs
                       </Link></li>
                     <li><Link to={"/Notifications"} className="sub-items">
-                    <svg class="hide" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="hide" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 0C5.38267 0 0 5.38267 0 12V12.0013L6.66667 6.668V10.668H16V13.3347H6.66667V17.3347L0 12.0013C0.00133333 18.6187 5.38267 24 12 24C18.6173 24 24 18.6173 24 12C24 5.38267 18.6173 0 12 0Z" fill="#EF981D"/>
                       </svg>Preferences</Link></li>
                     <li>

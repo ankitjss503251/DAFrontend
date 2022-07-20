@@ -1218,6 +1218,7 @@ header#myHeader {
   top: -50px;
   background: linear-gradient(0deg, black, #444444);
   z-index: 1;
+  border: 3px solid #ef981d;
 }
 /* .logoImg_con {
   background: linear-gradient(0deg, black, #444444);
@@ -2572,6 +2573,17 @@ button.filter_btn.active {
   border: 1px solid #313f4a;
   box-shadow: 2px 2px 5px rgb(0 0 0 / 25%);
   border-radius: 10px;
+  transition: .5s ease;
+}
+.collection_items:hover {
+  border: 1px solid #ef981d;
+  /* box-shadow: 2px 2px 5px rgb(239 152 29 / 70%); */
+  box-shadow: rgb(239 153 31) -5px 5px, rgb(239 153 31 / 30%) -10px 10px;
+  transform: scale(1.03);
+}
+.collection_items:hover .buy_btn {
+  background: linear-gradient(180deg, #ef981d 56.77%, #f9bf50 100%);
+  color: #fff !important;
 }
 .form-select:focus {
   border-color: #ef981d;
@@ -2594,12 +2606,18 @@ button.filter_btn.active {
   color: #ef981d;
   padding: 3px 25px;
   display: inline-block;
+  transition: .5s ease;
+}
+.buy_btn:hover {
+  background: linear-gradient(180deg, #ef981d 56.77%, #f9bf50 100%);
+  color: #fff !important;
 }
 .collection_row {
   display: flex;
   justify-content: space-between;
   /* align-items: center; */
 }
+
 .coll_itemstext span {
   font-family: "Montserrat";
   font-weight: 400;
@@ -5269,4 +5287,40 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     pointer-events: none;
     z-index: var(--onboard-modal-z-index, var(--modal-z-index));
     display: none !important;
+}
+
+
+.no_data_text{
+  font-size: 20px;
+  text-align: center;
+}
+
+@media screen and (max-width:1399px) {
+
+  .follow_btns .white_btn {margin-bottom:10px;}
+
+}
+
+@media screen and (max-width:767px) {
+
+section.collection_info .justify-content-end {
+
+  justify-content: center !important;
+
+  margin-top: 20px;
+
+}
+
+}
+
+@media screen and (max-width:390px) {
+
+  .follow_btns button.white_btn.mr10 {margin-right:0px;}
+
+.follow_btns {
+
+  text-align: center;
+
+}
+
 }
