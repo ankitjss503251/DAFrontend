@@ -21,10 +21,17 @@ import { slowRefresh } from "./../helpers/NotifyStatus";
 import Logo from "./../logo.svg";
 import PopupModal from "./components/popupModal";
 import evt from "./components/Events";
+import init from "@web3-onboard/core";
+import LandingPage  from "../LandingPage";
 
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
+
+//evt.on("wallet-connect",()=>{
+//    console.log("1111 111jf;lskdjf");
+//    connectWallet()
+//  });  
 
 const onboard = Onboard({
   wallets: [walletConnect, injected],
@@ -109,9 +116,7 @@ const onboard = Onboard({
  
 
 evt.removeAllListeners("wallet-connect", walletConnect);
-evt.on("wallet-connect",()=>{
-  console.log("1111");
-});  
+
 
 const Navbar = (props) => {
   const [cookies, setCookie, removeCookie] = useCookies([]);
@@ -307,8 +312,14 @@ const Navbar = (props) => {
     slowRefresh(1000);
   };
    
+  if(!account){
+    
+    return <LandingPage connectWallet={connectWallet}/>
+  }
 
   return (
+    
+  
     <div className="admin-navbar d-flex w-100">
       {isChainSwitched ? (
         <PopupModal
