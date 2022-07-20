@@ -118,63 +118,63 @@ export const handleBuyNft = async (
         buyerOrder.push(parseInt(order[key]));
     }
   }
-  if (buyerOrder[5] !== ZERO_ADDRESS) {
-    try {
-      let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
-      //check user's payment token balance
-      if (
-        new BigNumber(amount).isGreaterThan(new BigNumber(allowance.balance))
-      ) {
-        NotificationManager.error("Don't have sufficient funds");
-        return false;
-      }
+  // if (buyerOrder[5] !== ZERO_ADDRESS) {
+  //   try {
+  //     let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
+  //     //check user's payment token balance
+  //     if (
+  //       new BigNumber(amount).isGreaterThan(new BigNumber(allowance.balance))
+  //     ) {
+  //       NotificationManager.error("Don't have sufficient funds");
+  //       return false;
+  //     }
 
-      if (
-        new BigNumber(allowance.allowance).isLessThan(
-          new BigNumber(buyerOrder[6])
-        )
-      ) {
-        let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
+  //     if (
+  //       new BigNumber(allowance.allowance).isLessThan(
+  //         new BigNumber(buyerOrder[6])
+  //       )
+  //     ) {
+  //       let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
 
-        if (approveRes === false) {
-          return false;
-        }
-      }
-    } catch (err) {
-      console.log("error", err);
-      return;
-    }
-  }
+  //       if (approveRes === false) {
+  //         return false;
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.log("error", err);
+  //     return;
+  //   }
+  // }
 
-  try {
-    let usrHaveQuantity = await GetOwnerOfToken(
-      sellerOrder[1],
-      sellerOrder[2],
-      isERC721,
-      sellerOrder[0]
-    );
-    if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-      NotificationManager.error("Seller don't own that much quantity");
-      return false;
-    }
-  } catch (e) {
-    console.log("error", e);
-    return false;
-  }
+  // try {
+  //   let usrHaveQuantity = await GetOwnerOfToken(
+  //     sellerOrder[1],
+  //     sellerOrder[2],
+  //     isERC721,
+  //     sellerOrder[0]
+  //   );
+  //   if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
+  //     NotificationManager.error("Seller don't own that much quantity");
+  //     return false;
+  //   }
+  // } catch (e) {
+  //   console.log("error", e);
+  //   return false;
+  // }
 
   // check if seller still owns that much quantity of current token id
   // check if seller still have approval for marketplace
   // check if buyer have sufficient matic or not (fixed sale)
 
-  let approval = await NFTcontract.isApprovedForAll(
-    sellerOrder[0],
-    contracts.MARKETPLACE
-  );
+  // let approval = await NFTcontract.isApprovedForAll(
+  //   sellerOrder[0],
+  //   contracts.MARKETPLACE
+  // );
 
-  if (!approval) {
-    NotificationManager.error("Seller didn't approved marketplace");
-    return false;
-  }
+  // if (!approval) {
+  //   NotificationManager.error("Seller didn't approved marketplace");
+  //   return false;
+  // }
 
   let signature = details.signature;
   let options;
@@ -191,17 +191,28 @@ export const handleBuyNft = async (
       value: sellerOrder[5] === ZERO_ADDRESS ? amount : 0,
     };
 
-    let completeOrder = await marketplace.completeOrder(
-      sellerOrder,
-      signature,
-      buyerOrder,
-      signature,
-      options
-    );
-    let res = await completeOrder.wait();
-    if (res.status === 0) {
-      return false;
-    }
+    try {
+      let result = await marketplace.estimateGas.completeOrder(
+        sellerOrder,
+        signature,
+        buyerOrder,
+        signature,
+        options
+      );
+      if (result) {
+        let completeOrder = await marketplace.completeOrder(
+          sellerOrder,
+          signature,
+          buyerOrder,
+          signature,
+          options
+        );
+        let res = await completeOrder.wait();
+        if (res.status === 0) {
+          return false;
+        }
+      }
+    } catch (e) {}
   } catch (e) {
     console.log("error in contract function calling", e);
     if (e.code === 4001) {
@@ -266,7 +277,7 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
-  // slowRefresh(1000);
+  slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
