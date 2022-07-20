@@ -41,7 +41,7 @@ function Marketplacecollection() {
   useEffect(() => {
     const fetch = async () => {
       setLoader(true);
-      let temp = allCollections;
+      
       try {
         const res1 = await getCategory();
         setCategories(res1);
@@ -50,6 +50,7 @@ function Marketplacecollection() {
           t = [...t, r.name];
         });
         if (!t.includes(searchedText) && !showTab) {
+          let temp = allCollections;
           const reqData = {
             page: currPageAll,
             limit: 12,
@@ -95,8 +96,9 @@ function Marketplacecollection() {
 
   const handleCategoryChange = async (category) => {
     setLoader(true);
-    let temp2 = activeCat;
+   
     try {
+      let temp2 = activeCat;
       const reqBody = {
         page: currPage,
         limit: 12,
@@ -104,10 +106,12 @@ function Marketplacecollection() {
         isOnMarketplace: 1,
       };
       const ind = await getCollections(reqBody);
+      console.log("data in category is--------->",ind)
       setCardCount(cardCount + ind.length);
-      if (ind.length > 0) {
+      if (ind.length > 0 ) {
         setLoadMoreDisabled("");
-        temp2 = [...temp2, ind];
+        // temp2 = [...temp2, ind];
+        temp2 = [ind]
         setActiveCat(temp2);
       }
       if (ind?.length <= 0 && activeCat) {
@@ -158,10 +162,10 @@ function Marketplacecollection() {
                       aria-controls="#all"
                       aria-selected="true"
                       onClick={() => {
+                        setAllCollections([]);
                         setLoadMoreDisabledAll("");
                         setLoadMoreDisabled("");
                         setShowTab("");
-                        setAllCollections([]);
                         setCardCount(0);
                         setCurrPageAll(1);
                       }}
@@ -186,14 +190,14 @@ function Marketplacecollection() {
                             aria-controls={`#${cat.name}`}
                             aria-selected="true"
                             onClick={() => {
-                              setLoader(true);
-                              setCurrPage(1);
                               setActiveCat([]);
-                              setCardCount(0);
-                              handleCategoryChange(cat);
                               setLoadMoreDisabledAll("");
                               setLoadMoreDisabled("");
                               setShowTab("show active");
+                              // setLoader(true);
+                              setCardCount(0);
+                              setCurrPage(1);
+                              handleCategoryChange(cat);
                             }}
                           >
                             {cat.name}

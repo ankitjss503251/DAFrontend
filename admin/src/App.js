@@ -110,31 +110,31 @@ function App() {
         
                   /> */}
         
-                    <Route path="admins" element={<Admins />}></Route>
+        {currentUser ?  <Route path="admins" element={<Admins />} /> : <Route path="/"  />}
         
-                    <Route path="createcollection" element={<CreateCollection />} />
+        {currentUser ?    <Route path="createcollection" element={<CreateCollection />} /> :<Route path="/"  />}
         
-                    <Route path="createnfts" element={<CreateNFTs />} />
+        {currentUser ?     <Route path="createnfts" element={<CreateNFTs />} /> : <Route path="/"  />}
         
-                    <Route path="createbrands" element={<CreateBrands />} />
+        {currentUser ?     <Route path="createbrands" element={<CreateBrands />} /> : <Route path="/"  />}
         
-                    <Route path="login" element={<Login />} />
+        {currentUser ?     <Route path="login" element={<Login />} /> : <Route path="/"  />}
         
-                    <Route path="register" element={<Register />} />
+        {currentUser ?    <Route path="register" element={<Register />} /> : <Route path="/"  />: <Route path="/"  />}
         
-                    <Route path="importedNfts/:address/:id" element={<NftDetail />} />
+        {currentUser ?     <Route path="importedNfts/:address/:id" element={<NftDetail />} /> : <Route path="/"  />}
         
-                    <Route
+        {currentUser ?      <Route
                       path="createcategories"
                       showNotificationPopup={() => {}}
                       element={<CreateCategories />}
-                    />
+                    /> : <Route path="/"  />}
         
-                    <Route
+        {currentUser ?           <Route
                       path="notificationpopup"
                       notificationpopup={notificationpopup}
                       element={<NotificationPopup />}
-                    />
+                    /> : <Route path="/"  />}
                   </Route>
 
           
