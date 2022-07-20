@@ -85,7 +85,7 @@ function MultiMintingPage(props) {
       setisApprovePopupClass("checkiconCompleted");
       setisMintPopupClass("checkiconCompleted");
       setClosePopupDisabled(false);
-      NotificationManager.success("mint Succeeded");
+      NotificationManager.success("Mint Succeeded");
     }
   }
   evt.removeAllListeners("txn-status", txnStatus);
@@ -106,7 +106,12 @@ function MultiMintingPage(props) {
     } else if (msg.includes("not enough balance")) {
       setisApprovePopupClass("errorIcon");
       setClosePopupDisabled(false);
-      NotificationManager.error("not enough token");
+      NotificationManager.error("Not enough token");
+      return true;
+    } else if (msg.includes("check wallet for confirmation")) {
+      setisMintPopupClass("errorIcon");
+      setClosePopupDisabled(false);
+      NotificationManager.error(msg);
       return true;
     } else {
       setisApprovePopupClass("errorIcon");
@@ -114,6 +119,7 @@ function MultiMintingPage(props) {
       NotificationManager.error(msg);
       return true;
     }
+
     return false;
   }
   evt.removeAllListeners("txn-error", txnError);

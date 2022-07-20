@@ -209,7 +209,7 @@ const Home = () => {
                     >
                       <div className="mint_box online_rotater" style={mint_bg}>
                         {card.link ? (
-                          <Link to={card.link}>
+                          <a href={card.link}>
                             <div className="mint_img">
                               <img
                                 alt=""
@@ -235,7 +235,7 @@ const Home = () => {
                                 ""
                               )}
                             </div>
-                          </Link>
+                          </a>
                         ) : (
                           <div className="mint_img">
                             <img
@@ -279,14 +279,14 @@ const Home = () => {
                               />
                             </Link>
                           </div>
-                          <Link to={card.link}>
+                          <a href={card.link}>
                             {" "}
                             <h4 className="mb-2">
                               {card.name?.length > 15
                                 ? card.name?.slice(0, 15) + "..."
                                 : card.name}
                             </h4>
-                          </Link>
+                          </a>
                           <ul className="m-0 p-0">
                             <li>
                               <span>
