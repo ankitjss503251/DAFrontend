@@ -20,8 +20,18 @@ import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
 import Logo from "./../logo.svg";
 import PopupModal from "./components/popupModal";
+import evt from "./components/Events";
+import init from "@web3-onboard/core";
+import LandingPage  from "../LandingPage";
+
+
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
+
+//evt.on("wallet-connect",()=>{
+//    console.log("1111 111jf;lskdjf");
+//    connectWallet()
+//  });  
 
 const onboard = Onboard({
   wallets: [walletConnect, injected],
@@ -103,8 +113,9 @@ const onboard = Onboard({
     },
   },
 });
+ 
 
-
+evt.removeAllListeners("wallet-connect", walletConnect);
 
 
 const Navbar = (props) => {
@@ -115,7 +126,11 @@ const Navbar = (props) => {
   const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
-  console.log("onboard is--------->",onboard)
+ 
+  
+  
+ 
+
 
   useEffect(() => {
     init();
@@ -175,7 +190,7 @@ const Navbar = (props) => {
     const profile = await getProfile();
     setUserDetails(profile.data);
   };
-
+  
   const connectWallet = async () => {
 
     if (window.ethereum) {
@@ -296,8 +311,15 @@ const Navbar = (props) => {
     NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
+   
+  if(!account){
+    
+    return <LandingPage connectWallet={connectWallet}/>
+  }
 
   return (
+    
+  
     <div className="admin-navbar d-flex w-100">
       {isChainSwitched ? (
         <PopupModal
