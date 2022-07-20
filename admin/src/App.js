@@ -86,8 +86,8 @@ function App() {
           /> */}
 
           <Route path="sadmin" element={<Login />} />
-          {
-            !currentUser ? <Route path="/" element={<LandingPage />} /> : <Route
+          
+             <Route 
             element={<>
                 <Navbar />
                 <Outlet />
@@ -95,7 +95,7 @@ function App() {
                
         
         
-          currentUser ? <Route path="/" element={<Home />} /> 
+         {currentUser ? <Route path="/" element={<Home />} /> : <Route path="/"  />}
         
                     
                     {/* <Route
@@ -137,7 +137,7 @@ function App() {
                     />
                   </Route>
 
-          }
+          
             
         </Routes>
 
