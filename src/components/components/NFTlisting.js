@@ -334,7 +334,7 @@ function NFTlisting(props) {
                          {o.sellerID&&o.sellerID.walletAddress
                            ? o.sellerID.walletAddress.slice(0,3)+
                            "..."+
-                           o.sellerID.walletAddress.slice(39,41)
+                           o.sellerID.walletAddress.slice(39,42)
                            :""}
                        </span>
                      </td>
@@ -360,7 +360,7 @@ function NFTlisting(props) {
                      <td>
                        {o.salesType===0
                          ? "Fixed Sale"
-                         :o.salesType===1
+                         :o.salesType===1 && o.deadline !== GENERAL_TIMESTAMP
                            ? "Auction"
                            :"Open for Bids"}
                      </td>

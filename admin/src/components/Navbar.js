@@ -107,9 +107,10 @@ const onboard = Onboard({
   },
 });
  
-evt.on("wallet-connect",()=>{
-  console.log("1111");
-}); 
+
+// evt.on("wallet-connect",()=>{
+//   console.log("1111");
+// }); 
 
 
 const Navbar = (props) => {
@@ -120,16 +121,16 @@ const Navbar = (props) => {
   const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
- 
-  
-  
- 
-
 
   useEffect(() => {
     init();
     console.log('rendered');
   }, []);
+
+  
+  evt.on("wallet-connect",()=>{
+    console.log("1111");
+  }); 
 
   const init = async () => {
     if (cookies["da_selected_account"]) {
@@ -310,8 +311,6 @@ const Navbar = (props) => {
     slowRefresh(1000);
   };
    
-
-  evt.removeAllListeners("wallet-connect", walletConnect);
  
 
   return (

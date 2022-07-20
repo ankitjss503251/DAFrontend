@@ -49,7 +49,6 @@ function Marketplacecollection() {
         res1?.map((r) => {
           t = [...t, r.name];
         });
-        console.log("1111");
         if (!t.includes(searchedText) && !showTab) {
           const reqData = {
             page: currPageAll,
@@ -63,7 +62,6 @@ function Marketplacecollection() {
             setLoadMoreDisabledAll("");
             temp = [...temp, res];
             setAllCollections(temp);
-            console.log("2222");
           }
 
           if (allCollections && res.length <= 0) {
@@ -72,7 +70,6 @@ function Marketplacecollection() {
             return;
           }
         } else {
-          console.log("3333");
           setLoader(true);
           try {
             setShowTab("show active");
@@ -97,7 +94,6 @@ function Marketplacecollection() {
   }, [loadMore, searchedText, showTab]);
 
   const handleCategoryChange = async (category) => {
-    console.log("4444");
     setLoader(true);
     let temp2 = activeCat;
     try {
@@ -113,7 +109,6 @@ function Marketplacecollection() {
         setLoadMoreDisabled("");
         temp2 = [...temp2, ind];
         setActiveCat(temp2);
-        console.log("temp2", temp2);
       }
       if (ind?.length <= 0 && activeCat) {
         setLoader(false);
@@ -221,7 +216,7 @@ function Marketplacecollection() {
                     return oIndex.map((card, key) => (
                       <div className='col-lg-4 col-md-6 mb-5' key={key}>
                         <div className='collection_slide'>
-                          <Link to={`/collection/${card?._id}`}>
+                          <a href={`/collection/${card?._id}`}>
                             <div className="mint_img">
                               <img
                                 className='img-fluid w-100'
@@ -232,12 +227,12 @@ function Marketplacecollection() {
                                 alt=''
                               />
                             </div>
-                          </Link>
+                          </a>
                           <div className='collection_text'>
                           <div className='coll_profileimg'>
                             <div className="rotater_border profile_img">
-                              <Link className="rounded-circle"
-                                to={`/collectionwithcollection/${card?.brand?._id}`}>
+                              <a className="rounded-circle"
+                                href={`/collectionwithcollection/${card?.brand?._id}`}>
                                 
                                   <img
                                     alt=''
@@ -253,7 +248,7 @@ function Marketplacecollection() {
                                     className='check_img'
                                     src={"../img/collections/check.png"}
                                   /> */}
-                              </Link>
+                              </a>
                             </div>
                           </div>
                             
@@ -310,7 +305,7 @@ function Marketplacecollection() {
                     return oIndex.map((card, key) => (
                       <div className='col-lg-4 col-md-6 mb-5' key={key}>
                         <div className='collection_slide'>
-                          <Link to={`/collection/${card._id}`}>
+                          <a href={`/collection/${card._id}`}>
                             <div className="mint_img">
                               <img
                                 className='img-fluid w-100'
@@ -321,12 +316,12 @@ function Marketplacecollection() {
                                 }}
                               />
                             </div>
-                          </Link>
+                          </a>
                           <div className='collection_text'>
                             <div className='coll_profileimg'>
                               <div className="rotater_border profile_img">
-                                <Link className="rounded-circle"
-                                to={`/collectionwithcollection/${card.brand._id}`}>
+                                <a className="rounded-circle"
+                                href={`/collectionwithcollection/${card.brand._id}`}>
                                   <img
                                     alt=''
                                     className=''
@@ -341,16 +336,16 @@ function Marketplacecollection() {
                                   className='check_img'
                                   src={"../img/collections/check.png"}
                                   /> */}
-                                </Link>
+                                </a>
                               </div>
                             </div>
                             
                             <h4 className='collname'>
-                              <Link to={`/collection/${card._id}`}>
+                              <a href={`/collection/${card._id}`}>
                                 {card.name?.length > 8
                                   ? card.name?.slice(0, 8)
                                   : card.name}
-                              </Link>
+                              </a>
                             </h4>
                             <p>
                               {card.desc?.length > 8

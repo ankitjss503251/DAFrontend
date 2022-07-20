@@ -160,7 +160,7 @@ function NFToffer(props) {
                             {b?.bidderID?.walletAddress
                               ? b?.bidderID?.walletAddress?.slice(0, 3) +
                                 "..." +
-                                b?.bidderID?.walletAddress?.slice(39, 41)
+                                b?.bidderID?.walletAddress?.slice(39, 42)
                               : ""}
                           </span>
                         </td>

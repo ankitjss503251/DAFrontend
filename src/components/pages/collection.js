@@ -102,17 +102,7 @@ function Collection() {
     }
   };
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const c = await getCategory();
-        setCategory(c);
-      } catch (e) {
-        console.log("Error", e);
-      }
-    };
-    fetch();
-  }, []);
+
 
   useEffect(() => {
     const fetch = async () => {
@@ -126,6 +116,7 @@ function Collection() {
           searchText: searchedText ? searchedText : "",
         };
         const res = await getCollections(reqData);
+        console.log("resss",res,"reqData", reqData)
         setCollectionDetails(res[0]);
         const data = {
           page: currPage,
