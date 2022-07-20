@@ -118,33 +118,33 @@ export const handleBuyNft = async (
         buyerOrder.push(parseInt(order[key]));
     }
   }
-  // if (buyerOrder[5] !== ZERO_ADDRESS) {
-  //   try {
-  //     let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
-  //     //check user's payment token balance
-  //     if (
-  //       new BigNumber(amount).isGreaterThan(new BigNumber(allowance.balance))
-  //     ) {
-  //       NotificationManager.error("Don't have sufficient funds");
-  //       return false;
-  //     }
+  if (buyerOrder[5] !== ZERO_ADDRESS) {
+    try {
+      let allowance = await getPaymentTokenInfo(buyerOrder[0], buyerOrder[5]);
+      //check user's payment token balance
+      if (
+        new BigNumber(amount).isGreaterThan(new BigNumber(allowance.balance))
+      ) {
+        NotificationManager.error("Don't have sufficient funds");
+        return false;
+      }
 
-  //     if (
-  //       new BigNumber(allowance.allowance).isLessThan(
-  //         new BigNumber(buyerOrder[6])
-  //       )
-  //     ) {
-  //       let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
+      if (
+        new BigNumber(allowance.allowance).isLessThan(
+          new BigNumber(buyerOrder[6])
+        )
+      ) {
+        let approveRes = await handleApproveToken(buyerOrder[0], buyerOrder[5]);
 
-  //       if (approveRes === false) {
-  //         return false;
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.log("error", err);
-  //     return;
-  //   }
-  // }
+        if (approveRes === false) {
+          return false;
+        }
+      }
+    } catch (err) {
+      console.log("error", err);
+      return;
+    }
+  }
 
   // try {
   //   let usrHaveQuantity = await GetOwnerOfToken(
@@ -166,15 +166,15 @@ export const handleBuyNft = async (
   // check if seller still have approval for marketplace
   // check if buyer have sufficient matic or not (fixed sale)
 
-  // let approval = await NFTcontract.isApprovedForAll(
-  //   sellerOrder[0],
-  //   contracts.MARKETPLACE
-  // );
+  let approval = await NFTcontract.isApprovedForAll(
+    sellerOrder[0],
+    contracts.MARKETPLACE
+  );
 
-  // if (!approval) {
-  //   NotificationManager.error("Seller didn't approved marketplace");
-  //   return false;
-  // }
+  if (!approval) {
+    NotificationManager.error("Seller didn't approved marketplace");
+    return false;
+  }
 
   let signature = details.signature;
   let options;
@@ -187,6 +187,7 @@ export const handleBuyNft = async (
 
     options = {
       from: account,
+      gasPrice: 10000000000,
       gasLimit: 9000000,
       value: sellerOrder[5] === ZERO_ADDRESS ? amount : 0,
     };
@@ -199,6 +200,7 @@ export const handleBuyNft = async (
         signature,
         options
       );
+      console.log("result buy", result);
       if (result) {
         let completeOrder = await marketplace.completeOrder(
           sellerOrder,
@@ -212,7 +214,16 @@ export const handleBuyNft = async (
           return false;
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      // console.log("JSON.parse(e)", JSON.parse(e));
+
+      if (JSON.stringify(e).includes(`"reason":"Not an owner"`)) {
+        alert("Not an owner");
+        console.log("error in contract function calling", e);
+        return;
+      }
+      return;
+    }
   } catch (e) {
     console.log("error in contract function calling", e);
     if (e.code === 4001) {
@@ -277,7 +288,7 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
-  slowRefresh(1000);
+  // slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -285,6 +296,7 @@ export const handleApproveToken = async (userAddress, tokenAddress) => {
     let token = await exportInstance(tokenAddress, erc20Abi);
     const options = {
       from: userAddress,
+      gasPrice: 10000000000,
       gasLimit: 9000000,
       value: 0,
     };
@@ -441,6 +453,7 @@ export const handleRemoveFromSale = async (orderId, account) => {
     );
     const options = {
       from: account,
+      gasPrice: 10000000000,
       gasLimit: 9000000,
       value: "0",
     };
@@ -842,6 +855,38 @@ export const handleAcceptBids = async (
         gasLimit: 9000000,
         value: 0,
       };
+      try {
+        let result = await marketplace.estimateGas.completeOrder(
+          sellerOrder,
+          sellerSignature,
+          buyerOrder,
+          buyerSignature,
+          options
+        );
+        console.log("result buy", result);
+        if (result) {
+          completeOrder = await marketplace.completeOrder(
+            sellerOrder,
+            sellerSignature,
+            buyerOrder,
+            buyerSignature,
+            options
+          );
+          let res = await completeOrder.wait();
+          if (res.status === 0) {
+            return false;
+          }
+        }
+      } catch (e) {
+        // console.log("JSON.parse(e)", JSON.parse(e));
+
+        if (JSON.stringify(e).includes(`"reason":"Not an owner"`)) {
+          alert("Not an owner");
+          console.log("error in contract function calling", e);
+          return;
+        }
+        return;
+      }
       completeOrder = await marketplace.completeOrder(
         sellerOrder,
         sellerSignature,
@@ -986,7 +1031,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
 
   let options = {
     from: account,
-
+    gasPrice: 10000000000,
     gasLimit: 9000000,
 
     value: 0,
@@ -1048,8 +1093,6 @@ export const handleAcceptOffers = async (bidData, props, account) => {
       return false;
     }
 
-    let erc721 = props.NftDetails.type === 1 ? 1 : 2;
-
     try {
       let reqParams = {
         bidID: bidData._id,
@@ -1058,7 +1101,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         qtyBought: 1,
         qty_sold: 1,
         buyer: bidData.bidderID._id,
-        erc721: 1,
+        erc721: props.NftDetails.type === 1 ? 1 : 2,
       };
 
       await acceptOffer(reqParams);
@@ -1096,6 +1139,7 @@ export const handleUpdateBidStatus = async (
     await updateBidNft(reqParams);
 
     NotificationManager.success(`Bid ${action} Successfully`);
+    slowRefresh(1000);
   } catch (e) {
     console.log("error in api", e);
   }

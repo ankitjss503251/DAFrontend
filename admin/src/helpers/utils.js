@@ -7,7 +7,6 @@ const provider = new ethers.providers.JsonRpcProvider(
 );
 
 export const getEvents = async (tokenAddress) => {
-  console.log("tokenAdd", tokenAddress);
   const contract = new ethers.Contract(
     tokenAddress,
     abi,
