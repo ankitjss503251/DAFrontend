@@ -62,3 +62,10 @@ export function isLoggedIn()
 {
   return isSuperAdmin() || true;
 }
+export function isEmptyObject(obj) {
+  return (
+    Object.getPrototypeOf(obj) === Object.prototype &&
+    Object.getOwnPropertyNames(obj).length === 0 &&
+    Object.getOwnPropertySymbols(obj).length === 0
+  );
+}

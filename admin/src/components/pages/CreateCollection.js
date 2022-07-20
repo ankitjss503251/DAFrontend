@@ -26,10 +26,9 @@ import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { ItemDescription } from "semantic-ui-react";
 import Spinner from "../components/Spinner";
 
-function CreateCollection(props) { console.log("rerender",props)
+function CreateCollection(props) {
   const [logoImg, setLogoImg] = useState("");
   const [coverImg, setCoverImg] = useState("");
   const [title, setTitle] = useState("");
@@ -288,7 +287,7 @@ function CreateCollection(props) { console.log("rerender",props)
           );
           setLoading(false);
           setTimeout(() => {
-            window.location.href = "/createcollection";
+            window.location.href = "/admin/createcollection";
           }, 1000);
         } catch (e) {
           console.log("error", e);

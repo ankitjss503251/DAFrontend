@@ -3,7 +3,7 @@ import { NotificationManager } from "react-notifications";
 import Sidebar from "../components/Sidebar";
 import { useCookies } from "react-cookie";
 import { addBrand, GetBrand } from "../../apiServices";
-import { isEmptyObject } from "jquery";
+import { isEmptyObject } from "../../helpers/utils";
 import Spinner from "../components/Spinner";
 
 function CreateBrands() {
@@ -108,14 +108,14 @@ function CreateBrands() {
         NotificationManager.success(brand.message, "", 800);
         setLoading(false);
         setTimeout(() => {
-          window.location.href = "/createbrands";
+          window.location.href = "/admin/createbrands";
         }, 1000);
       } catch (e) {
         console.log(e);
         NotificationManager.error(e.message, "", 800);
         setLoading(false);
         setTimeout(() => {
-          window.location.href = "/createbrands";
+          window.location.href = "/admin/createbrands";
         }, 1000);
       }
       setLoading(false);
