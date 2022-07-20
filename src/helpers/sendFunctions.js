@@ -479,7 +479,7 @@ export const createBid=async (
     qty = 1,
     bidPrice,
     isOffer = false,
-    bidDeadline);
+    );
   let SellerOrder;
   let sellerOrder=[];
   let buyerOrder=[];

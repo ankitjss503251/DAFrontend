@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 //import Home1 from "./components/pages/Home";
-
-
-
+import evt from "./components/components/Events";
 
 const instaImg = {
   backgroundImage: "url(./images/main_bg.png)",
@@ -12,14 +10,27 @@ const instaImg = {
   backgroundPosition: "center",
 };
 
+
+
 function LandingPage() {
+  // evt.setMaxListeners(1);
 
-
- 
+  const connectWalletEvent = () => {
+    evt.emit("wallet-connect");
+    
+  }; 
 
   return (
-    <div >
-     <h1>Connect Wallet</h1>
+    <div className='wrapper'>
+      <div id='content'>
+        <div className='boxrow row'>
+          <div className='col-md-12 text-center'>
+            <button className='round-btn montserrat text-light text-decoration-none' onClick={() => connectWalletEvent()}>
+              Connect Wallet
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
