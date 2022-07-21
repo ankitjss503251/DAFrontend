@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Message from "./SVG/Message";
-import Notification from "./SVG/Notification";
-import Wallet from "./SVG/Wallet";
 import { Link } from "react-router-dom";
+import Wallet from "./SVG/Wallet";
 import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
 import walletConnectModule from "@web3-onboard/walletconnect";
@@ -12,6 +10,7 @@ import {
   Login,
   Logout,
   adminRegister,
+  isSuperAdmin,
   logoutSuperAdmin,
 } from "./../apiServices";
 import { NotificationManager } from "react-notifications";
@@ -231,6 +230,7 @@ const Navbar = (props) => {
         try {
           const res = await adminRegister(address);
           const res2 = await Login(address);
+          
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
             return;
@@ -265,6 +265,7 @@ const Navbar = (props) => {
       } else {
         try {
           const res = await Login(address);
+          debugger;
           console.log("Login API response", res);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
@@ -376,7 +377,7 @@ const Navbar = (props) => {
           </div>
         </li> */}
         <li>
-          {props.isAdmin ? (
+          {isSuperAdmin() ? (
             <button
               className="round-btn montserrat text-light text-decoration-none"
               onClick={logoutSuperAdmin}
