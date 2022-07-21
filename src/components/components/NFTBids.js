@@ -87,6 +87,7 @@ function NFTBids(props) {
             <div className="bid_user_address">
               <div>
                 <span className="adr">
+               
                   {currentUser?.slice(0, 8) +
                     "..." +
                     currentUser?.slice(34, 42)}
@@ -275,10 +276,11 @@ function NFTBids(props) {
                             <td className="d-flex justify-content-start align-items-center mb-0">
                               <span className="blue_dot circle_dot"></span>
                               <span>
+                              {console.log('currentuser length', currentUser, currentUser.length)}
                                 {b?.bidderID?.walletAddress
                                   ? b?.bidderID?.walletAddress?.slice(0, 3) +
                                     "..." +
-                                    b?.bidderID?.walletAddress?.slice(39, 41)
+                                    b?.bidderID?.walletAddress?.slice(39, 42)
                                   : ""}
                               </span>
                             </td>

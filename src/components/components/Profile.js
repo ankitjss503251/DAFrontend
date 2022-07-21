@@ -151,7 +151,6 @@ function Profile() {
       return;
     }
 
-    console.log("email is---->", email);
     if (email !== "" || email !== undefined) {
       let res = await isValidEmail(email);
       if (!res) {
@@ -159,7 +158,6 @@ function Profile() {
       }
     }
 
-    console.log("data to be updated is---->", data);
     try {
       let res = await updateProfile(data);
       if (res === "User Details Updated successfully") {
