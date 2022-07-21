@@ -18,7 +18,7 @@ import erc1155Abi from "./../config/abis/simpleERC1155.json";
 // import { fetchBidNft } from "../apiServices";
 // import { GENERAL_DATE, GENERAL_TIMESTAMP } from "./constants";
 import NotificationManager from "react-notifications/lib/NotificationManager";
-import { isEmptyObject } from "jquery";
+import { isEmptyObject } from "./utils";
 import abi from "../config/abis/generalERC721Abi.json";
 import {
   importCollection,
