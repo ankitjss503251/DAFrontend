@@ -40,7 +40,7 @@ function Sidebar() {
           </li>
         ) : null}
        
-        {window.sessionStorage.getItem('role') === "admin" ? (
+        {(isSuperAdmin && isSuperAdmin() || window.sessionStorage.getItem('role') === "admin") ? (
           <>
             <li>
               <Link

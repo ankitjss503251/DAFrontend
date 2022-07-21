@@ -64,7 +64,7 @@ function App(props) {
         </div>
       </div>
      
-      <BrowserRouter basename='/admin'>
+      <BrowserRouter>
         <Routes>
           {/* <Route
             path="navbar"
@@ -76,7 +76,7 @@ function App(props) {
           <Route path="sadmin" element={<Login />} />
 
           <Route
-          
+            
             element={
               <>
                 <Navbar />

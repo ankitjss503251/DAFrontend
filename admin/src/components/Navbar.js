@@ -9,6 +9,7 @@ import {
   Login,
   Logout,
   adminRegister,
+  isSuperAdmin,
   logoutSuperAdmin,
 } from "./../apiServices";
 import { NotificationManager } from "react-notifications";
@@ -348,7 +349,7 @@ const Navbar = (props) => {
           </div>
         </li> */}
         <li>
-          {props.isAdmin ? (
+          {isSuperAdmin() ? (
             <button
               className="round-btn montserrat text-light text-decoration-none"
               onClick={logoutSuperAdmin}
