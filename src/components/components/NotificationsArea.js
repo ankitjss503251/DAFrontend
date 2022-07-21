@@ -19,7 +19,7 @@ function NotificationsArea() {
             <img
               src={"../img/profile/mdi_sticker-check-outline.png"}
               alt=''
-              class='img-fluid'
+              className='img-fluid'
             />
           </div>
           <div className=''>
@@ -32,7 +32,7 @@ function NotificationsArea() {
             <img
               src={"../img/profile/mdi_sticker-check-outline.png"}
               alt=''
-              class='img-fluid'
+              className='img-fluid'
             />
           </div>
           <div className=''>
@@ -45,7 +45,7 @@ function NotificationsArea() {
             <img
               src={"../img/profile/mdi_sticker-check-outline.png"}
               alt=''
-              class='img-fluid'
+              className='img-fluid'
             />
           </div>
           <div className=''>
@@ -58,7 +58,7 @@ function NotificationsArea() {
             <img
               src={"../img/profile/mdi_sticker-check-outline.png"}
               alt=''
-              class='img-fluid'
+              className='img-fluid'
             />
           </div>
           <div className=''>
@@ -71,7 +71,7 @@ function NotificationsArea() {
             <img
               src={"../img/profile/mdi_sticker-check-outline.png"}
               alt=''
-              class='img-fluid'
+              className='img-fluid'
             />
           </div>
           <div className=''>
@@ -84,7 +84,7 @@ function NotificationsArea() {
             <img
               src={"../img/profile/mdi_sticker-check-outline.png"}
               alt=''
-              class='img-fluid'
+              className='img-fluid'
             />
           </div>
           <div className=''>
@@ -100,7 +100,7 @@ function NotificationsArea() {
             <img
               src={"../img/profile/mdi_sticker-check-outline.png"}
               alt=''
-              class='img-fluid'
+              className='img-fluid'
             />
           </div>
           <div className=''>
@@ -113,7 +113,7 @@ function NotificationsArea() {
             <img
               src={"../img/profile/mdi_sticker-check-outline.png"}
               alt=''
-              class='img-fluid'
+              className='img-fluid'
             />
           </div>
           <div className=''>
@@ -156,7 +156,7 @@ function NotificationsArea() {
       <div className='mt-5'>
         <button
           type='submit'
-          class={`yellow_btn mr-3 mb-3 ${isDisabled}`}
+          className={`yellow_btn mr-3 mb-3 ${isDisabled}`}
           disabled={isDisabled ? true : false}
           onClick={() => {
             NotificationManager.success("Minimun Bid Threshold updated successfully","",800);               

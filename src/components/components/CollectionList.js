@@ -6,13 +6,15 @@ function CollectionList(props) {
   return (
     <Link to={`/NFTdetails/${props.nft?.id}`}>
       <div className='collection_items'>
-        <img
-          alt=''
-          src={props.nft?.image}
-          class='img-fluid width-100'
-          style={{ height: "306.52px", borderTopLeftRadius: "inherit", borderTopRightRadius: "inherit" }}
-          onError={(e) => e.target.src = "../img/collections/list4.png"}
-        />
+        <div className="collection__img">
+          <img
+            alt=''
+            src={props.nft?.image}
+            className='img-fluid width-100'
+            style={{ height: "306.52px", borderTopLeftRadius: "inherit", borderTopRightRadius: "inherit" }}
+            onError={(e) => e.target.src = "../img/collections/list4.png"}
+          />
+        </div>
         <div className='coll_itemstext'>
           <div className='collection_row mb-3'>
             <div className='collection_col'>

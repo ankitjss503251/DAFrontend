@@ -141,6 +141,7 @@ const Header = function () {
         const s = await onboard.connectWallet({
           autoSelect: { label: cookies["label"], disableModals: true },
         });
+        console.log("onboard is------->",s)
         await onboard.setChain({
           chainId: process.env.REACT_APP_CHAIN_ID,
         });
@@ -539,8 +540,8 @@ const Header = function () {
                   Collections
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/helpcenter" tabindex="-1">
+              <li className='nav-item'>
+                <NavLink className='nav-link' to='/helpcenter' tabIndex='-1'>
                   Resources
                   <ul className="sub_menu">
                     <li>
@@ -594,9 +595,8 @@ const Header = function () {
                   <li className="nav-item">
                     <button
                       onClick={!account ? connectWallet : disconnectWallet}
-                      className="main_btn"
-                      tabindex="-1"
-                    >
+                      className='main_btn'
+                      tabIndex='-1'>
                       {!account
                         ? "Connect Wallet"
                         : account.slice(0, 4) + "..." + account.slice(38, 42)}
@@ -621,8 +621,8 @@ const Header = function () {
                       <span className='cartqt'>9</span>
                     </div>
                   </li> */}
-                  <li className="nav-item">
-                    <NavLink to="" tabindex="-1" className="profile_pic">
+                  <li className='nav-item'>
+                    <NavLink to='' tabIndex='-1' className='profile_pic'>
                       <img
                         src={
                           userDetails?.profileIcon
@@ -703,13 +703,12 @@ const Header = function () {
                       <li>
                         <NavLink to={"/Notifications"} className="sub-items">
                           <svg
-                            class="hide"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
+                            className='hide'
+                            width='24'
+                            height='24'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            xmlns='http://www.w3.org/2000/svg'>
                             <path
                               d="M12 0C5.38267 0 0 5.38267 0 12V12.0013L6.66667 6.668V10.668H16V13.3347H6.66667V17.3347L0 12.0013C0.00133333 18.6187 5.38267 24 12 24C18.6173 24 24 18.6173 24 12C24 5.38267 18.6173 0 12 0Z"
                               fill="#EF981D"
@@ -743,11 +742,10 @@ const Header = function () {
                   </li>
                   <li className="nav-item">
                     <button
-                      className="square_yello"
-                      tabindex="-1"
-                      onClick={disconnectWallet}
-                    >
-                      <img src="../img/edit.png" alt="edit" />{" "}
+                      className='square_yello'
+                      tabIndex='-1'
+                      onClick={disconnectWallet}>
+                      <img src='../img/edit.png' alt='edit' />{" "}
                       {account?.slice(0, 4) + "..." + account?.slice(38, 42)}
                     </button>
                   </li>

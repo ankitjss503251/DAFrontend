@@ -3,6 +3,7 @@ import Slider from "./slick-loader/slider";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { getCollections } from "../../helpers/getterFunctions";
+import { Link } from "react-router-dom";
 
 function CarouselCollection() {
   const [hotCollections, setHotCollections] = useState([]);
@@ -83,27 +84,30 @@ function CarouselCollection() {
               return (
                
                   <div className='collection_slide' key={key}>
-                    <a href={`/collection/${card?._id}`}>
-                      <img
-                        style={{
-                          borderTopLeftRadius: "10px",
-                          borderTopRightRadius: "10px",
-                        }}
-                        src={card.logoImg}
-                        class='img-fluid w-100'
-                        alt=''
-                        onError={(e) =>
-                          (e.target.src = "../img/collections/list4.png")
-                        }
-                      />
-                    </a>
+                    <Link to={`/collection/${card?._id}`}>
+                      <div className="mint_img">
+                        <img
+                          style={{
+                            borderTopLeftRadius: "10px",
+                            borderTopRightRadius: "10px",
+                          }}
+                          src={card.logoImg}
+                          className='img-fluid'
+                          alt=''
+                          onError={(e) =>
+                            (e.target.src = "../img/collections/list4.png")
+                          }
+                        />
+                      </div>
+                    </Link>
                     <div className='collection_text text-center'>
                       
                       <div className='coll_profileimg'>
-                        <a href={`/collectionwithcollection/${card?.brand?._id}`}>
+                        <div className="rotater_border profile_img">
+                        <Link className="rounded-circle" to={`/collectionwithcollection/${card?.brand?._id}`}>
                           <img
                             alt=''
-                            className='profile_img'
+                            className=''
                             src={card.brand?.logoImage}
                             onError={(e) => {
                               e.target.src = "../img/collections/list4.png";
@@ -114,16 +118,19 @@ function CarouselCollection() {
                                   className='check_img'
                                   src={"../img/collections/check.png"}
                                 /> */}
-                        </a>
+                        </Link>
+                        </div>
                       </div>
                       
                       
                         <h4 className='collname'>
+
                           <a href={`/collection/${card?._id}`}>
-                            {card?.name?.length > 8 ? card?.name?.slice(0,8) + "..." : card?.name}
+                            {card?.name?.length > 15 ? card?.name?.slice(0,15) + "..." : card?.name}
                           </a>
+
                         </h4>
-                        <p>{card.desc ? (card.desc?.length > 8 ? card.desc?.slice(0,8) + "..." : card.desc) : "-"}</p>
+                        <p>{card.desc ? (card.desc?.length > 20 ? card.desc?.slice(0,20) + "..." : card.desc) : "-"}</p>
                       
                     </div>
                   </div>

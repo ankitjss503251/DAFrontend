@@ -102,17 +102,7 @@ function Collection() {
     }
   };
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const c = await getCategory();
-        setCategory(c);
-      } catch (e) {
-        console.log("Error", e);
-      }
-    };
-    fetch();
-  }, []);
+
 
   useEffect(() => {
     const fetch = async () => {
@@ -126,6 +116,7 @@ function Collection() {
           searchText: searchedText ? searchedText : "",
         };
         const res = await getCollections(reqData);
+        console.log("resss",res,"reqData", reqData)
         setCollectionDetails(res[0]);
         const data = {
           page: currPage,
@@ -201,24 +192,24 @@ function Collection() {
           </h1>
           <ul class="collection_social mb-4">
             <li>
-              <Link to={"/"}>
+              <a href={"/"}>
                 <i class="fa fa-facebook fa-lg"></i>
-              </Link>
+              </a>
             </li>
             <li>
-              <Link to={"/"}>
+              <a href={"/"}>
                 <i class="fa fa-twitter fa-lg"></i>
-              </Link>
+              </a>
             </li>
             <li>
-              <Link to={"/"}>
+              <a href={"/"}>
                 <i class="fa fa-linkedin fa-lg"></i>
-              </Link>
+              </a>
             </li>
             <li>
-              <Link to={"/"}>
+              <a href={"/"}>
                 <i class="fa fa-pinterest fa-lg"></i>
-              </Link>
+              </a>
             </li>
           </ul>
 

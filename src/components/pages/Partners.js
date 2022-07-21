@@ -6,6 +6,7 @@ import {PartnerWithUs} from "../../Data/dummyJSON";
 // import collection from './collection';
 import Arrow from '../SVG/Arrow';
 import { PartnersLogos } from '../../Data/dummyJSON';
+import { Link } from '@reach/router';
 
 var bgImgStyle = {
     backgroundImage: "url(./img/background.jpg)",
@@ -62,14 +63,18 @@ function Partners() {
                     <div className="row">
                         {PartnerWithUs.map(partners=>(
                             <div className="col-md-4 mb-4" key={partners.id}>
-                                <div class="collection_slide" tabIndex="-1">
-                                    <img src={partners.img} class="img-fluid" alt="" />
-                                    <div class="collection_text">
-                                        <div class="coll_profileimg">
-                                            <img alt="" class="profile_img" src={partners.profile_img} />
+                                <div className="collection_slide" tabIndex="-1">
+                                    <img src={partners.img} className="img-fluid" alt="" />
+                                    <div className="collection_text">
+                                        <div className="coll_profileimg">
+                                            <div className="rotater_border profile_img">
+                                                <Link to={""} className="rounded-circle">
+                                                    <img alt="" className="" src={partners.profile_img} />
+                                                </Link>
+                                            </div>
                                         </div>
-                                        <h3 class="collname">{partners.Heading} <img alt="" class="" src="../img/collections/check.png" /></h3>
-                                        <p><span className='text-light'>by</span> {partners.Subheading} <img alt="" class="" src="../img/collections/check.png" /></p>
+                                        <h3 className="collname">{partners.Heading} <img alt="" className="" src="../img/collections/check.png" /></h3>
+                                        <p><span className='text-light'>by</span> {partners.Subheading} <img alt="" className="" src="../img/collections/check.png" /></p>
                                         <div className='description text-center text-light'>{partners.Text}</div>
                                     </div>
                                 </div>
@@ -88,63 +93,63 @@ function Partners() {
                     </div>
                     <div className="row partner_faq">
                         <div className="col-md-12">
-                            <div class="accordion" id="accordionExample">
-                                <div class="accordion-item1">
-                                    <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <div className="accordion" id="accordionExample">
+                                <div className="accordion-item1">
+                                    <h2 className="accordion-header" id="headingOne">
+                                    <button className="accordion-button1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                         What is an NFT? What makes them so great? <span className="arrow_faq"><Arrow /></span>
                                     </button>
                                     </h2>
-                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
+                                    <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                    <div className="accordion-body">
                                         <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the, though the transition does limit overflow.
                                     </div>
                                     </div>
                                 </div>
-                                <div class="accordion-item1">
-                                    <h2 class="accordion-header" id="headingTwo">
-                                    <button class="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <div className="accordion-item1">
+                                    <h2 className="accordion-header" id="headingTwo">
+                                    <button className="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                         What makes HunterToken special? <span className="arrow_faq"><Arrow /></span>
                                     </button>
                                     </h2>
-                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
+                                    <div id="collapseTwo" className="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div className="accordion-body">
                                         <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the, though the transition does limit overflow.
                                     </div>
                                     </div>
                                 </div>
-                                <div class="accordion-item1">
-                                    <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <div className="accordion-item1">
+                                    <h2 className="accordion-header" id="headingThree">
+                                    <button className="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                         What does a partnership with huntertoken entail? <span className="arrow_faq"><Arrow /></span>
                                     </button>
                                     </h2>
-                                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
+                                    <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                    <div className="accordion-body">
                                         <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the, though the transition does limit overflow.
                                     </div>
                                     </div>
                                 </div>
-                                <div class="accordion-item1">
-                                    <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <div className="accordion-item1">
+                                    <h2 className="accordion-header" id="headingThree">
+                                    <button className="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
                                         What does it cost to partner with HunterToken <span className="arrow_faq"><Arrow /></span>
                                     </button>
                                     </h2>
-                                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
+                                    <div id="collapseFour" className="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                    <div className="accordion-body">
                                         <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the, though the transition does limit overflow.
                                     </div>
                                     </div>
                                 </div>
-                                <div class="accordion-item1">
-                                    <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                <div className="accordion-item1">
+                                    <h2 className="accordion-header" id="headingThree">
+                                    <button className="accordion-button1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                                         How do we get started? <span className="arrow_faq"><Arrow /></span>
                                     </button>
                                     </h2>
-                                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
+                                    <div id="collapseFive" className="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                    <div className="accordion-body">
                                         <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the, though the transition does limit overflow.
                                     </div>
                                     </div>
@@ -159,7 +164,7 @@ function Partners() {
                     <div className="row align-items-center">
                         {PartnersLogos.map(partnerlogo =>(
                             <div className="col" key={partnerlogo.id}>
-                                <img src={partnerlogo.img} class="img-fluid" alt="" />
+                                <img src={partnerlogo.img} className="img-fluid" alt="" />
                             </div>
                         ))}
                     </div>

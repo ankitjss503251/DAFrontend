@@ -475,6 +475,7 @@ tbody td {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 10px;
 }
 .Lightmode .login_form {
   width: 500px;
@@ -998,12 +999,19 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   top: 0;
   width: auto;
   filter: invert(1);
-  background-size:
-  25px
-  
-  ;
+  background-size: 25px;
   background-position: 98%;
   }
+
+.admin_profile_img {
+    height: 140px !important;object-fit: contain;
+}
+.Lightmode .admintitle {
+  background: #f3aa34;
+}
+.Lightmode .admintitle.text-yellow {
+  color: #fff;
+}
 
 
   .popup-box {

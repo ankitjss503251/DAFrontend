@@ -145,7 +145,7 @@ function CreateBrands() {
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">Brand</h5>
       
-          <table class="table table-hover text-light">
+          <table className="table table-hover text-light">
             <thead>
               <tr>
                 <th>Customer</th>
@@ -153,22 +153,21 @@ function CreateBrands() {
                 <th>Description</th>
               </tr>
             </thead>
-            <br></br>
+         
             {myBrand &&
             myBrand !== undefined &&
             myBrand !== "" &&
             !isEmptyObject(myBrand) &&
             myBrand.length > 0
               ? myBrand.map((data, index) => (
-                  <tbody>
+                  <tbody key={index}>
                     <tr>
-                      <td>
-                        <img
+                      <td><img
                           src={data.logoImage}
                           className="profile_i"
                           alt=""
-                        />
-                      </td>
+                         
+                        /></td>
                       <td>{data.name ? data.name?.length > 8 ? data.name?.slice(0,8) + "..." : data.name : "-"}</td>
                       <td>{data.description ? data.description?.length > 15 ? data.description?.slice(0,15) : data.description : '-'}</td>
                     </tr>
@@ -204,7 +203,7 @@ function CreateBrands() {
             <div className="modal-body">
               <form className="row">
                 <div className="mb-1 col-md-4">
-                  <label for="recipient-name" className="col-form-label">
+                  <label htmlFor="recipient-name" className="col-form-label">
                     Upload Logo *
                   </label>
                   <div
@@ -233,24 +232,19 @@ function CreateBrands() {
                       }}
                       onClick={() => imageUploader.current.click()}
                     >
-                      <p className="text-center">Click or Drop here</p>
+                      <p className="text-center">Click here</p>
                       <img
                         alt=""
                         ref={uploadedImage}
                         src={"../images/upload.png"}
-                        style={{
-                          width: "110px",
-                          height: "110px",
-                          margin: "auto",
-                        }}
-                        className="img-fluid profile_circle_img"
+                        className="img-fluid profile_circle_img admin_profile_img"
                       />
-                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                      {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                     </div>
                   </div>
                 </div>
                 <div className="mb-1 col-md-8">
-                  <label for="recipient-name" className="col-form-label">
+                  <label htmlFor="recipient-name" className="col-form-label">
                     Upload Cover Image *
                   </label>
                   <div
@@ -279,24 +273,19 @@ function CreateBrands() {
                       }}
                       onClick={() => imageUploader2.current.click()}
                     >
-                      <p className="text-center">Click or Drop here</p>
+                      <p className="text-center">Click here</p>
                       <img
                         alt=""
                         ref={uploadedImage2}
                         src={"../images/upload.png"}
-                        style={{
-                          width: "110px",
-                          height: "110px",
-                          margin: "auto",
-                        }}
-                        className="img-fluid profile_circle_img"
+                        className="img-fluid profile_circle_img admin_profile_img"
                       />
-                      {/* <div class="overlat_btn"><button type="" class="img_edit_btn"><i class="fa fa-edit fa-lg"></i></button></div> */}
+                      {/* <div className="overlat_btn"><button type="" className="img_edit_btn"><i className="fa fa-edit fa-lg"></i></button></div> */}
                     </div>
                   </div>
                 </div>
                 <div className="col-md-12 mb-1">
-                  <label for="recipient-name" className="col-form-label">
+                  <label htmlFor="recipient-name" className="col-form-label">
                     Title *
                   </label>
                   <input
@@ -308,7 +297,7 @@ function CreateBrands() {
                   />
                 </div>
                 <div className="col-md-12 mb-1">
-                  <label for="message-text" className="col-form-label">
+                  <label htmlFor="message-text" className="col-form-label">
                     Description *
                   </label>
                   <textarea

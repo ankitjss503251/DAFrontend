@@ -18,8 +18,18 @@ import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
 import Logo from "./../logo.svg";
 import PopupModal from "./components/popupModal";
+import evt from "./components/Events";
+import init from "@web3-onboard/core";
+import LandingPage  from "../LandingPage";
+
+
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
+
+//evt.on("wallet-connect",()=>{
+//    console.log("1111 111jf;lskdjf");
+//    connectWallet()
+//  });  
 
 const onboard = Onboard({
   wallets: [walletConnect, injected],
@@ -101,8 +111,9 @@ const onboard = Onboard({
     },
   },
 });
+ 
 
-
+evt.removeAllListeners("wallet-connect", walletConnect);
 
 
 const Navbar = (props) => {
@@ -118,6 +129,11 @@ const Navbar = (props) => {
     init();
     console.log('rendered');
   }, []);
+
+  
+  evt.on("wallet-connect",()=>{
+    console.log("1111");
+  }); 
 
   const init = async () => {
     if (cookies["da_selected_account"]) {
@@ -168,11 +184,15 @@ const Navbar = (props) => {
     }
   }, [provider, account, chainId]);
 
+  function walletConnect() {
+    connectWallet();
+  }
+
   const getUserProfile = async () => {
     const profile = await getProfile();
     setUserDetails(profile.data);
   };
-
+  
   const connectWallet = async () => {
 
     if (window.ethereum) {
@@ -295,8 +315,15 @@ const Navbar = (props) => {
     NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
+   
+  if(!account){
+    
+    return <LandingPage connectWallet={connectWallet}/>
+  }
 
   return (
+    
+  
     <div className="admin-navbar d-flex w-100">
       {isChainSwitched ? (
         <PopupModal
@@ -331,9 +358,9 @@ const Navbar = (props) => {
           <img src={"../images/user.jpg"} alt="" className="img-fluid" />
         </div>
         {props.model}
-        <a className="logo" href="/admin">
+        <Link className="logo" to="/">
           Digital Arms
-        </a>
+        </Link>
       </div>
       <ul className="p-0 m-0">
         {/* <li className='text-light'>

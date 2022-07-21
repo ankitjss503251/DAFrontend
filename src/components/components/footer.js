@@ -59,7 +59,7 @@ const footer= () => (
                     </div>
                     <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12">
                         <div className="widget newsletter-widget">
-                            <h5 class="mb-4">Newsletter</h5>
+                            <h5 className="mb-4">Newsletter</h5>
                             <p>Signup for our newsletter to get the latest news in your inbox</p>
                             <form action="#" className="form-dark mb-1" id="form_subscribe" method="post" name="form_subscribe">
                                 <div className="newsletter_box">

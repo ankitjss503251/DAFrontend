@@ -303,6 +303,7 @@ function NFTDetails() {
       };
 
       let _data = await fetchBidNft(searchParams);
+      console.log("have bids", _data);
       if (_data && _data.data.length > 0) {
         const b = _data.data[0];
         setHaveBid(true);
@@ -321,13 +322,14 @@ function NFTDetails() {
       let searchParams = {
         nftID: NFTDetails.id,
         buyerID: localStorage.getItem("userId"),
-        bidStatus: "All",
+        bidStatus: "MakeOffer",
         orderID: "All",
       };
 
       let _data = await fetchOfferNft(searchParams);
 
       if (_data && _data.data.length > 0) {
+        console.log("offer data is------>", _data);
         const b = _data.data[0];
         setHaveOffer(true);
 
@@ -344,7 +346,7 @@ function NFTDetails() {
     setLoading(true);
 
     if (marketplaceSaleType === 0) {
-      if (itemprice === undefined || itemprice === "" || itemprice === 0) {
+      if (itemprice === undefined || itemprice === "" || itemprice <= 0) {
         NotificationManager.error("Please Enter a price", "", 800);
         setLoading(false);
         return;
@@ -352,6 +354,11 @@ function NFTDetails() {
     } else if (marketplaceSaleType === 1) {
       if (datetime === "" || datetime === undefined) {
         NotificationManager.error("Please Enter Expiration date", "", 800);
+        setLoading(false);
+        return;
+      }
+      if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
+        NotificationManager.error("Please Enter Minimum Bid", "", 800);
         setLoading(false);
         return;
       }
@@ -400,7 +407,7 @@ function NFTDetails() {
       return;
     }
 
-    if (offerPrice == "" || offerPrice === undefined) {
+    if (offerPrice === "" || offerPrice === undefined || offerPrice <= 0) {
       NotificationManager.error("Enter Offer Price");
       setLoading(false);
       return;
@@ -432,14 +439,14 @@ function NFTDetails() {
       currentUser,
       NFTDetails?.type,
       offerQuantity,
-      ethers.utils.parseEther(offerPrice),
+      ethers.utils.parseEther(offerPrice.toString()),
       deadline,
       NFTDetails.id,
       contracts.BUSD
     );
     setLoading(false);
 
-    // slowRefresh(1000);
+    slowRefresh(1000);
 
     //await putOnMarketplace(currentUser, orderData);
   };
@@ -507,7 +514,7 @@ function NFTDetails() {
 
     const dt = ev.target["value"] + ":00Z";
 
-    const ct = moment().toISOString();
+    const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
 
     if (dt < ct) {
       NotificationManager.error(
@@ -605,16 +612,10 @@ function NFTDetails() {
                     if (val.split(".").length > 2) {
                       val = val.replace(/\.+$/, "");
                     }
-                    if (val.length === 1 && val !== "0.") {
-                      val = Number(val);
-                    }
                   }
                 } else {
                   if (val.split(".").length > 2) {
                     val = val.replace(/\.+$/, "");
-                  }
-                  if (val.length === 1 && val !== "0.") {
-                    val = Number(val);
                   }
                 }
                 setPrice(val);
@@ -641,10 +642,10 @@ function NFTDetails() {
                 return;
               }
               try {
-                await createBid(
+                let res = await createBid(
                   orders[0].nftID,
                   orders[0]._id,
-                  orders[0].sellerID?._id,
+                  orders[0].sellerID,
                   currentUser,
                   firstOrderNFT?.type,
                   orders[0].total_quantity,
@@ -652,6 +653,10 @@ function NFTDetails() {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
+                if (res === false) {
+                  setLoading(false);
+                  return;
+                }
                 NotificationManager.success("Bid Placed Successfully", "", 800);
                 setLoading(false);
                 slowRefresh(1000);
@@ -662,7 +667,7 @@ function NFTDetails() {
               }
             }}
           >
-            {haveBid ? "Update Bid" : "Place Bid"}
+            {haveBid && haveBid !== "none" ? "Update Bid" : "Place Bid"}
           </button>
         </div>
       }
@@ -798,7 +803,6 @@ function NFTDetails() {
               ) : (
                 ""
               )}
-
               {NFTDetails && NFTDetails.fileType == "3D" ? (
                 <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
                   <pointLight position={[10, 10, 10]} intensity={1.3} />
@@ -1120,26 +1124,24 @@ function NFTDetails() {
             </div>
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">Listings</h3>
-              <div className="table-responsive">
-                <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
-              </div>
+              {/* <div className='table-responsive'> */}
+              <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
+              {/* </div> */}
             </div>
 
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">Bids</h3>
-              <div className="table-responsive">
-                <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
-              </div>
+
+              <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
             </div>
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">Offers</h3>
-              <div className="table-responsive">
-                <NFToffer
-                  id={NFTDetails.id}
-                  NftDetails={NFTDetails}
-                  collectionAddress={collection?.contractAddress}
-                />
-              </div>
+
+              <NFToffer
+                id={NFTDetails.id}
+                NftDetails={NFTDetails}
+                collectionAddress={collection?.contractAddress}
+              />
             </div>
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">History</h3>
@@ -1178,7 +1180,6 @@ function NFTDetails() {
           </div>
         </div>
       </section>
-
       {/* <!-- The Modal --> */}
       <div className={`modal marketplace putOnMarketplace`} id="detailPop">
         <div className="modal-dialog modal-lg modal-dialog-centered">
@@ -1192,11 +1193,9 @@ function NFTDetails() {
                 data-bs-dismiss="modal"
               ></button>
             </div>
-
             {/* <!-- Modal body --> */}
             <div className="modal-body">
               <h3 className="text-light text_16">Select method</h3>
-
               <ul
                 className="d-flex mb-4 justify-content-around g-3"
                 id="pills-tab"
@@ -1214,7 +1213,6 @@ function NFTDetails() {
                   </button>
                 </li>
                 <li className="list-unstyled">
-                  detailPop
                   <button
                     id="btn2"
                     className="navbtn"
@@ -1259,7 +1257,6 @@ function NFTDetails() {
                       onChange={(e) => {
                         const re = /[+-]?[0-9]+\.?[0-9]*/;
                         let val = e.target.value;
-
                         if (e.target.value === "" || re.test(e.target.value)) {
                           const numStr = String(val);
                           if (numStr.includes(".")) {
@@ -1268,18 +1265,13 @@ function NFTDetails() {
                               if (val.split(".").length > 2) {
                                 val = val.replace(/\.+$/, "");
                               }
-                              if (val.length === 1 && val !== "0.") {
-                                val = Number(val);
-                              }
                             }
                           } else {
                             if (val.split(".").length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
-                            if (val.length === 1 && val !== "0.") {
-                              val = Number(val);
-                            }
                           }
+                          console.log("valll", val, typeof val);
                           setItemprice(val);
                         }
                       }}
@@ -1345,19 +1337,14 @@ function NFTDetails() {
                             if (val.split(".").length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
-                            if (val.length === 1 && val !== "0.") {
-                              val = Number(val);
-                            }
                           }
                         } else {
                           if (val.split(".").length > 2) {
                             val = val.replace(/\.+$/, "");
                           }
-                          if (val.length === 1 && val !== "0.") {
-                            val = Number(val);
-                          }
                         }
                         setItem_bid(val);
+                        setItemprice(val);
                       }
                     }}
                   />
@@ -1367,7 +1354,6 @@ function NFTDetails() {
                   <label htmlFor="Payment" className="form-label">
                     Payment Token
                   </label>
-
                   {marketplaceSaleType === 0 ? (
                     <>
                       <select
@@ -1381,7 +1367,7 @@ function NFTDetails() {
                         }}
                       >
                         {" "}
-                        <option value={"BNB"} selected>
+                        <option value={"BNB"} defaultValue>
                           BNB
                         </option>
                         <option value={"HNTR"}>HNTR</option>
@@ -1399,7 +1385,7 @@ function NFTDetails() {
                         }
                       >
                         {" "}
-                        <option value={"BUSD"} selected>
+                        <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>
@@ -1500,16 +1486,10 @@ function NFTDetails() {
                             if (val.split(".").length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
-                            if (val.length === 1 && val !== "0.") {
-                              val = Number(val);
-                            }
                           }
                         } else {
                           if (val.split(".").length > 2) {
                             val = val.replace(/\.+$/, "");
-                          }
-                          if (val.length === 1 && val !== "0.") {
-                            val = Number(val);
                           }
                         }
                         setOfferPrice(val);
@@ -1571,9 +1551,6 @@ function NFTDetails() {
                         }}
                       >
                         {" "}
-                        <option value={"BNB"} selected>
-                          BNB
-                        </option>
                         {/* <option value={"HNTR"}>HNTR</option> */}
                         <option value={"BUSD"}>BUSD</option>
                       </select>
@@ -1589,7 +1566,7 @@ function NFTDetails() {
                         }
                       >
                         {" "}
-                        <option value={"BUSD"} selected>
+                        <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>

@@ -74,7 +74,7 @@ const Home = () => {
           page: 1,
           limit: 12,
           isExclusive: 1,
-          isOnMarketplace: 1,
+          // isOnMarketplace: 1,
         });
         setUpcomingMints(res);
       } catch (e) {
@@ -171,7 +171,7 @@ const Home = () => {
                   </div>
                   <h4>#3 Sell NFT’s </h4>
                   <p className="textdes">
-                    List your NFT’s on the secondary market place
+                    List your NFT’s on the secondary marketplace
                   </p>
                 </div>
               </div>
@@ -207,14 +207,14 @@ const Home = () => {
                       className="col-lg-4 col-md-6 col-sm-12 mb-lg-0 mb-xl-0 mb-4"
                       key={key}
                     >
-                      <div className="mint_box" style={mint_bg}>
+                      <div className="mint_box online_rotater" style={mint_bg}>
                         {card.link ? (
-                          <a href={card.link}>
+                          <Link to={card.link}>
                             <div className="mint_img">
                               <img
                                 alt=""
                                 src={card?.logoImg}
-                                class="img-fluid"
+                                className="img-fluid"
                                 onError={(e) =>
                                   (e.target.src =
                                     "../img/collections/list4.png")
@@ -235,13 +235,13 @@ const Home = () => {
                                 ""
                               )}
                             </div>
-                          </a>
+                          </Link>
                         ) : (
                           <div className="mint_img">
                             <img
                               alt=""
                               src={card?.logoImg}
-                              class="img-fluid"
+                              className="img-fluid"
                               onError={(e) =>
                                 (e.target.src = "../img/collections/list4.png")
                               }
@@ -263,9 +263,9 @@ const Home = () => {
                           </div>
                         )}
                         <div className="mint_text p-4">
-                          <div className="logoImg_con">
-                            <a
-                              href={`/collectionwithcollection/${card.brand?._id}`}
+                          <div className="logoImg_con rotater_border">
+                            <Link
+                              to={`/collectionwithcollection/${card.brand?._id}`}
                               className="rounded-circle "
                             >
                               <img
@@ -277,16 +277,16 @@ const Home = () => {
                                     "../img/collections/list4.png")
                                 }
                               />
-                            </a>
+                            </Link>
                           </div>
-                          <a href={card.link}>
+                          <Link to={card.link}>
                             {" "}
                             <h4 className="mb-2">
-                              {card.name?.length > 8
-                                ? card.name?.slice(0, 8) + "..."
+                              {card.name?.length > 15
+                                ? card.name?.slice(0, 15) + "..."
                                 : card.name}
                             </h4>
-                          </a>
+                          </Link>
                           <ul className="m-0 p-0">
                             <li>
                               <span>
@@ -373,9 +373,9 @@ const Home = () => {
                                     gradientUnits="userSpaceOnUse"
                                     gradientTransform="translate(9.05518 24.0601) rotate(-179.751) scale(14.1173 23.1636)"
                                   >
-                                    <stop offset="0.314" stop-color="#FF9800" />
-                                    <stop offset="0.662" stop-color="#FF6D00" />
-                                    <stop offset="0.972" stop-color="#F44336" />
+                                    <stop offset="0.314" stopColor="#FF9800" />
+                                    <stop offset="0.662" stopColor="#FF6D00" />
+                                    <stop offset="0.972" stopColor="#F44336" />
                                   </radialGradient>
                                   <radialGradient
                                     id="paint1_radial_57_4693"
@@ -385,29 +385,29 @@ const Home = () => {
                                     gradientUnits="userSpaceOnUse"
                                     gradientTransform="translate(9.84805 10.0119) rotate(90.5787) scale(14.771 11.1163)"
                                   >
-                                    <stop offset="0.214" stop-color="#FFF176" />
-                                    <stop offset="0.328" stop-color="#FFF27D" />
-                                    <stop offset="0.487" stop-color="#FFF48F" />
-                                    <stop offset="0.672" stop-color="#FFF7AD" />
-                                    <stop offset="0.793" stop-color="#FFF9C4" />
+                                    <stop offset="0.214" stopColor="#FFF176" />
+                                    <stop offset="0.328" stopColor="#FFF27D" />
+                                    <stop offset="0.487" stopColor="#FFF48F" />
+                                    <stop offset="0.672" stopColor="#FFF7AD" />
+                                    <stop offset="0.793" stopColor="#FFF9C4" />
                                     <stop
                                       offset="0.822"
-                                      stop-color="#FFF8BD"
+                                      stopColor="#FFF8BD"
                                       stop-opacity="0.804"
                                     />
                                     <stop
                                       offset="0.863"
-                                      stop-color="#FFF6AB"
+                                      stopColor="#FFF6AB"
                                       stop-opacity="0.529"
                                     />
                                     <stop
                                       offset="0.91"
-                                      stop-color="#FFF38D"
+                                      stopColor="#FFF38D"
                                       stop-opacity="0.209"
                                     />
                                     <stop
                                       offset="0.941"
-                                      stop-color="#FFF176"
+                                      stopColor="#FFF176"
                                       stop-opacity="0"
                                     />
                                   </radialGradient>
@@ -543,7 +543,7 @@ const Home = () => {
                 })
               : ""}
             {upcomingMints.length > 3 ? (
-              <div class="col-md-12 text-center mt-5">
+              <div className="col-md-12 text-center mt-5">
                 <Link to={"/mintcollectionlive"} className="view_all_bdr">
                   View All
                 </Link>
@@ -561,8 +561,8 @@ const Home = () => {
             <div className="text-center">
               <h2 className="text-center second_hd color-light mb-5">
                 Hot Collections
-                <div class="border_div">
-                  <span class="title_bottom_border"></span>
+                <div className="border_div">
+                  <span className="title_bottom_border"></span>
                 </div>
               </h2>
             </div>
@@ -623,8 +623,8 @@ const Home = () => {
               <h2 className="text-center second_hd color-light mb-5">
                 Most recent items put on sale per
                 <br /> Collection
-                <div class="border_div">
-                  <span class="title_bottom_border"></span>
+                <div className="border_div">
+                  <span className="title_bottom_border"></span>
                 </div>
               </h2>
             </div>
@@ -633,7 +633,7 @@ const Home = () => {
             <CarouselNew />
           </div>
           {upcomingMints.length > 0 ? (
-            <div class="col-md-12 text-center mt-5">
+            <div className="col-md-12 text-center mt-5">
               <Link to={"/marketplace"} className="view_all_bdr">
                 View All
               </Link>
@@ -651,8 +651,8 @@ const Home = () => {
               <div className="text-center">
                 <h2 className="text-center second_hd color-light mb-5">
                   Top Sellers
-                  <div class="border_div">
-                    <span class="title_bottom_border"></span>
+                  <div className="border_div">
+                    <span className="title_bottom_border"></span>
                   </div>
                 </h2>
               </div>
@@ -668,7 +668,7 @@ const Home = () => {
           <div className="col-lg-12">
             <div className="text-center">
               <h2 className="text-center second_hd color-light mb-5">Browse by Category
-              <div class="border_div"><span class="title_bottom_border"></span></div>
+              <div className="border_div"><span className="title_bottom_border"></span></div>
               </h2>
             </div>
           </div>

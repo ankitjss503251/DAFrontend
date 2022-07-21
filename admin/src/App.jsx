@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 import "./App.css";
 import Home1 from "./components/pages/Home";
 import { BrowserRouter, Routes, Route,Outlet } from "react-router-dom";
@@ -14,7 +15,11 @@ import Admins1 from "./components/pages/admins";
 import { NotificationContainer } from "react-notifications";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
 import Navbar from "./components/Navbar";
+<<<<<<< HEAD:admin/src/App.jsx
 import withLogin from "./components/components/withLogin";
+=======
+import LandingPage from "./LandingPage";
+>>>>>>> d8d87b94ff5ab33aa3f38e0dab1ba14204a223c1:admin/src/App.js
 
 const Home = withLogin(Home1);
 const Admins = withLogin(Admins1);
@@ -33,6 +38,9 @@ const instaImg = {
 function App(props) {
   const [mode, setMode] = useState("Darkmode");
   const [notificationpopup, setNotificationPopup] = useState(null);
+  const [currentUser, setCurrentUser] = useState("");
+  const [cookies, setCookies, removeCookies] = useCookies([]);
+
   const showNotificationPopup = (message, title) => {
     setNotificationPopup({
       msg: message,
@@ -50,6 +58,12 @@ function App(props) {
       setMode("Darkmode");
     }
   };
+
+
+  useEffect(() => {
+    if (cookies["da_selected_account"])
+      setCurrentUser(cookies["da_selected_account"]);
+  }, [cookies]);
 
   return (
     <div style={instaImg} className={mode}>
