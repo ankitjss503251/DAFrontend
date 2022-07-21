@@ -510,6 +510,7 @@ function NFTDetails() {
   };
 
   function handleChange(ev) {
+    console.log("ev", ev, new Date(ev), moment.utc(ev));
     if (!ev.target["validity"].valid) return;
 
     const dt = ev.target["value"] + ":00Z";

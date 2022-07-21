@@ -1095,3 +1095,6 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     border-radius: 10px;
   }
 
+.landing{
+  height: 100vh;
+}

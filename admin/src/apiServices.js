@@ -1,13 +1,13 @@
 import { ethers } from "ethers";
 import Web3 from "web3";
 import API from "./helpers/apiClient";
-import { setCookie, isSuperAdmin, deleteIsAdmin } from "./helpers/utils";
+import { setCookie, isSuperAdmin, deleteIsAdmin, deleteCookie } from "./helpers/utils";
 const web3 = new Web3(
   "https://polygon-mumbai.g.alchemy.com/v2/8RAii8kDi0Fwe47iF1_WLjpcSfp3q3R6"
 );
 
 export const exportInstance = async (SCAddress, ABI) => {
-  let provider = new ethers.providers.Web3Provider(window.ethereum); 
+  let provider = new ethers.providers.Web3Provider(window.ethereum);
   let signer = provider.getSigner();
   let a = new ethers.Contract(SCAddress, ABI, signer);
 
@@ -69,6 +69,7 @@ export const Login = async (account) => {
     }),
   };
   try {
+    deleteCookie("connect.auth")
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/auth/adminlogin",
       requestOptions
@@ -347,7 +348,7 @@ export const addBrand = async (data) => {
     body: data,
   };
   try {
-   
+
 
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/utils/addBrand",
@@ -397,7 +398,7 @@ export const createNft = async (data) => {
   };
 
   try {
-    
+
 
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/nft/createNFT",
@@ -423,7 +424,7 @@ export const addCategory = async (data) => {
     body: data,
   };
   try {
-   
+
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/utils/addCategory",
       requestOptions
@@ -735,12 +736,17 @@ export const GetOrdersByNftId = async (data) => {
 function getAuthorization() {
   return getHeaders() || isSuperAdmin();
 }
+
 export { isSuperAdmin };
 
 export const adminLogin = ({ username, password }) => {
   return API.post("/auth/superAdminLogin", { username, password }).then(
     (res) => {
       let { token } = res?.data;
+      localStorage.removeItem("Authorization")
+      deleteCookie("da_selected_account")
+      deleteCookie("chain_id")
+      window.sessionStorage.removeItem("role")
       setCookie("connect.auth", token, 100);
       setCookie("selected_account", "superadmin", 100);
 
@@ -750,6 +756,7 @@ export const adminLogin = ({ username, password }) => {
 };
 export function logoutSuperAdmin() {
   deleteIsAdmin();
+  window.location.reload()
 }
 export const adminUsers = (page) => {
   let limit = 12;
