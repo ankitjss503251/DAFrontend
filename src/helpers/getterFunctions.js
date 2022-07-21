@@ -300,6 +300,8 @@ export const getNFTs = async (req) => {
       searchText: req.searchText,
       isMinted: req.isMinted,
       isOnMarketplace: req.isOnMarketplace,
+      salesType: req.salesType,
+      priceSort: req.priceSort
     };
 
     data = await getNFTList(reqBody);
