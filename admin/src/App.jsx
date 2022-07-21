@@ -15,11 +15,8 @@ import Admins1 from "./components/pages/admins";
 import { NotificationContainer } from "react-notifications";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
 import Navbar from "./components/Navbar";
-<<<<<<< HEAD:admin/src/App.jsx
 import withLogin from "./components/components/withLogin";
-=======
 import LandingPage from "./LandingPage";
->>>>>>> d8d87b94ff5ab33aa3f38e0dab1ba14204a223c1:admin/src/App.js
 
 const Home = withLogin(Home1);
 const Admins = withLogin(Admins1);
