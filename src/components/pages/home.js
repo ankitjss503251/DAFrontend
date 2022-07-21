@@ -74,6 +74,7 @@ const Home = () => {
           page: 1,
           limit: 12,
           isExclusive: 1,
+          // isOnMarketplace: 1,
         });
         setUpcomingMints(res);
       } catch (e) {

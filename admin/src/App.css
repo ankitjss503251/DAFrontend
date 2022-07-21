@@ -1004,7 +1004,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   }
 
 .admin_profile_img {
-    max-height: 200px;
+    height: 140px !important;object-fit: contain;
 }
 .Lightmode .admintitle {
   background: #f3aa34;
