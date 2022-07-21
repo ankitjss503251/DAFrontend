@@ -47,7 +47,6 @@ const NftDetail = () => {
 
       let data = await fetch(uri);
       data = await data.json();
-      console.log("dataa", address);
       if (currentUser) {
         owner = await GetOwnerOfToken(address, id, true, currentUser);
         console.log("owner", owner);

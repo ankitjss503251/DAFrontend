@@ -20,8 +20,6 @@ export const getEvents = async (tokenAddress) => {
     null
   );
   let events = await contract.queryFilter(eventFilter);
-
-  console.log("data", events.length);
 };
 /******    Cookies         ******/
 export function setCookie(cname:string, cvalue:any, exdays:number) {

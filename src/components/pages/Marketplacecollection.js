@@ -106,7 +106,6 @@ function Marketplacecollection() {
         isOnMarketplace: 1,
       };
       const ind = await getCollections(reqBody);
-      console.log("data in category is--------->",ind)
       setCardCount(cardCount + ind.length);
       if (ind.length > 0 ) {
         setLoadMoreDisabled("");

@@ -120,7 +120,7 @@ function App() {
         
         {currentUser ?     <Route path="login" element={<Login />} /> : <Route path="/"  />}
         
-        {currentUser ?    <Route path="register" element={<Register />} /> : <Route path="/"  />: <Route path="/"  />}
+        {currentUser ?    <Route path="register" element={<Register />} /> : <Route path="/"  />}
         
         {currentUser ?     <Route path="importedNfts/:address/:id" element={<NftDetail />} /> : <Route path="/"  />}
         

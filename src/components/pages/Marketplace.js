@@ -84,12 +84,11 @@ function Marketplace() {
   const [activeSaleType, setActiveSaleType] = useState(-1);
   const [loader, setLoader] = useState(false);
   const [cardCount, setCardCount] = useState(0);
-  const [priceSort, setPriceSort] = useState("");
+  const [priceSort, setPriceSort] = useState("ASC");
   const [searchedCol, setSearchedCol] = useState("");
   const [searcheBrand, setSearchedBrand] = useState("");
 
   const filterToggle = () => {
-    console.log("filter", togglemode);
     if (togglemode === "filterhide") {
       setTogglemode("filtershow");
       document.getElementsByClassName("filter_btn")[0].classList.add("active");
@@ -120,7 +119,7 @@ function Marketplace() {
   }, []);
 
   useEffect(() => {
-    console.log("sales type filter value", activeSaleType);
+    console.log("sales type filter value", activeSaleType, priceSort);
     const fetch = async () => {
       setLoader(true);
       let temp = allNFTs;
@@ -169,7 +168,7 @@ function Marketplace() {
       }
     };
     fetch();
-  }, [loadMore, ERCType, sText, activeSaleType]);
+  }, [loadMore, ERCType, sText, activeSaleType, priceSort]);
 
   return (
     <div>
@@ -231,7 +230,7 @@ function Marketplace() {
                   className='market_select_form form-select'
                   aria-label='Default select example'
                   style={bgImgarrow}
-                  onChange={() => {
+                  onChange={(e) => {
                     setPriceSort(e.target.value);
                   }}>
                   <option value='ASC' defaultValue>
@@ -402,9 +401,9 @@ function Marketplace() {
                       }}
                     />
                     {cols && cols.length > 0 && colsAdv !== ""
-                      ? cols.map((i) => {
+                      ? cols.map((i, key) => {
                           return (
-                            <div className='form-check form-check-inline'>
+                            <div className='form-check form-check-inline' key={key}>
                               <input
                                 type='radio'
                                 id={i.name}
@@ -437,9 +436,9 @@ function Marketplace() {
                           <label htmlFor='all'>All</label>
                         </div>
                         {category.length > 0
-                          ? category?.map((c) => {
+                          ? category?.map((c, key) => {
                               return (
-                                <div className='form-check form-check-inline'>
+                                <div className='form-check form-check-inline' key={key}>
                                   <input
                                     type='radio'
                                     id={c.name}
@@ -476,9 +475,9 @@ function Marketplace() {
                     <li>
                       <form action='#' className='checked_form'>
                         {brands.length > 0
-                          ? brands?.map((b) => {
+                          ? brands?.map((b, key) => {
                               return (
-                                <div className='form-check form-check-inline'>
+                                <div className='form-check form-check-inline' key={key}>
                                   <input
                                     type='radio'
                                     id={b.name}
@@ -501,7 +500,7 @@ function Marketplace() {
             {loader ? (
               <SkeletonCard cards={cardCount} grid={grid} />
             ) : allNFTs?.length > 0 ? (
-              allNFTs.map((oIndex) => {
+              allNFTs.map((oIndex, key) => {
                 return oIndex.map((card, key) => {
                   return (
                     <div className={grid} key={key}>
