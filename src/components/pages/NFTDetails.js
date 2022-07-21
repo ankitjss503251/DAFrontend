@@ -346,7 +346,7 @@ function NFTDetails() {
     setLoading(true);
 
     if (marketplaceSaleType === 0) {
-      if (itemprice === undefined || itemprice === "" || itemprice === 0) {
+      if (itemprice === undefined || itemprice === "" || itemprice <= 0) {
         NotificationManager.error("Please Enter a price", "", 800);
         setLoading(false);
         return;
@@ -354,6 +354,11 @@ function NFTDetails() {
     } else if (marketplaceSaleType === 1) {
       if (datetime === "" || datetime === undefined) {
         NotificationManager.error("Please Enter Expiration date", "", 800);
+        setLoading(false);
+        return;
+      }
+      if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
+        NotificationManager.error("Please Enter Minimum Bid", "", 800);
         setLoading(false);
         return;
       }
@@ -402,7 +407,7 @@ function NFTDetails() {
       return;
     }
 
-    if (offerPrice == "" || offerPrice === undefined) {
+    if (offerPrice === "" || offerPrice === undefined || offerPrice <= 0) {
       NotificationManager.error("Enter Offer Price");
       setLoading(false);
       return;
@@ -510,7 +515,7 @@ function NFTDetails() {
     const dt = ev.target["value"] + ":00Z";
 
     const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
-    console.log("time comparison", dt, ct);
+
     if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
