@@ -73,7 +73,7 @@ function MintEventSlider(props) {
     console.log(props.id);
     if(cookies.selected_account){
       let bal=await fetchUserBal(cookies.selected_account,props.id)
-      console.log("THIS IS BALANCE",parseInt(bal));
+      
       if(MAX_WHITELIST_BUY_PER_USER>parseInt(bal)){
           setMaxNFT(MAX_WHITELIST_BUY_PER_USER-parseInt(bal));
           console.log("max NFT set To:",maxNFT);

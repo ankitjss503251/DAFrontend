@@ -113,7 +113,6 @@ function Marketplacecollection() {
         setLoadMoreDisabled("");
         temp2 = [...temp2, ind];
         setActiveCat(temp2);
-        console.log("temp2", temp2);
       }
       if (ind?.length <= 0 && activeCat) {
         setLoader(false);
