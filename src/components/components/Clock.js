@@ -29,7 +29,6 @@ const Clock = (props) => {
   }
  const getTimeUntil = (deadline) => {
     let time = Date.parse(deadline) - Date.parse(new Date());
- 
     if (time <= 0) {
       setState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     } else {
@@ -37,7 +36,7 @@ const Clock = (props) => {
       const minutes = Math.floor((time / 1000 / 60) % 60);
       const hours = Math.floor((time / (1000 * 60 * 60)) % 24);
       const days = Math.floor(time / (1000 * 60 * 60 * 24));
-    
+   
       setState({ days, hours, minutes, seconds });
     }
   }
@@ -56,6 +55,7 @@ const Clock = (props) => {
   
     return (
       <div className='d-flex'>
+      
         <div className='Clock-days'>{leading0(state.days)}d</div>
         <div className='Clock-hours'>{leading0(state.hours)}h</div>
         <div className='Clock-minutes'>
