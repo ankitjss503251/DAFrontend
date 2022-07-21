@@ -421,7 +421,9 @@ function Collection() {
                     );
                   })
                 ) : (
-                  <h2 className="text-white text-center">No NFT Found</h2>
+                  <div className="col-md-12">
+          <h4 className="no_data_text text-muted">No NFTs Available</h4>
+        </div>
                 )}
 
                 {nftList.length > 8 ? (
