@@ -7,12 +7,8 @@ import {
   getCategory,
   getAllCollections,
   GetBrand,
-  // getImportedNFTs,
-  getNFTList,
   GetMyCollectionsList,
-  importCollection,
   UpdateCollection,
-  createNft,
   blockUnBlockCollection,
   isSuperAdmin,
   importNft,
@@ -26,7 +22,6 @@ import moment from "moment";
 import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { ItemDescription } from "semantic-ui-react";
 import Spinner from "../components/Spinner";
 
 function CreateCollection() {
@@ -101,7 +96,7 @@ function CreateCollection() {
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
     const dt = ev.target["value"] + ":00Z";
-    const ct = moment().add({'hours': 5, 'minutes': 30}).toISOString();
+    const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
     if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
@@ -271,8 +266,8 @@ function CreateCollection() {
         fd.append("categoryID", category);
         fd.append("brandID", brand);
         fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
-        fd.append("preSaleStartTime", preSaleStartTime);
-        fd.append("preSaleEndTime", datetime2);
+        fd.append("preSaleStartTime", new Date(preSaleStartTime)).toUTCString();
+        fd.append("preSaleEndTime", new Date(datetime2)).toUTCString();
         fd.append("preSaleTokenAddress", contracts.BUSD);
         fd.append("totalSupply", maxSupply);
         fd.append("type", Number(nftType));
@@ -357,8 +352,8 @@ function CreateCollection() {
           //fd.append("chainID", chain);
           fd.append("link", importedCollectionLink);
           fd.append("contractAddress", contractAddress);
-          fd.append("preSaleStartTime", preSaleStartTime);
-          fd.append("preSaleEndTime", datetime2);
+          fd.append("preSaleStartTime", new Date(preSaleStartTime).toUTCString());
+          fd.append("preSaleEndTime", new Date(datetime2).toUTCString());
           fd.append("preSaleTokenAddress", contracts.BUSD);
           fd.append("totalSupply", maxSupply);
           fd.append("type", type);
