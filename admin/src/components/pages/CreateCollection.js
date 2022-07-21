@@ -24,7 +24,7 @@ import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import Spinner from "../components/Spinner";
 
-function CreateCollection() {
+function CreateCollection(props) {
   const [logoImg, setLogoImg] = useState("");
   const [coverImg, setCoverImg] = useState("");
   const [title, setTitle] = useState("");
@@ -91,6 +91,7 @@ function CreateCollection() {
       setCategory(_cat[0]._id);
     };
     fetch();
+    console.log('create collection')
   }, []);
 
   function handleChange(ev) {
@@ -282,7 +283,7 @@ function CreateCollection() {
           );
           setLoading(false);
           setTimeout(() => {
-            window.location.href = "/createcollection";
+            window.location.href = "/admin/createcollection";
           }, 1000);
         } catch (e) {
           console.log("error", e);
@@ -1657,4 +1658,4 @@ function CreateCollection() {
   );
 }
 
-export default CreateCollection;
+export default React.memo(CreateCollection);

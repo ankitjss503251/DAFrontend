@@ -21,13 +21,13 @@ export const getEvents = async (tokenAddress) => {
   let events = await contract.queryFilter(eventFilter);
 };
 /******    Cookies         ******/
-export function setCookie(cname:string, cvalue:any, exdays:number) {
+export function setCookie(cname, cvalue, exdays) {
   const d = new Date();
   d.setTime(d.getTime() + (exdays*24*60*60*1000));
   let expires = "expires="+ d.toUTCString();
   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
-export function getCookie(cname:string) {
+export function getCookie(cname) {
   let name = cname + "=";
   let decodedCookie = decodeURIComponent(document.cookie);
   let ca = decodedCookie.split(';');
@@ -42,7 +42,7 @@ export function getCookie(cname:string) {
   }
   return "";
 }
-export function deleteCookie(cname:string) {
+export function deleteCookie(cname) {
      setCookie(cname,"",-1);
 }
 /******    Cookies  end       ******/
@@ -58,4 +58,11 @@ export function isSuperAdmin()
 export function isLoggedIn()
 {
   return isSuperAdmin() || true;
+}
+export function isEmptyObject(obj) {
+  return (
+    Object.getPrototypeOf(obj) === Object.prototype &&
+    Object.getOwnPropertyNames(obj).length === 0 &&
+    Object.getOwnPropertySymbols(obj).length === 0
+  );
 }

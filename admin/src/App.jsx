@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import "./App.css";
 import Home1 from "./components/pages/Home";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route,Outlet } from "react-router-dom";
 import CreateCollection1 from "./components/pages/CreateCollection";
 import CreateNFTs1 from "./components/pages/CreateNFTs";
 import Rightarrow from "./components/SVG/rightarrow";
@@ -14,9 +14,8 @@ import NotificationPopup from "./components/components/NotificationPopup";
 import Admins1 from "./components/pages/admins";
 import { NotificationContainer } from "react-notifications";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
-import withLogin from "./components/components/withLogin";
-
 import Navbar from "./components/Navbar";
+import withLogin from "./components/components/withLogin";
 import LandingPage from "./LandingPage";
 
 const Home = withLogin(Home1);
@@ -33,7 +32,7 @@ const instaImg = {
   backgroundPosition: "center",
 };
 
-function App() {
+function App(props) {
   const [mode, setMode] = useState("Darkmode");
   const [notificationpopup, setNotificationPopup] = useState(null);
   const [currentUser, setCurrentUser] = useState("");
@@ -67,7 +66,7 @@ function App() {
     <div style={instaImg} className={mode}>
       <div className="btn_hidden">
         <div className="define_mode">
-          <button type="button" onClick={toggleMode}>
+          <button type="button" onClick={()=>{ toggleMode();}}>
             <Rightarrow />{" "}
             <span className="mode_text">
               {mode === "Darkmode" ? "Light Mode" : "Dark Mode"}
@@ -75,7 +74,7 @@ function App() {
           </button>
         </div>
       </div>
-
+     
       <BrowserRouter>
         <Routes>
           {/* <Route
@@ -84,65 +83,62 @@ function App() {
             element={<Navbar />}
             toggleMode={toggleMode}
           /> */}
-
-          <Route path="sadmin" element={<Login />} />
           
-             <Route 
-            element={<>
+          <Route path="sadmin" element={<Login />} />
+
+          <Route
+            
+            element={
+              <>
                 <Navbar />
                 <Outlet />
-              </>} > 
-               
-        
-        
-         {currentUser ? <Route path="/" element={<Home />} /> : <Route path="/"  />}
-        
-                    
-                    {/* <Route
-        
-             path="navbar"
-        
-                    model={mode}
-        
-                    element={<Navbar />}
-        
-                    toggleMode={toggleMode}
-        
-                  /> */}
-        
-        {currentUser ?  <Route path="admins" element={<Admins />} /> : <Route path="/"  />}
-        
-        {currentUser ?    <Route path="createcollection" element={<CreateCollection />} /> :<Route path="/"  />}
-        
-        {currentUser ?     <Route path="createnfts" element={<CreateNFTs />} /> : <Route path="/"  />}
-        
-        {currentUser ?     <Route path="createbrands" element={<CreateBrands />} /> : <Route path="/"  />}
-        
-        {currentUser ?     <Route path="login" element={<Login />} /> : <Route path="/"  />}
-        
-        {currentUser ?    <Route path="register" element={<Register />} /> : <Route path="/"  />}
-        
-        {currentUser ?     <Route path="importedNfts/:address/:id" element={<NftDetail />} /> : <Route path="/"  />}
-        
-        {currentUser ?      <Route
-                      path="createcategories"
-                      showNotificationPopup={() => {}}
-                      element={<CreateCategories />}
-                    /> : <Route path="/"  />}
-        
-        {currentUser ?           <Route
-                      path="notificationpopup"
-                      notificationpopup={notificationpopup}
-                      element={<NotificationPopup />}
-                    /> : <Route path="/"  />}
-                  </Route>
+              </>
+            }
+          >
+            <Route index  element={<Home />} />
+            {/* <Route
 
-          
-            
+     path="navbar"
+
+            model={mode}
+
+            element={<Navbar />}
+
+            toggleMode={toggleMode}
+
+          /> */}
+
+            <Route path="admins" element={<Admins />}></Route>
+
+            <Route path="createcollection" element={<CreateCollection />} />
+
+            <Route path="createnfts" element={<CreateNFTs />} />
+
+            <Route path="createbrands" element={<CreateBrands />} />
+
+            <Route path="login" element={<Login />} />
+
+            <Route path="register" element={<Register />} />
+
+            <Route path="importedNfts/:address/:id" element={<NftDetail />} />
+
+            <Route
+              path="createcategories"
+              showNotificationPopup={() => {}}
+              element={<CreateCategories />}
+            />
+
+            <Route
+              path="notificationpopup"
+              notificationpopup={notificationpopup}
+              element={<NotificationPopup />}
+            />
+          </Route>
         </Routes>
 
         <NotificationContainer />
       </BrowserRouter>
+   
     </div>
   );
 }
