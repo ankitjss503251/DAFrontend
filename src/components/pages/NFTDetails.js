@@ -346,11 +346,7 @@ function NFTDetails() {
     setLoading(true);
 
     if (marketplaceSaleType === 0) {
-      if (
-        itemprice === undefined ||
-        itemprice === "" ||
-        Number(itemprice) <= 0
-      ) {
+      if (itemprice === undefined || itemprice === "" || itemprice === 0) {
         NotificationManager.error("Please Enter a price", "", 800);
         setLoading(false);
         return;
@@ -361,13 +357,8 @@ function NFTDetails() {
         setLoading(false);
         return;
       }
-      if (item_bid === undefined || item_bid === "" || Number(item_bid) <= 0) {
-        NotificationManager.error("Please Enter Minimum Bid", "", 800);
-        setLoading(false);
-        return;
-      }
     } else {
-      if (item_bid === undefined || item_bid === "" || Number(item_bid) <= 0) {
+      if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
         NotificationManager.error("Please Enter Minimum Bid", "", 800);
         setLoading(false);
         return;
@@ -411,11 +402,7 @@ function NFTDetails() {
       return;
     }
 
-    if (
-      offerPrice === "" ||
-      offerPrice === undefined ||
-      Number(offerPrice) <= 0
-    ) {
+    if (offerPrice == "" || offerPrice === undefined) {
       NotificationManager.error("Enter Offer Price");
       setLoading(false);
       return;
