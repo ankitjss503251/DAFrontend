@@ -498,13 +498,11 @@ export const ImportNFTs = async (address, abi, currentUser) => {
         console.log("e", e);
         return;
       }
-      console.log("token", dbSupply);
       let calls = [];
       let data = [];
       let ids = [];
       for (let i = dbSupply; i < parseInt(originalSupply); i++) {
         let tokenId = await token.tokenByIndex(i);
-        console.log("tokenId", tokenId);
         calls.push({
           address: address,
           name: "tokenURI",
