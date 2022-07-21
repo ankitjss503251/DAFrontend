@@ -254,7 +254,6 @@ function CreateNFTs() {
         limit: 20,
       };
       let data = await GetMyCollectionsList(reqBody);
-      console.log("dataaaaaaaaa", data)
       if (data && data.results && data.results[0].length > 0) {
         let res = data?.results[0].filter((d, i) => d.isMinted === 1);
         setCollections(res);

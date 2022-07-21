@@ -126,9 +126,10 @@ function CollectionWithCollection() {
           page: currPage,
           limit: 8,
           brandID: brandID,
-          searchText: searchFor,
-          ERCType: ERCType,
+          searchText: searchFor ? searchFor : "",
+          ERCType: ERCType ? ERCType : "",
         });
+        console.log("brands nft", temp)
         setCardCount(cardCount + nft.length);
         if (nft.length > 0) {
           for (let i = 0; i < nft.length; i++) {
@@ -148,6 +149,7 @@ function CollectionWithCollection() {
           }
           temp = [...temp, nft];
         }
+       
         if (temp && temp.length <= 0) {
           setLoader(false);
           setLoadMoreDisabled("disabled");

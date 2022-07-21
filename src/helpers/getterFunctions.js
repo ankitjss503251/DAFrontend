@@ -303,7 +303,6 @@ export const getNFTs = async (req) => {
     };
 
     data = await getNFTList(reqBody);
-    console.log("data", data);
   } catch (e) {
     console.log("Error in getNFts API--->", e);
   }
@@ -312,7 +311,6 @@ export const getNFTs = async (req) => {
   let arr = [];
   if (data && data.length > 0) arr = data;
   else return [];
-  console.log("arrr", arr);
   arr
     ? arr.map((nft, key) => {
         formattedData[key] = {

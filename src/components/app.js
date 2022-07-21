@@ -68,6 +68,7 @@ const App = (props) => {
           <Route path="/userprofile" element={<UserProfile />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/collection/:id" element={<Collection />} />
+          
           <Route
             path="/collectionwithcollection"
             element={<CollectionWithCollection />}
