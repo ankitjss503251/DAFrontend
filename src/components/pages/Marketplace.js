@@ -581,19 +581,19 @@ function Marketplace() {
                             ""
                           )}
 
-                          {card && card.fileType === "3D" ? (
-                            <Canvas
-                              className='img-fluid items_img w-100 my-3'
-                              camera={{ position: [10, 100, 100], fov: 1 }}>
-                              <pointLight
-                                position={[10, 10, 10]}
-                                intensity={1.3}
-                              />
-                              <Suspense fallback={null}>
-                                <Model image={card.image} />
-                              </Suspense>
-                              <OrbitControls />
-                            </Canvas>
+                          {card && card.fileType === "3D" ? ("hello"
+                            //<Canvas
+                            //  className='img-fluid items_img w-100 my-3'
+                            //  camera={{ position: [10, 100, 100], fov: 1 }}>
+                            //  <pointLight
+                            //    position={[10, 10, 10]}
+                            //    intensity={1.3}
+                            //  />
+                            //  <Suspense fallback={null}>
+                            //    <Model image={card.image} />
+                            //  </Suspense>
+                            //  <OrbitControls />
+                            //</Canvas>
                           ) : (
                             ""
                           )}
