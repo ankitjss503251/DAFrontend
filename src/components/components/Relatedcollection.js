@@ -28,6 +28,7 @@ const Relatedcollection = (props) => {
                       src={card.coverImg}
                       className='img-fluid'
                       alt=''
+                      onError={(e) => (e.target.src = "../img/collections/list4.png")}
                     />
                   </div>
                   <div className='collection_text'>
@@ -38,6 +39,7 @@ const Relatedcollection = (props) => {
                           alt=''
                           className=''
                           src={card?.brand?.logoImage}
+                          onError={(e) => (e.target.src = "../img/collections/list4.png")}
                         />
                         {/* <img
                           alt=''
@@ -69,6 +71,7 @@ const Relatedcollection = (props) => {
                       src={card.coverImg}
                       className='img-fluid'
                       alt=''
+                      onError={(e) => (e.target.src = "../img/collections/list4.png")}
                     />
                   </div>
                   <div className='collection_text'>
@@ -79,6 +82,7 @@ const Relatedcollection = (props) => {
                             alt=''
                             className=''
                             src={card.logoImg}
+                            onError={(e) => (e.target.src = "../img/collections/list4.png")}
                           />
                           
                           {/* <img

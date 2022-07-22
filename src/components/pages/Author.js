@@ -33,6 +33,9 @@ function Author() {
   const [cardCount, setCardCount] = useState(1);
   const [searchFor, setSearchFor] = useState("");
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
+  const [priceSort, setPriceSort] = useState('ASC');
+  const [ERCType, setERCType] = useState();
+  const [currPage, setCurrPage] = useState(1)
 
   const bgImage = {
     backgroundImage: `url(${coverImg})`,
@@ -86,11 +89,13 @@ function Author() {
       setProfile(_profile);
       try {
         let reqBody = {
-          page: 1,
+          page: currPage,
           limit: 12,
           userWalletAddress: _profile?.walletAddress?.toLowerCase(),
           searchType: "owned",
           searchText: searchFor,
+          priceSort: priceSort,
+          ERCType: ERCType
         };
         let _owned = await GetOwnedNftList(reqBody);
         console.log("_owned", _owned);
@@ -116,7 +121,7 @@ function Author() {
       }
     };
     fetch();
-  }, [id, searchFor]);
+  }, [id, searchFor, ERCType, priceSort]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -162,7 +167,7 @@ function Author() {
                 </div> */}
               </div>
             </div>
-            <div className='col-md-4 d-flex justify-content-end'>
+            {/* <div className='col-md-4 d-flex justify-content-end'>
               <div className='follow_btns'>
                 <button type='button' className='white_btn mr10'>
                   5.2k Followers
@@ -171,7 +176,7 @@ function Author() {
                   5.2k Following
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
           {/* <div className="collection_pick">
             <img alt='' src={'../img/author/user-img.png'} className="img-fluid collection_profile" />
@@ -342,7 +347,13 @@ function Author() {
                 <select
                   className='market_select_form form-select'
                   aria-label='Default select example'
-                  style={bgImgarrow}>
+                  style={bgImgarrow}
+                  onChange={(e) => {
+                    setOwnedNFTs([]);
+                    setCurrPage(1);
+                    setCardCount(0);
+                    setERCType(parseInt(e.target.value));
+                  }}>
                   <option value='0' defaultValue>
                     All Items
                   </option>
@@ -352,11 +363,18 @@ function Author() {
                 <select
                   className='market_select_form form-select'
                   aria-label='Default select example'
-                  style={bgImgarrow}>
-                  <option value='1' defaultValue>
+                  style={bgImgarrow}
+                  onChange={(e) => {
+                    setOwnedNFTs([]);
+                    setCurrPage(1);
+                    setCardCount(0);
+                    setPriceSort(e.target.value);
+                  }}
+                  >
+                  <option value='ASC' defaultValue>
                     Price: Low to High
                   </option>
-                  <option value='2'>Price: High to Low</option>
+                  <option value='DESC'>Price: High to Low</option>
                 </select>
                 {/* <div className="market_div"> */}
                 <div id='gridtwo' className='market_grid' onClick={gridtwo}>
@@ -555,7 +573,7 @@ function Author() {
                 {loader ? (
                   <CollectionsNFT cards={cardCount} grid={grid} />
                 ) : (
-                  ownedNFTs?.map((card, key) => (
+                 ownedNFTs?.length > 0 ? ownedNFTs?.map((card, key) => (
                     <div className={grid} key={key}>
                       <AuthorListing
                         image={card.image}
@@ -563,7 +581,11 @@ function Author() {
                         link={`/nftDetails/${card._id}`}
                       />
                     </div>
-                  ))
+                  )) : (
+                    <div className="col-md-12">
+            <h4 className="no_data_text text-muted">No NFTs Available</h4>
+          </div>
+                  )
                 )}
               </div>
             </div>

@@ -1306,7 +1306,7 @@ header#myHeader {
   width: 90px;
   object-fit: cover;
   margin: auto;
-  background-image: url(../../assets/images/woman.png);
+  /* background-image: url(../../assets/images/woman.png); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -5190,7 +5190,7 @@ a:hover {
   width: 82.56px;
   height: 80px;
   border-radius: 100%;
-  background-image: url(../../assets/images/woman.png);
+  /* background-image: url(../../assets/images/woman.png); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
