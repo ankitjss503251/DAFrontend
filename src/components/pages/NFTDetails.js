@@ -216,6 +216,7 @@ function NFTDetails() {
   const [haveOffer, setHaveOffer] = useState("none");
   const [ownedBy, setOwnedBy] = useState("");
   const [bidStatus, setBidStatus] = useState("");
+  const [modalImage,setModalImge]=useState("")
 
   useEffect(() => {
     async function setUser() {
@@ -243,6 +244,11 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+        console.log("nft details is---------->",res[0])
+        if(res[0].fileType==="3D"){
+          let image=res[0].split("/");
+          console.log("3d Image is------->",image);
+        }
         setOrders(res[0]?.OrderData);
         if (res[0]?.OrderData.length <= 0) {
           setOrders([]);
