@@ -35,6 +35,7 @@ import Offers from "./pages/Offers";
 import AccountSupport from "./pages/AccountSupport";
 import Earnings from "./pages/Earnings";
 import Header from "./menu/header";
+import MyNFTs from "./pages/MyNFTs";
 
 // import {DUMMY_COLLECTIONS} from "../dummyJSON";
 
@@ -51,6 +52,7 @@ const App = (props) => {
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route exact path="/author/:id" element={<Author />} />
+          <Route exact path="/myNfts" element={<MyNFTs />} />
           <Route exact path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
