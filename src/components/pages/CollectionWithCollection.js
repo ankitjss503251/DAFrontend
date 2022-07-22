@@ -280,7 +280,7 @@ function CollectionWithCollection() {
           <ul className='collection_status mt-5 mb-5'>
             <li>
               {console.log("nfts[0].count", nfts)}
-              <h4>{}</h4>
+              <h4>{cardCount}</h4>
               <p>items</p>
             </li>
             <li>
@@ -640,7 +640,7 @@ function CollectionWithCollection() {
                     </h4>
                   </div>
                 )}
-                {nfts.length > 8 && (
+                {nfts[0]?.length > 7 && (
                   <div className='col-md-12 text-center mt-5'>
                     <button
                       type='button'

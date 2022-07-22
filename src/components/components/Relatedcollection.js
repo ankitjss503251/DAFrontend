@@ -37,7 +37,7 @@ const Relatedcollection = (props) => {
                         <img
                           alt=''
                           className=''
-                          src={card.logoImg}
+                          src={card?.brand?.logoImage}
                         />
                         {/* <img
                           alt=''

@@ -9,6 +9,7 @@ const AdvancedFilter = (props) => {
   const [cFlag, setCFlag] = useState(true);
   const [bFlag, setBFlag] = useState(true);
   
+  
 
   useEffect(() => {
     if(props.brandName !== undefined && bFlag){
