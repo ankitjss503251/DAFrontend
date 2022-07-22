@@ -8,7 +8,11 @@ import { AuthorCard } from "../../Data/dummyJSON";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
 import { useParams } from "react-router-dom";
-import { GetIndividualAuthorDetail, getOnSaleItems, GetOwnedNftList } from "../../apiServices";
+import {
+  GetIndividualAuthorDetail,
+  getOnSaleItems,
+  GetOwnedNftList,
+} from "../../apiServices";
 import moment from "moment";
 import coverImg from "./../../assets/images/authorbg.jpg";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
@@ -17,7 +21,6 @@ import { getCategory } from "../../helpers/getterFunctions";
 import BGImg from "../../assets/images/background.jpg";
 import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 import { useCookies } from "react-cookie";
-
 
 function Author() {
   const { id } = useParams();
@@ -30,8 +33,6 @@ function Author() {
   const [cardCount, setCardCount] = useState(1);
   const [searchFor, setSearchFor] = useState("");
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
- 
-
 
   const bgImage = {
     backgroundImage: `url(${coverImg})`,
@@ -66,19 +67,16 @@ function Author() {
     }
   };
 
-
-
   useEffect(() => {
- const fetch = async () => {
-   try {
-     const c = await getCategory();
-     setCategory(c);
-   } catch (e) {
-     console.log("Error", e);
-   }
- };
- fetch();
-   
+    const fetch = async () => {
+      try {
+        const c = await getCategory();
+        setCategory(c);
+      } catch (e) {
+        console.log("Error", e);
+      }
+    };
+    fetch();
   }, []);
 
   useEffect(() => {
@@ -86,37 +84,35 @@ function Author() {
       setLoader(true);
       let _profile = await GetIndividualAuthorDetail({ userID: id });
       setProfile(_profile);
-      try{
-
+      try {
         let reqBody = {
           page: 1,
           limit: 12,
           userWalletAddress: _profile?.walletAddress?.toLowerCase(),
           searchType: "owned",
-          searchText: searchFor
+          searchText: searchFor,
         };
         let _owned = await GetOwnedNftList(reqBody);
+        console.log("_owned", _owned);
         setCardCount(cardCount + _owned.count);
         setTotalOwned(_owned.count);
-        if (_owned && _owned.results.length > 0) setOwnedNFTs(_owned.results[0]);
+        if (_owned && _owned.results.length > 0)
+          setOwnedNFTs(_owned.results);
         setLoader(false);
-      }catch(e){
+      } catch (e) {
         console.log("Error in fetching owned nfts", e);
-      }      
+      }
 
-      try{
-        
+      try {
         let reqBody = {
           page: 1,
           limit: 12,
-          userWalletAddress: _profile?.walletAddress?.toLowerCase()
-        }
+          userWalletAddress: _profile?.walletAddress?.toLowerCase(),
+        };
         const onsale = await getOnSaleItems(reqBody);
         setOnSaleNFTs(onsale);
-       
-      }
-      catch(e){
-        console.log("Error in fetching onSale Items",e);
+      } catch (e) {
+        console.log("Error in fetching onSale Items", e);
       }
     };
     fetch();
@@ -136,31 +132,28 @@ function Author() {
     document.getElementById("gridthree").classList.add("active");
     document.getElementById("gridtwo").classList.remove("active");
   };
-  
 
   const [grid, setgrid] = useState("col-md-3 mb-4");
 
   return (
     <div style={bgImgStyle}>
-     
       <section
-        className="collection_banner pdd_8 d-flex align-items-center justify-content-center"
-        style={bgImage}>
-        </section>
-        <section className="collection_info">
-         <div className="container">
-          <div className="row align-items-end martop-100">
-            <div className="col-md-4"></div>
-            <div className="col-md-4 d-flex justify-content-center">
-              <div className="auther_pick">
+        className='collection_banner pdd_8 d-flex align-items-center justify-content-center'
+        style={bgImage}></section>
+      <section className='collection_info'>
+        <div className='container'>
+          <div className='row align-items-end martop-100'>
+            <div className='col-md-4'></div>
+            <div className='col-md-4 d-flex justify-content-center'>
+              <div className='auther_pick'>
                 <img
-                  alt=""
+                  alt=''
                   src={
                     profile?.profileIcon
                       ? profile?.profileIcon
                       : "../img/author/icon5.svg"
                   }
-                  className="img-fluid collection_profile"
+                  className='img-fluid collection_profile'
                 />
                 {/* <div className="overlat_btn">
                   <button type="" className="img_edit_btn">
@@ -169,13 +162,13 @@ function Author() {
                 </div> */}
               </div>
             </div>
-            <div className="col-md-4 d-flex justify-content-end">
-              <div className="follow_btns">
-                <button type="button" className="white_btn mr10">
+            <div className='col-md-4 d-flex justify-content-end'>
+              <div className='follow_btns'>
+                <button type='button' className='white_btn mr10'>
                   5.2k Followers
                 </button>
-                <button type="button" className="yellow_btn">
-                5.2k Following
+                <button type='button' className='yellow_btn'>
+                  5.2k Following
                 </button>
               </div>
             </div>
@@ -185,44 +178,43 @@ function Author() {
             <div className="overlat_btn"><button type="" className="img_edit_btn"><i className='fa fa-edit fa-lg'></i></button></div>
           </div> */}
 
-          <h1 className="collection_title text-center">
+          <h1 className='collection_title text-center'>
             {profile?.username ? profile?.username : "John Doe"}{" "}
-            <img alt="" src={"../img/author/check.png"} className="img-fluid" />
+            <img alt='' src={"../img/author/check.png"} className='img-fluid' />
           </h1>
 
-          <div className="coppycode text-center mb-4">
-            <span className="d-inline-flex align-items-center">
+          <div className='coppycode text-center mb-4'>
+            <span className='d-inline-flex align-items-center'>
               <svg
-                className="copysvg"
-                width="13"
-                height="20"
-                viewBox="0 0 13 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+                className='copysvg'
+                width='13'
+                height='20'
+                viewBox='0 0 13 20'
+                fill='none'
+                xmlns='http://www.w3.org/2000/svg'>
                 <path
-                  d="M6.14228 0L6.27637 0.455737V13.6802L6.14228 13.814L0.00364971 10.1855L6.14228 0Z"
-                  fill="#8C8C8C"
+                  d='M6.14228 0L6.27637 0.455737V13.6802L6.14228 13.814L0.00364971 10.1855L6.14228 0Z'
+                  fill='#8C8C8C'
                 />
                 <path
-                  d="M6.14213 0L12.2808 10.1855L6.14213 13.8141V7.39532V0Z"
-                  fill="#8C8C8C"
+                  d='M6.14213 0L12.2808 10.1855L6.14213 13.8141V7.39532V0Z'
+                  fill='#8C8C8C'
                 />
                 <path
-                  d="M6.14222 14.9763L6.21777 15.0684V19.7793L6.14222 20L-6.29425e-05 11.3496L6.14222 14.9763Z"
-                  fill="#8C8C8C"
+                  d='M6.14222 14.9763L6.21777 15.0684V19.7793L6.14222 20L-6.29425e-05 11.3496L6.14222 14.9763Z'
+                  fill='#8C8C8C'
                 />
                 <path
-                  d="M6.14213 19.9997V14.9761L12.2808 11.3494L6.14213 19.9997Z"
-                  fill="#8C8C8C"
+                  d='M6.14213 19.9997V14.9761L12.2808 11.3494L6.14213 19.9997Z'
+                  fill='#8C8C8C'
                 />
                 <path
-                  d="M6.14209 13.8139L0.00355101 10.1854L6.14209 7.39526V13.8139Z"
-                  fill="#8C8C8C"
+                  d='M6.14209 13.8139L0.00355101 10.1854L6.14209 7.39526V13.8139Z'
+                  fill='#8C8C8C'
                 />
                 <path
-                  d="M12.2808 10.1854L6.14222 13.8139V7.39526L12.2808 10.1854Z"
-                  fill="#8C8C8C"
+                  d='M12.2808 10.1854L6.14222 13.8139V7.39526L12.2808 10.1854Z'
+                  fill='#8C8C8C'
                 />
               </svg>
               {profile?.walletAddress
@@ -232,100 +224,94 @@ function Author() {
                 : "-"}
             </span>
           </div>
-          <div className="user_description text-center mb-5">
+          <div className='user_description text-center mb-5'>
             <p>{profile?.bio}</p>
             <h6>Joined {moment(profile?.createdOn).format("MMMM YYYY")}</h6>
           </div>
 
-          <ul className="author_cart nav" role="tablist">
+          <ul className='author_cart nav' role='tablist'>
             <li>
               <button
-                data-bs-toggle="pill"
-                data-bs-target="#pills-Owned"
-                type="button"
-                role="tab"
-                aria-controls="pills-Owned"
-                aria-selected="true"
-                className="active"
-              >
+                data-bs-toggle='pill'
+                data-bs-target='#pills-Owned'
+                type='button'
+                role='tab'
+                aria-controls='pills-Owned'
+                aria-selected='true'
+                className='active'>
                 <img
-                  alt=""
+                  alt=''
                   src={"../img/author/icon1.svg"}
-                  className="img-fluid"
+                  className='img-fluid'
                 />{" "}
                 Owned ({totalOwned})
               </button>
             </li>
             <li>
               <button
-                data-bs-toggle="pill"
-                data-bs-target="#pills-Sale"
-                type="button"
-                role="tab"
-                aria-controls="pills-Sale"
-                aria-selected="true"
-              >
+                data-bs-toggle='pill'
+                data-bs-target='#pills-Sale'
+                type='button'
+                role='tab'
+                aria-controls='pills-Sale'
+                aria-selected='true'>
                 On Sale
               </button>
             </li>
             <li>
               <button
-                data-bs-toggle="pill"
-                data-bs-target="#pills-Favourited"
-                type="button"
-                role="tab"
-                aria-controls="pills-Favourited"
-                aria-selected="true"
-              >
+                data-bs-toggle='pill'
+                data-bs-target='#pills-Favourited'
+                type='button'
+                role='tab'
+                aria-controls='pills-Favourited'
+                aria-selected='true'>
                 <img
-                  alt=""
+                  alt=''
                   src={"../img/author/icon3.svg"}
-                  className="img-fluid"
+                  className='img-fluid'
                 />{" "}
                 Favourite
               </button>
             </li>
             <li>
               <button
-                data-bs-toggle="pill"
-                data-bs-target="#pills-Activity"
-                type="button"
-                role="tab"
-                aria-controls="pills-Activity"
-                aria-selected="true"
-              >
+                data-bs-toggle='pill'
+                data-bs-target='#pills-Activity'
+                type='button'
+                role='tab'
+                aria-controls='pills-Activity'
+                aria-selected='true'>
                 <img
-                  alt=""
+                  alt=''
                   src={"../img/author/icon4.svg"}
-                  className="img-fluid"
+                  className='img-fluid'
                 />{" "}
                 Activity
               </button>
             </li>
             <li>
               <button
-                type="button"
-                className="dropdown-toggle"
+                type='button'
+                className='dropdown-toggle'
                 to={""}
-                role="button"
-                id="dropdownMenuLink"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+                role='button'
+                id='dropdownMenuLink'
+                data-bs-toggle='dropdown'
+                aria-expanded='false'>
                 Offers
               </button>
-              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <ul className='dropdown-menu' aria-labelledby='dropdownMenuLink'>
                 <li>
                   <NavLink
-                    activeclassname="active-link"
-                    className="dropdown-item"
-                    to={"/"}
-                  >
+                    activeclassname='active-link'
+                    className='dropdown-item'
+                    to={"/"}>
                     <DownloadSVG /> Offer Received
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink className="dropdown-item" to={"/"}>
+                  <NavLink className='dropdown-item' to={"/"}>
                     <OffermadeSVG /> Offer Made
                   </NavLink>
                 </li>
@@ -333,26 +319,24 @@ function Author() {
             </li>
           </ul>
 
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="market_search_form mb-5">
-                <form className="d-flex marketplace_form">
+          <div className='row'>
+            <div className='col-lg-12'>
+              <div className='market_search_form mb-5'>
+                <form className='d-flex marketplace_form'>
                   <input
-                    className=" me-2"
-                    type="search"
-                    placeholder="Search item here..."
-                    aria-label="Search"
+                    className=' me-2'
+                    type='search'
+                    placeholder='Search item here...'
+                    aria-label='Search'
                     value={searchFor}
-                    onChange={(e) => 
-                      {setOwnedNFTs([])
-                      setSearchFor(e.target.value)
-                     setCardCount(1)
-                    }
-
-                    }
+                    onChange={(e) => {
+                      setOwnedNFTs([]);
+                      setSearchFor(e.target.value);
+                      setCardCount(1);
+                    }}
                   />
-                  <button className="market_btn" type="submit">
-                    <img src="../img/search.svg" alt="" />
+                  <button className='market_btn' type='submit'>
+                    <img src='../img/search.svg' alt='' />
                   </button>
                 </form>
                 <select
@@ -366,20 +350,19 @@ function Author() {
                   <option value='2'>Multiple Items</option>
                 </select>
                 <select
-                  className="market_select_form form-select"
-                  aria-label="Default select example"
-                  style={bgImgarrow}
-                >
-                  <option value="1" defaultValue>
+                  className='market_select_form form-select'
+                  aria-label='Default select example'
+                  style={bgImgarrow}>
+                  <option value='1' defaultValue>
                     Price: Low to High
                   </option>
-                  <option value="2">Price: High to Low</option>
+                  <option value='2'>Price: High to Low</option>
                 </select>
                 {/* <div className="market_div"> */}
-                <div id="gridtwo" className="market_grid" onClick={gridtwo}>
+                <div id='gridtwo' className='market_grid' onClick={gridtwo}>
                   <Twogrid />
                 </div>
-                <div id="gridthree" className="market_grid" onClick={gridthree}>
+                <div id='gridthree' className='market_grid' onClick={gridthree}>
                   <Threegrid />
                 </div>
                 {/* </div> */}
@@ -393,31 +376,30 @@ function Author() {
               </div>
             </div>
             <div className={`filter mb-5 ${togglemode}`}>
-              <div className="filtercol">
+              <div className='filtercol'>
                 <form>
                   <button
-                    type="button"
-                    className="drop_down_tlt"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#demo"
-                  >
+                    type='button'
+                    className='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo'>
                     Status <UpArrow />
                   </button>
-                  <div id="demo" className="collapse show">
-                    <ul className="status_ul">
+                  <div id='demo' className='collapse show'>
+                    <ul className='status_ul'>
                       <li>
-                        <Link to={"/"} className="filter_border">
+                        <Link to={"/"} className='filter_border'>
                           Buy Now
                         </Link>
-                        <Link to={"/"} className="filter_border">
+                        <Link to={"/"} className='filter_border'>
                           On Auction
                         </Link>
                       </li>
                       <li>
-                        <Link to={"/"} className="filter_border">
+                        <Link to={"/"} className='filter_border'>
                           Now
                         </Link>
-                        <Link to={"/"} className="filter_border">
+                        <Link to={"/"} className='filter_border'>
                           Offers
                         </Link>
                       </li>
@@ -471,50 +453,48 @@ function Author() {
                   </div> */}
                 </form>
               </div>
-              <div className="filtercol">
+              <div className='filtercol'>
                 <form>
                   <button
-                    type="button"
-                    className="drop_down_tlt"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#demo3"
-                  >
+                    type='button'
+                    className='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo3'>
                     Collections <UpArrow />
                   </button>
-                  <div id="demo3" className="collapse show">
+                  <div id='demo3' className='collapse show'>
                     <input
-                      type="text"
-                      placeholder="Filter"
-                      className="filter_apply filter-text-left filter_padd"
+                      type='text'
+                      placeholder='Filter'
+                      className='filter_apply filter-text-left filter_padd'
                     />
                   </div>
                 </form>
               </div>
-              <div className="filtercol">
+              <div className='filtercol'>
                 <button
-                  type="button"
-                  className="drop_down_tlt mb-4"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#demo4"
-                >
+                  type='button'
+                  className='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo4'>
                   Categories <UpArrow />
                 </button>
-                <div id="demo4" className="collapse show">
+                <div id='demo4' className='collapse show'>
                   <ul>
-                    <li className="sub-items">
-                      <form action="#" className="checked_form">
-                        <div className="form-check form-check-inline">
-                          <input type="radio" id="allnfts" name="radio-group" />
-                          <label htmlFor="allnfts">All NFTs</label>
+                    <li className='sub-items'>
+                      <form action='#' className='checked_form'>
+                        <div className='form-check form-check-inline'>
+                          <input type='radio' id='allnfts' name='radio-group' />
+                          <label htmlFor='allnfts'>All NFTs</label>
                         </div>
                         {category
                           ? category.map((c) => {
                               return (
-                                <div className="form-check form-check-inline" >
+                                <div className='form-check form-check-inline'>
                                   <input
-                                    type="radio"
+                                    type='radio'
                                     id={c.name}
-                                    name="radio-group"
+                                    name='radio-group'
                                     key={c}
                                   />
                                   <label htmlFor={c.name}>{c.name}</label>
@@ -527,33 +507,32 @@ function Author() {
                   </ul>
                 </div>
               </div>
-              <div className="filtercol">
+              <div className='filtercol'>
                 <button
-                  type="button"
-                  className="drop_down_tlt mb-4"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#demo5"
-                >
+                  type='button'
+                  className='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo5'>
                   Brands <UpArrow />
                 </button>
-                <div id="demo5" className="collapse show">
+                <div id='demo5' className='collapse show'>
                   <ul>
                     <li>
                       <input
-                        type="text"
-                        placeholder="Filter"
-                        className="filter_apply  filter-text-left filter_padd"
+                        type='text'
+                        placeholder='Filter'
+                        className='filter_apply  filter-text-left filter_padd'
                       />
                     </li>
                     <li>
-                      <form action="#" className="checked_form">
-                        <div className="form-check form-check-inline">
-                          <input type="radio" id="test1" name="radio-group" />
-                          <label htmlFor="test1">Apple</label>
+                      <form action='#' className='checked_form'>
+                        <div className='form-check form-check-inline'>
+                          <input type='radio' id='test1' name='radio-group' />
+                          <label htmlFor='test1'>Apple</label>
                         </div>
-                        <div className="form-check form-check-inline">
-                          <input type="radio" id="test2" name="radio-group" />
-                          <label htmlFor="test2">Apple</label>
+                        <div className='form-check form-check-inline'>
+                          <input type='radio' id='test2' name='radio-group' />
+                          <label htmlFor='test2'>Apple</label>
                         </div>
                       </form>
                     </li>
@@ -564,58 +543,60 @@ function Author() {
           </div>
         </div>
       </section>
-      <section className="collection_list mb-5 pb-5">
-        <div className="container">
-          <div className="tab-content" id="pills-tabContent">
+      <section className='collection_list mb-5 pb-5'>
+        <div className='container'>
+          <div className='tab-content' id='pills-tabContent'>
             <div
-              className="tab-pane fade show active"
-              id="pills-Owned"
-              role="tabpanel"
-              aria-labelledby="pills-Owned-tab"
-            >
-              <div className="row">
-              {loader ? (
-              <CollectionsNFT cards={cardCount} grid={grid} />
-            ) : ownedNFTs?.map((card, key) => (
-                  <div className={grid} key={key}>
-                    <AuthorListing
-                      image={card.image}
-                      card={card}
-                      link={`/nftDetails/${card._id}`}
-                    />
-                  </div>
-                ))}
+              className='tab-pane fade show active'
+              id='pills-Owned'
+              role='tabpanel'
+              aria-labelledby='pills-Owned-tab'>
+              <div className='row'>
+                {loader ? (
+                  <CollectionsNFT cards={cardCount} grid={grid} />
+                ) : (
+                  ownedNFTs?.map((card, key) => (
+                    <div className={grid} key={key}>
+                      <AuthorListing
+                        image={card.image}
+                        card={card}
+                        link={`/nftDetails/${card._id}`}
+                      />
+                    </div>
+                  ))
+                )}
               </div>
             </div>
             <div
-              className="tab-pane fade"
-              id="pills-Sale"
-              role="tabpanel"
-              aria-labelledby="pills-Sale-tab"
-            >
-              <div className="row">
-              {loader ? (
-              <CollectionsNFT cards={cardCount} grid={grid} />
-            ) : onSaleNFTs?.map((card, key) => {
-                return (  <div className={grid} key={key}>
-                    <AuthorListing
-                      image={card.image}
-                      card={card}
-                      link={`/nftDetails/${card._id}`}
-                      bttn={card.OrderData[0].salesType}
-                    />
-                  </div>
-                )
-                })}
+              className='tab-pane fade'
+              id='pills-Sale'
+              role='tabpanel'
+              aria-labelledby='pills-Sale-tab'>
+              <div className='row'>
+                {loader ? (
+                  <CollectionsNFT cards={cardCount} grid={grid} />
+                ) : (
+                  onSaleNFTs?.map((card, key) => {
+                    return (
+                      <div className={grid} key={key}>
+                        <AuthorListing
+                          image={card.image}
+                          card={card}
+                          link={`/nftDetails/${card._id}`}
+                          bttn={card.OrderData[0].salesType}
+                        />
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
             <div
-              className="tab-pane fade"
-              id="pills-Favourited"
-              role="tabpanel"
-              aria-labelledby="pills-Favourited-tab"
-            >
-              <div className="row">
+              className='tab-pane fade'
+              id='pills-Favourited'
+              role='tabpanel'
+              aria-labelledby='pills-Favourited-tab'>
+              <div className='row'>
                 {AuthorCard.map((card, key) => (
                   <div className={grid} key={key}>
                     <AuthorListing
@@ -632,12 +613,11 @@ function Author() {
               </div>
             </div>
             <div
-              className="tab-pane fade"
-              id="pills-Activity"
-              role="tabpanel"
-              aria-labelledby="pills-Activity-tab"
-            >
-              <div className="row">
+              className='tab-pane fade'
+              id='pills-Activity'
+              role='tabpanel'
+              aria-labelledby='pills-Activity-tab'>
+              <div className='row'>
                 {AuthorCard.map((card, key) => (
                   <div className={grid} key={key}>
                     <AuthorListing

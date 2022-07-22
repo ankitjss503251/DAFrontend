@@ -6,7 +6,8 @@ const AdvancedFilter = (props) => {
   const [activeSaleType, setActiveSaleType] = useState(-2);
   const [cols, setCols] = useState([]);
   const [colsAdv, setColsAdv] = useState("");
-  const [flag, setFlag] = useState(true);
+  const [cFlag, setCFlag] = useState(true);
+  const [bFlag, setBFlag] = useState(true)
 
   console.log("props in advanced filter", props)
 
@@ -201,15 +202,15 @@ const AdvancedFilter = (props) => {
                 <div className='form-check form-check-inline'>
                   <input
                     type='radio'
-                    id='all'
+                    id='allCategory'
                     name='radio-group'
-                    checked={flag}
+                    checked={cFlag}
                     onChange={() => {
-                      setFlag(true);
+                      setCFlag(true);
                       props.onAdvSearch({ type: "category", value: "" });
                     }}
                   />
-                  <label htmlFor='all'>All</label>
+                  <label htmlFor='allCategory'>All</label>
                 </div>
                 {props.category.length > 0
                   ? props.category?.map((c, key) => {
@@ -222,7 +223,7 @@ const AdvancedFilter = (props) => {
                             key={c.name}
                             value={c._id}
                             onChange={(e) => {
-                              setFlag(false);
+                              setCFlag(false);
                               props.onAdvSearch({
                                 type: "category",
                                 value: e.target.value,
@@ -258,7 +259,54 @@ const AdvancedFilter = (props) => {
           </li> */}
             <li>
               <form action='#' className='checked_form'>
-                {props.brands.length > 0
+              <div className='form-check form-check-inline'>
+                  <input
+                    type='radio'
+                    id='allBrands'
+                    name='radio-group'
+                    checked={bFlag}
+                    onChange={() => {
+                      setBFlag(true);
+                      props.onAdvSearch({ type: "brand", value: "" });
+                    }}
+                  />
+                  <label htmlFor='allBrands'>All</label>
+                </div>
+                {
+                  props.brandName ?   props.brands.length > 0
+                    ? props.brands?.map((b, key) => {
+                      // if(b.name === props.brandName) { props.onAdvSearch({
+                      //   type: "brand",
+                      //   value: b._id
+                      // })}
+                        return (
+                          <div className='form-check form-check-inline' key={key}>
+                                <input
+                                  type='radio'
+                                  id={b.name}
+                                  name='radio-group'
+                                  key={b}
+                                  value={b._id}
+                                  checked={
+                                    b.name === props.brandName
+                                  }
+                                  onChange={(e) => {
+                                    setBFlag(false);
+                                    props.brandName
+                                      ? e.preventDefault()
+                                      : props.onAdvSearch({
+                                          type: "brand",
+                                          value: e.target.value,
+                                        });
+                                  }}
+                                />
+                                <label htmlFor={b.name}>{b.name}</label>
+                          </div>
+                        );
+                      })
+                    : ""
+                    :
+                    props.brands.length > 0
                   ? props.brands?.map((b, key) => {
                     // if(b.name === props.brandName) { props.onAdvSearch({
                     //   type: "brand",
@@ -273,13 +321,9 @@ const AdvancedFilter = (props) => {
                                 name='radio-group'
                                 key={b}
                                 value={b._id}
-                                checked={
-                                  b.name === props.brandName ? "true" : ""
-                                }
                                 onChange={(e) => {
-                                  props.brandName
-                                    ? e.preventDefault()
-                                    : props.onAdvSearch({
+                                  setBFlag(false);
+                                 props.onAdvSearch({
                                         type: "brand",
                                         value: e.target.value,
                                       });
@@ -290,6 +334,8 @@ const AdvancedFilter = (props) => {
                       );
                     })
                   : ""}
+                
+              
               </form>
             </li>
           </ul>
