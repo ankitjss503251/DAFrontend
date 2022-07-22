@@ -5289,6 +5289,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     z-index: var(--onboard-modal-z-index, var(--modal-z-index));
     display: none !important;
 }
+
 @media screen and (max-width:1399px) {
   .follow_btns .white_btn {margin-bottom:10px;}
 }
@@ -5321,6 +5322,7 @@ section.collection_info .justify-content-end {
     object-fit: cover;
   }
 }
+
 
 .no_data_text{
   font-size: 20px;

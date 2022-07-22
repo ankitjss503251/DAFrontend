@@ -23,13 +23,14 @@ function CreateCategories() {
   }, [currentUser]);
 
   useMemo(() => {
-    if (currentUser) {
-      const fetch = async () => {
-        let _myBrand = await getCategory();
-        setMyCategory(_myBrand);
-      };
-      fetch();
+    // if (currentUser) {
+    const fetch = async () => {
+      let _myBrand = await getCategory();
+      setMyCategory(_myBrand);
+      // };
+
     }
+    fetch();
   }, [currentUser]);
   const uploadedImage = React.useRef(null);
   const imageUploader = React.useRef(null);
@@ -84,14 +85,14 @@ function CreateCategories() {
         }
         setLoading(false);
         setTimeout(() => {
-          window.location.href = "/createcategories";
+          window.location.href = "/admin/createcategories";
         }, 1000);
       } catch (e) {
         console.log(e);
         NotificationManager.error(e.message, "", 800);
         setLoading(false);
         setTimeout(() => {
-          window.location.href = "/createcategories";
+          window.location.href = "/admin/createcategories";
         }, 1000);
       }
       setLoading(false);
@@ -130,19 +131,19 @@ function CreateCategories() {
             </thead>
             <br></br>
             {myCategory &&
-            myCategory != undefined &&
-            myCategory != "" &&
-            myCategory.length > 0
+              myCategory != undefined &&
+              myCategory != "" &&
+              myCategory.length > 0
               ? myCategory.map((data, index) => (
-                  <tbody key={index}>
-                    <tr>
-                      <td>{data.name ? data.name?.length > 8 ? data.name?.slice(0,8)+"..."  : data.name: "-"}</td>
-                      <td>
-                        <img src={data.image} className="profile_i" alt="" />
-                      </td>
-                    </tr>
-                  </tbody>
-                ))
+                <tbody key={index}>
+                  <tr>
+                    <td>{data.name ? data.name?.length > 8 ? data.name?.slice(0, 8) + "..." : data.name : "-"}</td>
+                    <td>
+                      <img src={data.image} className="profile_i" alt="" />
+                    </td>
+                  </tr>
+                </tbody>
+              ))
               : "No Categories Found"}
           </table>
         </div>
