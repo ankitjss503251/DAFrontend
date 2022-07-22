@@ -16,9 +16,7 @@ import { NotificationContainer } from "react-notifications";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
 import withLogin from "./components/components/withLogin";
 import Error404 from "./components/pages/Error404";
-
 import Navbar from "./components/Navbar";
-import LandingPage from "./LandingPage";
 import { isSuperAdmin } from "./apiServices";
 
 const Home = withLogin(Home1);

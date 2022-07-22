@@ -513,7 +513,7 @@ function NFTDetails() {
     console.log("ev", ev, new Date(ev), moment.utc(ev));
     if (!ev.target["validity"].valid) return;
 
-    const dt = ev.target["value"] + ":00Z";
+    const dt = ev.target["value"];
 
     const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
 
@@ -879,36 +879,36 @@ function NFTDetails() {
                   <div className="row">
                     {NFTDetails
                       ? NFTDetails?.attributes?.map((attr, key) => {
-                          const rarity = parseInt(attr?.rarity);
-                          return (
-                            <div className="col-md-6 mb-4" key={key}>
-                              <div className="tab_label">
-                                <div className="d-flex align-items-start flex-column">
-                                  <p>{attr.trait_type}</p>
-                                  <span className="big_text">{attr.value}</span>
-                                </div>
-                                {rarity ? (
-                                  <p>
-                                    {rarity}% <span>have this traits</span>
-                                  </p>
-                                ) : (
-                                  ""
-                                )}
+                        const rarity = parseInt(attr?.rarity);
+                        return (
+                          <div className="col-md-6 mb-4" key={key}>
+                            <div className="tab_label">
+                              <div className="d-flex align-items-start flex-column">
+                                <p>{attr.trait_type}</p>
+                                <span className="big_text">{attr.value}</span>
                               </div>
                               {rarity ? (
-                                <div className="progress mt-2">
-                                  <div
-                                    className={`progress-bar w-${rarity}`}
-                                    role="progressbar"
-                                    aria-valuenow={rarity}
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                  ></div>
-                                </div>
+                                <p>
+                                  {rarity}% <span>have this traits</span>
+                                </p>
                               ) : (
                                 ""
                               )}
-                              {/* <div className='progress'>
+                            </div>
+                            {rarity ? (
+                              <div className="progress mt-2">
+                                <div
+                                  className={`progress-bar w-${rarity}`}
+                                  role="progressbar"
+                                  aria-valuenow={rarity}
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                ></div>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                            {/* <div className='progress'>
                           <div
                             className='progress-bar w-75'
                             role='progressbar'
@@ -916,9 +916,9 @@ function NFTDetails() {
                             aria-valuemin='0'
                             aria-valuemax='100'></div>
                         </div> */}
-                            </div>
-                          );
-                        })
+                          </div>
+                        );
+                      })
                       : ""}
                   </div>
                 </div>
