@@ -328,7 +328,7 @@ function Collection() {
       </section>
       <section className="collection_list mb-5 pb-5">
         <div className="container">
-          <div className="tab-content" id="pills-tabContent">
+          <div className="tab-content tab-padd" id="pills-tabContent">
             <div
               className="tab-pane fade show active"
               id="pills-Items"
@@ -484,7 +484,6 @@ function Collection() {
                 </div>
               </div>
               <section className="collectionAction mb-5 pb-5 mt-5">
-                <div className="container">
                   <div className="row">
                     <div className="col-md-12">
                       <img
@@ -928,7 +927,6 @@ function Collection() {
                       </a>
                     </div>
                   </div>
-                </div>
               </section>
             </div>
           </div>
