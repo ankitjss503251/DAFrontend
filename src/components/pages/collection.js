@@ -181,9 +181,13 @@ function Collection() {
         <div className="container">
           <div className="collection_pick">
             <img
-              alt=""
+            alt=""
               src={collectionDetails?.brand?.logoImage}
               class="img-fluid collection_profile"
+              onError={(e) => {
+                e.target.src =
+                  "../img/collections/list4.png";
+              }}
             />
             {/* <img
               alt=''
@@ -235,7 +239,7 @@ function Collection() {
                   setIsCopied(true);
                   setTimeout(() => {
                     setIsCopied(false);
-                  }, 3000);
+                  }, 1000);
                 }}
               >
                 <svg
