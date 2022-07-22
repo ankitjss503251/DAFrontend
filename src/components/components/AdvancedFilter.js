@@ -7,9 +7,7 @@ const AdvancedFilter = (props) => {
   const [cols, setCols] = useState([]);
   const [colsAdv, setColsAdv] = useState("");
   const [cFlag, setCFlag] = useState(true);
-  const [bFlag, setBFlag] = useState(true)
-
-  console.log("props in advanced filter", props)
+  const [bFlag, setBFlag] = useState(props.brandName !== undefined ? true : false)
 
   return (
     <div className={`filter mb-5 ${props.togglemode}`}>
@@ -206,6 +204,7 @@ const AdvancedFilter = (props) => {
                     name='radio-group'
                     checked={cFlag}
                     onChange={() => {
+                      
                       setCFlag(true);
                       props.onAdvSearch({ type: "category", value: "" });
                     }}
@@ -266,8 +265,9 @@ const AdvancedFilter = (props) => {
                     name='radio-group'
                     checked={bFlag}
                     onChange={() => {
-                      setBFlag(true);
-                      props.onAdvSearch({ type: "brand", value: "" });
+                      if(props.brandName === undefined)
+                   {   setBFlag(true);
+                      props.onAdvSearch({ type: "brand", value: "" });}
                     }}
                   />
                   <label htmlFor='allBrands'>All</label>
