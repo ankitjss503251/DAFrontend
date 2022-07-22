@@ -182,7 +182,7 @@ function Collection() {
           <div className="collection_pick">
             <img
               alt=""
-              src={collectionDetails?.logoImg}
+              src={collectionDetails?.brand?.logoImage}
               class="img-fluid collection_profile"
             />
             {/* <img
