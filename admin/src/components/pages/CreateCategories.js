@@ -85,14 +85,14 @@ function CreateCategories() {
         }
         setLoading(false);
         setTimeout(() => {
-          window.location.href = "/admin/createcategories";
+          window.location.href = "/createcategories";
         }, 1000);
       } catch (e) {
         console.log(e);
         NotificationManager.error(e.message, "", 800);
         setLoading(false);
         setTimeout(() => {
-          window.location.href = "/admin/createcategories";
+          window.location.href = "/createcategories";
         }, 1000);
       }
       setLoading(false);

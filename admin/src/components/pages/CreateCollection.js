@@ -286,7 +286,7 @@ function CreateCollection(props) {
           );
           setLoading(false);
           setTimeout(() => {
-            window.location.href = "/admin/createcollection";
+            window.location.href = "/createcollection";
           }, 1000);
         } catch (e) {
           console.log("error", e);
