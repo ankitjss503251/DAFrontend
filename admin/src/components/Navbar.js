@@ -228,7 +228,6 @@ const Navbar = (props) => {
 
         try {
           const res = await Login(address);
-
           console.log("Login API response", res);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
