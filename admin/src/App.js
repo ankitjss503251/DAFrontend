@@ -88,7 +88,7 @@ function App() {
           /> */}
 
           <Route path="sadmin" element={<Login />} />
-          <Route path="404" element={<Error404 />} />
+          {/* <Route path="404" element={<Error404 />} /> */}
 
           <Route
             element={<>
@@ -127,7 +127,10 @@ function App() {
             /> : <Route path="/" />}
           </Route>
 
-
+          <Route
+            path="*"
+            element={<Error404 />}
+          />
 
         </Routes>
 
