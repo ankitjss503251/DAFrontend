@@ -335,7 +335,7 @@ function Collection() {
               role="tabpanel"
               aria-labelledby="pills-Items-tab"
             >
-              {nftList.length > 0 ? (
+            
                 <div className="row">
                   <div className="col-lg-12">
                     <div className="market_search_form mb-4">
@@ -406,9 +406,7 @@ function Collection() {
                     </div>
                   </div>
                 </div>
-              ) : (
-                ""
-              )}
+            
               <div className="row">
                 {loader ? (
                   <CollectionsNFT cards={cardCount} grid={grid} />
