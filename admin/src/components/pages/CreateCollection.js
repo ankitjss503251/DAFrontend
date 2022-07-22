@@ -286,7 +286,7 @@ function CreateCollection(props) {
           );
           setLoading(false);
           setTimeout(() => {
-            window.location.href = "/admin/createcollection";
+            window.location.href = "/createcollection";
           }, 1000);
         } catch (e) {
           console.log("error", e);
@@ -599,7 +599,7 @@ function CreateCollection(props) {
                   ? myCollections.map((item, index) => {
                     return (
                       <>
-                        <tr>
+                        <tr key={index}>
                           <td>
                             {" "}
                             <div className="first-col">

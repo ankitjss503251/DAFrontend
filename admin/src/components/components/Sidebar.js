@@ -49,7 +49,7 @@ function Sidebar() {
                 to={"/createcollection"}
                 className="text-decoration-none text-light"
               >
-                <Collectionsvg />  Collection
+                <Collectionsvg />  Collections
               </Link>
             </li>
             <li>

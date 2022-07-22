@@ -109,14 +109,14 @@ function CreateBrands() {
         NotificationManager.success(brand.message, "", 800);
         setLoading(false);
         setTimeout(() => {
-          window.location.href = "/admin/createbrands";
+          window.location.href = "/createbrands";
         }, 1000);
       } catch (e) {
         console.log(e);
         NotificationManager.error(e.message, "", 800);
         setLoading(false);
         setTimeout(() => {
-          window.location.href = "/admin/createbrands";
+          window.location.href = "/createbrands";
         }, 1000);
       }
       setLoading(false);
