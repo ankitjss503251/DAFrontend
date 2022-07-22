@@ -278,9 +278,9 @@ function Marketplacecollection() {
                     ));
                   })
                 ) : (
-                  <h2 className="text-white text-center">
-                    No Collection Found
-                  </h2>
+                  <div className="col-md-12">
+          <h4 className="no_data_text text-muted">No Collections Available</h4>
+        </div>
                 )}
                 {allCollections[0]?.length > 12 ? (
                   <div className="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
@@ -370,9 +370,9 @@ function Marketplacecollection() {
                     ));
                   })
                 ) : (
-                  <h2 className="text-white text-center">
-                    No Collection Found
-                  </h2>
+                  <div className="col-md-12">
+          <h4 className="no_data_text text-muted">No Collections Available</h4>
+        </div>
                 )}
                 {activeCat[0]?.length > 12 ? (
                   <div className="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">

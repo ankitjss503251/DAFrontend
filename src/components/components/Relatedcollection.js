@@ -100,14 +100,14 @@ const Relatedcollection = (props) => {
           })
         : ""}
         {
-         ( props.collections?.length > 3 && viewAll === "") ?  <div className="col-md-12 text-center mt-5">
+         ( props.collections?.length > 4 && viewAll === "") ?  <div className="col-md-12 text-center mt-5">
           <button className="view_all_bdr" onClick={() => setViewAll("show")}>
             View All
           </button>
         </div> : ""
         }
          {
-         ( props.collections?.length > 3 && viewAll !== "") ?  <div className="col-md-12 text-center mt-5">
+         ( props.collections?.length > 4 && viewAll !== "") ?  <div className="col-md-12 text-center mt-5">
           <button className="view_all_bdr" onClick={() => setViewAll("")}>
             Hide
           </button>

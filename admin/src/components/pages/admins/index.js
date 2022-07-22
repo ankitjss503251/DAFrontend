@@ -9,31 +9,27 @@ import {
 } from "../../../apiServices";
 
 
-let modal;
 function Admins() {
-  const [state, setState] = useState({records:[],loading:false,toggleModal:'',category:{},reload:0});
-  const {category}        = state;
-
-
-    
+  const [state, setState] = useState({ records: [], loading: false, toggleModal: '', category: {}, reload: 0 });
+  const { category } = state;
 
 
 
   useEffect(() => {
-    adminUsers(1).then(({data})=>{
-      setState(state=>({...state,records:(data.count>0?data.results:[])}))
+    adminUsers(1).then(({ data }) => {
+      setState(state => ({ ...state, records: (data.count > 0 ? data.results : []) }))
     })
   }, [state.reload]);
-  function getStatusLabel(_status)
-  {
-    let status = {1:"Active",0:"Inactive"};
+
+  function getStatusLabel(_status) {
+    let status = { 1: "Active", 0: "Inactive" };
     return status[_status] || " ";
   }
-  function blockUnblockUser(id,status)
-  {
-    blockUnBlockAdmin(id,status).then(res=>{
-      setState(state=>({...state,reload:Math.random()}));
-    }).catch(e=>{
+
+  function blockUnblockUser(id, status) {
+    blockUnBlockAdmin(id, status).then(res => {
+      setState(state => ({ ...state, reload: Math.random() }));
+    }).catch(e => {
 
     });
   }
@@ -53,12 +49,12 @@ function Admins() {
       };
       reader.readAsDataURL(file);
       if (e.target.files && e.target.files[0]) {
-        setState(state=>({...state,category:Object.assign(state.category,{profileIcon:e.target.files[0]})}));
+        setState(state => ({ ...state, category: Object.assign(state.category, { profileIcon: e.target.files[0] }) }));
       }
     }
   };
   const handleValidationCheck = () => {
-    if (category.profileIcon === "" || category.profileIcon  === undefined) {
+    if (category.profileIcon === "" || category.profileIcon === undefined) {
       NotificationManager.error("Please Upload User Image", "", 800);
       return false;
     }
@@ -72,27 +68,28 @@ function Admins() {
     }
     return true;
   };
-  const handleSaveAdmin = async (e)=>{
-    setState(state=>({...state,loading:true}));
+  const handleSaveAdmin = async (e) => {
+    setState(state => ({ ...state, loading: true }));
     if (handleValidationCheck() == false) {
-      setState(state=>({...state,loading:false}));
+      setState(state => ({ ...state, loading: false }));
       return;
     } else {
       var fd = new FormData();
       category.adminID = category._id;
-      Object.entries(category).forEach(([name,val])=>{
-        fd.append(name,val);
+      Object.entries(category).forEach(([name, val]) => {
+        fd.append(name, val);
       })
 
       try {
-        let user = await saveAdminUser(fd,category?._id);
+        let user = await saveAdminUser(fd, category?._id);
         NotificationManager.success(user.message, "", 2000);
-        setState(state=>({...state,loading:false,reload:Math.random(),toggleModal:'',category:{}}));
+        setState(state => ({ ...state, loading: false, reload: Math.random(), toggleModal: '', category: {} }));
+        window.location.reload()
         document.querySelector('.modal-backdrop')?.classList.toggle('show');
       } catch (e) {
         let error = await e.getBody();
         NotificationManager.error(error.message, "", 2000);
-        setState(state=>({...state,loading:false}));
+        setState(state => ({ ...state, loading: false }));
       }
       // setState(state=>({...state,loading:false}));
     }
@@ -114,7 +111,7 @@ function Admins() {
             type="button"
             data-bs-toggle="modal"
             data-bs-target="#adminModal"
-            onClick={() =>{ setState(state=>({...state,toggleModal:'show'})) }}>
+            onClick={() => { setState(state => ({ ...state, toggleModal: 'show' })) }}>
             + Add Admin
           </button>
         </div>
@@ -129,7 +126,7 @@ function Admins() {
           </p>
           <table className="table table-hover text-light">
             <thead>
-             
+
               <tr>
                 <th>Image</th>
                 <th>Name</th>
@@ -139,55 +136,55 @@ function Admins() {
 
               </tr>
             </thead>
-   
-            {state.records.length>0?
-             state.records.map((item, index) => {
-                  return (
-                    <tbody key={index}>
-                      <tr>
-                        <td>
-                          {" "}
-                          <img
-                            src={item.profileIcon}
-                            className="profile_i m-2"
-                            alt=""
-                          />
-                        </td>
-                        <td>{item.fullname}</td>
-                        <td>{item.walletAddress}</td>
-                        <td>{getStatusLabel(item.status)}</td>
-                    
-                      
-                        
+
+            {state.records.length > 0 ?
+              state.records.map((item, index) => {
+                return (
+                  <tbody key={index}>
+                    <tr>
+                      <td>
+                        {" "}
+                        <img
+                          src={item.profileIcon}
+                          className="profile_i m-2"
+                          alt=""
+                        />
+                      </td>
+                      <td>{item.fullname}</td>
+                      <td>{item.walletAddress}</td>
+                      <td>{getStatusLabel(item.status)}</td>
+
+
+
                       <td>
 
-                      <div className="btn_container">
-                   
-                        <button
-                          className="btn btn-admin m-1 p-1 text-light "
-                          type="button"
-                          onClick={() => {
-                            blockUnblockUser(item._id,item.status?0:1);
-                          }}
-                        >
-                          {item.status === 0 ? "Active" : "InActive"}
-                        </button>
+                        <div className="btn_container">
 
-                        <button
-                          className="btn btn-admin m-1 p-1 text-light"
-                          type="button"
-                          data-bs-toggle="modal"
-                          data-bs-target="#adminModal"
-                          onClick={() =>{ setState(state=>({...state,category:item,toggleModal:'show'})) }}>
-                          Edit
-                        </button>
-        
-                      </div>
+                          <button
+                            className="btn btn-admin m-1 p-1 text-light "
+                            type="button"
+                            onClick={() => {
+                              blockUnblockUser(item._id, item.status ? 0 : 1);
+                            }}
+                          >
+                            {item.status === 0 ? "Active" : "InActive"}
+                          </button>
+
+                          <button
+                            className="btn btn-admin m-1 p-1 text-light"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#adminModal"
+                            onClick={() => { setState(state => ({ ...state, category: item, toggleModal: 'show' })) }}>
+                            Edit
+                          </button>
+
+                        </div>
                       </td>
-                      </tr>
-                    </tbody>
-                  );
-                })
+                    </tr>
+                  </tbody>
+                );
+              })
               : <tfoot><tr><td colSpan={5} align="center">No Record Found</td></tr></tfoot>}
           </table>
         </div>
@@ -200,7 +197,7 @@ function Admins() {
         tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
-        
+
       >
         <div className="modal-dialog modal-lg">
           <div className="modal-content">
@@ -209,11 +206,11 @@ function Admins() {
                 className="modal-title text-yellow font-24 font-600"
                 id="exampleModalLabel"
               >
-                {category._id?'Update':'Create New'}  Admin
+                {category._id ? 'Update' : 'Create New'}  Admin
               </h5>
               <button
                 type="button"
-                onClick={e=>{ setState(state=>({...state,category:{fullname:"",walletAddress:""}}))}}
+                onClick={e => { setState(state => ({ ...state, category: { fullname: "", walletAddress: "" } })) }}
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
@@ -275,9 +272,9 @@ function Admins() {
                     type="text"
                     className="form-control"
                     id="recipient-name"
-                    
+
                     value={category?.fullname}
-                    onChange={(e) =>setState(state=>({...state,category:Object.assign(state.category,{fullname:e.target.value})}))}
+                    onChange={(e) => setState(state => ({ ...state, category: Object.assign(state.category, { fullname: e.target.value }) }))}
                   />
                 </div>
                 <div className="col-md-12 mb-1">
@@ -288,9 +285,9 @@ function Admins() {
                     type="text"
                     className="form-control"
                     id="recipient-wallet"
-                    
+
                     value={category?.walletAddress}
-                    onChange={(e) =>setState(state=>({...state,category:Object.assign(state.category,{walletAddress:e.target.value})}))}
+                    onChange={(e) => setState(state => ({ ...state, category: Object.assign(state.category, { walletAddress: e.target.value }) }))}
                   />
                 </div>
               </form>
@@ -302,7 +299,7 @@ function Admins() {
                 className="btn btn-admin text-light"
                 onClick={handleSaveAdmin}
               >
-                {state.loading?'Submiting...':'Submit'}
+                {state.loading ? 'Submiting...' : 'Submit'}
               </button>
             </div>
           </div>
