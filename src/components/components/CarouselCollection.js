@@ -91,7 +91,7 @@ function CarouselCollection() {
                             borderTopLeftRadius: "10px",
                             borderTopRightRadius: "10px",
                           }}
-                          src={card.logoImg}
+                          src={card?.coverImg}
                           className='img-fluid'
                           alt=''
                           onError={(e) =>
@@ -108,7 +108,7 @@ function CarouselCollection() {
                           <img
                             alt=''
                             className=''
-                            src={card.brand?.logoImage}
+                            src={card?.brand?.logoImage}
                             onError={(e) => {
                               e.target.src = "../img/collections/list4.png";
                             }}
@@ -130,7 +130,7 @@ function CarouselCollection() {
                           </a>
 
                         </h4>
-                        <p>{card.desc ? (card.desc?.length > 20 ? card.desc?.slice(0,20) + "..." : card.desc) : "-"}</p>
+                        <p>{card?.desc ? (card?.desc?.length > 20 ? card?.desc?.slice(0,20) + "..." : card?.desc) : "-"}</p>
                       
                     </div>
                   </div>

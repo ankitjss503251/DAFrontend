@@ -7,11 +7,10 @@ const provider = new ethers.providers.JsonRpcProvider(
 );
 
 export const getEvents = async (tokenAddress) => {
-  console.log("tokenAdd", tokenAddress);
   const contract = new ethers.Contract(
     tokenAddress,
     abi,
-   provider
+    provider
   );
   console.log("contract", contract);
   let eventFilter = contract.filters.Transfer(
@@ -20,21 +19,19 @@ export const getEvents = async (tokenAddress) => {
     null
   );
   let events = await contract.queryFilter(eventFilter);
-
-  console.log("data", events.length);
 };
 /******    Cookies         ******/
-export function setCookie(cname:string, cvalue:any, exdays:number) {
+export function setCookie(cname, cvalue, exdays) {
   const d = new Date();
-  d.setTime(d.getTime() + (exdays*24*60*60*1000));
-  let expires = "expires="+ d.toUTCString();
+  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+  let expires = "expires=" + d.toUTCString();
   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
-export function getCookie(cname:string) {
+export function getCookie(cname) {
   let name = cname + "=";
   let decodedCookie = decodeURIComponent(document.cookie);
   let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
+  for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) == ' ') {
       c = c.substring(1);
@@ -45,20 +42,25 @@ export function getCookie(cname:string) {
   }
   return "";
 }
-export function deleteCookie(cname:string) {
-     setCookie(cname,"",-1);
+export function deleteCookie(cname) {
+  setCookie(cname, "", -1);
 }
 /******    Cookies  end       ******/
-export function deleteIsAdmin()
-{
+export function deleteIsAdmin() {
   deleteCookie('connect.auth');
+  deleteCookie('selected_account');
 }
-export function isSuperAdmin()
-{
+export function isSuperAdmin() {
   return getCookie('connect.auth');
 }
 
-export function isLoggedIn()
-{
+export function isLoggedIn() {
   return isSuperAdmin() || true;
+}
+export function isEmptyObject(obj) {
+  return (
+    Object.getPrototypeOf(obj) === Object.prototype &&
+    Object.getOwnPropertyNames(obj).length === 0 &&
+    Object.getOwnPropertySymbols(obj).length === 0
+  );
 }

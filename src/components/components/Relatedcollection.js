@@ -28,6 +28,7 @@ const Relatedcollection = (props) => {
                       src={card.coverImg}
                       className='img-fluid'
                       alt=''
+                      onError={(e) => (e.target.src = "../img/collections/list4.png")}
                     />
                   </div>
                   <div className='collection_text'>
@@ -37,7 +38,8 @@ const Relatedcollection = (props) => {
                         <img
                           alt=''
                           className=''
-                          src={card.logoImg}
+                          src={card?.brand?.logoImage}
+                          onError={(e) => (e.target.src = "../img/collections/list4.png")}
                         />
                         {/* <img
                           alt=''
@@ -69,6 +71,7 @@ const Relatedcollection = (props) => {
                       src={card.coverImg}
                       className='img-fluid'
                       alt=''
+                      onError={(e) => (e.target.src = "../img/collections/list4.png")}
                     />
                   </div>
                   <div className='collection_text'>
@@ -79,6 +82,7 @@ const Relatedcollection = (props) => {
                             alt=''
                             className=''
                             src={card.logoImg}
+                            onError={(e) => (e.target.src = "../img/collections/list4.png")}
                           />
                           
                           {/* <img
@@ -100,14 +104,14 @@ const Relatedcollection = (props) => {
           })
         : ""}
         {
-         ( props.collections?.length > 3 && viewAll === "") ?  <div className="col-md-12 text-center mt-5">
+         ( props.collections?.length > 4 && viewAll === "") ?  <div className="col-md-12 text-center mt-5">
           <button className="view_all_bdr" onClick={() => setViewAll("show")}>
             View All
           </button>
         </div> : ""
         }
          {
-         ( props.collections?.length > 3 && viewAll !== "") ?  <div className="col-md-12 text-center mt-5">
+         ( props.collections?.length > 4 && viewAll !== "") ?  <div className="col-md-12 text-center mt-5">
           <button className="view_all_bdr" onClick={() => setViewAll("")}>
             Hide
           </button>

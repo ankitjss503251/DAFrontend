@@ -23,6 +23,7 @@ import BGImg from "../../assets/images/background.jpg";
 import { convertToEth } from "../../helpers/numberFormatter";
 import NotificationManager from "react-notifications/lib/NotificationManager";
 import { getAllBrands } from "../../apiServices";
+import AdvancedFilter from "../components/AdvancedFilter";
 
 function CollectionWithCollection() {
   const bgImgStyle = {
@@ -40,7 +41,7 @@ function CollectionWithCollection() {
   const [collections, setCollections] = useState([]);
   const [togglemode, setTogglemode] = useState("filterhide");
   const [nfts, setNfts] = useState([]);
-  const [isCopied, setIsCopied] = useState(false);
+  const [salesType, setSalesType] = useState("");
   const [category, setCategory] = useState([]);
   const [currPage, setCurrPage] = useState(1);
   const [loader, setLoader] = useState(false);
@@ -49,6 +50,10 @@ function CollectionWithCollection() {
   const [searchFor, setSearchFor] = useState("");
   const [ERCType, setERCType] = useState();
   const [brands, setBrands] = useState([]);
+  const [priceSort, setPriceSort] = useState("ASC");
+  const [searchedCol, setSearchedCol] = useState("");
+  const [searchedBrand, setSearchedBrand] = useState("");
+  const [searchedCat, setSearchedCat] = useState("");
 
   const filterToggle = () => {
     setLoadMoreDisabled("");
@@ -126,9 +131,15 @@ function CollectionWithCollection() {
           page: currPage,
           limit: 8,
           brandID: brandID,
-          searchText: searchFor,
+          searchText: searchFor ? searchFor : "",
           ERCType: ERCType,
+          salesType: salesType >= 0 ? salesType : "",
+          priceSort: priceSort,
+          categoryID: searchedCat,
+          brandID: brandID,
+          collectionID: searchedCol,
         });
+
         setCardCount(cardCount + nft.length);
         if (nft.length > 0) {
           for (let i = 0; i < nft.length; i++) {
@@ -143,24 +154,33 @@ function CollectionWithCollection() {
                       .slice(0, -2),
               saleType: order?.salesType,
               paymentToken: order?.paymentToken,
-              collectionName: cols[i]?.name,
+              collectionName: nft[i].collectionData[0].name,
             };
           }
           temp = [...temp, nft];
-        }
-        if (temp && temp.length <= 0) {
+
+          setNfts(temp);
+          setLoader(false);
+        } else {
           setLoader(false);
           setLoadMoreDisabled("disabled");
           return;
         }
-        setNfts(temp);
-        setLoader(false);
       } catch (e) {
         console.log("error in get brandbyID", e);
       }
     };
     fetch();
-  }, [currPage, searchFor, ERCType]);
+  }, [
+    currPage,
+    searchFor,
+    ERCType,
+    priceSort,
+    searchedBrand,
+    searchedCat,
+    searchedCol,
+    salesType,
+  ]);
 
   const bgImage = {
     backgroundImage: `url(${brandDetails?.coverImage})`,
@@ -168,19 +188,30 @@ function CollectionWithCollection() {
     backgroundPosition: "center",
   };
 
+  const handleAdvSearch = (data) => {
+    setNfts([]);
+    setCurrPage(1);
+    setCardCount(0);
+    setLoadMoreDisabled("");
+    if (data.type === "salesType") setSalesType(data.value);
+    if (data.type === "collection") setSearchedCol(data.value);
+    if (data.type === "brand") setSearchedBrand(data.value);
+    if (data.type === "category") setSearchedCat(data.value);
+  };
+
   return (
     <div style={bgImgStyle}>
-      {loadMoreDisabled && nfts.length > 0
+      {/* {loadMoreDisabled 
         ? NotificationManager.info("No more items to load", "", 800)
-        : ""}
-      <section className="collection_banner pdd_8" style={bgImage}></section>
-      <section className="collection_info">
-        <div className="container">
-          <div className="collection_pick">
+        : ""} */}
+      <section className='collection_banner pdd_8' style={bgImage}></section>
+      <section className='collection_info'>
+        <div className='container'>
+          <div className='collection_pick'>
             <img
-              alt=""
+              alt=''
               src={brandDetails?.logoImage}
-              className="img-fluid collection_profile"
+              className='img-fluid collection_profile'
               onError={(e) => (e.target.src = "../img/collections/list4.png")}
             />
             {/* <img
@@ -189,26 +220,26 @@ function CollectionWithCollection() {
               className='img-fluid check_img'
             /> */}
           </div>
-          <h1 className="collection_title text-center">{brandDetails?.name}</h1>
-          <ul className="collection_social mb-4">
+          <h1 className='collection_title text-center'>{brandDetails?.name}</h1>
+          <ul className='collection_social mb-4'>
             <li>
-              <a href="/">
-                <i className="fa fa-facebook fa-lg"></i>
+              <a href='/'>
+                <i className='fa fa-facebook fa-lg'></i>
               </a>
             </li>
             <li>
-              <a href="/">
-                <i className="fa fa-twitter fa-lg"></i>
+              <a href='/'>
+                <i className='fa fa-twitter fa-lg'></i>
               </a>
             </li>
             <li>
-              <a href="/">
-                <i className="fa fa-linkedin fa-lg"></i>
+              <a href='/'>
+                <i className='fa fa-linkedin fa-lg'></i>
               </a>
             </li>
             <li>
-              <a href="/">
-                <i className="fa fa-pinterest fa-lg"></i>
+              <a href='/'>
+                <i className='fa fa-pinterest fa-lg'></i>
               </a>
             </li>
           </ul>
@@ -246,10 +277,10 @@ function CollectionWithCollection() {
             </span>
           </div> */}
 
-          <ul className="collection_status mt-5 mb-5">
+          <ul className='collection_status mt-5 mb-5'>
             <li>
               {console.log("nfts[0].count", nfts)}
-              <h4>{}</h4>
+              <h4>{cardCount}</h4>
               <p>items</p>
             </li>
             <li>
@@ -265,47 +296,45 @@ function CollectionWithCollection() {
               <p>volume traded</p>
             </li>
           </ul>
-          <div className="collection_description text-center">
+          <div className='collection_description text-center'>
             <p>{brandDetails?.description}</p>
-            <span className="top_arrow">
-              <img alt="" src={"../img/top_arrow.png"} className="img-fluid" />
+            <span className='top_arrow'>
+              <img alt='' src={"../img/top_arrow.png"} className='img-fluid' />
             </span>
           </div>
 
-          <div className="row">
-            <div className="col-md-12">
-              <h4 className="second_hd text-center mb-3">Collection</h4>
+          <div className='row'>
+            <div className='col-md-12'>
+              <h4 className='second_hd text-center mb-3'>Collection</h4>
             </div>
           </div>
           <Relatedcollection collections={collections} />
 
-          <div className="row">
-            <div className="col-md-12 text-center item_active">
-              <ul className="author_cart nav" role="tablist">
-                <li classname="item_active">
+          <div className='row'>
+            <div className='col-md-12 text-center item_active'>
+              <ul className='author_cart nav' role='tablist'>
+                <li classname='item_active'>
                   <a
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-Items"
-                    role="tab"
-                    aria-controls="pills-Items"
-                    aria-selected="true"
-                    className="active"
-                  >
-                    <span className="mr-3">
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-Items'
+                    role='tab'
+                    aria-controls='pills-Items'
+                    aria-selected='true'
+                    className='active'>
+                    <span className='mr-3'>
                       <ItemSVG />
                     </span>{" "}
                     <span>Items</span>
                   </a>
                 </li>
-                <li classname="item_active">
+                <li classname='item_active'>
                   <a
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-Activity"
-                    role="tab"
-                    aria-controls="pills-Activity"
-                    aria-selected="true"
-                  >
-                    <span className="mr-3">
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-Activity'
+                    role='tab'
+                    aria-controls='pills-Activity'
+                    aria-selected='true'>
+                    <span className='mr-3'>
                       <ActivitySVG />
                     </span>{" "}
                     <span>Activity</span>
@@ -316,24 +345,23 @@ function CollectionWithCollection() {
           </div>
         </div>
       </section>
-      <section className="collection_list mb-5 pb-5">
-        <div className="container">
-          <div className="tab-content" id="pills-tabContent">
+      <section className='collection_list mb-5 pb-5'>
+        <div className='container'>
+          <div className='tab-content' id='pills-tabContent'>
             <div
-              className="tab-pane fade show active"
-              id="pills-Items"
-              role="tabpanel"
-              aria-labelledby="pills-Items-tab"
-            >
-              <div className="row">
-                <div className="col-lg-12  mb-5">
-                  <div className="market_search_form">
-                    <form className="d-flex marketplace_form">
+              className='tab-pane fade show active'
+              id='pills-Items'
+              role='tabpanel'
+              aria-labelledby='pills-Items-tab'>
+              <div className='row'>
+                <div className='col-lg-12  mb-5'>
+                  <div className='market_search_form'>
+                    <form className='d-flex marketplace_form'>
                       <input
-                        className=" me-2"
-                        type="search"
-                        placeholder="Search item here..."
-                        aria-label="Search"
+                        className=' me-2'
+                        type='search'
+                        placeholder='Search item here...'
+                        aria-label='Search'
                         value={searchFor}
                         onChange={(e) => {
                           setNfts([]);
@@ -343,13 +371,13 @@ function CollectionWithCollection() {
                           setLoadMoreDisabled("");
                         }}
                       />
-                      <button className="market_btn" type="submit">
-                        <img src="../img/search.svg" alt="" />
+                      <button className='market_btn' type='submit'>
+                        <img src='../img/search.svg' alt='' />
                       </button>
                     </form>
                     <select
-                      className="market_select_form form-select"
-                      aria-label="Default select example"
+                      className='market_select_form form-select'
+                      aria-label='Default select example'
                       style={bgImgarrow}
                       value={ERCType}
                       onChange={(e) => {
@@ -358,48 +386,58 @@ function CollectionWithCollection() {
                         setCardCount(0);
                         setERCType(parseInt(e.target.value));
                         setLoadMoreDisabled("");
-                      }}
-                    >
-                      <option value="0" selected>
+                      }}>
+                      <option value='0' selected>
                         All Items
                       </option>
-                      <option value="1">Single Items</option>
-                      <option value="2">Multiple Items</option>
+                      <option value='1'>Single Items</option>
+                      <option value='2'>Multiple Items</option>
                     </select>
 
                     <select
-                      className="market_select_form form-select"
-                      aria-label="Default select example"
+                      className='market_select_form form-select'
+                      aria-label='Default select example'
                       style={bgImgarrow}
-                    >
-                      <option value="1" selected>
+                      onChange={(e) => {
+                        setNfts([]);
+                        setCurrPage(1);
+                        setCardCount(0);
+                        setLoadMoreDisabled("");
+                        setPriceSort(e.target.value);
+                      }}>
+                      <option value='ASC' defaultValue>
                         Price: Low to High
                       </option>
-                      <option value="2">Price: High to Low</option>
+                      <option value='DESC'>Price: High to Low</option>
                     </select>
                     {/* <div className="market_div"> */}
-                    <div id="gridtwo" className="market_grid" onClick={gridtwo}>
+                    <div id='gridtwo' className='market_grid' onClick={gridtwo}>
                       <Twogrid />
                     </div>
                     <div
-                      id="gridthree"
-                      className="market_grid"
-                      onClick={gridthree}
-                    >
+                      id='gridthree'
+                      className='market_grid'
+                      onClick={gridthree}>
                       <Threegrid />
                     </div>
                     {/* </div> */}
                     <button
-                      type="button"
-                      className="filter_btn"
-                      onClick={filterToggle}
-                    >
+                      type='button'
+                      className='filter_btn'
+                      onClick={filterToggle}>
                       Adv.Filter
                     </button>
                   </div>
                   {/* <div className='search_qt mt-3'>10,000 items</div> */}
                 </div>
-                <div className={`filter mb-5 ${togglemode}`}>
+                <AdvancedFilter
+                  togglemode={togglemode}
+                  category={category}
+                  brands={brands}
+                  onAdvSearch={handleAdvSearch}
+                  brandName={brandDetails?.name}
+                />
+                {/* <div className={`filter mb-5 ${togglemode}`}>
                   <div className="filtercol">
                     <form>
                       <button
@@ -431,14 +469,14 @@ function CollectionWithCollection() {
                         </ul>
                       </div>
 
-                      {/* <button
+                       <button
                     type='button'
                     className='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
-                  </button> */}
-                      {/* <div id='demo2' className='collapse show'>
+                  </button> 
+                     <div id='demo2' className='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
@@ -473,7 +511,7 @@ function CollectionWithCollection() {
                         </button>
                       </li>
                     </ul>
-                  </div> */}
+                  </div> 
                     </form>
                   </div>
                   <div className="filtercol">
@@ -579,10 +617,10 @@ function CollectionWithCollection() {
                       </ul>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
 
-              <div className="row">
+              <div className='row'>
                 {loader ? (
                   <CollectionsNFT cards={cardCount} grid={grid} />
                 ) : nfts?.length > 0 ? (
@@ -596,17 +634,20 @@ function CollectionWithCollection() {
                     });
                   })
                 ) : (
-                  <h2 className="text-white text-center">No NFT Found</h2>
+                  <div className='col-md-12'>
+                    <h4 className='no_data_text text-muted'>
+                      No NFTs Available
+                    </h4>
+                  </div>
                 )}
-                {nfts.length > 0 && (
-                  <div className="col-md-12 text-center mt-5">
+                {nfts[0]?.length > 7 && (
+                  <div className='col-md-12 text-center mt-5'>
                     <button
-                      type="button"
+                      type='button'
                       className={`btn view_all_bdr ${loadMoreDisabled}`}
                       onClick={() => {
                         setCurrPage(currPage + 1);
-                      }}
-                    >
+                      }}>
                       Load More
                     </button>
                   </div>
@@ -614,112 +655,108 @@ function CollectionWithCollection() {
               </div>
             </div>
             <div
-              className="tab-pane fade"
-              id="pills-Activity"
-              role="tabpanel"
-              aria-labelledby="pills-Activity-tab"
-            >
-              <div className="row">
-                <div className="col-md-6 d-md-inline-flex">
+              className='tab-pane fade'
+              id='pills-Activity'
+              role='tabpanel'
+              aria-labelledby='pills-Activity-tab'>
+              <div className='row'>
+                <div className='col-md-6 d-md-inline-flex'>
                   <select
-                    className="action_select_form form-select mr-3"
-                    aria-label="Default select example"
-                    style={bgImgarrow}
-                  >
+                    className='action_select_form form-select mr-3'
+                    aria-label='Default select example'
+                    style={bgImgarrow}>
                     <option selected>Listings</option>
-                    <option value="1">Listings Items 1</option>
-                    <option value="2">Listings Items 2</option>
-                    <option value="3">Listings Items 3</option>
+                    <option value='1'>Listings Items 1</option>
+                    <option value='2'>Listings Items 2</option>
+                    <option value='3'>Listings Items 3</option>
                   </select>
                   <select
-                    className="action_select_form form-select"
-                    aria-label="Default select example"
-                    style={bgImgarrow}
-                  >
+                    className='action_select_form form-select'
+                    aria-label='Default select example'
+                    style={bgImgarrow}>
                     <option selected>Hunter Token</option>
-                    <option value="1">Hunter Token 1</option>
-                    <option value="2">Hunter Token 2</option>
-                    <option value="3">Hunter Token 3</option>
+                    <option value='1'>Hunter Token 1</option>
+                    <option value='2'>Hunter Token 2</option>
+                    <option value='3'>Hunter Token 3</option>
                   </select>
                 </div>
-                <div className="col-md-6 d-flex justify-content-end">
+                <div className='col-md-6 d-flex justify-content-end'>
                   <select
-                    className="action_select_form form-select"
-                    aria-label="Default select example"
-                    style={bgImgarrow}
-                  >
+                    className='action_select_form form-select'
+                    aria-label='Default select example'
+                    style={bgImgarrow}>
                     <option selected>Last 90 Days</option>
-                    <option value="1">Last 40 Days</option>
-                    <option value="2">Last 30 Days</option>
-                    <option value="3">Last 10 Days</option>
+                    <option value='1'>Last 40 Days</option>
+                    <option value='2'>Last 30 Days</option>
+                    <option value='3'>Last 10 Days</option>
                   </select>
                 </div>
               </div>
-              <section className="collectionAction mb-5 pb-5 mt-5">
-                <div className="container">
-                  <div className="row">
-                    <div className="col-md-12">
+              <section className='collectionAction mb-5 pb-5 mt-5'>
+                <div className='container'>
+                  <div className='row'>
+                    <div className='col-md-12'>
                       <img
-                        alt=""
+                        alt=''
                         src={"../img/collections/graph.png"}
-                        className="img-fluid"
+                        className='img-fluid'
                       />
                     </div>
                   </div>
-                  <div className="row mt-5">
-                    <div className="col-md-12">
-                      <div className="table-responsive">
-                        <table className=" Action_table text-center">
-                          <tr className="">
+                  <div className='row mt-5'>
+                    <div className='col-md-12'>
+                      <div className='table-responsive'>
+                        <table className=' Action_table text-center'>
+                          <tr className=''>
                             <th>
-                              <div className="tb_title">List</div>
+                              <div className='tb_title'>List</div>
                             </th>
                             <th>
-                              <div className="tb_title">Item</div>
+                              <div className='tb_title'>Item</div>
                             </th>
                             <th>
-                              <div className="tb_title">Price</div>
+                              <div className='tb_title'>Price</div>
                             </th>
                             <th>
-                              <div className="tb_title">Quantity</div>
+                              <div className='tb_title'>Quantity</div>
                             </th>
                             <th>
-                              <div className="tb_title">From</div>
+                              <div className='tb_title'>From</div>
                             </th>
                             <th>
-                              <div className="tb_title">To</div>
+                              <div className='tb_title'>To</div>
                             </th>
                             <th>
-                              <div className="tb_title">Time</div>
+                              <div className='tb_title'>Time</div>
                             </th>
                           </tr>
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -729,30 +766,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -762,30 +799,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -795,30 +832,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -828,30 +865,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -861,30 +898,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -894,30 +931,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -927,30 +964,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -960,30 +997,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -993,30 +1030,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -1026,30 +1063,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -1059,30 +1096,30 @@ function CollectionWithCollection() {
                           <tr>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               List
                             </td>
                             <td>
                               <img
-                                alt=""
+                                alt=''
                                 src={"../img/collections/item1.png"}
-                                className="img-fluid"
+                                className='img-fluid'
                               />{" "}
                               Firearms #5234
                             </td>
                             <td>
-                              <p className="table_p">
+                              <p className='table_p'>
                                 <img
-                                  alt=""
+                                  alt=''
                                   src={"../img/collections/hhh.png"}
-                                  className="img-fluid"
+                                  className='img-fluid'
                                 />{" "}
                                 99.95
                               </p>
-                              <span className="special_text">$591,623.15</span>
+                              <span className='special_text'>$591,623.15</span>
                             </td>
                             <td>1</td>
                             <td>UserName</td>
@@ -1093,9 +1130,9 @@ function CollectionWithCollection() {
                       </div>
                     </div>
                   </div>
-                  <div className="row mt-5">
-                    <div className="col-md-12 text-center ">
-                      <button type="button" className={`btn view_all_bdr`}>
+                  <div className='row mt-5'>
+                    <div className='col-md-12 text-center '>
+                      <button type='button' className={`btn view_all_bdr`}>
                         Load More
                       </button>
                     </div>

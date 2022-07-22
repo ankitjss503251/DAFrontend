@@ -682,7 +682,7 @@ const Header = function () {
                       </li>
                       <li>
                         <NavLink
-                          to={`/author/${userDetails?._id}`}
+                          to={`/myNfts`}
                           className="sub-items"
                         >
                           <svg

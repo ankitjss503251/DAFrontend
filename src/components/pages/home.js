@@ -74,7 +74,7 @@ const Home = () => {
           page: 1,
           limit: 12,
           isExclusive: 1,
-          isOnMarketplace: 1,
+          // isOnMarketplace: 1,
         });
         setUpcomingMints(res);
       } catch (e) {
@@ -213,7 +213,7 @@ const Home = () => {
                             <div className="mint_img">
                               <img
                                 alt=""
-                                src={card?.logoImg}
+                                src={card?.coverImg}
                                 className="img-fluid"
                                 onError={(e) =>
                                   (e.target.src =
@@ -240,7 +240,7 @@ const Home = () => {
                           <div className="mint_img">
                             <img
                               alt=""
-                              src={card?.logoImg}
+                              src={card?.coverImg}
                               className="img-fluid"
                               onError={(e) =>
                                 (e.target.src = "../img/collections/list4.png")

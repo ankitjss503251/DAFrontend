@@ -1,5 +1,5 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, NavLink } from "react-router-dom";
 import Dashboardsvg from "../SVG/dashboardsvg";
 import Formsvg from "../SVG/formsvg";
 import Tablesvg from "../SVG/tablesvg";
@@ -7,8 +7,19 @@ import Performancesvg from "../SVG/performancesvg";
 import Collectionsvg from "../SVG/collectionsvg";
 import Nftsvg from "../SVG/nftsvg";
 import { isSuperAdmin } from "../../apiServices";
+import { useCookies } from "react-cookie";
+
 function Sidebar() {
-  //   const [active, setActive] = useState('active');
+
+  const [cookies] = useCookies([]);
+  const [currentUser, setCurrentUser] = useState("");
+
+  useEffect(() => {
+    if (cookies.da_selected_account)
+      setCurrentUser(cookies.da_selected_account);
+    // else NotificationManager.error("Connect Your Metamask", "", 800);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cookies.da_selected_account]);
 
   return (
     <nav id="sidebar">
@@ -22,48 +33,39 @@ function Sidebar() {
             <Dashboardsvg /> Dashboard
           </NavLink>
         </li>
-        {/* <li>
-          <NavLink to={"/form"} className="text-decoration-none text-light">
-            <Formsvg /> Forms
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to={"/table"} className="text-decoration-none text-light">
-            <Tablesvg /> Tables
-          </NavLink>
-        </li> */}
-        {isSuperAdmin && isSuperAdmin() ? (
+
+        {(isSuperAdmin && isSuperAdmin()) ? (
           <li>
             <NavLink to={"/admins"} className="text-decoration-none text-light">
               <Formsvg /> Admins List
             </NavLink>
           </li>
         ) : null}
-       
-        {window.sessionStorage.getItem("role") === "admin" ? (
+
+        {((isSuperAdmin && isSuperAdmin()) || window.sessionStorage.getItem('role') === "admin") ? (
           <>
             <li>
-              <NavLink
+              <Link
                 to={"/createcollection"}
                 className="text-decoration-none text-light"
               >
-                <Collectionsvg /> Create Collection
-              </NavLink>
+                <Collectionsvg />  Collections
+              </Link>
             </li>
             <li>
-              <NavLink
+              <Link
                 to={"/createnfts"}
                 className="text-decoration-none text-light"
               >
-                <Nftsvg /> Create NFTs
-              </NavLink>
+                <Nftsvg />  NFTs
+              </Link>
             </li>
             <li>
               <NavLink
                 to={"/createbrands"}
                 className="text-decoration-none text-light"
               >
-                <Performancesvg /> Create Brands
+                <Performancesvg />  Brands
               </NavLink>
             </li>
             <li>
@@ -71,7 +73,7 @@ function Sidebar() {
                 to={"/createcategories"}
                 className="text-decoration-none text-light"
               >
-                <Performancesvg /> Create Categories
+                <Performancesvg />  Categories
               </NavLink>
             </li>
           </>

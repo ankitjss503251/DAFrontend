@@ -17,10 +17,7 @@ import { useCookies } from "react-cookie";
 import extendedERC721Abi from "./../../config/abis/extendedERC721.json";
 import { exportInstance } from "../../apiServices";
 import contracts from "./../../config/contracts";
-import { GENERAL_DATE, GENERAL_TIMESTAMP } from "../../helpers/constants";
 import "../../App.css";
-import { useGLTF } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
 import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import Spinner from "../components/Spinner";
@@ -116,13 +113,23 @@ function CreateNFTs() {
         page: 1,
         limit: 12,
       };
-      let res = await GetMyNftList(reqBody);
-      if (res && res.results && res.results.length > 0) {
-        setNfts(res.results[0]);
+      let res
+      if (currentUser) {
+        res = await GetMyNftList(reqBody);
+        if (res && res.results && res.results.length > 0) {
+          setNfts(res.results[0]);
+        }
       }
+      else if (isSuperAdmin()) {
+        res = await getNFTList(reqBody)
+        if (res && res.results && res.results.length > 0) {
+          setNfts(res.results);
+        }
+      }
+
     };
     fetch();
-  }, []);
+  }, [currentUser, isSuperAdmin]);
 
   const handleCreateNFT = async () => {
     if (handleValidationCheck()) {
@@ -254,7 +261,6 @@ function CreateNFTs() {
         limit: 20,
       };
       let data = await GetMyCollectionsList(reqBody);
-      console.log("dataaaaaaaaa", data)
       if (data && data.results && data.results[0].length > 0) {
         let res = data?.results[0].filter((d, i) => d.isMinted === 1);
         setCollections(res);
@@ -310,15 +316,15 @@ function CreateNFTs() {
           {isSuperAdmin()
             ? null
             : currentUser && (
-                <button
-                  className='btn btn-admin text-light'
-                  type='button'
-                  data-bs-toggle='modal'
-                  data-bs-target='#NftModal'
-                  onClick={() => setModal("active")}>
-                  + Add NFTs
-                </button>
-              )}
+              <button
+                className='btn btn-admin text-light'
+                type='button'
+                data-bs-toggle='modal'
+                data-bs-target='#NftModal'
+                onClick={() => setModal("active")}>
+                + Add NFTs
+              </button>
+            )}
         </div>
         <div className='adminbody table-widget text-light box-background'>
           <h5 className='admintitle font-600 font-24 text-yellow'>NFTs</h5>
@@ -335,35 +341,35 @@ function CreateNFTs() {
               <tbody>
                 {nfts && nfts.length > 0
                   ? nfts.map((n, i) => {
-                      return (
-                        <tr>
-                          <td>
-                            <img
-                              src={n.image}
-                              className='profile_i'
-                              alt=''
-                              onError={(e) =>
-                                (e.target.src = "../images/login.jpg")
-                              }
-                            />
-                          </td>
-                          <td>
-                            {n.name
-                              ? n.name?.length > 8
-                                ? n.name?.slice(0, 8) + "..."
-                                : n.name
-                              : "-"}
-                          </td>
-                          <td>
-                            {n.description
-                              ? n.description?.length > 15
-                                ? n.description?.slice(0, 15) + "..."
-                                : n.description
-                              : "-"}
-                          </td>
-                        </tr>
-                      );
-                    })
+                    return (
+                      <tr>
+                        <td>
+                          <img
+                            src={n.image}
+                            className='profile_i'
+                            alt=''
+                            onError={(e) =>
+                              (e.target.src = "../images/login.jpg")
+                            }
+                          />
+                        </td>
+                        <td>
+                          {n.name
+                            ? n.name?.length > 8
+                              ? n.name?.slice(0, 8) + "..."
+                              : n.name
+                            : "-"}
+                        </td>
+                        <td>
+                          {n.description
+                            ? n.description?.length > 15
+                              ? n.description?.slice(0, 15) + "..."
+                              : n.description
+                            : "-"}
+                        </td>
+                      </tr>
+                    );
+                  })
                   : "No NFTs Found"}
               </tbody>
             </table>
@@ -464,8 +470,8 @@ function CreateNFTs() {
                           className='img-fluid profile_circle_img'
                           key={img}
                           src={img}
-                          >
-                           
+                        >
+
                           <AmbientLight color={0xffffff} />
                           <DirectionLight
                             color={0xffffff}
@@ -492,6 +498,7 @@ function CreateNFTs() {
                     className='form-control'
                     id='recipient-name'
                     value={title}
+                    maxLength={25}
                     onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
@@ -512,10 +519,10 @@ function CreateNFTs() {
                     <option value=''>Select</option>
                     {collections.length > 0
                       ? collections.map((c, i) => {
-                          return (
-                            <option value={JSON.stringify(c)}>{c.name}</option>
-                          );
-                        })
+                        return (
+                          <option value={JSON.stringify(c)}>{c.name}</option>
+                        );
+                      })
                       : ""}
                   </select>
                 </div>
@@ -549,6 +556,7 @@ function CreateNFTs() {
                     className='form-control'
                     id='message-text'
                     value={description}
+                    maxLength={300}
                     onChange={(e) => setDescription(e.target.value)}></textarea>
                 </div>
                 <div className='col-md-6 mt-2'>
@@ -670,31 +678,31 @@ function CreateNFTs() {
               <div className='row mt-3 attributeAdded_con'>
                 {attrKeys && attrValues
                   ? attrKeys.map((attrKey, key) => {
-                      return attrKey !== "" ? (
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <div className='createProperty'>
-                            <div className='nft_attr'>
-                              <h5>{attrKey}</h5>
-                              <h4>{attrValues[key]}</h4>
-                            </div>
-                            <button
-                              className='remove-btn btn-main'
-                              onClick={() => {
-                                handlePropertyRemoved(key);
-                              }}>
-                              <i className='fa fa-trash' aria-hidden='true'></i>
-                            </button>
+                    return attrKey !== "" ? (
+                      <div className='col-lg-6 col-md-6 col-sm-6'>
+                        <div className='createProperty'>
+                          <div className='nft_attr'>
+                            <h5>{attrKey}</h5>
+                            <h4>{attrValues[key]}</h4>
                           </div>
                           <button
                             className='remove-btn btn-main'
                             onClick={() => {
                               handlePropertyRemoved(key);
-                            }}></button>
+                            }}>
+                            <i className='fa fa-trash' aria-hidden='true'></i>
+                          </button>
                         </div>
-                      ) : (
-                        ""
-                      );
-                    })
+                        <button
+                          className='remove-btn btn-main'
+                          onClick={() => {
+                            handlePropertyRemoved(key);
+                          }}></button>
+                      </div>
+                    ) : (
+                      ""
+                    );
+                  })
                   : ""}
               </div>
             </div>

@@ -15,9 +15,11 @@ import Admins1 from "./components/pages/admins";
 import { NotificationContainer } from "react-notifications";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
 import withLogin from "./components/components/withLogin";
+import Error404 from "./components/pages/Error404";
 
 import Navbar from "./components/Navbar";
 import LandingPage from "./LandingPage";
+import { isSuperAdmin } from "./apiServices";
 
 const Home = withLogin(Home1);
 const Admins = withLogin(Admins1);
@@ -86,59 +88,50 @@ function App() {
           /> */}
 
           <Route path="sadmin" element={<Login />} />
-          
-             <Route 
-            element={<>
-                <Navbar />
-                <Outlet />
-              </>} > 
-               
-        
-        
-         {currentUser ? <Route path="/" element={<Home />} /> : <Route path="/"  />}
-        
-                    
-                    {/* <Route
-        
-             path="navbar"
-        
-                    model={mode}
-        
-                    element={<Navbar />}
-        
-                    toggleMode={toggleMode}
-        
-                  /> */}
-        
-                    <Route path="admins" element={<Admins />}></Route>
-        
-                    <Route path="createcollection" element={<CreateCollection />} />
-        
-                    <Route path="createnfts" element={<CreateNFTs />} />
-        
-                    <Route path="createbrands" element={<CreateBrands />} />
-        
-                    <Route path="login" element={<Login />} />
-        
-                    <Route path="register" element={<Register />} />
-        
-                    <Route path="importedNfts/:address/:id" element={<NftDetail />} />
-        
-                    <Route
-                      path="createcategories"
-                      showNotificationPopup={() => {}}
-                      element={<CreateCategories />}
-                    />
-        
-                    <Route
-                      path="notificationpopup"
-                      notificationpopup={notificationpopup}
-                      element={<NotificationPopup />}
-                    />
-                  </Route>
+          {/* <Route path="404" element={<Error404 />} /> */}
 
-          
-            
+          <Route
+            element={<>
+              <Navbar />
+              <Outlet />
+            </>} >
+
+
+
+            {currentUser || isSuperAdmin() ? <Route path="/" element={<Home />} /> : <Route path="/" />}
+
+            {currentUser || isSuperAdmin() ? <Route path="admins" element={<Admins />} /> : <Route path="/" />}
+
+            {currentUser || isSuperAdmin() ? <Route path="createcollection" element={<CreateCollection />} /> : <Route path="/" />}
+
+            {currentUser || isSuperAdmin() ? <Route path="createnfts" element={<CreateNFTs />} /> : <Route path="/" />}
+
+            {currentUser || isSuperAdmin() ? <Route path="createbrands" element={<CreateBrands />} /> : <Route path="/" />}
+
+            {currentUser || isSuperAdmin() ? <Route path="login" element={<Login />} /> : <Route path="/" />}
+
+            {currentUser || isSuperAdmin() ? <Route path="register" element={<Register />} /> : <Route path="/" />}
+
+            {currentUser || isSuperAdmin() ? <Route path="importedNfts/:address/:id" element={<NftDetail />} /> : <Route path="/" />}
+
+            {currentUser || isSuperAdmin() ? <Route
+              path="createcategories"
+              showNotificationPopup={() => { }}
+              element={<CreateCategories />}
+            /> : <Route path="/" />}
+
+            {currentUser || isSuperAdmin() ? <Route
+              path="notificationpopup"
+              notificationpopup={notificationpopup}
+              element={<NotificationPopup />}
+            /> : <Route path="/" />}
+          </Route>
+
+          <Route
+            path="*"
+            element={<Error404 />}
+          />
+
         </Routes>
 
         <NotificationContainer />
