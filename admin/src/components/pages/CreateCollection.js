@@ -925,6 +925,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       name="title"
                       value={title}
+                      maxLength={25}
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
@@ -964,6 +965,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={maxSupply}
+                      maxLength={10}
                       onChange={(e) => {
                         setMaxSupply(e.target.value);
                       }}
@@ -981,6 +983,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={price}
+                      maxLength={10}
                       onChange={(e) => numberInputCheck(e)}
                       onKeyPress={(e) => {
                         if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -1032,6 +1035,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={symbol}
+                      maxLength={10}
                       onChange={(e) => setSymbol(e.target.value)}
                     />
                   </div>
@@ -1043,6 +1047,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="message-text"
                       value={description}
+                      maxLength={300}
                       onChange={(e) => setDescription(e.target.value)}
                     ></textarea>
                   </div>
@@ -1055,6 +1060,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       name="title"
+                      maxLength={100}
                       value={importedCollectionLink}
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
