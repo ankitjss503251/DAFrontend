@@ -599,7 +599,7 @@ function CreateCollection(props) {
                   ? myCollections.map((item, index) => {
                     return (
                       <>
-                        <tr>
+                        <tr key={index}>
                           <td>
                             {" "}
                             <div className="first-col">

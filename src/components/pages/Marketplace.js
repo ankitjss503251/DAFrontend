@@ -141,10 +141,6 @@ function Marketplace() {
           setLoadMoreDisabled("");
           for (let i = 0; i < res.length; i++) {
             const orderDet = await getPrice(res[i].orderData);
-
-            // const brandDet = await getBrandDetailsById(
-            //   res[i].collectionData[0].brandID
-            // );
             res[i] = {
               ...res[i],
               salesType: orderDet?.salesType,
@@ -183,7 +179,6 @@ function Marketplace() {
 
   const handleAdvSearch = (data) => {
     setAllNFTs([]);
-    console.log("coming from advanced filter", allNFTs);
     setCurrPage(1);
     setCardCount(0);
     setLoadMoreDisabled("");
