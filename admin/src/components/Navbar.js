@@ -167,21 +167,21 @@ const Navbar = (props) => {
     setProvider(null);
   };
 
-  useEffect(() => {
-    if (provider) {
-      provider.on("accountsChanged", (accounts) => {
-        const wallets = onboard.state.get().wallets;
-        setProvider(wallets[0].provider);
-        userAuth(wallets[0], wallets[0].accounts[0].address);
-      });
-      provider.on("chainChanged", (chains) => {
-        console.log("chain changed", chains);
-        if (chains !== process.env.REACT_APP_CHAIN_ID) {
-          setIsChainSwitched(true);
-        }
-      });
-    }
-  }, [provider, account, chainId]);
+  // useEffect(() => {
+  //   if (provider) {
+  //     provider.on("accountsChanged", (accounts) => {
+  //       const wallets = onboard.state.get().wallets;
+  //       setProvider(wallets[0].provider);
+  //       userAuth(wallets[0], wallets[0].accounts[0].address);
+  //     });
+  //     provider.on("chainChanged", (chains) => {
+  //       console.log("chain changed", chains);
+  //       if (chains !== process.env.REACT_APP_CHAIN_ID) {
+  //         setIsChainSwitched(true);
+  //       }
+  //     });
+  //   }
+  // }, [provider, account, chainId]);
 
   function walletConnect() {
     connectWallet();
@@ -228,7 +228,6 @@ const Navbar = (props) => {
 
         try {
           const res = await Login(address);
-          debugger;
           console.log("Login API response", res);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
@@ -265,6 +264,10 @@ const Navbar = (props) => {
           NotificationManager.error("Something went wrong", "", 800);
           return;
         }
+      }
+      else {
+        NotificationManager.error("Wallet is not added as admin", "", 800);
+        return;
       }
     } catch (e) {
       console.log(e);
