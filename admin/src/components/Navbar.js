@@ -167,21 +167,21 @@ const Navbar = (props) => {
     setProvider(null);
   };
 
-  useEffect(() => {
-    if (provider) {
-      provider.on("accountsChanged", (accounts) => {
-        const wallets = onboard.state.get().wallets;
-        setProvider(wallets[0].provider);
-        userAuth(wallets[0], wallets[0].accounts[0].address);
-      });
-      provider.on("chainChanged", (chains) => {
-        console.log("chain changed", chains);
-        if (chains !== process.env.REACT_APP_CHAIN_ID) {
-          setIsChainSwitched(true);
-        }
-      });
-    }
-  }, [provider, account, chainId]);
+  // useEffect(() => {
+  //   if (provider) {
+  //     provider.on("accountsChanged", (accounts) => {
+  //       const wallets = onboard.state.get().wallets;
+  //       setProvider(wallets[0].provider);
+  //       userAuth(wallets[0], wallets[0].accounts[0].address);
+  //     });
+  //     provider.on("chainChanged", (chains) => {
+  //       console.log("chain changed", chains);
+  //       if (chains !== process.env.REACT_APP_CHAIN_ID) {
+  //         setIsChainSwitched(true);
+  //       }
+  //     });
+  //   }
+  // }, [provider, account, chainId]);
 
   function walletConnect() {
     connectWallet();
