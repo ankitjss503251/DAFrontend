@@ -24,13 +24,14 @@ function CreateBrands() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser) {
-      const fetch = async () => {
-        let _myBrand = await GetBrand();
-        setMyBrand(_myBrand);
-      };
-      fetch();
+    // if (currentUser) {
+    const fetch = async () => {
+      let _myBrand = await GetBrand();
+      setMyBrand(_myBrand);
+      // };
+
     }
+    fetch();
   }, [currentUser]);
 
   const uploadedImage = React.useRef(null);
@@ -144,7 +145,7 @@ function CreateBrands() {
         )}
         <div className="adminbody table-widget text-light box-background">
           <h5 className="admintitle font-600 font-24 text-yellow">Brand</h5>
-      
+
           <table className="table table-hover text-light">
             <thead>
               <tr>
@@ -153,26 +154,26 @@ function CreateBrands() {
                 <th>Description</th>
               </tr>
             </thead>
-         
+
             {myBrand &&
-            myBrand !== undefined &&
-            myBrand !== "" &&
-            !isEmptyObject(myBrand) &&
-            myBrand.length > 0
+              myBrand !== undefined &&
+              myBrand !== "" &&
+              !isEmptyObject(myBrand) &&
+              myBrand.length > 0
               ? myBrand.map((data, index) => (
-                  <tbody key={index}>
-                    <tr>
-                      <td><img
-                          src={data.logoImage}
-                          className="profile_i"
-                          alt=""
-                         
-                        /></td>
-                      <td>{data.name ? data.name?.length > 8 ? data.name?.slice(0,8) + "..." : data.name : "-"}</td>
-                      <td>{data.description ? data.description?.length > 15 ? data.description?.slice(0,15) : data.description : '-'}</td>
-                    </tr>
-                  </tbody>
-                ))
+                <tbody key={index}>
+                  <tr>
+                    <td><img
+                      src={data.logoImage}
+                      className="profile_i"
+                      alt=""
+
+                    /></td>
+                    <td>{data.name ? data.name?.length > 8 ? data.name?.slice(0, 8) + "..." : data.name : "-"}</td>
+                    <td>{data.description ? data.description?.length > 15 ? data.description?.slice(0, 15) : data.description : '-'}</td>
+                  </tr>
+                </tbody>
+              ))
               : "No Brands Found"}
           </table>
         </div>

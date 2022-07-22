@@ -113,10 +113,20 @@ function CreateNFTs() {
         page: 1,
         limit: 12,
       };
-      let res = await GetMyNftList(reqBody);
-      if (res && res.results && res.results.length > 0) {
-        setNfts(res.results[0]);
+      let res
+      if (currentUser) {
+        res = await GetMyNftList(reqBody);
+        if (res && res.results && res.results.length > 0) {
+          setNfts(res.results[0]);
+        }
       }
+      else if (isSuperAdmin()) {
+        res = await getNFTList(reqBody)
+        if (res && res.results && res.results.length > 0) {
+          setNfts(res.results);
+        }
+      }
+
     };
     fetch();
   }, []);
@@ -306,15 +316,15 @@ function CreateNFTs() {
           {isSuperAdmin()
             ? null
             : currentUser && (
-                <button
-                  className='btn btn-admin text-light'
-                  type='button'
-                  data-bs-toggle='modal'
-                  data-bs-target='#NftModal'
-                  onClick={() => setModal("active")}>
-                  + Add NFTs
-                </button>
-              )}
+              <button
+                className='btn btn-admin text-light'
+                type='button'
+                data-bs-toggle='modal'
+                data-bs-target='#NftModal'
+                onClick={() => setModal("active")}>
+                + Add NFTs
+              </button>
+            )}
         </div>
         <div className='adminbody table-widget text-light box-background'>
           <h5 className='admintitle font-600 font-24 text-yellow'>NFTs</h5>
@@ -331,35 +341,35 @@ function CreateNFTs() {
               <tbody>
                 {nfts && nfts.length > 0
                   ? nfts.map((n, i) => {
-                      return (
-                        <tr>
-                          <td>
-                            <img
-                              src={n.image}
-                              className='profile_i'
-                              alt=''
-                              onError={(e) =>
-                                (e.target.src = "../images/login.jpg")
-                              }
-                            />
-                          </td>
-                          <td>
-                            {n.name
-                              ? n.name?.length > 8
-                                ? n.name?.slice(0, 8) + "..."
-                                : n.name
-                              : "-"}
-                          </td>
-                          <td>
-                            {n.description
-                              ? n.description?.length > 15
-                                ? n.description?.slice(0, 15) + "..."
-                                : n.description
-                              : "-"}
-                          </td>
-                        </tr>
-                      );
-                    })
+                    return (
+                      <tr>
+                        <td>
+                          <img
+                            src={n.image}
+                            className='profile_i'
+                            alt=''
+                            onError={(e) =>
+                              (e.target.src = "../images/login.jpg")
+                            }
+                          />
+                        </td>
+                        <td>
+                          {n.name
+                            ? n.name?.length > 8
+                              ? n.name?.slice(0, 8) + "..."
+                              : n.name
+                            : "-"}
+                        </td>
+                        <td>
+                          {n.description
+                            ? n.description?.length > 15
+                              ? n.description?.slice(0, 15) + "..."
+                              : n.description
+                            : "-"}
+                        </td>
+                      </tr>
+                    );
+                  })
                   : "No NFTs Found"}
               </tbody>
             </table>
@@ -460,8 +470,8 @@ function CreateNFTs() {
                           className='img-fluid profile_circle_img'
                           key={img}
                           src={img}
-                          >
-                           
+                        >
+
                           <AmbientLight color={0xffffff} />
                           <DirectionLight
                             color={0xffffff}
@@ -508,10 +518,10 @@ function CreateNFTs() {
                     <option value=''>Select</option>
                     {collections.length > 0
                       ? collections.map((c, i) => {
-                          return (
-                            <option value={JSON.stringify(c)}>{c.name}</option>
-                          );
-                        })
+                        return (
+                          <option value={JSON.stringify(c)}>{c.name}</option>
+                        );
+                      })
                       : ""}
                   </select>
                 </div>
@@ -666,31 +676,31 @@ function CreateNFTs() {
               <div className='row mt-3 attributeAdded_con'>
                 {attrKeys && attrValues
                   ? attrKeys.map((attrKey, key) => {
-                      return attrKey !== "" ? (
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <div className='createProperty'>
-                            <div className='nft_attr'>
-                              <h5>{attrKey}</h5>
-                              <h4>{attrValues[key]}</h4>
-                            </div>
-                            <button
-                              className='remove-btn btn-main'
-                              onClick={() => {
-                                handlePropertyRemoved(key);
-                              }}>
-                              <i className='fa fa-trash' aria-hidden='true'></i>
-                            </button>
+                    return attrKey !== "" ? (
+                      <div className='col-lg-6 col-md-6 col-sm-6'>
+                        <div className='createProperty'>
+                          <div className='nft_attr'>
+                            <h5>{attrKey}</h5>
+                            <h4>{attrValues[key]}</h4>
                           </div>
                           <button
                             className='remove-btn btn-main'
                             onClick={() => {
                               handlePropertyRemoved(key);
-                            }}></button>
+                            }}>
+                            <i className='fa fa-trash' aria-hidden='true'></i>
+                          </button>
                         </div>
-                      ) : (
-                        ""
-                      );
-                    })
+                        <button
+                          className='remove-btn btn-main'
+                          onClick={() => {
+                            handlePropertyRemoved(key);
+                          }}></button>
+                      </div>
+                    ) : (
+                      ""
+                    );
+                  })
                   : ""}
               </div>
             </div>

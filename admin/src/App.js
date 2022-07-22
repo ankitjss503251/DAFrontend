@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import "./App.css";
 import Home1 from "./components/pages/Home";
-import { BrowserRouter, Routes, Route,Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import CreateCollection1 from "./components/pages/CreateCollection";
 import CreateNFTs1 from "./components/pages/CreateNFTs";
 import Rightarrow from "./components/SVG/rightarrow";
@@ -14,9 +14,11 @@ import NotificationPopup from "./components/components/NotificationPopup";
 import Admins1 from "./components/pages/admins";
 import { NotificationContainer } from "react-notifications";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
-import Navbar from "./components/Navbar";
 import withLogin from "./components/components/withLogin";
+
+import Navbar from "./components/Navbar";
 import LandingPage from "./LandingPage";
+import { isSuperAdmin } from "./apiServices";
 
 const Home = withLogin(Home1);
 const Admins = withLogin(Admins1);
@@ -32,7 +34,7 @@ const instaImg = {
   backgroundPosition: "center",
 };
 
-function App(props) {
+function App() {
   const [mode, setMode] = useState("Darkmode");
   const [notificationpopup, setNotificationPopup] = useState(null);
   const [currentUser, setCurrentUser] = useState("");
@@ -66,7 +68,7 @@ function App(props) {
     <div style={instaImg} className={mode}>
       <div className="btn_hidden">
         <div className="define_mode">
-          <button type="button" onClick={()=>{ toggleMode();}}>
+          <button type="button" onClick={toggleMode}>
             <Rightarrow />{" "}
             <span className="mode_text">
               {mode === "Darkmode" ? "Light Mode" : "Dark Mode"}
@@ -74,7 +76,7 @@ function App(props) {
           </button>
         </div>
       </div>
-     
+
       <BrowserRouter>
         <Routes>
           {/* <Route
@@ -83,62 +85,52 @@ function App(props) {
             element={<Navbar />}
             toggleMode={toggleMode}
           /> */}
-          
+
           <Route path="sadmin" element={<Login />} />
 
           <Route
-            
-            element={
-              <>
-                <Navbar />
-                <Outlet />
-              </>
-            }
-          >
-            <Route index  element={<Home />} />
-            {/* <Route
+            element={<>
+              <Navbar />
+              <Outlet />
+            </>} >
 
-     path="navbar"
 
-            model={mode}
 
-            element={<Navbar />}
+            {currentUser || isSuperAdmin() ? <Route path="/" element={<Home />} /> : <Route path="/" />}
 
-            toggleMode={toggleMode}
+            {currentUser || isSuperAdmin() ? <Route path="admins" element={<Admins />} /> : <Route path="/" />}
 
-          /> */}
+            {currentUser || isSuperAdmin() ? <Route path="createcollection" element={<CreateCollection />} /> : <Route path="/" />}
 
-            <Route path="admins" element={<Admins />}></Route>
+            {currentUser || isSuperAdmin() ? <Route path="createnfts" element={<CreateNFTs />} /> : <Route path="/" />}
 
-            <Route path="createcollection" element={<CreateCollection />} />
+            {currentUser || isSuperAdmin() ? <Route path="createbrands" element={<CreateBrands />} /> : <Route path="/" />}
 
-            <Route path="createnfts" element={<CreateNFTs />} />
+            {currentUser || isSuperAdmin() ? <Route path="login" element={<Login />} /> : <Route path="/" />}
 
-            <Route path="createbrands" element={<CreateBrands />} />
+            {currentUser || isSuperAdmin() ? <Route path="register" element={<Register />} /> : <Route path="/" />}
 
-            <Route path="login" element={<Login />} />
+            {currentUser || isSuperAdmin() ? <Route path="importedNfts/:address/:id" element={<NftDetail />} /> : <Route path="/" />}
 
-            <Route path="register" element={<Register />} />
-
-            <Route path="importedNfts/:address/:id" element={<NftDetail />} />
-
-            <Route
+            {currentUser || isSuperAdmin() ? <Route
               path="createcategories"
-              showNotificationPopup={() => {}}
+              showNotificationPopup={() => { }}
               element={<CreateCategories />}
-            />
+            /> : <Route path="/" />}
 
-            <Route
+            {currentUser || isSuperAdmin() ? <Route
               path="notificationpopup"
               notificationpopup={notificationpopup}
               element={<NotificationPopup />}
-            />
+            /> : <Route path="/" />}
           </Route>
+
+
+
         </Routes>
 
         <NotificationContainer />
       </BrowserRouter>
-   
     </div>
   );
 }

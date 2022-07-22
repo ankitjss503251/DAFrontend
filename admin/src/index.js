@@ -1,19 +1,18 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client'
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 import { CookiesProvider } from "react-cookie";
 import { NotificationContainer } from "react-notifications";
-const root = createRoot(document.getElementById("root"))
-
+const root = createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
-     <CookiesProvider>
-    <NotificationContainer />
-    <App />
-  </CookiesProvider>
+    <CookiesProvider>
+      <NotificationContainer />
+      <App />
+    </CookiesProvider>
   </React.StrictMode>
 );
 

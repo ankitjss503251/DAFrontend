@@ -20,6 +20,7 @@ import SkeletonCard from "../components/Skeleton/NFTSkeletonCard";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Tokens } from "../../helpers/tokensToSymbol";
+import AdvancedFilter from "../components/AdvancedFilter";
 
 var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
@@ -78,15 +79,14 @@ function Marketplace() {
   const [category, setCategory] = useState([]);
   const [sText, setSText] = useState("");
   const [brands, setBrands] = useState([]);
-  const [cols, setCols] = useState([]);
-  const [colsAdv, setColsAdv] = useState("");
   const [ERCType, setERCType] = useState();
-  const [activeSaleType, setActiveSaleType] = useState(-1);
+  const [salesType, setSalesType] = useState("");
   const [loader, setLoader] = useState(false);
   const [cardCount, setCardCount] = useState(0);
   const [priceSort, setPriceSort] = useState("ASC");
   const [searchedCol, setSearchedCol] = useState("");
-  const [searcheBrand, setSearchedBrand] = useState("");
+  const [searchedBrand, setSearchedBrand] = useState("");
+  const [searchedCat, setSearchedCat] = useState("");
 
   const filterToggle = () => {
     if (togglemode === "filterhide") {
@@ -119,7 +119,6 @@ function Marketplace() {
   }, []);
 
   useEffect(() => {
-    console.log("sales type filter value", activeSaleType, priceSort);
     const fetch = async () => {
       setLoader(true);
       let temp = allNFTs;
@@ -130,7 +129,11 @@ function Marketplace() {
           searchText: sText ? sText : searchedText ? searchedText : "",
           isOnMarketplace: 1,
           ERCType: ERCType,
-          salesType: activeSaleType !== -1 ? activeSaleType : "",
+          salesType: salesType >= 0 ? salesType : "",
+          priceSort: priceSort,
+          categoryID: searchedCat,
+          brandID: searchedBrand,
+          collectionID: searchedCol,
         };
         const res = await getNFTs(reqData);
         setCardCount(cardCount + res.length);
@@ -138,7 +141,7 @@ function Marketplace() {
           setLoadMoreDisabled("");
           for (let i = 0; i < res.length; i++) {
             const orderDet = await getPrice(res[i].orderData);
-            
+
             // const brandDet = await getBrandDetailsById(
             //   res[i].collectionData[0].brandID
             // );
@@ -168,7 +171,27 @@ function Marketplace() {
       }
     };
     fetch();
-  }, [loadMore, ERCType, sText, activeSaleType, priceSort]);
+  }, [
+    loadMore,
+    ERCType,
+    sText,
+    salesType,
+    priceSort,searchedBrand,
+    searchedCat,
+    searchedCol,
+  ]);
+
+  const handleAdvSearch = (data) => {
+    setAllNFTs([]);
+    console.log("coming from advanced filter", allNFTs);
+    setCurrPage(1);
+    setCardCount(0);
+    setLoadMoreDisabled("");
+    if (data.type === "salesType") setSalesType(data.value);
+    if (data.type === "collection") setSearchedCol(data.value);
+    if (data.type === "brand") setSearchedBrand(data.value);
+    if (data.type === "category") setSearchedCat(data.value);
+  };
 
   return (
     <div>
@@ -231,6 +254,10 @@ function Marketplace() {
                   aria-label='Default select example'
                   style={bgImgarrow}
                   onChange={(e) => {
+                    setAllNFTs([]);
+                    setCurrPage(1);
+                    setCardCount(0);
+                    setLoadMoreDisabled("");
                     setPriceSort(e.target.value);
                   }}>
                   <option value='ASC' defaultValue>
@@ -254,7 +281,13 @@ function Marketplace() {
                 </button>
               </div>
             </div>
-            <div className={`filter mb-5 ${togglemode}`}>
+            <AdvancedFilter
+              togglemode={togglemode}
+              category={category}
+              brands={brands}
+              onAdvSearch={handleAdvSearch}
+            />
+            {/* <div className={`filter mb-5 ${togglemode}`}>
               <div className='filtercol'>
                 <form>
                   <button
@@ -325,14 +358,14 @@ function Marketplace() {
                     </ul>
                   </div>
 
-                  {/* <button
+                   <button
                     type='button'
                     className='drop_down_tlt'
                     data-bs-toggle='collapse'
                     data-bs-target='#demo2'>
                     Price <UpArrow />
-                  </button> */}
-                  {/* <div id='demo2' className='collapse show'>
+                  </button> 
+                   <div id='demo2' className='collapse show'>
                     <ul className='status_ul'>
                       <li>
                         <select
@@ -367,7 +400,7 @@ function Marketplace() {
                         </button>
                       </li>
                     </ul>
-                  </div> */}
+                  </div> 
                 </form>
               </div>
               <div className='filtercol'>
@@ -465,13 +498,13 @@ function Marketplace() {
                 </button>
                 <div id='demo5' className='collapse show'>
                   <ul>
-                    {/* <li>
+                     <li>
                       <input
                         type='text'
                         placeholder='Filter'
                         className='filter_apply  filter-text-left filter_padd'
                       />
-                    </li> */}
+                    </li> 
                     <li>
                       <form action='#' className='checked_form'>
                         {brands.length > 0
@@ -494,7 +527,7 @@ function Marketplace() {
                   </ul>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className='row'>
             {loader ? (
@@ -638,7 +671,9 @@ function Marketplace() {
                 });
               })
             ) : (
-              <h2 className='text-white text-center'>No NFT Found</h2>
+              <div className="col-md-12">
+          <h4 className="no_data_text text-muted">No NFTs Available</h4>
+        </div>
             )}
           </div>
           {allNFTs?.length > 0 ? (
