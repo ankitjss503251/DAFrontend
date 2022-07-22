@@ -195,9 +195,10 @@ function Marketplace() {
 
   return (
     <div>
-      {loadMoreDisabled && allNFTs.length > 0
+{/*        
+      {(loadMoreDisabled && allNFTs.length > 0)
         ? NotificationManager.info("No more items to load", "", 800)
-        : ""}
+        : ""} */}
       <section className='register_hd pdd_12' style={register_bg}>
         <div className='container'>
           <div className='row'>
@@ -227,7 +228,7 @@ function Marketplace() {
                       setLoadMoreDisabled("");
                     }}
                   />
-                  <button className='market_btn' type='submit'>
+                  <button className='market_btn' type='button'>
                     <img src='../img/search.svg' alt='' />
                   </button>
                 </form>
@@ -551,8 +552,6 @@ function Marketplace() {
                                 className='profile_img creatorImg'
                                 src={
                                   card?.brand?.logoImage
-                                    ? card?.brand?.logoImage
-                                    : ""
                                 }
                                 key={card}
                                 onError={(e) =>
@@ -676,7 +675,7 @@ function Marketplace() {
         </div>
             )}
           </div>
-          {allNFTs?.length > 0 ? (
+          {allNFTs[0]?.length > 11 ? (
             <div className='row'>
               <div className='col-md-12 text-center mt-5'>
                 <button
