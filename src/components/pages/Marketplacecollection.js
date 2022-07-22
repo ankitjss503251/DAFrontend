@@ -318,7 +318,7 @@ function Marketplacecollection() {
                             <div className="mint_img">
                               <img
                                 className="img-fluid w-100"
-                                src={card.logoImg}
+                                src={card.coverImg}
                                 alt=""
                                 onError={(e) => {
                                   e.target.src = "../img/collections/list4.png";
