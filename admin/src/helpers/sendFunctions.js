@@ -42,7 +42,7 @@ import { getSignature } from "./getterFunctions";
 import erc721Abi from "./../config/abis/simpleERC721.json";
 import { slowRefresh } from "./NotifyStatus";
 import abi from "../config/abis/generalERC721Abi.json";
-import { isEmptyObject } from "jquery";
+import { isEmptyObject } from "./utils"; 
 
 import {
   importCollection,

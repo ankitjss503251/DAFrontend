@@ -22,11 +22,11 @@ function LandingPage(props) {
     //console.log("events are---->",evt)
     props.connectWallet()
     //evt.emit("wallet-connect");
-    
-  }; 
+
+  };
 
   return (
-    <div className='wrapper'>
+    <div className='wrapper landing'>
       <div id='content'>
         <div className='boxrow row'>
           <div className='col-md-12 text-center'>

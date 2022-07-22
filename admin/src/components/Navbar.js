@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Message from "./SVG/Message";
-import Notification from "./SVG/Notification";
-import Wallet from "./SVG/Wallet";
 import { Link } from "react-router-dom";
+import Wallet from "./SVG/Wallet";
 import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
 import walletConnectModule from "@web3-onboard/walletconnect";
@@ -12,6 +10,7 @@ import {
   Login,
   Logout,
   adminRegister,
+  isSuperAdmin,
   logoutSuperAdmin,
 } from "./../apiServices";
 import { NotificationManager } from "react-notifications";
@@ -22,7 +21,7 @@ import Logo from "./../logo.svg";
 import PopupModal from "./components/popupModal";
 import evt from "./components/Events";
 import init from "@web3-onboard/core";
-import LandingPage  from "../LandingPage";
+import LandingPage from "../LandingPage";
 
 
 const injected = injectedModule();
@@ -35,7 +34,7 @@ const walletConnect = walletConnectModule();
 
 const onboard = Onboard({
   wallets: [walletConnect, injected],
- 
+
   chains: [
     {
       id: "0x13881",
@@ -102,8 +101,6 @@ const onboard = Onboard({
           header: "Available Wallets",
         },
       },
-
-
     },
   },
 
@@ -113,7 +110,7 @@ const onboard = Onboard({
     },
   },
 });
- 
+
 
 evt.removeAllListeners("wallet-connect", walletConnect);
 
@@ -132,10 +129,10 @@ const Navbar = (props) => {
     console.log('rendered');
   }, []);
 
-  
-  evt.on("wallet-connect",()=>{
+
+  evt.on("wallet-connect", () => {
     console.log("1111");
-  }); 
+  });
 
   const init = async () => {
     if (cookies["da_selected_account"]) {
@@ -154,8 +151,8 @@ const Navbar = (props) => {
         path: "/",
       });
       setCookie("balance", s[0].accounts[0].balance, { path: "/" });
-      
-      
+
+
     }
   };
 
@@ -194,7 +191,7 @@ const Navbar = (props) => {
     const profile = await getProfile();
     setUserDetails(profile.data);
   };
-  
+
   const connectWallet = async () => {
 
     if (window.ethereum) {
@@ -227,44 +224,11 @@ const Navbar = (props) => {
   const userAuth = async (primaryWallet, address) => {
     try {
       const isUserExist = await checkuseraddress(address);
-      if (isUserExist?.message === "User not found") {
-        try {
-          const res = await adminRegister(address);
-          const res2 = await Login(address);
-          if (res?.message === "Wallet Address required") {
-            NotificationManager.info(res?.message);
-            return;
-          } else if (res?.message === "User already exists") {
-            NotificationManager.error(res?.message);
-            return;
-          } else {
-            setAccount(primaryWallet.accounts[0].address);
-            setLabel(primaryWallet.label);
-            window.sessionStorage.setItem("role", res2?.data?.userType);
-            setCookie("da_selected_account", address, { path: "/" });
-            setCookie("label", primaryWallet.label, { path: "/" });
-            setCookie(
-              "chain_id",
-              parseInt(primaryWallet.chains[0].id, 16).toString(),
-              {
-                path: "/",
-              }
-            );
-            setCookie("balance", primaryWallet.accounts[0].balance, {
-              path: "/",
-            });
-            getUserProfile();
-            NotificationManager.success(res?.message);
-            slowRefresh(1000);
-            return;
-          }
-        } catch (e) {
-          NotificationManager.error(e);
-          return;
-        }
-      } else {
+      if (isUserExist?.message !== "User not found") {
+
         try {
           const res = await Login(address);
+          debugger;
           console.log("Login API response", res);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
@@ -315,15 +279,14 @@ const Navbar = (props) => {
     NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
-   
-  if(!account){
-    
-    return <LandingPage connectWallet={connectWallet}/>
+
+  if (!account && !isSuperAdmin()) {
+    return <LandingPage connectWallet={connectWallet} />
   }
 
   return (
-    
-  
+
+
     <div className="admin-navbar d-flex w-100">
       {isChainSwitched ? (
         <PopupModal
@@ -376,7 +339,7 @@ const Navbar = (props) => {
           </div>
         </li> */}
         <li>
-          {props.isAdmin ? (
+          {isSuperAdmin() ? (
             <button
               className="round-btn montserrat text-light text-decoration-none"
               onClick={logoutSuperAdmin}
