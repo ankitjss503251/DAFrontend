@@ -488,9 +488,9 @@ function Author() {
                           <label htmlFor='allnfts'>All NFTs</label>
                         </div>
                         {category
-                          ? category.map((c) => {
+                          ? category.map((c, key) => {
                               return (
-                                <div className='form-check form-check-inline'>
+                                <div className='form-check form-check-inline' key={key}>
                                   <input
                                     type='radio'
                                     id={c.name}

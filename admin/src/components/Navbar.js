@@ -228,7 +228,6 @@ const Navbar = (props) => {
 
         try {
           const res = await Login(address);
-
           console.log("Login API response", res);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
@@ -265,6 +264,10 @@ const Navbar = (props) => {
           NotificationManager.error("Something went wrong", "", 800);
           return;
         }
+      }
+      else {
+        NotificationManager.error("Wallet is not added as admin", "", 800);
+        return;
       }
     } catch (e) {
       console.log(e);
