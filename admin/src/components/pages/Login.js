@@ -12,6 +12,7 @@ function Login(props) {
   function hasError() {
     return !(state.username?.trim() && state.password?.trim());
   }
+  
   function checkLogin(e) {
     e.preventDefault();
     setState(state => ({ ...state, error: '' }));
