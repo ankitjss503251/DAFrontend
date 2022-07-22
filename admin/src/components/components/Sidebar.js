@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link,NavLink } from "react-router-dom";
 import Dashboardsvg from "../SVG/dashboardsvg";
 import Formsvg from "../SVG/formsvg";
 import Tablesvg from "../SVG/tablesvg";
@@ -40,23 +40,23 @@ function Sidebar() {
           </li>
         ) : null}
        
-        {window.sessionStorage.getItem("role") === "admin" ? (
+        {(isSuperAdmin && isSuperAdmin() || window.sessionStorage.getItem('role') === "admin") ? (
           <>
             <li>
-              <NavLink
+              <Link
                 to={"/createcollection"}
                 className="text-decoration-none text-light"
               >
                 <Collectionsvg /> Create Collection
-              </NavLink>
+              </Link>
             </li>
             <li>
-              <NavLink
+              <Link
                 to={"/createnfts"}
                 className="text-decoration-none text-light"
               >
                 <Nftsvg /> Create NFTs
-              </NavLink>
+              </Link>
             </li>
             <li>
               <NavLink

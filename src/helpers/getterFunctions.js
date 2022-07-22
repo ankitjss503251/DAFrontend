@@ -92,7 +92,7 @@ export const GetOwnerOfToken = async (
 
 export const getPaymentTokenInfo = async (userWallet, tokenAddress) => {
   let token = await exportInstance(tokenAddress, erc20Abi);
-  console.log("token is ----->", token);
+
   let symbol = await token.symbol();
   let name = await token.name();
   let allowance = await token.allowance(userWallet, contracts.MARKETPLACE);
@@ -192,7 +192,6 @@ export const getUsersTokenBalance = async (account, tokenAddress) => {
   let token;
   token = await exportInstance(tokenAddress, erc20Abi);
   let userBalance = await token.balanceOf(account);
-  console.log("token", token, "userBalance", userBalance.toString(), account);
   return userBalance.toString();
 };
 
@@ -304,7 +303,6 @@ export const getNFTs = async (req) => {
     };
 
     data = await getNFTList(reqBody);
-    console.log("data", data);
   } catch (e) {
     console.log("Error in getNFts API--->", e);
   }
@@ -313,7 +311,6 @@ export const getNFTs = async (req) => {
   let arr = [];
   if (data && data.length > 0) arr = data;
   else return [];
-  console.log("arrr", arr);
   arr
     ? arr.map((nft, key) => {
         formattedData[key] = {

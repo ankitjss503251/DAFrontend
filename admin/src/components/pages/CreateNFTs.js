@@ -17,10 +17,7 @@ import { useCookies } from "react-cookie";
 import extendedERC721Abi from "./../../config/abis/extendedERC721.json";
 import { exportInstance } from "../../apiServices";
 import contracts from "./../../config/contracts";
-import { GENERAL_DATE, GENERAL_TIMESTAMP } from "../../helpers/constants";
 import "../../App.css";
-import { useGLTF } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
 import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import Spinner from "../components/Spinner";
@@ -254,7 +251,6 @@ function CreateNFTs() {
         limit: 20,
       };
       let data = await GetMyCollectionsList(reqBody);
-      console.log("dataaaaaaaaa", data)
       if (data && data.results && data.results[0].length > 0) {
         let res = data?.results[0].filter((d, i) => d.isMinted === 1);
         setCollections(res);

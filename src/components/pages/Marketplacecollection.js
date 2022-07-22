@@ -41,7 +41,7 @@ function Marketplacecollection() {
   useEffect(() => {
     const fetch = async () => {
       setLoader(true);
-      let temp = allCollections;
+      
       try {
         const res1 = await getCategory();
         setCategories(res1);
@@ -49,8 +49,8 @@ function Marketplacecollection() {
         res1?.map((r) => {
           t = [...t, r.name];
         });
-        console.log("1111");
         if (!t.includes(searchedText) && !showTab) {
+          let temp = allCollections;
           const reqData = {
             page: currPageAll,
             limit: 12,
@@ -63,7 +63,6 @@ function Marketplacecollection() {
             setLoadMoreDisabledAll("");
             temp = [...temp, res];
             setAllCollections(temp);
-            console.log("2222");
           }
 
           if (allCollections && res.length <= 0) {
@@ -72,7 +71,6 @@ function Marketplacecollection() {
             return;
           }
         } else {
-          console.log("3333");
           setLoader(true);
           try {
             setShowTab("show active");
@@ -97,10 +95,10 @@ function Marketplacecollection() {
   }, [loadMore, searchedText, showTab]);
 
   const handleCategoryChange = async (category) => {
-    console.log("4444");
     setLoader(true);
-    let temp2 = activeCat;
+   
     try {
+      let temp2 = activeCat;
       const reqBody = {
         page: currPage,
         limit: 12,
@@ -109,11 +107,11 @@ function Marketplacecollection() {
       };
       const ind = await getCollections(reqBody);
       setCardCount(cardCount + ind.length);
-      if (ind.length > 0) {
+      if (ind.length > 0 ) {
         setLoadMoreDisabled("");
-        temp2 = [...temp2, ind];
+        // temp2 = [...temp2, ind];
+        temp2 = [ind]
         setActiveCat(temp2);
-        console.log("temp2", temp2);
       }
       if (ind?.length <= 0 && activeCat) {
         setLoader(false);
@@ -163,10 +161,10 @@ function Marketplacecollection() {
                       aria-controls="#all"
                       aria-selected="true"
                       onClick={() => {
+                        setAllCollections([]);
                         setLoadMoreDisabledAll("");
                         setLoadMoreDisabled("");
                         setShowTab("");
-                        setAllCollections([]);
                         setCardCount(0);
                         setCurrPageAll(1);
                       }}
@@ -191,14 +189,14 @@ function Marketplacecollection() {
                             aria-controls={`#${cat.name}`}
                             aria-selected="true"
                             onClick={() => {
-                              setLoader(true);
-                              setCurrPage(1);
                               setActiveCat([]);
-                              setCardCount(0);
-                              handleCategoryChange(cat);
                               setLoadMoreDisabledAll("");
                               setLoadMoreDisabled("");
                               setShowTab("show active");
+                              // setLoader(true);
+                              setCardCount(0);
+                              setCurrPage(1);
+                              handleCategoryChange(cat);
                             }}
                           >
                             {cat.name}

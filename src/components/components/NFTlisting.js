@@ -13,7 +13,7 @@ import {
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import Clock from "./Clock";
-import {GENERAL_TIMESTAMP} from "../../helpers/constants";
+import { GENERAL_TIMESTAMP} from "../../helpers/constants";
 import {Tokens} from "../../helpers/tokensToSymbol";
 import {ethers} from "ethers";
 import Spinner from "./Spinner";
@@ -331,11 +331,11 @@ function NFTlisting(props) {
                      <td className="d-flex justify-content-start align-items-center mb-0">
                        <span className="yellow_dot circle_dot"></span>
                        <span>
-                         {o.sellerID && o.sellerID.walletAddress
-                           ? o.sellerID.walletAddress.slice(0, 3) +
-                             "..." +
-                             o.sellerID.walletAddress.slice(39, 41)
-                           : ""}
+                         {o.sellerID&&o.sellerID.walletAddress
+                           ? o.sellerID.walletAddress.slice(0,3)+
+                           "..."+
+                           o.sellerID.walletAddress.slice(39,42)
+                           :""}
                        </span>
                      </td>
                      <td>
@@ -360,16 +360,17 @@ function NFTlisting(props) {
                      <td>
                        {o.salesType === 0
                          ? "Fixed Sale"
-                         : o.salesType === 1 && o.deadline !== GENERAL_TIMESTAMP
-                         ? "Auction"
-                         : "Open for Bids"}
+                         :o.salesType===1 && o.deadline !== GENERAL_TIMESTAMP
+                           ? "Auction"
+                           :"Open for Bids"}
                      </td>
                      <td>
-                       {moment(new Date(o.deadline * 1000)).subtract({
-                         hours: 5,
-                         minutes: 30,
-                       })._d < new Date() ||
-                       o.deadline === GENERAL_TIMESTAMP ? (
+                    
+                       {moment(new Date(o.deadline*1000))
+                         .subtract({
+                           hours: 5,
+                           minutes: 30,
+                         })._d<new Date() || o.deadline === GENERAL_TIMESTAMP ? (
                          "--:--:--"
                        ) : (
                          <Clock

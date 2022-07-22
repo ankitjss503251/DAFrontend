@@ -84,9 +84,11 @@ function Marketplace() {
   const [activeSaleType, setActiveSaleType] = useState(-1);
   const [loader, setLoader] = useState(false);
   const [cardCount, setCardCount] = useState(0);
+  const [priceSort, setPriceSort] = useState("ASC");
+  const [searchedCol, setSearchedCol] = useState("");
+  const [searcheBrand, setSearchedBrand] = useState("");
 
   const filterToggle = () => {
-    console.log("filter", togglemode);
     if (togglemode === "filterhide") {
       setTogglemode("filtershow");
       document.getElementsByClassName("filter_btn")[0].classList.add("active");
@@ -117,6 +119,7 @@ function Marketplace() {
   }, []);
 
   useEffect(() => {
+    console.log("sales type filter value", activeSaleType, priceSort);
     const fetch = async () => {
       setLoader(true);
       let temp = allNFTs;
@@ -135,7 +138,7 @@ function Marketplace() {
           setLoadMoreDisabled("");
           for (let i = 0; i < res.length; i++) {
             const orderDet = await getPrice(res[i].orderData);
-            console.log("orderDet", orderDet);
+            
             // const brandDet = await getBrandDetailsById(
             //   res[i].collectionData[0].brandID
             // );
@@ -165,33 +168,33 @@ function Marketplace() {
       }
     };
     fetch();
-  }, [loadMore, ERCType, sText, activeSaleType]);
+  }, [loadMore, ERCType, sText, activeSaleType, priceSort]);
 
   return (
     <div>
       {loadMoreDisabled && allNFTs.length > 0
         ? NotificationManager.info("No more items to load", "", 800)
         : ""}
-      <section className="register_hd pdd_12" style={register_bg}>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
+      <section className='register_hd pdd_12' style={register_bg}>
+        <div className='container'>
+          <div className='row'>
+            <div className='col-md-12'>
               <h1>Marketplace</h1>
             </div>
           </div>
         </div>
       </section>
-      <section className="marketplacecollection pdd_8" style={bgImgStyle}>
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="market_search_form mb-5">
-                <form className="d-flex marketplace_form">
+      <section className='marketplacecollection pdd_8' style={bgImgStyle}>
+        <div className='container'>
+          <div className='row'>
+            <div className='col-lg-12'>
+              <div className='market_search_form mb-5'>
+                <form className='d-flex marketplace_form'>
                   <input
-                    className=" me-2"
-                    type="search"
-                    placeholder="Search item here..."
-                    aria-label="Search"
+                    className=' me-2'
+                    type='search'
+                    placeholder='Search item here...'
+                    aria-label='Search'
                     value={sText}
                     onChange={(e) => {
                       setAllNFTs([]);
@@ -201,13 +204,13 @@ function Marketplace() {
                       setLoadMoreDisabled("");
                     }}
                   />
-                  <button className="market_btn" type="submit">
-                    <img src="../img/search.svg" alt="" />
+                  <button className='market_btn' type='submit'>
+                    <img src='../img/search.svg' alt='' />
                   </button>
                 </form>
                 <select
-                  className="market_select_form form-select"
-                  aria-label="Default select example"
+                  className='market_select_form form-select'
+                  aria-label='Default select example'
                   style={bgImgarrow}
                   value={ERCType}
                   onChange={(e) => {
@@ -216,112 +219,107 @@ function Marketplace() {
                     setCardCount(0);
                     setERCType(parseInt(e.target.value));
                     setLoadMoreDisabled("");
-                  }}
-                >
-                  <option value="0" defaultValue>
+                  }}>
+                  <option value='0' defaultValue>
                     All Items
                   </option>
-                  <option value="1">Single Items</option>
-                  <option value="2">Multiple Items</option>
+                  <option value='1'>Single Items</option>
+                  <option value='2'>Multiple Items</option>
                 </select>
                 <select
-                  className="market_select_form form-select"
-                  aria-label="Default select example"
+                  className='market_select_form form-select'
+                  aria-label='Default select example'
                   style={bgImgarrow}
-                >
-                  <option value="1" defaultValue>
+                  onChange={(e) => {
+                    setPriceSort(e.target.value);
+                  }}>
+                  <option value='ASC' defaultValue>
                     Price: Low to High
                   </option>
-                  <option value="2">Price: High to Low</option>
+                  <option value='DESC'>Price: High to Low</option>
                 </select>
                 {/* <div className="market_div"> */}
-                <div id="gridtwo" className="market_grid" onClick={gridtwo}>
+                <div id='gridtwo' className='market_grid' onClick={gridtwo}>
                   <Twogrid />
                 </div>
-                <div id="gridthree" className="market_grid" onClick={gridthree}>
+                <div id='gridthree' className='market_grid' onClick={gridthree}>
                   <Threegrid />
                 </div>
                 {/* </div> */}
                 <button
-                  type="button"
-                  className="filter_btn"
-                  onClick={filterToggle}
-                >
+                  type='button'
+                  className='filter_btn'
+                  onClick={filterToggle}>
                   Adv.Filter
                 </button>
               </div>
             </div>
             <div className={`filter mb-5 ${togglemode}`}>
-              <div className="filtercol">
+              <div className='filtercol'>
                 <form>
                   <button
-                    type="button"
-                    className="drop_down_tlt"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#demo"
-                  >
+                    type='button'
+                    className='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo'>
                     Status <UpArrow />
                   </button>
-                  <div id="demo" className="collapse show">
-                    <ul className="status_ul d-flex flex-wrap">
+                  <div id='demo' className='collapse show'>
+                    <ul className='status_ul d-flex flex-wrap'>
                       <li
                         className={`filter_border mr-2 ${
                           activeSaleType === 3 ? "active" : ""
                         }`}
-                        value="3"
+                        value='3'
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
                           setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
-                        }}
-                      >
+                        }}>
                         All NFTs
                       </li>
                       <li
                         className={`filter_border mr-2 ${
                           activeSaleType === 4 ? "active" : ""
                         }`}
-                        value="4"
+                        value='-1'
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
                           setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
-                        }}
-                      >
+                        }}>
                         Not For Sale
                       </li>
                       <li
                         className={`filter_border mr-2 ${
                           activeSaleType === 0 ? "active" : ""
                         }`}
-                        value="0"
+                        value='0'
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
                           setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
-                        }}
-                      >
+                        }}>
                         Buy Now
                       </li>
                       <li
                         className={`filter_border mr-2 ${
                           activeSaleType === 1 ? "active" : ""
                         }`}
-                        value="1"
+                        value='1'
                         onClick={(e) => {
                           setAllNFTs([]);
                           setCurrPage(1);
                           setCardCount(0);
                           setActiveSaleType(e.target.value);
                           setLoadMoreDisabled("");
-                        }}
-                      >
+                        }}>
                         On Auction
                       </li>
                     </ul>
@@ -372,21 +370,20 @@ function Marketplace() {
                   </div> */}
                 </form>
               </div>
-              <div className="filtercol">
+              <div className='filtercol'>
                 <form>
                   <button
-                    type="button"
-                    className="drop_down_tlt"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#demo3"
-                  >
+                    type='button'
+                    className='drop_down_tlt'
+                    data-bs-toggle='collapse'
+                    data-bs-target='#demo3'>
                     Collections <UpArrow />
                   </button>
-                  <div id="demo3" className="collapse show ">
+                  <div id='demo3' className='collapse show '>
                     <input
-                      type="text"
-                      placeholder="Filter"
-                      className="filter_apply filter-text-left filter_padd mb-3"
+                      type='text'
+                      placeholder='Filter'
+                      className='filter_apply filter-text-left filter_padd mb-3'
                       value={colsAdv}
                       onChange={async (e) => {
                         setColsAdv(e.target.value);
@@ -404,14 +401,15 @@ function Marketplace() {
                       }}
                     />
                     {cols && cols.length > 0 && colsAdv !== ""
-                      ? cols.map((i) => {
+                      ? cols.map((i, key) => {
                           return (
-                            <div className="form-check form-check-inline" >
+                            <div className='form-check form-check-inline' key={key}>
                               <input
-                                type="radio"
+                                type='radio'
                                 id={i.name}
-                                name="radio-group"
+                                name='radio-group'
                                 key={i}
+                                
                               />
                               <label htmlFor={i.name}>{i.name}</label>
                             </div>
@@ -421,31 +419,30 @@ function Marketplace() {
                   </div>
                 </form>
               </div>
-              <div className="filtercol">
+              <div className='filtercol'>
                 <button
-                  type="button"
-                  className="drop_down_tlt mb-4"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#demo4"
-                >
+                  type='button'
+                  className='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo4'>
                   Categories <UpArrow />
                 </button>
-                <div id="demo4" className="collapse show">
+                <div id='demo4' className='collapse show'>
                   <ul>
-                    <li className="sub-items" >
-                      <form action="#" className="checked_form">
-                        <div className="form-check form-check-inline">
-                          <input type="radio" id="all" name="radio-group" />
-                          <label htmlFor="all">All</label>
+                    <li className='sub-items'>
+                      <form action='#' className='checked_form'>
+                        <div className='form-check form-check-inline'>
+                          <input type='radio' id='all' name='radio-group' />
+                          <label htmlFor='all'>All</label>
                         </div>
                         {category.length > 0
-                          ? category?.map((c) => {
+                          ? category?.map((c, key) => {
                               return (
-                                <div className="form-check form-check-inline" >
+                                <div className='form-check form-check-inline' key={key}>
                                   <input
-                                    type="radio"
+                                    type='radio'
                                     id={c.name}
-                                    name="radio-group"
+                                    name='radio-group'
                                     key={c.name}
                                   />
                                   <label htmlFor={c.name}>{c.name}</label>
@@ -458,16 +455,15 @@ function Marketplace() {
                   </ul>
                 </div>
               </div>
-              <div className="filtercol">
+              <div className='filtercol'>
                 <button
-                  type="button"
-                  className="drop_down_tlt mb-4"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#demo5"
-                >
+                  type='button'
+                  className='drop_down_tlt mb-4'
+                  data-bs-toggle='collapse'
+                  data-bs-target='#demo5'>
                   Brands <UpArrow />
                 </button>
-                <div id="demo5" className="collapse show">
+                <div id='demo5' className='collapse show'>
                   <ul>
                     {/* <li>
                       <input
@@ -477,15 +473,15 @@ function Marketplace() {
                       />
                     </li> */}
                     <li>
-                      <form action="#" className="checked_form">
+                      <form action='#' className='checked_form'>
                         {brands.length > 0
-                          ? brands?.map((b) => {
+                          ? brands?.map((b, key) => {
                               return (
-                                <div className="form-check form-check-inline">
+                                <div className='form-check form-check-inline' key={key}>
                                   <input
-                                    type="radio"
+                                    type='radio'
                                     id={b.name}
-                                    name="radio-group"
+                                    name='radio-group'
                                     key={b}
                                   />
                                   <label htmlFor={b.name}>{b.name}</label>
@@ -500,28 +496,26 @@ function Marketplace() {
               </div>
             </div>
           </div>
-          <div className="row">
+          <div className='row'>
             {loader ? (
               <SkeletonCard cards={cardCount} grid={grid} />
             ) : allNFTs?.length > 0 ? (
-              allNFTs.map((oIndex) => {
-                
+              allNFTs.map((oIndex, key) => {
                 return oIndex.map((card, key) => {
                   return (
                     <div className={grid} key={key}>
-                      <div className="items_slide h-100" key={key}>
-                        <div className="items_profileimg">
+                      <div className='items_slide h-100' key={key}>
+                        <div className='items_profileimg'>
                           <a
                             href={
                               card?.brand?._id
                                 ? `/collectionwithcollection/${card?.brand?._id}`
                                 : ``
-                            }
-                          >
-                            <div className="profile_left nft-logo-img">
+                            }>
+                            <div className='profile_left nft-logo-img'>
                               <img
-                                alt=""
-                                className="profile_img creatorImg"
+                                alt=''
+                                className='profile_img creatorImg'
                                 src={
                                   card?.brand?.logoImage
                                     ? card?.brand?.logoImage
@@ -536,12 +530,12 @@ function Marketplace() {
                             </div>
                           </a>
                         </div>
-                        <a href={`/NFTdetails/${card.id}`} className="nft-cont">
+                        <a href={`/NFTdetails/${card.id}`} className='nft-cont'>
                           {card && card.fileType === "Image" ? (
                             <img
                               src={card?.image}
-                              className="img-fluid items_img w-100 my-3"
-                              alt=""
+                              className='img-fluid items_img w-100 my-3'
+                              alt=''
                               onError={(e) => {
                                 console.log("image error is--->", e);
                                 e.target.src = "../img/collections/list4.png";
@@ -552,21 +546,18 @@ function Marketplace() {
                           )}
                           {card && card.fileType === "Video" ? (
                             <video
-                              className="img-fluid items_img w-100 my-3"
-                              controls
-                            >
-                              <source src={card?.image} type="video/mp4" />
+                              className='img-fluid items_img w-100 my-3'
+                              controls>
+                              <source src={card?.image} type='video/mp4' />
                             </video>
                           ) : (
                             ""
                           )}
 
                           {card && card.fileType === "3D" ? (
-                           
                             <Canvas
-                              className="img-fluid items_img w-100 my-3"
-                              camera={{ position: [10, 100, 100], fov: 1 }}
-                            >
+                              className='img-fluid items_img w-100 my-3'
+                              camera={{ position: [10, 100, 100], fov: 1 }}>
                               <pointLight
                                 position={[5, 10, 10]}
                                 intensity={1.1}
@@ -580,19 +571,26 @@ function Marketplace() {
                             ""
                           )}
                         </a>
-                        <div className="items_text nft-info-div">
-                          <div className="items_info ">
-                            <div className="items_left">
-                              <h3 className="">
+                        <div className='items_text nft-info-div'>
+                          <div className='items_info '>
+                            <div className='items_left'>
+                              <h3 className=''>
                                 {card?.name?.length > 15
                                   ? card?.name?.slice(0, 15) + "..."
                                   : card?.name}
                               </h3>
                               {card.paymentToken ? (
-                                <div className="d-flex">
-                                  <div className="token_img">
-                              <img src={Tokens[card?.paymentToken?.toLowerCase()]?.icon} alt="payment token"/>
-                             </div> 
+                                <div className='d-flex'>
+                                  <div className='token_img'>
+                                    <img
+                                      src={
+                                        Tokens[
+                                          card?.paymentToken?.toLowerCase()
+                                        ]?.icon
+                                      }
+                                      alt='payment token'
+                                    />
+                                  </div>
                                   <p>
                                     {" "}
                                     {card.price}{" "}
@@ -626,8 +624,7 @@ function Marketplace() {
                           </div>
                           <Link
                             to={`/NFTdetails/${card.id}`}
-                            className="border_btn width-100 title_color"
-                          >
+                            className='border_btn width-100 title_color'>
                             {card.salesType === 0
                               ? "Buy Now"
                               : card.salesType === 1 || card.salesType === 2
@@ -641,20 +638,19 @@ function Marketplace() {
                 });
               })
             ) : (
-              <h2 className="text-white text-center">No NFT Found</h2>
+              <h2 className='text-white text-center'>No NFT Found</h2>
             )}
           </div>
           {allNFTs?.length > 0 ? (
-            <div className="row">
-              <div className="col-md-12 text-center mt-5">
+            <div className='row'>
+              <div className='col-md-12 text-center mt-5'>
                 <button
-                  type="button"
+                  type='button'
                   className={`btn view_all_bdr ${loadMoreDisabled}`}
                   onClick={() => {
                     setCurrPage(currPage + 1);
                     setLoadMore(!loadMore);
-                  }}
-                >
+                  }}>
                   Load More
                 </button>
               </div>
