@@ -826,7 +826,7 @@ export const getOnSaleItems = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    return datas.data.results[0];
+    return datas.data.results;
   } catch (err) {
     return err;
   }
