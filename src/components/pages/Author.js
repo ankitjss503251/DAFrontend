@@ -21,6 +21,9 @@ import { getCategory } from "../../helpers/getterFunctions";
 import BGImg from "../../assets/images/background.jpg";
 import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 import { useCookies } from "react-cookie";
+import NFThistory from "../components/NFThistory";
+import NFToffer from "../components/NFToffer";
+import GeneralOffer from '../components/GeneralOffer'
 
 function Author() {
   const { id } = useParams();
@@ -139,6 +142,9 @@ function Author() {
   };
 
   const [grid, setgrid] = useState("col-md-3 mb-4");
+
+
+  
 
   return (
     <div style={bgImgStyle}>
@@ -306,19 +312,28 @@ function Author() {
                 aria-expanded='false'>
                 Offers
               </button>
-              <ul className='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+              <ul className='dropdown-menu Autherpagetab' aria-labelledby='dropdownMenuLink'>
                 <li>
-                  <NavLink
-                    activeclassname='active-link'
-                    className='dropdown-item'
-                    to={"/"}>
-                    <DownloadSVG /> Offer Received
-                  </NavLink>
+                <button
+                  data-bs-toggle='pill'
+                  data-bs-target='#pills-NFToffer'
+                  type='button'
+                  role='tab'
+                  aria-controls='pills-NFToffer'
+                  aria-selected='true'>
+                  <DownloadSVG /> Offer Received
+                </button>
                 </li>
                 <li>
-                  <NavLink className='dropdown-item' to={"/"}>
+                  <button
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-NFTmade'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-NFTmade'
+                    aria-selected='true'>
                     <OffermadeSVG /> Offer Made
-                  </NavLink>
+                  </button>
                 </li>
               </ul>
             </li>
@@ -640,24 +655,42 @@ function Author() {
               role='tabpanel'
               aria-labelledby='pills-Activity-tab'>
               <div className='row'>
-                {AuthorCard.map((card, key) => (
-                  <div className={grid} key={key}>
-                    <AuthorListing
-                      image={card.img}
-                      submenu={card.Subheading}
-                      heading={card.Heading}
-                      price={card.price}
-                      date={card.Date}
-                      button={card.Slug}
-                      link={card.Like}
-                    />
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">History</h3>
+                  <div className="table-responsive">
+                    <NFThistory />
                   </div>
-                ))}
+                </div>
+              </div>
+            </div>
+            <div
+              className='tab-pane fade'
+              id='pills-NFToffer'
+              role='tabpanel'
+              aria-labelledby='pills-NFToffer-tab'>
+              <div className='row'>
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">Offers Received</h3>
+                  <GeneralOffer />
+                </div>
+              </div>
+            </div>
+            <div
+              className='tab-pane fade'
+              id='pills-NFTmade'
+              role='tabpanel'
+              aria-labelledby='pills-NFTmade-tab'>
+              <div className='row'>
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">Offers Made</h3>
+                  <GeneralOffer />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+      
       <Footer />
     </div>
   );

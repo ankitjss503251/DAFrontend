@@ -230,7 +230,7 @@ function Profile() {
 
   useEffect(() => {}, []);
   return (
-    <div className="profile_area pdd_8">
+    <div className="">
       <h1 className="profile_h1 mb-3">Profile Settings</h1>
       <div className="row">
         <div className="col-lg-6 col-md-8 order-md-0 order-sm-2">
