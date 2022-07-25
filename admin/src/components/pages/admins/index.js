@@ -145,9 +145,12 @@ function Admins() {
                       <td>
                         {" "}
                         <img
-                          src={item.profileIcon}
+                          src={item?.profileIcon ? item?.profileIcon : ""}
                           className="profile_i m-2"
                           alt=""
+                          onError={(e) => 
+                           ( e.target.src = "./../images/login.jpg")
+                          }
                         />
                       </td>
                       <td>{item.fullname}</td>

@@ -27,13 +27,13 @@ function LandingPage(props) {
 
   return (
     <div className='wrapper landing'>
-      <div id='content'>
-        <div className='boxrow row'>
-          <div className='col-md-12 text-center'>
-            <button className='round-btn montserrat text-light text-decoration-none' onClick={() => connectWalletEvent()}>
-              Connect Wallet
-            </button>
-          </div>
+      <div className="connect_wallet">
+        <div className="connect_wallet_col">
+          <img src="../images/logo.svg" className="img-fluid d-block" alt="" />
+          <h4 class="text-light text-center font-24 text-uppercase font-700 my-4">Connect Your Wallet</h4>
+          <button className='round-btn montserrat text-light text-decoration-none connect_wallet_btn mt-3' onClick={() => connectWalletEvent()}>
+            Connect Wallet
+          </button>
         </div>
       </div>
     </div>

@@ -87,7 +87,7 @@ function NFTBids(props) {
             <div className="bid_user_address">
               <div>
                 <span className="adr">
-               
+
                   {currentUser?.slice(0, 8) +
                     "..." +
                     currentUser?.slice(34, 42)}
@@ -184,7 +184,7 @@ function NFTBids(props) {
               console.log(
                 "Number(price)",
                 Number(price) <
-                  Number(convertToEth(currentBid.price?.$numberDecimal)),
+                Number(convertToEth(currentBid.price?.$numberDecimal)),
                 Number(price),
                 Number(convertToEth(currentBid.price?.$numberDecimal))
               );
@@ -268,19 +268,19 @@ function NFTBids(props) {
                 <tbody>
                   {bids && bids.length > 0
                     ? bids.map((b, i) => {
-                        const bidOwner = b?.owner?.walletAddress?.toLowerCase();
-                        const bidder =
-                          b?.bidderID?.walletAddress?.toLowerCase();
-                        return (
-                          <tr>
-                            <td className="d-flex justify-content-start align-items-center mb-0">
-                              <span className="blue_dot circle_dot"></span>
-                              <span>
+                      const bidOwner = b?.owner?.walletAddress?.toLowerCase();
+                      const bidder =
+                        b?.bidderID?.walletAddress?.toLowerCase();
+                      return (
+                        <tr>
+                          <td className="d-flex justify-content-start align-items-center mb-0">
+                            <span className="blue_dot circle_dot"></span>
+                            <span>
                               {console.log('currentuser length', currentUser, currentUser.length)}
                                 {b?.bidderID?.walletAddress
-                                  ? b?.bidderID?.walletAddress?.slice(0, 3) +
+                                  ? b?.bidderID?.walletAddress?.slice(0, 4) +
                                     "..." +
-                                    b?.bidderID?.walletAddress?.slice(39, 42)
+                                    b?.bidderID?.walletAddress?.slice(38, 42)
                                   : ""}
                               </span>
                             </td>
@@ -316,123 +316,111 @@ function NFTBids(props) {
                                 minutes: 30,
                               })
                               .toISOString()}></Clock> */}
-                              --:--:--
-                            </td>
-                            <td className="blue_text">
-                              {new Date(b.bidDeadline * 1000) < new Date()
-                                ? "Ended"
-                                : "Active"}
-                            </td>
-                            <td className="text-center">
-                              {bidOwner === currentUser?.toLowerCase() ? (
-                                <div className="d-flex flex-column justify-content-center align-items-center">
-                                  <button
-                                    to={"/"}
-                                    className="small_yellow_btn small_btn mb-3"
-                                    onClick={async () => {
-                                      setLoading(true);
-                                      await handleAcceptBids(
-                                        b,
-                                        props.NftDetails.type
-                                      );
-                                      setLoading(false);
-                                      setReloadContent(!reloadContent);
-                                    }}
-                                  >
-                                    Accept
-                                  </button>
-                                  <button
-                                    to={"/"}
-                                    className="small_border_btn small_btn"
-                                    onClick={async () => {
-                                      await handleUpdateBidStatus(
-                                        b._id,
-                                        "Rejected"
-                                      );
-                                      setReloadContent(!reloadContent);
-                                    }}
-                                  >
-                                    Reject
-                                  </button>
-                                </div>
-                              ) : bidOwner !== currentUser?.toLowerCase() &&
-                                bidder === currentUser?.toLowerCase() ? (
-                                <div className="d-flex flex-column justify-content-center align-items-center ">
-                                  <button
-                                    disabled={
-                                      moment(
-                                        new Date(b.bidDeadline * 1000)
-                                      ).subtract({
-                                        hours: 5,
-                                        minutes: 30,
-                                      })._d < new Date()
-                                    }
-                                    className="small_yellow_btn small_btn mb-2"
-                                    onClick={() => {
-                                      setCurrentBid(b);
-
-                                      setPrice(
-                                        Number(
-                                          convertToEth(
-                                            b?.bidPrice?.$numberDecimal
-                                          )
-                                        )
-                                      );
-                                      setIsUpdateBidModal(true);
-                                      console.log(
-                                        "current bid--->",
-                                        b,
-                                        moment(b.bidDeadline * 1000)
-                                          .utc()
-                                          .format()
-                                      );
-                                    }}
-                                  >
-                                    Update Bid
-                                  </button>
-                                  <button
-                                    disabled={
-                                      moment(
-                                        new Date(b.bidDeadline * 1000)
-                                      ).subtract({
-                                        hours: 5,
-                                        minutes: 30,
-                                      })._d < new Date()
-                                    }
-                                    className="small_border_btn small_btn"
-                                    onClick={async () => {
-                                      await handleUpdateBidStatus(
-                                        b._id,
-                                        "Cancelled"
-                                      );
-                                      slowRefresh(1000);
-                                    }}
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              ) : bidder === currentUser?.toLowerCase() ? (
+                            --:--:--
+                          </td>
+                          <td className="blue_text">
+                            {moment.utc(b.bidDeadline * 1000).local().format()
+                              ? "Ended"
+                              : "Active"}
+                          </td>
+                          <td className="text-center">
+                            {bidOwner === currentUser?.toLowerCase() ? (
+                              <div className="d-flex flex-column justify-content-center align-items-center">
+                                <button
+                                  to={"/"}
+                                  className="small_yellow_btn small_btn mb-3"
+                                  onClick={async () => {
+                                    setLoading(true);
+                                    await handleAcceptBids(
+                                      b,
+                                      props.NftDetails.type
+                                    );
+                                    setLoading(false);
+                                    setReloadContent(!reloadContent);
+                                  }}
+                                >
+                                  Accept
+                                </button>
                                 <button
                                   to={"/"}
                                   className="small_border_btn small_btn"
-                                  disabled={
-                                    moment(
-                                      new Date(b.bidDeadline * 1000)
-                                    ).subtract({
-                                      hours: 5,
-                                      minutes: 30,
-                                    })._d < new Date()
-                                  }
+                                  onClick={async () => {
+                                    await handleUpdateBidStatus(
+                                      b._id,
+                                      "Rejected"
+                                    );
+                                    setReloadContent(!reloadContent);
+                                  }}
                                 >
-                                  Place Bid
+                                  Reject
                                 </button>
-                              ) : (
-                                ""
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })
+                              </div>
+                            ) : bidOwner !== currentUser?.toLowerCase() &&
+                              bidder === currentUser?.toLowerCase() ? (
+                              <div className="d-flex flex-column justify-content-center align-items-center ">
+                                <button
+                                  disabled={
+                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
+                                  }
+                                  className="small_yellow_btn small_btn mb-2"
+                                  onClick={() => {
+                                    setCurrentBid(b);
+
+                                    setPrice(
+                                      Number(
+                                        convertToEth(
+                                          b?.bidPrice?.$numberDecimal
+                                        )
+                                      )
+                                    );
+                                    setIsUpdateBidModal(true);
+                                    console.log(
+                                      "current bid--->",
+                                      b,
+                                      moment.utc(b.bidDeadline * 1000)
+                                        .local()
+                                        .format()
+                                    );
+                                  }}
+                                >
+                                  Update Bid
+                                </button>
+                                {console.log("momentt", moment.utc(
+                                  new Date(b.bidDeadline * 1000)
+                                ).local().format())}
+                                <button
+                                  disabled={
+                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
+                                  }
+                                  className="small_border_btn small_btn"
+                                  onClick={async () => {
+                                    await handleUpdateBidStatus(
+                                      b._id,
+                                      "Cancelled"
+                                    );
+                                    slowRefresh(1000);
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            ) : bidder === currentUser?.toLowerCase() ? (
+                              <button
+                                to={"/"}
+                                className="small_border_btn small_btn"
+                                disabled={
+                                  moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
+                                }
+                              >
+                                Place Bid
+                              </button>
+                            ) : (
+                              ""
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
                     : ""}
                 </tbody>
               </table>

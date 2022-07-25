@@ -17,6 +17,7 @@ import {
   GetIndividualAuthorDetail,
   getCategories,
   fetchOfferNft,
+  fetchOfferMade,
 } from "../apiServices";
 import { ethers } from "ethers";
 import contracts from "../config/contracts";
@@ -477,6 +478,38 @@ export const getPrice = async (data) => {
     console.log("Error in getting nft order details", e);
   }
 };
+
+
+const getOfferMade = async(req) => {
+   let formattedData = [];
+   let data = [];
+   try {
+    let reqBody = {
+      page: 1,
+      limit: 13,
+      userID: "62d923016af5725c1419be4d"
+    };
+
+    data = await fetchOfferMade(reqBody);
+  } catch (e) {
+    console.log("Error in getNFts API--->", e);
+  }
+
+  let arr = [];
+  if (data && data.count > 0) arr = data.results;
+  else return [];
+  arr
+    ? arr.map((order, key) => {
+      formattedData[key] = {
+        buyerAddress: order?.BidderData[0]?.walletAddress,
+        sellerAddress: order?.ownerData[0]?.walletAddress
+      }
+      })
+    : (formattedData[0] = {});
+  return formattedData;
+}
+
+getOfferMade();
 
 // export const getUsersNFTs = async (
 //   paramType,

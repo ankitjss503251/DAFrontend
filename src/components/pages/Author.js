@@ -21,6 +21,9 @@ import { getCategory } from "../../helpers/getterFunctions";
 import BGImg from "../../assets/images/background.jpg";
 import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 import { useCookies } from "react-cookie";
+import NFThistory from "../components/NFThistory";
+import NFToffer from "../components/NFToffer";
+import GeneralOffer from '../components/GeneralOffer'
 
 function Author() {
   const { id } = useParams();
@@ -33,6 +36,9 @@ function Author() {
   const [cardCount, setCardCount] = useState(1);
   const [searchFor, setSearchFor] = useState("");
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
+  const [priceSort, setPriceSort] = useState('ASC');
+  const [ERCType, setERCType] = useState();
+  const [currPage, setCurrPage] = useState(1)
 
   const bgImage = {
     backgroundImage: `url(${coverImg})`,
@@ -86,11 +92,13 @@ function Author() {
       setProfile(_profile);
       try {
         let reqBody = {
-          page: 1,
+          page: currPage,
           limit: 12,
           userWalletAddress: _profile?.walletAddress?.toLowerCase(),
           searchType: "owned",
           searchText: searchFor,
+          priceSort: priceSort,
+          ERCType: ERCType
         };
         let _owned = await GetOwnedNftList(reqBody);
         console.log("_owned", _owned);
@@ -110,13 +118,14 @@ function Author() {
           userWalletAddress: _profile?.walletAddress?.toLowerCase(),
         };
         const onsale = await getOnSaleItems(reqBody);
+        console.log("onsale items", onsale)
         setOnSaleNFTs(onsale);
       } catch (e) {
         console.log("Error in fetching onSale Items", e);
       }
     };
     fetch();
-  }, [id, searchFor]);
+  }, [id, searchFor, ERCType, priceSort]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -134,6 +143,9 @@ function Author() {
   };
 
   const [grid, setgrid] = useState("col-md-3 mb-4");
+
+
+  
 
   return (
     <div style={bgImgStyle}>
@@ -162,7 +174,7 @@ function Author() {
                 </div> */}
               </div>
             </div>
-            <div className='col-md-4 d-flex justify-content-end'>
+            {/* <div className='col-md-4 d-flex justify-content-end'>
               <div className='follow_btns'>
                 <button type='button' className='white_btn mr10'>
                   5.2k Followers
@@ -171,7 +183,7 @@ function Author() {
                   5.2k Following
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
           {/* <div className="collection_pick">
             <img alt='' src={'../img/author/user-img.png'} className="img-fluid collection_profile" />
@@ -301,19 +313,28 @@ function Author() {
                 aria-expanded='false'>
                 Offers
               </button>
-              <ul className='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+              <ul className='dropdown-menu Autherpagetab' aria-labelledby='dropdownMenuLink'>
                 <li>
-                  <NavLink
-                    activeclassname='active-link'
-                    className='dropdown-item'
-                    to={"/"}>
-                    <DownloadSVG /> Offer Received
-                  </NavLink>
+                <button
+                  data-bs-toggle='pill'
+                  data-bs-target='#pills-NFToffer'
+                  type='button'
+                  role='tab'
+                  aria-controls='pills-NFToffer'
+                  aria-selected='true'>
+                  <DownloadSVG /> Offer Received
+                </button>
                 </li>
                 <li>
-                  <NavLink className='dropdown-item' to={"/"}>
+                  <button
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-NFTmade'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-NFTmade'
+                    aria-selected='true'>
                     <OffermadeSVG /> Offer Made
-                  </NavLink>
+                  </button>
                 </li>
               </ul>
             </li>
@@ -342,7 +363,13 @@ function Author() {
                 <select
                   className='market_select_form form-select'
                   aria-label='Default select example'
-                  style={bgImgarrow}>
+                  style={bgImgarrow}
+                  onChange={(e) => {
+                    setOwnedNFTs([]);
+                    setCurrPage(1);
+                    setCardCount(0);
+                    setERCType(parseInt(e.target.value));
+                  }}>
                   <option value='0' defaultValue>
                     All Items
                   </option>
@@ -352,11 +379,18 @@ function Author() {
                 <select
                   className='market_select_form form-select'
                   aria-label='Default select example'
-                  style={bgImgarrow}>
-                  <option value='1' defaultValue>
+                  style={bgImgarrow}
+                  onChange={(e) => {
+                    setOwnedNFTs([]);
+                    setCurrPage(1);
+                    setCardCount(0);
+                    setPriceSort(e.target.value);
+                  }}
+                  >
+                  <option value='ASC' defaultValue>
                     Price: Low to High
                   </option>
-                  <option value='2'>Price: High to Low</option>
+                  <option value='DESC'>Price: High to Low</option>
                 </select>
                 {/* <div className="market_div"> */}
                 <div id='gridtwo' className='market_grid' onClick={gridtwo}>
@@ -555,7 +589,7 @@ function Author() {
                 {loader ? (
                   <CollectionsNFT cards={cardCount} grid={grid} />
                 ) : (
-                  ownedNFTs?.map((card, key) => (
+                 ownedNFTs?.length > 0 ? ownedNFTs?.map((card, key) => (
                     <div className={grid} key={key}>
                       <AuthorListing
                         image={card.image}
@@ -563,7 +597,11 @@ function Author() {
                         link={`/nftDetails/${card._id}`}
                       />
                     </div>
-                  ))
+                  )) : (
+                    <div className="col-md-12">
+            <h4 className="no_data_text text-muted">No NFTs Available</h4>
+          </div>
+                  )
                 )}
               </div>
             </div>
@@ -618,24 +656,42 @@ function Author() {
               role='tabpanel'
               aria-labelledby='pills-Activity-tab'>
               <div className='row'>
-                {AuthorCard.map((card, key) => (
-                  <div className={grid} key={key}>
-                    <AuthorListing
-                      image={card.img}
-                      submenu={card.Subheading}
-                      heading={card.Heading}
-                      price={card.price}
-                      date={card.Date}
-                      button={card.Slug}
-                      link={card.Like}
-                    />
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">History</h3>
+                  <div className="table-responsive">
+                    <NFThistory />
                   </div>
-                ))}
+                </div>
+              </div>
+            </div>
+            <div
+              className='tab-pane fade'
+              id='pills-NFToffer'
+              role='tabpanel'
+              aria-labelledby='pills-NFToffer-tab'>
+              <div className='row'>
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">Offers Received</h3>
+                  <GeneralOffer />
+                </div>
+              </div>
+            </div>
+            <div
+              className='tab-pane fade'
+              id='pills-NFTmade'
+              role='tabpanel'
+              aria-labelledby='pills-NFTmade-tab'>
+              <div className='row'>
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">Offers Made</h3>
+                  <GeneralOffer />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+      
       <Footer />
     </div>
   );

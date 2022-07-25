@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense,useRef } from "react";
 import Footer from "../components/footer";
 import CollectionList from "../components/CollectionList";
 import Relatedcollection from "../components/Relatedcollection";
@@ -24,6 +24,29 @@ import { convertToEth } from "../../helpers/numberFormatter";
 import NotificationManager from "react-notifications/lib/NotificationManager";
 import { getAllBrands } from "../../apiServices";
 import AdvancedFilter from "../components/AdvancedFilter";
+import {
+  Canvas,useFrame,
+  extend,
+  useThree
+} from "@react-three/fiber";
+import { useGLTF, OrbitControls } from "@react-three/drei";
+
+//extend({OrbitControls});
+
+const CameraControls=() => {
+  // Get a reference to the Three.js Camera, and the canvas html element.
+  // We need these to setup the OrbitControls component.
+  // https://threejs.org/docs/#examples/en/controls/OrbitControls
+  const {
+    camera,
+    gl: {domElement},
+  }=useThree();
+  // Ref to the controls, so that we can update them on every frame using useFrame
+  const controls=useRef();
+  useFrame((state) => controls.current.update());
+  return <orbitControls ref={controls} args={[camera,domElement]} />;
+};
+
 
 function CollectionWithCollection() {
   const bgImgStyle = {
@@ -280,7 +303,7 @@ function CollectionWithCollection() {
           <ul className='collection_status mt-5 mb-5'>
             <li>
               {console.log("nfts[0].count", nfts)}
-              <h4>{}</h4>
+              <h4>{cardCount}</h4>
               <p>items</p>
             </li>
             <li>
@@ -640,7 +663,7 @@ function CollectionWithCollection() {
                     </h4>
                   </div>
                 )}
-                {nfts.length > 8 && (
+                {nfts[0]?.length > 7 && (
                   <div className='col-md-12 text-center mt-5'>
                     <button
                       type='button'
