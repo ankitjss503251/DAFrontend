@@ -193,15 +193,10 @@ const Home = () => {
             </div>
             {upcomingMints && upcomingMints?.length > 0
               ? upcomingMints.slice(0, 3).map((card, key) => {
-                const st = card.saleStartTime;
+                const st = moment.utc(card.saleStartTime).local().format();
                 console.log("start date", st, st !== null);
-                const et = card.saleEndTime;
-                const ct = moment()
-                  .add({
-                    hours: 5,
-                    minutes: 30,
-                  })
-                  .toISOString();
+                const et = moment.utc(card.saleEndTime).local().format();
+                const ct = moment(new Date()).format();
                 return (
                   <div
                     className="col-lg-4 col-md-6 col-sm-12 mb-lg-0 mb-xl-0 mb-4"
@@ -300,7 +295,7 @@ const Home = () => {
                             {`${card.totalSupply} items`}
                           </li>
                         </ul>
-                        {1 ? (
+                        {ct < st ? (
                           <span className="mint_time mt-4">
                             <svg
                               width="24"
@@ -344,6 +339,7 @@ const Home = () => {
                               }
                             ></Clock>
                           </span>
+
                         ) : ct >= st && ct < et ? (
                           <span className="mint_time mt-4">
                             <svg
