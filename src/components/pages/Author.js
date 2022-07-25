@@ -23,7 +23,7 @@ import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 import { useCookies } from "react-cookie";
 import NFThistory from "../components/NFThistory";
 import NFToffer from "../components/NFToffer";
-
+import GeneralOffer from '../components/GeneralOffer'
 
 function Author() {
   const { id } = useParams();
@@ -142,6 +142,9 @@ function Author() {
   };
 
   const [grid, setgrid] = useState("col-md-3 mb-4");
+
+
+  
 
   return (
     <div style={bgImgStyle}>
@@ -311,7 +314,6 @@ function Author() {
               </button>
               <ul className='dropdown-menu Autherpagetab' aria-labelledby='dropdownMenuLink'>
                 <li>
-                {/* pills-NFToffer */}
                 <button
                   data-bs-toggle='pill'
                   data-bs-target='#pills-NFToffer'
@@ -321,12 +323,6 @@ function Author() {
                   aria-selected='true'>
                   <DownloadSVG /> Offer Received
                 </button>
-                  {/* <NavLink
-                    activeclassname='active-link'
-                    className='dropdown-item'
-                    to={"/"}>
-                    <DownloadSVG /> Offer Received
-                  </NavLink> */}
                 </li>
                 <li>
                   <button
@@ -338,9 +334,6 @@ function Author() {
                     aria-selected='true'>
                     <OffermadeSVG /> Offer Made
                   </button>
-                  {/* <NavLink className='dropdown-item' to={"/"}>
-                    <OffermadeSVG /> Offer Made
-                  </NavLink> */}
                 </li>
               </ul>
             </li>
@@ -678,11 +671,7 @@ function Author() {
               <div className='row'>
                 <div className="col-md-12 mb-5">
                   <h3 className="title_36 mb-4">Offers Received</h3>
-                  <NFToffer
-                    // id={NFTDetails.id}
-                    // NftDetails={NFTDetails}
-                    // collectionAddress={collection?.contractAddress}
-                  />
+                  <GeneralOffer />
                 </div>
               </div>
             </div>
@@ -694,11 +683,7 @@ function Author() {
               <div className='row'>
                 <div className="col-md-12 mb-5">
                   <h3 className="title_36 mb-4">Offers Made</h3>
-                  <NFToffer
-                    // id={NFTDetails.id}
-                    // NftDetails={NFTDetails}
-                    // collectionAddress={collection?.contractAddress}
-                  />
+                  <GeneralOffer />
                 </div>
               </div>
             </div>

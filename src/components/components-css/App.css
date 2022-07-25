@@ -5396,3 +5396,37 @@ section.collection_info .justify-content-end {
 .author_cart li .Autherpagetab button:hover svg, 
 .author_cart li .Autherpagetab button.active svg {fill: #fff;}
 .displaynone {display: none;}
+.usersidebar .nav-link {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: #ffffff;
+  list-style: none;
+  background: transparent !important;
+  width: fit-content;
+  display: inline-block;
+  padding: 0px !important;
+  border-radius: 0px !important;
+  margin-bottom: 40px;
+}
+.usersidebar .nav-link svg {
+  margin-right: 10px;
+}
+.usersidebar .nav-link.active {
+  color: #ef981d;
+}
+.usersidebar .nav-link.active svg,
+.usersidebar .nav-link.active path,
+.usersidebar .nav-link.active g {
+  fill: #ef981d !important;
+}
+/* .usersidebar li .active svg, 
+.usersidebar li .active path,
+.usersidebar li .active g, 
+.usersidebar li:hover svg, 
+.usersidebar li:hover path, 
+.usersidebar li:hover g {
+
+} */
