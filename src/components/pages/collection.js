@@ -263,7 +263,7 @@ function Collection() {
               <h4>
                 {collectionDetails?.totalSupply
                   ? collectionDetails.totalSupply
-                  : "-"}
+                  : "0"}
               </h4>
               <p>items</p>
             </li>

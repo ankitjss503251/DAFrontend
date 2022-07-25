@@ -36,7 +36,8 @@ function MyNFTs() {
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
   const [priceSort, setPriceSort] = useState('ASC');
   const [ERCType, setERCType] = useState();
-  const [currPage, setCurrPage] = useState(1)
+  const [currPage, setCurrPage] = useState(1);
+  const [onSaleCount, setOnSaleCount] = useState(0);
 
   const bgImage = {
     backgroundImage: `url(${coverImg})`,
@@ -120,6 +121,7 @@ function MyNFTs() {
           userWalletAddress: _profile?.walletAddress?.toLowerCase(),
         };
         const onsale = await getOnSaleItems(reqBody);
+        setOnSaleCount(onsale?.length);
         setOnSaleNFTs(onsale);
       } catch (e) {
         console.log("Error in fetching onSale Items", e);
@@ -265,7 +267,7 @@ function MyNFTs() {
                 role='tab'
                 aria-controls='pills-Sale'
                 aria-selected='true'>
-                On Sale
+                On Sale ({onSaleCount})
               </button>
             </li>
             <li>

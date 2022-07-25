@@ -32,16 +32,11 @@ import {Tokens} from "../../helpers/tokensToSymbol";
 import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
-import {slowRefresh} from "../../helpers/NotifyStatus";
-import {fetchBidNft,viewNFTDetails} from "../../apiServices";
-import {fetchOfferNft} from "../../apiServices";
-
-import {useGLTF} from "@react-three/drei";
-import {
-  Canvas,useFrame,
-  extend,
-  useThree,
-} from "@react-three/fiber";
+import { slowRefresh } from "../../helpers/NotifyStatus";
+import { fetchBidNft, InsertHistory, viewNFTDetails } from "../../apiServices";
+import { fetchOfferNft } from "../../apiServices";
+import { useGLTF } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
 
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
@@ -397,7 +392,8 @@ function NFTDetails() {
         return;
       }
     }
-    let orderData={
+    try{
+    let orderData = {
       nftId: NFTDetails.id,
       collection: NFTDetails.collectionAddress,
       price: itemprice,
@@ -419,10 +415,23 @@ function NFTDetails() {
     if(res===false) {
       setLoading(false);
       return;
-    } else {
-      // NotificationManager.success("Imported successfully");
-      setLoading(false);
-      return;
+    }
+      let historyReqData = {
+        nftID: NFTDetails.id,
+        sellerID: localStorage.getItem('userId'),
+        action: "PutOnSale",
+        type: "List",
+        price: ethers.utils.parseEther(itemprice.toString()).toString(),
+        paymentToken: marketplaceSaleType === 0
+        ? contracts[selectedTokenFS]
+        : contracts[selectedToken],
+        quantity: item_qt,
+        createdBy: localStorage.getItem('userId')
+      }
+      await InsertHistory(historyReqData);
+    }
+    catch(e){
+      console.log("Error in putOnMarketplace", e);
     }
   };
 
@@ -686,7 +695,19 @@ function NFTDetails() {
                   setLoading(false);
                   return;
                 }
-                NotificationManager.success("Bid Placed Successfully","",800);
+                let historyReqData = {
+                  nftID: orders[0].nftID,
+                  buyerID: localStorage.getItem('userId'),
+                  sellerID:orders[0].sellerID, 
+                  action: "Bid",
+                  type: haveBid && haveBid !== "none" ? "Updated" : "Created",
+                  price: ethers.utils.parseEther(price.toString()).toString(),
+                  paymentToken: contracts[selectedToken],
+                  quantity: orders[0].total_quantity,
+                  createdBy: localStorage.getItem('userId')
+                }
+                await InsertHistory(historyReqData);
+                NotificationManager.success("Bid Placed Successfully", "", 800);
                 setLoading(false);
                 slowRefresh(1000);
               } catch(e) {
@@ -788,8 +809,21 @@ function NFTDetails() {
                 setLoading(false);
                 return;
               }
+
+              let historyReqData = {
+                nftID: NFTDetails.id,
+                buyerID: localStorage.getItem('userId'),
+                sellerID:  orders[0].sellerID,
+                action: "Sold",
+                price: orders[0]?.price?.$numberDecimal,
+                paymentToken: contracts[selectedTokenFS],
+                quantity: orders[0].total_quantity,
+                createdBy: localStorage.getItem('userId')
+              }
+              await InsertHistory(historyReqData);
+
               setLoading(false);
-              // slowRefresh(1000);
+              slowRefresh(1000);
             }}
           >
             {"Buy Now"}
@@ -1026,10 +1060,23 @@ function NFTDetails() {
                     data-bs-toggle="modal"
                     data-bs-target="#detailPop"
                     onClick={async () => {
-                      console.log("orders[0]",orders[0],orders);
-                      setLoading(true);
-                      await handleRemoveFromSale(orders[0]._id,currentUser);
-                      setLoading(false);
+                      console.log("orders[0]", orders[0], orders);
+                      try{
+                        setLoading(true);
+                        await handleRemoveFromSale(orders[0]._id, currentUser);
+                        let historyReqData = {
+                          nftID: NFTDetails.id,
+                          sellerID: localStorage.getItem('userId'),
+                          action: "RemoveFromSale",
+                          price: orders[0].price?.$numberDecimal,
+                          createdBy: localStorage.getItem('userId')
+                        }
+                        await InsertHistory(historyReqData);
+                        setLoading(false);
+                      }
+                      catch(e){
+                        console.log("Error in remove from sale", e);
+                      }
                     }}
                   >
                     Remove From Sale
@@ -1175,7 +1222,7 @@ function NFTDetails() {
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">History</h3>
               <div className="table-responsive">
-                <NFThistory />
+                <NFThistory nftID={NFTDetails.id}/>
               </div>
             </div>
             {allNFTs.length>1? (

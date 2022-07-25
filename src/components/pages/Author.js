@@ -118,6 +118,7 @@ function Author() {
           userWalletAddress: _profile?.walletAddress?.toLowerCase(),
         };
         const onsale = await getOnSaleItems(reqBody);
+        console.log("onsale items", onsale)
         setOnSaleNFTs(onsale);
       } catch (e) {
         console.log("Error in fetching onSale Items", e);
