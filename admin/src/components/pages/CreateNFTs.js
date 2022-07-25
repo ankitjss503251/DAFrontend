@@ -129,7 +129,7 @@ function CreateNFTs() {
 
     };
     fetch();
-  }, []);
+  }, [currentUser, isSuperAdmin]);
 
   const handleCreateNFT = async () => {
     if (handleValidationCheck()) {

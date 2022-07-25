@@ -177,7 +177,7 @@ export const updateProfile = async (data) => {
   const requestOptions = {
     method: "PUT",
     headers: {
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: formData,
   };
@@ -252,7 +252,7 @@ export const createCollection = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: data,
   };
@@ -328,14 +328,14 @@ export const GetIndividualAuthorDetail = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: JSON.stringify(data),
   };
   try {
     let response = await fetch(
       process.env.REACT_APP_API_BASE_URL +
-        `/user/getIndividualUser/${data.userID}`,
+      `/user/getIndividualUser/${data.userID}`,
       requestOptions
     );
     const isJson = response.headers
@@ -352,7 +352,7 @@ export const createOrder = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
@@ -379,7 +379,7 @@ export const createOrderBuffer = async (data) => {
   const requestOptions = {
     method: "POST",
     headers: {
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
@@ -454,7 +454,7 @@ export const UpdateOrder = async (data) => {
     method: "PUT",
 
     headers: {
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
@@ -480,7 +480,7 @@ export const DeleteOrder = async (data) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: JSON.stringify(data),
   };
@@ -597,7 +597,7 @@ export const GetCombinedNfts = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: JSON.stringify(data),
   };
@@ -644,7 +644,7 @@ export const createBidNft = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: JSON.stringify(data),
   };
@@ -669,7 +669,7 @@ export const createOfferNFT = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: JSON.stringify(data),
   };
@@ -716,7 +716,7 @@ export const fetchOfferNft = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: JSON.stringify(data),
   };
@@ -741,7 +741,7 @@ export const acceptBid = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: JSON.stringify(data),
   };
@@ -765,7 +765,7 @@ export const acceptOffer = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: JSON.stringify(data),
   };
@@ -789,7 +789,7 @@ export const updateBidNft = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("Authorization"),
+      Authorization: getHeaders(),
     },
     body: JSON.stringify(data),
   };

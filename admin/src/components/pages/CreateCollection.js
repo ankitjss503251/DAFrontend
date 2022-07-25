@@ -99,6 +99,7 @@ function CreateCollection(props) {
 
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
+    console.log("evv.target", ev.target["value"]);
     const dt = ev.target["value"];
     const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
     if (dt < ct) {
@@ -270,8 +271,8 @@ function CreateCollection(props) {
         fd.append("categoryID", category);
         fd.append("brandID", brand);
         fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
-        fd.append("preSaleStartTime", new Date(preSaleStartTime));
-        fd.append("preSaleEndTime", new Date(datetime2));
+        fd.append("preSaleStartTime", preSaleStartTime);
+        fd.append("preSaleEndTime", datetime2);
         fd.append("preSaleTokenAddress", contracts.BUSD);
         fd.append("totalSupply", maxSupply);
         fd.append("type", Number(nftType));
@@ -286,7 +287,7 @@ function CreateCollection(props) {
           );
           setLoading(false);
           setTimeout(() => {
-            window.location.href = "/admin/createcollection";
+            window.location.href = "/createcollection";
           }, 1000);
         } catch (e) {
           console.log("error", e);
@@ -356,8 +357,8 @@ function CreateCollection(props) {
           //fd.append("chainID", chain);
           fd.append("link", importedCollectionLink);
           fd.append("contractAddress", contractAddress);
-          fd.append("preSaleStartTime", new Date(preSaleStartTime));
-          fd.append("preSaleEndTime", new Date(datetime2));
+          fd.append("preSaleStartTime", preSaleStartTime);
+          fd.append("preSaleEndTime", datetime2);
           fd.append("preSaleTokenAddress", contracts.BUSD);
           fd.append("totalSupply", maxSupply);
           fd.append("type", type);
@@ -599,7 +600,7 @@ function CreateCollection(props) {
                   ? myCollections.map((item, index) => {
                     return (
                       <>
-                        <tr key={index}>
+                        <tr>
                           <td>
                             {" "}
                             <div className="first-col">
@@ -925,7 +926,6 @@ function CreateCollection(props) {
                       id="recipient-name"
                       name="title"
                       value={title}
-                      maxLength={25}
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
@@ -965,7 +965,6 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={maxSupply}
-                      maxLength={10}
                       onChange={(e) => {
                         setMaxSupply(e.target.value);
                       }}
@@ -983,7 +982,6 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={price}
-                      maxLength={10}
                       onChange={(e) => numberInputCheck(e)}
                       onKeyPress={(e) => {
                         if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -1035,7 +1033,6 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={symbol}
-                      maxLength={10}
                       onChange={(e) => setSymbol(e.target.value)}
                     />
                   </div>
@@ -1047,7 +1044,6 @@ function CreateCollection(props) {
                       className="form-control"
                       id="message-text"
                       value={description}
-                      maxLength={300}
                       onChange={(e) => setDescription(e.target.value)}
                     ></textarea>
                   </div>
@@ -1060,7 +1056,6 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       name="title"
-                      maxLength={100}
                       value={importedCollectionLink}
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);

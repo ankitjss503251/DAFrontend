@@ -265,6 +265,10 @@ const Navbar = (props) => {
           return;
         }
       }
+      else {
+        NotificationManager.error("Wallet is not added as admin", "", 800);
+        return;
+      }
     } catch (e) {
       console.log(e);
     }
