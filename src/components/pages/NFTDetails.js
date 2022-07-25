@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, Suspense } from "react";
+import React,{useState,useEffect,useRef,Suspense} from "react";
 import Footer from "../components/footer";
 import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
 import NFToffer from "../components/NFToffer";
 import NFTBids from "../components/NFTBids";
-import { ethers } from "ethers";
+import {ethers} from "ethers";
 import NFThistory from "../components/NFThistory";
 import {
   getCollections,
@@ -12,63 +12,68 @@ import {
   getNFTDetails,
 } from "../../helpers/getterFunctions";
 
-import { useParams } from "react-router-dom";
-import { convertToEth } from "../../helpers/numberFormatter";
+import {useParams} from "react-router-dom";
+import {convertToEth} from "../../helpers/numberFormatter";
 import {
   createOffer,
   putOnMarketplace,
   handleBuyNft,
   createBid,
 } from "../../helpers/sendFunctions";
-import { useCookies } from "react-cookie";
-import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
-import { handleRemoveFromSale } from "./../../helpers/sendFunctions";
+import {useCookies} from "react-cookie";
+import {GLTFModel,AmbientLight,DirectionLight} from "react-3d-viewer";
+import {handleRemoveFromSale} from "./../../helpers/sendFunctions";
 import contracts from "../../config/contracts";
-import { GENERAL_DATE } from "../../helpers/constants";
-import { NotificationManager } from "react-notifications";
+import {GENERAL_DATE} from "../../helpers/constants";
+import {NotificationManager} from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
-import { Tokens } from "../../helpers/tokensToSymbol";
+import {Tokens} from "../../helpers/tokensToSymbol";
 import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
-import { slowRefresh } from "../../helpers/NotifyStatus";
-import { fetchBidNft, viewNFTDetails } from "../../apiServices";
-import { fetchOfferNft } from "../../apiServices";
+import {slowRefresh} from "../../helpers/NotifyStatus";
+import {fetchBidNft,viewNFTDetails} from "../../apiServices";
+import {fetchOfferNft} from "../../apiServices";
 
-import { useGLTF } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import {useGLTF} from "@react-three/drei";
+import {
+  Canvas,useFrame,
+  extend,
+  useThree,
+} from "@react-three/fiber";
 
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
-function loadGLTFModel(scene, glbPath, options) {
-  const { receiveShadow, castShadow } = options;
-  return new Promise((resolve, reject) => {
-    const loader = new GLTFLoader();
+extend({OrbitControls});
+function loadGLTFModel(scene,glbPath,options) {
+  const {receiveShadow,castShadow}=options;
+  return new Promise((resolve,reject) => {
+    const loader=new GLTFLoader();
     loader.load(
       glbPath,
       (gltf) => {
-        const obj = gltf.scene;
-        obj.name = "dinosaur";
-        obj.position.y = 0;
-        obj.position.x = 0;
-        obj.receiveShadow = receiveShadow;
-        obj.castShadow = castShadow;
+        const obj=gltf.scene;
+        obj.name="dinosaur";
+        obj.position.y=0;
+        obj.position.x=0;
+        obj.receiveShadow=receiveShadow;
+        obj.castShadow=castShadow;
         scene.add(obj);
 
-        obj.traverse(function (child) {
-          if (child.isMesh) {
-            child.castShadow = castShadow;
-            child.receiveShadow = receiveShadow;
+        obj.traverse(function(child) {
+          if(child.isMesh) {
+            child.castShadow=castShadow;
+            child.receiveShadow=receiveShadow;
           }
         });
 
         resolve(obj);
       },
       undefined,
-      function (error) {
+      function(error) {
         console.log(error);
         reject(error);
       }
@@ -76,32 +81,47 @@ function loadGLTFModel(scene, glbPath, options) {
   });
 }
 function easeOutCirc(x) {
-  return Math.sqrt(1 - Math.pow(x - 1, 4));
+  return Math.sqrt(1-Math.pow(x-1,4));
 }
 
-const Show3DImage = () => {
-  const refContainer = useRef();
-  const [loading, setLoading] = useState(true);
-  const [renderer, setRenderer] = useState();
+const CameraControls=() => {
+  // Get a reference to the Three.js Camera, and the canvas html element.
+  // We need these to setup the OrbitControls component.
+  // https://threejs.org/docs/#examples/en/controls/OrbitControls
+  const {
+    camera,
+    gl: {domElement},
+  }=useThree();
+  // Ref to the controls, so that we can update them on every frame using useFrame
+  const controls=useRef();
+  useFrame((state) => controls.current.update());
+  return <orbitControls ref={controls} args={[camera,domElement]} />;
+};
+
+
+const Show3DImage=() => {
+  const refContainer=useRef();
+  const [loading,setLoading]=useState(true);
+  const [renderer,setRenderer]=useState();
 
   useEffect(() => {
-    const { current: container } = refContainer;
-    if (container && !renderer) {
-      const scW = container.clientWidth;
-      const scH = container.clientHeight;
-      const renderer = new THREE.WebGLRenderer({
+    const {current: container}=refContainer;
+    if(container&&!renderer) {
+      const scW=container.clientWidth;
+      const scH=container.clientHeight;
+      const renderer=new THREE.WebGLRenderer({
         antialias: true,
         alpha: true,
       });
       renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(scW, scH);
-      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.setSize(scW,scH);
+      renderer.outputEncoding=THREE.sRGBEncoding;
       container.appendChild(renderer.domElement);
       setRenderer(renderer);
 
-      const scene = new THREE.Scene();
-      const scale = 2;
-      const camera = new THREE.OrthographicCamera(
+      const scene=new THREE.Scene();
+      const scale=2;
+      const camera=new THREE.OrthographicCamera(
         -scale,
         scale,
         scale,
@@ -109,19 +129,19 @@ const Show3DImage = () => {
         0.01,
         50000
       );
-      const target = new THREE.Vector3(-0.5, 1.2, 0);
-      const initialCameraPosition = new THREE.Vector3(
-        20 * Math.sin(0.2 * Math.PI),
+      const target=new THREE.Vector3(-0.5,1.2,0);
+      const initialCameraPosition=new THREE.Vector3(
+        20*Math.sin(0.2*Math.PI),
         10,
-        20 * Math.cos(0.2 * Math.PI)
+        20*Math.cos(0.2*Math.PI)
       );
-      const ambientLight = new THREE.AmbientLight(0xcccccc, 1);
+      const ambientLight=new THREE.AmbientLight(0xcccccc,1);
       scene.add(ambientLight);
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.autoRotate = true;
-      controls.target = target;
+      const controls=new OrbitControls(camera,renderer.domElement);
+      controls.autoRotate=true;
+      controls.target=target;
 
-      loadGLTFModel(scene, "https://hunter.techdigital.com.au/Parrot.glb", {
+      loadGLTFModel(scene,"https://hunter.techdigital.com.au/Parrot.glb",{
         receiveShadow: false,
         castShadow: false,
       }).then(() => {
@@ -129,27 +149,27 @@ const Show3DImage = () => {
         setLoading(false);
       });
 
-      let req = null;
-      let frame = 0;
-      const animate = () => {
-        req = requestAnimationFrame(animate);
-        frame = frame <= 100 ? frame + 1 : frame;
+      let req=null;
+      let frame=0;
+      const animate=() => {
+        req=requestAnimationFrame(animate);
+        frame=frame<=100? frame+1:frame;
 
-        if (frame <= 100) {
-          const p = initialCameraPosition;
-          const rotSpeed = -easeOutCirc(frame / 120) * Math.PI * 20;
+        if(frame<=100) {
+          const p=initialCameraPosition;
+          const rotSpeed=-easeOutCirc(frame/120)*Math.PI*20;
 
-          camera.position.y = 10;
-          camera.position.x =
-            p.x * Math.cos(rotSpeed) + p.z * Math.sin(rotSpeed);
-          camera.position.z =
-            p.z * Math.cos(rotSpeed) - p.x * Math.sin(rotSpeed);
+          camera.position.y=10;
+          camera.position.x=
+            p.x*Math.cos(rotSpeed)+p.z*Math.sin(rotSpeed);
+          camera.position.z=
+            p.z*Math.cos(rotSpeed)-p.x*Math.sin(rotSpeed);
           camera.lookAt(target);
         } else {
           controls.update();
         }
 
-        renderer.render(scene, camera);
+        renderer.render(scene,camera);
       };
 
       return () => {
@@ -157,15 +177,15 @@ const Show3DImage = () => {
         renderer.dispose();
       };
     }
-  }, []);
+  },[]);
 
   return (
     <div
-      style={{ height: "350px", width: "350px", position: "relative" }}
+      style={{height: "350px",width: "350px",position: "relative"}}
       ref={refContainer}
     >
-      {loading && (
-        <span style={{ position: "absolute", left: "50%", top: "50%" }}>
+      {loading&&(
+        <span style={{position: "absolute",left: "50%",top: "50%"}}>
           Loading...
         </span>
       )}
@@ -173,12 +193,12 @@ const Show3DImage = () => {
   );
 };
 
-var textColor = {
+var textColor={
   textColor: "#EF981D",
 };
 
 function NFTDetails() {
-  var bgImgStyle = {
+  var bgImgStyle={
     backgroundImage: `url(${BGImg})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
@@ -187,87 +207,95 @@ function NFTDetails() {
     backgroundColor: "#000",
   };
 
-  const { id } = useParams();
+  const {id}=useParams();
 
-  const [NFTDetails, setNFTDetails] = useState([]);
-  const [allNFTs, setAllNFTs] = useState([]);
-  const [collection, setCollection] = useState([]);
-  const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
-  const [itemprice, setItemprice] = useState(0);
-  const [item_qt, setItem_qt] = useState(1);
-  const [item_bid, setItem_bid] = useState(0);
-  const [selectedToken, setSelectedToken] = useState("BUSD");
-  const [selectedTokenFS, setSelectedTokenFS] = useState("BNB");
-  const [datetime, setDatetime] = useState("");
-  const [currentUser, setCurrentUser] = useState();
-  const [cookies] = useCookies([]);
-  const [owned, setOwned] = useState("none");
-  const [orders, setOrders] = useState("none");
-  const [loading, setLoading] = useState(false);
-  const [modal, setModal] = useState(false);
-  const [offerPrice, setOfferPrice] = useState();
-  const [offerQuantity, setOfferQuantity] = useState(1);
-  const [isBuyNowModal, setIsBuyNowModal] = useState(false);
-  const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
-  const [qty, setQty] = useState(1);
-  const [price, setPrice] = useState("");
-  const [firstOrderNFT, setFirstOrderNFT] = useState([]);
-  const [haveBid, setHaveBid] = useState("none");
-  const [haveOffer, setHaveOffer] = useState("none");
-  const [ownedBy, setOwnedBy] = useState("");
-  const [bidStatus, setBidStatus] = useState("");
+  const [NFTDetails,setNFTDetails]=useState([]);
+  const [allNFTs,setAllNFTs]=useState([]);
+  const [collection,setCollection]=useState([]);
+  const [marketplaceSaleType,setmarketplaceSaleType]=useState(0);
+  const [itemprice,setItemprice]=useState(0);
+  const [item_qt,setItem_qt]=useState(1);
+  const [item_bid,setItem_bid]=useState(0);
+  const [selectedToken,setSelectedToken]=useState("BUSD");
+  const [selectedTokenFS,setSelectedTokenFS]=useState("BNB");
+  const [datetime,setDatetime]=useState("");
+  const [currentUser,setCurrentUser]=useState();
+  const [cookies]=useCookies([]);
+  const [owned,setOwned]=useState("none");
+  const [orders,setOrders]=useState("none");
+  const [loading,setLoading]=useState(false);
+  const [modal,setModal]=useState(false);
+  const [offerPrice,setOfferPrice]=useState();
+  const [offerQuantity,setOfferQuantity]=useState(1);
+  const [isBuyNowModal,setIsBuyNowModal]=useState(false);
+  const [isPlaceBidModal,setIsPlaceBidModal]=useState(false);
+  const [qty,setQty]=useState(1);
+  const [price,setPrice]=useState("");
+  const [firstOrderNFT,setFirstOrderNFT]=useState([]);
+  const [haveBid,setHaveBid]=useState("none");
+  const [haveOffer,setHaveOffer]=useState("none");
+  const [ownedBy,setOwnedBy]=useState("");
+  const [bidStatus,setBidStatus]=useState("");
+  const [modalImage,setModalImge]=useState("")
 
   useEffect(() => {
     async function setUser() {
-      if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+      if(cookies.selected_account) setCurrentUser(cookies.selected_account);
     }
     setUser();
-  }, [cookies.selected_account]);
+  },[cookies.selected_account]);
 
   useEffect(() => {
     async function windowScroll() {
-      window.scrollTo(0, 0);
+      window.scrollTo(0,0);
     }
     windowScroll();
-  }, []);
+  },[]);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetch=async () => {
       try {
-        const reqData = {
+        const reqData={
           nftID: id,
         };
-        const res = await getNFTDetails(reqData);
-        if (res.length === 0) {
-          window.location.href = "/marketplace";
+        const res=await getNFTDetails(reqData);
+        if(res.length===0) {
+          window.location.href="/marketplace";
           return;
         }
         setNFTDetails(res[0]);
+        console.log("nft details is---------->",res[0])
+        if(res[0].fileType==="3D") {
+
+          let image=res[0].image.split("//");
+          setModalImge(image[1])
+          console.log("3d Image is------->",image[1]);
+        }
         setOrders(res[0]?.OrderData);
-        if (res[0]?.OrderData.length <= 0) {
+        if(res[0]?.OrderData.length<=0) {
           setOrders([]);
         }
-        setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length - 1]?.address);
-        const c = await getCollections({ collectionID: res[0].collection });
+        setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length-1]?.address);
+        const c=await getCollections({collectionID: res[0].collection});
         setCollection(c[0]);
 
-        const reqData1 = {
+        const reqData1={
           page: 1,
           limit: 12,
           collectionID: res[0].collection,
         };
 
-        const nfts = await getNFTs(reqData1);
+        const nfts=await getNFTs(reqData1);
 
         setAllNFTs(nfts);
-        if (
-          currentUser &&
-          res[0].ownedBy &&
+        if(
+          currentUser&&
+          res[0].ownedBy&&
           res[0]?.ownedBy[0]?.address?.toLowerCase()
         ) {
-          for (let i = 0; i < res[0]?.ownedBy?.length; i++) {
-            if (
-              res[0]?.ownedBy[i]?.address?.toLowerCase() ===
+          for(let i=0;i<res[0]?.ownedBy?.length;i++) {
+            if(
+              res[0]?.ownedBy[i]?.address?.toLowerCase()===
               currentUser?.toLowerCase()
             ) {
               setOwned(true);
@@ -276,36 +304,36 @@ function NFTDetails() {
           }
         }
 
-        if (id) {
-          const _nft = await getNFTDetails({
+        if(id) {
+          const _nft=await getNFTDetails({
             nftID: id,
           });
           setOrders(_nft[0]?.OrderData);
-          if (_nft[0]?.OrderData.length <= 0) {
+          if(_nft[0]?.OrderData.length<=0) {
             setOrders([]);
           }
           setFirstOrderNFT(_nft[0]);
         }
-      } catch (e) {
-        console.log("Error in fetching nft Details", e);
+      } catch(e) {
+        console.log("Error in fetching nft Details",e);
       }
     };
     fetch();
-  }, [id, currentUser]);
+  },[id,currentUser]);
 
   useEffect(() => {
-    const fetch = async () => {
-      let searchParams = {
+    const fetch=async () => {
+      let searchParams={
         nftID: NFTDetails.id,
         buyerID: localStorage.getItem("userId"),
         bidStatus: "All",
         orderID: "All",
       };
 
-      let _data = await fetchBidNft(searchParams);
-      console.log("have bids", _data);
-      if (_data && _data.data.length > 0) {
-        const b = _data.data[0];
+      let _data=await fetchBidNft(searchParams);
+      console.log("have bids",_data);
+      if(_data&&_data.data.length>0) {
+        const b=_data.data[0];
         setHaveBid(true);
 
         setPrice(convertToEth(b?.bidPrice?.$numberDecimal));
@@ -315,80 +343,80 @@ function NFTDetails() {
       }
     };
     fetch();
-  }, [NFTDetails]);
+  },[NFTDetails]);
 
   useEffect(() => {
-    const fetch = async () => {
-      let searchParams = {
+    const fetch=async () => {
+      let searchParams={
         nftID: NFTDetails.id,
         buyerID: localStorage.getItem("userId"),
         bidStatus: "MakeOffer",
         orderID: "All",
       };
 
-      let _data = await fetchOfferNft(searchParams);
+      let _data=await fetchOfferNft(searchParams);
 
-      if (_data && _data.data.length > 0) {
-        console.log("offer data is------>", _data);
-        const b = _data.data[0];
+      if(_data&&_data.data.length>0) {
+        console.log("offer data is------>",_data);
+        const b=_data.data[0];
         setHaveOffer(true);
 
         setOfferPrice(convertToEth(b?.bidPrice?.$numberDecimal));
-        setDatetime(moment(b?.bidDeadline * 1000).toISOString());
+        setDatetime(moment(b?.bidDeadline*1000).toISOString());
       } else {
         setHaveOffer(false);
       }
     };
     fetch();
-  }, [NFTDetails]);
+  },[NFTDetails]);
 
-  const PutMarketplace = async () => {
+  const PutMarketplace=async () => {
     setLoading(true);
 
-    if (marketplaceSaleType === 0) {
-      if (itemprice === undefined || itemprice === "" || itemprice <= 0) {
-        NotificationManager.error("Please Enter a price", "", 800);
+    if(marketplaceSaleType===0) {
+      if(itemprice===undefined||itemprice===""||itemprice<=0) {
+        NotificationManager.error("Please Enter a price","",800);
         setLoading(false);
         return;
       }
-    } else if (marketplaceSaleType === 1) {
-      if (datetime === "" || datetime === undefined) {
-        NotificationManager.error("Please Enter Expiration date", "", 800);
+    } else if(marketplaceSaleType===1) {
+      if(datetime===""||datetime===undefined) {
+        NotificationManager.error("Please Enter Expiration date","",800);
         setLoading(false);
         return;
       }
-      if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
-        NotificationManager.error("Please Enter Minimum Bid", "", 800);
+      if(item_bid===undefined||item_bid===""||item_bid<=0) {
+        NotificationManager.error("Please Enter Minimum Bid","",800);
         setLoading(false);
         return;
       }
     } else {
-      if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
-        NotificationManager.error("Please Enter Minimum Bid", "", 800);
+      if(item_bid===undefined||item_bid===""||item_bid<=0) {
+        NotificationManager.error("Please Enter Minimum Bid","",800);
         setLoading(false);
         return;
       }
     }
-    let orderData = {
+    let orderData={
       nftId: NFTDetails.id,
       collection: NFTDetails.collectionAddress,
       price: itemprice,
       quantity: item_qt,
-      saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
-      salt: Math.round(Math.random() * 10000000),
-      endTime: datetime ? datetime : GENERAL_DATE,
+      saleType: marketplaceSaleType===1||marketplaceSaleType===2? 1:0,
+      salt: Math.round(Math.random()*10000000),
+      endTime: datetime? datetime:GENERAL_DATE,
       chosenType: marketplaceSaleType,
-      minimumBid: item_bid !== "" ? item_bid : 0,
+      minimumBid: item_bid!==""? item_bid:0,
       // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
       tokenAddress:
-        marketplaceSaleType === 0
+        marketplaceSaleType===0
           ? contracts[selectedTokenFS]
-          : contracts[selectedToken],
+          :contracts[selectedToken],
       tokenId: NFTDetails.tokenId,
-      erc721: NFTDetails.type === 1,
+      erc721: NFTDetails.type===1,
     };
-    let res = await putOnMarketplace(currentUser, orderData);
-    if (res === false) {
+    let res=await putOnMarketplace(currentUser,orderData);
+    if(res===false) {
       setLoading(false);
       return;
     } else {
@@ -398,36 +426,36 @@ function NFTDetails() {
     }
   };
 
-  const PlaceOffer = async () => {
+  const PlaceOffer=async () => {
     setLoading(true);
 
-    if (currentUser === undefined || currentUser === "") {
+    if(currentUser===undefined||currentUser==="") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);
       return;
     }
 
-    if (offerPrice === "" || offerPrice === undefined || offerPrice <= 0) {
+    if(offerPrice===""||offerPrice===undefined||offerPrice<=0) {
       NotificationManager.error("Enter Offer Price");
       setLoading(false);
       return;
     }
 
-    if (
-      offerQuantity === "" ||
-      (offerQuantity === undefined && NFTDetails.type !== 1)
+    if(
+      offerQuantity===""||
+      (offerQuantity===undefined&&NFTDetails.type!==1)
     ) {
       NotificationManager.error("Enter Offer Quantity");
       setLoading(false);
       return;
     }
-    if (datetime === "") {
+    if(datetime==="") {
       NotificationManager.error("Enter Offer EndTime");
       setLoading(false);
       return;
     }
 
-    let deadline = moment(datetime).unix();
+    let deadline=moment(datetime).unix();
     // let tokenAddress =
     //   marketplaceSaleType === 0
     //     ? contracts[selectedTokenFS]
@@ -452,13 +480,13 @@ function NFTDetails() {
   };
 
   function Model(props) {
-    const { scene } = useGLTF(props.image);
+    const {scene}=useGLTF(props.image);
     return <primitive object={scene} />;
   }
 
   // Popup
 
-  const handleMpShow = () => {
+  const handleMpShow=() => {
     document.getElementById("tab_opt_1").classList.remove("put_hide");
     document.getElementById("tab_opt_1").classList.add("put_show");
     document.getElementById("tab_opt_2").classList.remove("put_hide");
@@ -475,7 +503,7 @@ function NFTDetails() {
     setmarketplaceSaleType(0);
   };
 
-  const handleMpShow1 = () => {
+  const handleMpShow1=() => {
     document.getElementById("tab_opt_1").classList.remove("put_show");
     document.getElementById("tab_opt_1").classList.add("put_hide");
     document.getElementById("tab_opt_2").classList.remove("put_hide");
@@ -492,7 +520,7 @@ function NFTDetails() {
     setmarketplaceSaleType(1);
   };
 
-  const handleMpShow2 = () => {
+  const handleMpShow2=() => {
     document.getElementById("tab_opt_1").classList.remove("put_show");
     document.getElementById("tab_opt_1").classList.add("put_hide");
     document.getElementById("tab_opt_2").classList.remove("put_hide");
@@ -510,14 +538,14 @@ function NFTDetails() {
   };
 
   function handleChange(ev) {
-    console.log("ev", ev, new Date(ev), moment.utc(ev));
-    if (!ev.target["validity"].valid) return;
+    console.log("ev",ev,new Date(ev),moment.utc(ev));
+    if(!ev.target["validity"].valid) return;
 
     const dt = ev.target["value"];
 
-    const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
+    const ct=moment().add({hours: 5,minutes: 30}).toISOString();
 
-    if (dt < ct) {
+    if(dt<ct) {
       NotificationManager.error(
         "Start date should not be of past date",
         "",
@@ -530,19 +558,19 @@ function NFTDetails() {
 
   useEffect(() => {
     async function addClassList() {
-      var body = document.body;
-      if (loading || isPlaceBidModal || isBuyNowModal) {
+      var body=document.body;
+      if(loading||isPlaceBidModal||isBuyNowModal) {
         body.classList.add("overflow_hidden");
       } else {
         body.classList.remove("overflow_hidden");
       }
     }
     addClassList();
-  }, [loading, isPlaceBidModal, isBuyNowModal]);
+  },[loading,isPlaceBidModal,isBuyNowModal]);
 
   // Place Bid Checkout Modal
 
-  const placeBidModal = (
+  const placeBidModal=(
     <PopupModal
       content={
         <div className="popup-content1">
@@ -553,9 +581,9 @@ function NFTDetails() {
             <div className="bid_user_address">
               <div>
                 <span className="adr">
-                  {currentUser?.slice(0, 8) +
-                    "..." +
-                    currentUser?.slice(34, 42)}
+                  {currentUser?.slice(0,8)+
+                    "..."+
+                    currentUser?.slice(34,42)}
                 </span>
                 <span className="badge badge-success">Connected</span>
               </div>
@@ -571,13 +599,13 @@ function NFTDetails() {
             min="1"
             step="1"
             placeholder="Quantity e.g. 1,2,3..."
-            disabled={firstOrderNFT.type === 1 ? true : false}
+            disabled={firstOrderNFT.type===1? true:false}
             value={qty}
             onKeyPress={(e) => {
-              if (!/^\d*$/.test(e.key)) e.preventDefault();
+              if(!/^\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (Number(e.target.value) > Number(100)) {
+              if(Number(e.target.value)>Number(100)) {
                 NotificationManager.error(
                   "Quantity should be less than seller's order",
                   "",
@@ -599,24 +627,24 @@ function NFTDetails() {
             placeholder="Price e.g. 0.001,1..."
             value={price}
             onKeyPress={(e) => {
-              if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+              if(!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              const re = /[+-]?[0-9]+\.?[0-9]*/;
-              let val = e.target.value;
+              const re=/[+-]?[0-9]+\.?[0-9]*/;
+              let val=e.target.value;
 
-              if (e.target.value === "" || re.test(e.target.value)) {
-                const numStr = String(val);
-                if (numStr.includes(".")) {
-                  if (numStr.split(".")[1].length > 8) {
+              if(e.target.value===""||re.test(e.target.value)) {
+                const numStr=String(val);
+                if(numStr.includes(".")) {
+                  if(numStr.split(".")[1].length>8) {
                   } else {
-                    if (val.split(".").length > 2) {
-                      val = val.replace(/\.+$/, "");
+                    if(val.split(".").length>2) {
+                      val=val.replace(/\.+$/,"");
                     }
                   }
                 } else {
-                  if (val.split(".").length > 2) {
-                    val = val.replace(/\.+$/, "");
+                  if(val.split(".").length>2) {
+                    val=val.replace(/\.+$/,"");
                   }
                 }
                 setPrice(val);
@@ -629,8 +657,8 @@ function NFTDetails() {
             onClick={async () => {
               setIsPlaceBidModal(false);
               setLoading(true);
-              if (
-                Number(price) <
+              if(
+                Number(price)<
                 Number(convertToEth(orders[0].price?.$numberDecimal))
               ) {
                 NotificationManager.error(
@@ -643,7 +671,7 @@ function NFTDetails() {
                 return;
               }
               try {
-                let res = await createBid(
+                let res=await createBid(
                   orders[0].nftID,
                   orders[0]._id,
                   orders[0].sellerID,
@@ -654,35 +682,35 @@ function NFTDetails() {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
-                if (res === false) {
+                if(res===false) {
                   setLoading(false);
                   return;
                 }
-                NotificationManager.success("Bid Placed Successfully", "", 800);
+                NotificationManager.success("Bid Placed Successfully","",800);
                 setLoading(false);
                 slowRefresh(1000);
-              } catch (e) {
-                NotificationManager.error("Something went wrong", "", 800);
+              } catch(e) {
+                NotificationManager.error("Something went wrong","",800);
                 setLoading(false);
                 return;
               }
             }}
           >
-            {haveBid && haveBid !== "none" ? "Update Bid" : "Place Bid"}
+            {haveBid&&haveBid!=="none"? "Update Bid":"Place Bid"}
           </button>
         </div>
       }
       handleClose={() => {
         setIsPlaceBidModal(!isPlaceBidModal);
         setQty(1);
-        if (!haveBid) setPrice("");
+        if(!haveBid) setPrice("");
       }}
     />
   );
 
   // Buy Now Checkout Modal
 
-  const buyNowModal = (
+  const buyNowModal=(
     <PopupModal
       content={
         <div className="popup-content1">
@@ -692,9 +720,9 @@ function NFTDetails() {
             <div className="bid_user_address">
               <div>
                 <span className="adr">
-                  {currentUser?.slice(0, 8) +
-                    "..." +
-                    currentUser?.slice(34, 42)}
+                  {currentUser?.slice(0,8)+
+                    "..."+
+                    currentUser?.slice(34,42)}
                 </span>
                 <span className="badge badge-success">Connected</span>
               </div>
@@ -702,9 +730,9 @@ function NFTDetails() {
             </div>
           </div>
           <h6 className="enter_quantity_heading required">
-            {firstOrderNFT?.type === 1
+            {firstOrderNFT?.type===1
               ? "Quantity"
-              : "Please Enter the Quantity"}
+              :"Please Enter the Quantity"}
           </h6>
           <input
             className="form-control checkout_input"
@@ -712,13 +740,13 @@ function NFTDetails() {
             min="1"
             step="1"
             placeholder="Quantity e.g. 1,2,3..."
-            disabled={firstOrderNFT?.type === 1 ? true : false}
+            disabled={firstOrderNFT?.type===1? true:false}
             value={qty}
             onKeyPress={(e) => {
-              if (!/^\d*$/.test(e.key)) e.preventDefault();
+              if(!/^\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if (Number(e.target.value) > Number(orders[0].total_quantity)) {
+              if(Number(e.target.value)>Number(orders[0].total_quantity)) {
                 NotificationManager.error(
                   "Quantity should be less than seller's order",
                   "",
@@ -747,16 +775,16 @@ function NFTDetails() {
             onClick={async () => {
               setIsBuyNowModal(false);
               setLoading(true);
-              let res = await handleBuyNft(
+              let res=await handleBuyNft(
                 orders[0]._id,
-                firstOrderNFT.type === 1,
+                firstOrderNFT.type===1,
                 currentUser,
                 cookies.balance,
                 orders[0].total_quantity,
                 false,
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
-              if (res === false) {
+              if(res===false) {
                 setLoading(false);
                 return;
               }
@@ -778,41 +806,41 @@ function NFTDetails() {
 
   return (
     <div>
-      {loading ? <Spinner /> : ""}
-      {isPlaceBidModal ? placeBidModal : ""}
-      {isBuyNowModal ? buyNowModal : ""}
+      {loading? <Spinner />:""}
+      {isPlaceBidModal? placeBidModal:""}
+      {isBuyNowModal? buyNowModal:""}
       <section style={bgImgStyle} className="pdd_8">
         <div className="container">
           <div className="row mb-5">
             <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5">
-              {NFTDetails && NFTDetails.fileType == "Image" ? (
+              {NFTDetails&&NFTDetails.fileType=="Image"? (
                 <img
                   src={NFTDetails?.image}
                   className="img-fluid nftimg"
                   alt=""
                   onError={(e) => {
-                    e.target.src = "../img/collections/list4.png";
+                    e.target.src="../img/collectCanvasions/list4.png";
                   }}
                 />
-              ) : (
+              ):(
                 ""
               )}
-              {NFTDetails && NFTDetails.fileType == "Video" ? (
+              {NFTDetails&&NFTDetails.fileType=="Video"? (
                 <video className="img-fluid nftimg" controls>
                   <source src={NFTDetails?.image} type="video/mp4" />
                 </video>
-              ) : (
+              ):(
                 ""
               )}
-              {NFTDetails && NFTDetails.fileType == "3D" ? (
-                <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
-                  <pointLight position={[10, 10, 10]} intensity={1.3} />
+              {NFTDetails&&NFTDetails.fileType=="3D"? (
+                <Canvas camera={{position: [10,100,100],fov: 1}}>
+                  <pointLight position={[10,10,10]} intensity={1.3} />
                   <Suspense fallback={null}>
-                    <Model image={NFTDetails.image} />
+                    <Model image={`http://${modalImage}`} />
                   </Suspense>
-                  <OrbitControls />
+                  <CameraControls />
                 </Canvas>
-              ) : (
+              ):(
                 ""
               )}
             </div>
@@ -826,7 +854,7 @@ function NFTDetails() {
                 <p>
                   Owned by{" "}
                   <span style={textColor}>
-                    {ownedBy.slice(0, 8) + "..." + ownedBy.slice(34, 42)}
+                    {ownedBy.slice(0,8)+"..."+ownedBy.slice(34,42)}
                   </span>
                 </p>
                 <span className="add_wishlist">
@@ -845,7 +873,7 @@ function NFTDetails() {
                   {NFTDetails?.like} favourites
                 </span>
               </div>
-              {NFTDetails?.attributes?.length > 0 ? (
+              {NFTDetails?.attributes?.length>0? (
                 <ul
                   className="nav nav-pills mb-4 w-100"
                   id="pills-tab"
@@ -866,7 +894,7 @@ function NFTDetails() {
                     </button>
                   </li>
                 </ul>
-              ) : (
+              ):(
                 ""
               )}
               <div className="tab-content" id="pills-tabContent">
@@ -924,7 +952,7 @@ function NFTDetails() {
                 </div>
               </div>
               <div className="price_box">
-                {orders?.length > 0 && orders !== "none" ? (
+                {orders?.length>0&&orders!=="none"? (
                   <>
                     <h4>Price</h4>
                     <div className="price_div">
@@ -935,15 +963,15 @@ function NFTDetails() {
                       />
                       {Number(convertToEth(orders[0].price?.$numberDecimal))
                         .toFixed(6)
-                        .slice(0, -2)}{" "}
+                        .slice(0,-2)}{" "}
                       {Tokens[orders[0].paymentToken]?.symbolName}
                     </div>
                   </>
-                ) : (
+                ):(
                   ""
                 )}
-                {orders.length <= 0 && orders !== "none" && owned !== "none" ? (
-                  owned ? (
+                {orders.length<=0&&orders!=="none"&&owned!=="none"? (
+                  owned? (
                     <button
                       type="button"
                       className="title_color buy_now"
@@ -952,15 +980,15 @@ function NFTDetails() {
                     >
                       Put On Marketplace
                     </button>
-                  ) : (
+                  ):(
                     ""
                   )
-                ) : !owned &&
-                  orders.length > 0 &&
-                  owned !== "none" &&
-                  haveBid !== "none" &&
-                  haveOffer !== "none" ? (
-                  orders[0].salesType === 0 ? (
+                ):!owned&&
+                  orders.length>0&&
+                  owned!=="none"&&
+                  haveBid!=="none"&&
+                  haveOffer!=="none"? (
+                  orders[0].salesType===0? (
                     <button
                       type="button"
                       className="title_color buy_now"
@@ -970,46 +998,46 @@ function NFTDetails() {
                     >
                       Buy Now
                     </button>
-                  ) : (
+                  ):(
                     <button
                       type="button"
                       disabled={
-                        moment(new Date(orders[0].deadline * 1000)).subtract({
+                        moment(new Date(orders[0].deadline*1000)).subtract({
                           hours: 5,
                           minutes: 30,
-                        })._d < new Date()
+                        })._d<new Date()
                       }
                       className="title_color buy_now"
                       onClick={() => {
                         setIsPlaceBidModal(true);
                       }}
                     >
-                      {haveBid !== "none"
+                      {haveBid!=="none"
                         ? haveBid
                           ? "Update Bid"
-                          : "Place Bid"
-                        : ""}
+                          :"Place Bid"
+                        :""}
                     </button>
                   )
-                ) : owned && owned !== "none" ? (
+                ):owned&&owned!=="none"? (
                   <button
                     type="button"
                     className="title_color buy_now"
                     data-bs-toggle="modal"
                     data-bs-target="#detailPop"
                     onClick={async () => {
-                      console.log("orders[0]", orders[0], orders);
+                      console.log("orders[0]",orders[0],orders);
                       setLoading(true);
-                      await handleRemoveFromSale(orders[0]._id, currentUser);
+                      await handleRemoveFromSale(orders[0]._id,currentUser);
                       setLoading(false);
                     }}
                   >
                     Remove From Sale
                   </button>
-                ) : (
+                ):(
                   ""
                 )}
-                {!owned && owned !== "none" && haveOffer !== "none" ? (
+                {!owned&&owned!=="none"&&haveOffer!=="none"? (
                   <button
                     type="button"
                     className="border_btn title_color"
@@ -1017,9 +1045,9 @@ function NFTDetails() {
                     data-bs-target="#makeOfferModal"
                     onClick={() => setModal("active")}
                   >
-                    {haveOffer ? "Update Offer" : "Make Offers"}
+                    {haveOffer? "Update Offer":"Make Offers"}
                   </button>
-                ) : (
+                ):(
                   ""
                 )}
               </div>
@@ -1072,9 +1100,9 @@ function NFTDetails() {
                 <li>
                   <span className="asset_title">Contact Address</span>
                   <span className="asset_detail">
-                    {collection?.contractAddress?.slice(0, 4) +
-                      "..." +
-                      collection?.contractAddress?.slice(38, 42)}
+                    {collection?.contractAddress?.slice(0,4)+
+                      "..."+
+                      collection?.contractAddress?.slice(38,42)}
                   </span>
                 </li>
                 <li>
@@ -1150,7 +1178,7 @@ function NFTDetails() {
                 <NFThistory />
               </div>
             </div>
-            {allNFTs.length > 1 ? (
+            {allNFTs.length>1? (
               <>
                 <div className="col-md-12 ">
                   <h3 className="title_36 mb-4">
@@ -1162,7 +1190,7 @@ function NFTDetails() {
                     collectionName={collection?.name}
                   />
                 </div>
-                {allNFTs.length > 4 ? (
+                {allNFTs.length>4? (
                   <div className="col-md-12 text-center mt-5">
                     <a
                       className="view_all_bdr"
@@ -1171,11 +1199,11 @@ function NFTDetails() {
                       View All
                     </a>
                   </div>
-                ) : (
+                ):(
                   ""
                 )}
               </>
-            ) : (
+            ):(
               ""
             )}
           </div>
@@ -1238,7 +1266,7 @@ function NFTDetails() {
               </ul>
 
               <div className="tab-content">
-                {marketplaceSaleType === 0 ? (
+                {marketplaceSaleType===0? (
                   <div className="mb-3" id="tab_opt_1">
                     <label htmlFor="item_price" className="form-label">
                       Price
@@ -1253,32 +1281,32 @@ function NFTDetails() {
                       placeholder="Please Enter Price (MATIC)"
                       value={itemprice}
                       onKeyPress={(e) => {
-                        if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                        if(!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
                       }}
                       onChange={(e) => {
-                        const re = /[+-]?[0-9]+\.?[0-9]*/;
-                        let val = e.target.value;
-                        if (e.target.value === "" || re.test(e.target.value)) {
-                          const numStr = String(val);
-                          if (numStr.includes(".")) {
-                            if (numStr.split(".")[1].length > 8) {
+                        const re=/[+-]?[0-9]+\.?[0-9]*/;
+                        let val=e.target.value;
+                        if(e.target.value===""||re.test(e.target.value)) {
+                          const numStr=String(val);
+                          if(numStr.includes(".")) {
+                            if(numStr.split(".")[1].length>8) {
                             } else {
-                              if (val.split(".").length > 2) {
-                                val = val.replace(/\.+$/, "");
+                              if(val.split(".").length>2) {
+                                val=val.replace(/\.+$/,"");
                               }
                             }
                           } else {
-                            if (val.split(".").length > 2) {
-                              val = val.replace(/\.+$/, "");
+                            if(val.split(".").length>2) {
+                              val=val.replace(/\.+$/,"");
                             }
                           }
-                          console.log("valll", val, typeof val);
+                          console.log("valll",val,typeof val);
                           setItemprice(val);
                         }
                       }}
                     />
                   </div>
-                ) : (
+                ):(
                   ""
                 )}
                 <div className="mb-3" id="tab_opt_2">
@@ -1290,14 +1318,14 @@ function NFTDetails() {
                     name="item_qt"
                     id="item_qt"
                     min="1"
-                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
+                    disabled={NFTDetails.type===1? "disabled":""}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"
                     value={item_qt}
                     onChange={(event) => {
-                      if (
-                        NFTDetails.type !== 1 &&
-                        event.target.value > NFTDetails?.totalQuantity
+                      if(
+                        NFTDetails.type!==1&&
+                        event.target.value>NFTDetails?.totalQuantity
                       ) {
                         NotificationManager.error(
                           "Quantity must be less than or equal to total quantity.",
@@ -1324,24 +1352,24 @@ function NFTDetails() {
                     placeholder="Enter Minimum Bid"
                     value={item_bid}
                     onKeyPress={(e) => {
-                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                      if(!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
                     }}
                     onChange={(e) => {
-                      const re = /[+-]?[0-9]+\.?[0-9]*/;
-                      let val = e.target.value;
+                      const re=/[+-]?[0-9]+\.?[0-9]*/;
+                      let val=e.target.value;
 
-                      if (e.target.value === "" || re.test(e.target.value)) {
-                        const numStr = String(val);
-                        if (numStr.includes(".")) {
-                          if (numStr.split(".")[1].length > 8) {
+                      if(e.target.value===""||re.test(e.target.value)) {
+                        const numStr=String(val);
+                        if(numStr.includes(".")) {
+                          if(numStr.split(".")[1].length>8) {
                           } else {
-                            if (val.split(".").length > 2) {
-                              val = val.replace(/\.+$/, "");
+                            if(val.split(".").length>2) {
+                              val=val.replace(/\.+$/,"");
                             }
                           }
                         } else {
-                          if (val.split(".").length > 2) {
-                            val = val.replace(/\.+$/, "");
+                          if(val.split(".").length>2) {
+                            val=val.replace(/\.+$/,"");
                           }
                         }
                         setItem_bid(val);
@@ -1355,7 +1383,7 @@ function NFTDetails() {
                   <label htmlFor="Payment" className="form-label">
                     Payment Token
                   </label>
-                  {marketplaceSaleType === 0 ? (
+                  {marketplaceSaleType===0? (
                     <>
                       <select
                         className="form-select input_design select_bg"
@@ -1375,7 +1403,7 @@ function NFTDetails() {
                         <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
-                  ) : marketplaceSaleType === 1 ? (
+                  ):marketplaceSaleType===1? (
                     <>
                       <select
                         className="form-select input_design select_bg"
@@ -1391,7 +1419,7 @@ function NFTDetails() {
                         </option>
                       </select>
                     </>
-                  ) : (
+                  ):(
                     <>
                       <select
                         className="form-select input_design select_bg"
@@ -1408,20 +1436,20 @@ function NFTDetails() {
                     </>
                   )}
                 </div>
-                {marketplaceSaleType === 1 ? (
+                {marketplaceSaleType===1? (
                   <div id="tab_opt_5" className="mb-3">
                     <label for="item_ex_date" className="form-label">
                       Expiration date
                     </label>
                     <input
                       type="datetime-local"
-                      value={datetime.toString().substring(0, 16)}
+                      value={datetime.toString().substring(0,16)}
                       onChange={handleChange}
                       className="input_design"
                       required
                     />
                   </div>
-                ) : (
+                ):(
                   ""
                 )}
 
@@ -1473,24 +1501,24 @@ function NFTDetails() {
                     placeholder="Please Enter Price"
                     value={offerPrice}
                     onKeyPress={(e) => {
-                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                      if(!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
                     }}
                     onChange={(e) => {
-                      const re = /[+-]?[0-9]+\.?[0-9]*/;
-                      let val = e.target.value;
+                      const re=/[+-]?[0-9]+\.?[0-9]*/;
+                      let val=e.target.value;
 
-                      if (e.target.value === "" || re.test(e.target.value)) {
-                        const numStr = String(val);
-                        if (numStr.includes(".")) {
-                          if (numStr.split(".")[1].length > 8) {
+                      if(e.target.value===""||re.test(e.target.value)) {
+                        const numStr=String(val);
+                        if(numStr.includes(".")) {
+                          if(numStr.split(".")[1].length>8) {
                           } else {
-                            if (val.split(".").length > 2) {
-                              val = val.replace(/\.+$/, "");
+                            if(val.split(".").length>2) {
+                              val=val.replace(/\.+$/,"");
                             }
                           }
                         } else {
-                          if (val.split(".").length > 2) {
-                            val = val.replace(/\.+$/, "");
+                          if(val.split(".").length>2) {
+                            val=val.replace(/\.+$/,"");
                           }
                         }
                         setOfferPrice(val);
@@ -1507,12 +1535,12 @@ function NFTDetails() {
                     name="item_qt"
                     id="item_qt"
                     min="1"
-                    disabled={NFTDetails.type === 1 ? true : false}
+                    disabled={NFTDetails.type===1? true:false}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"
                     value={offerQuantity}
                     onChange={(event) => {
-                      if (NFTDetails.type === 1 && event.target.value > 1) {
+                      if(NFTDetails.type===1&&event.target.value>1) {
                         setOfferQuantity(1);
                         NotificationManager.error(
                           "Quantity must be 1.",
@@ -1520,9 +1548,9 @@ function NFTDetails() {
                           800
                         );
                       }
-                      if (
-                        NFTDetails.type !== 1 &&
-                        event.target.value > NFTDetails?.totalQuantity
+                      if(
+                        NFTDetails.type!==1&&
+                        event.target.value>NFTDetails?.totalQuantity
                       ) {
                         NotificationManager.error(
                           "Quantity must be less than or equal to total quantity.",
@@ -1539,7 +1567,7 @@ function NFTDetails() {
                     Payment Token
                   </label>
 
-                  {marketplaceSaleType === 0 ? (
+                  {marketplaceSaleType===0? (
                     <>
                       <select
                         className="form-select input_design select_bg"
@@ -1556,7 +1584,7 @@ function NFTDetails() {
                         <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
-                  ) : marketplaceSaleType === 1 ? (
+                  ):marketplaceSaleType===1? (
                     <>
                       <select
                         className="form-select input_design select_bg"
@@ -1572,7 +1600,7 @@ function NFTDetails() {
                         </option>
                       </select>
                     </>
-                  ) : (
+                  ):(
                     <>
                       <select
                         className="form-select input_design select_bg"
@@ -1597,7 +1625,7 @@ function NFTDetails() {
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
                   <input
                     type="datetime-local"
-                    value={(datetime || "").toString().substring(0, 16)}
+                    value={(datetime||"").toString().substring(0,16)}
                     //value={datetime}
                     onChange={handleChange}
                     className="input_design"
@@ -1609,7 +1637,7 @@ function NFTDetails() {
                     className="square_yello"
                     onClick={PlaceOffer}
                   >
-                    {haveOffer ? "Update Offer" : "Make Offers"}
+                    {haveOffer? "Update Offer":"Make Offers"}
                   </button>
                 </div>
               </div>
