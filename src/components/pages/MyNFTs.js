@@ -103,8 +103,11 @@ function MyNFTs() {
         let _owned = await GetOwnedNftList(reqBody);
         setCardCount(cardCount + _owned.count);
         setTotalOwned(_owned.count);
-        if (_owned && _owned.results.length > 0)
+        if (_owned && _owned.results.length > 0){
+          console.log("owned nft is------>",_owned.results)
           setOwnedNFTs(_owned.results);
+        }
+         
         setLoader(false);
       } catch (e) {
         console.log("Error in fetching owned nfts", e);
@@ -581,6 +584,7 @@ function MyNFTs() {
                     <div className={grid} key={key}>
                       <AuthorListing
                         image={card.image}
+                        fileType={card.fileType}
                         card={card}
                         link={`/nftDetails/${card._id}`}
                       />
@@ -607,6 +611,7 @@ function MyNFTs() {
                       <div className={grid} key={key}>
                         <AuthorListing
                           image={card.image}
+                          fileType={card.fileType}
                           card={card}
                           link={`/nftDetails/${card._id}`}
                           bttn={card.OrderData[0].salesType}
@@ -633,6 +638,7 @@ function MyNFTs() {
                       date={card.Date}
                       button={card.Slug}
                       link={card.Like}
+                      fileType={card.fileType}
                     />
                   </div>
                 ))}
@@ -654,6 +660,7 @@ function MyNFTs() {
                       date={card.Date}
                       button={card.Slug}
                       link={card.Like}
+                      fileType={card.fileType}
                     />
                   </div>
                 ))}
