@@ -1306,7 +1306,7 @@ header#myHeader {
   width: 90px;
   object-fit: cover;
   margin: auto;
-  background-image: url(../../assets/images/woman.png);
+  /* background-image: url(../../assets/images/woman.png); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -5190,7 +5190,7 @@ a:hover {
   width: 82.56px;
   height: 80px;
   border-radius: 100%;
-  background-image: url(../../assets/images/woman.png);
+  /* background-image: url(../../assets/images/woman.png); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -5334,7 +5334,13 @@ section.collection_info .justify-content-end {
   .follow_btns .white_btn {margin-bottom:10px;}
 
 }
-
+@media screen and (max-width:1024px) {
+  .filter.filtershow {flex-wrap: wrap;}
+.filtercol {width: 100%;}
+.status_ul li {
+  justify-content: center;
+}
+}
 @media screen and (max-width:767px) {
 
 section.collection_info .justify-content-end {
@@ -5357,4 +5363,7 @@ section.collection_info .justify-content-end {
 
 }
 
+}
+.navbar-toggler:focus {
+  box-shadow: none;
 }

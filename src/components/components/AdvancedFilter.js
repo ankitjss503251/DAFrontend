@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UpArrow from "../SVG/dropdown";
 import { getCollections } from "../../helpers/getterFunctions";
 
@@ -7,7 +7,15 @@ const AdvancedFilter = (props) => {
   const [cols, setCols] = useState([]);
   const [colsAdv, setColsAdv] = useState("");
   const [cFlag, setCFlag] = useState(true);
-  const [bFlag, setBFlag] = useState(props.brandName !== undefined ? true : false)
+  const [bFlag, setBFlag] = useState(true);
+  
+  
+
+  useEffect(() => {
+    if(props.brandName !== undefined && bFlag){
+       setBFlag(false)
+    }
+  }, [props.brandName])
 
   return (
     <div className={`filter mb-5 ${props.togglemode}`}>
@@ -204,7 +212,6 @@ const AdvancedFilter = (props) => {
                     name='radio-group'
                     checked={cFlag}
                     onChange={() => {
-                      
                       setCFlag(true);
                       props.onAdvSearch({ type: "category", value: "" });
                     }}
@@ -249,13 +256,6 @@ const AdvancedFilter = (props) => {
         </button>
         <div id='demo5' className='collapse show'>
           <ul>
-            {/* <li>
-            <input
-              type='text'
-              placeholder='Filter'
-              className='filter_apply  filter-text-left filter_padd'
-            />
-          </li> */}
             <li>
               <form action='#' className='checked_form'>
               <div className='form-check form-check-inline'>
@@ -265,20 +265,16 @@ const AdvancedFilter = (props) => {
                     name='radio-group'
                     checked={bFlag}
                     onChange={() => {
-                      if(props.brandName === undefined)
-                   {   setBFlag(true);
-                      props.onAdvSearch({ type: "brand", value: "" });}
-                    }}
+                      if(props.brandName === undefined){
+                        setBFlag(true);
+                        props.onAdvSearch({ type: "brand", value: "" });}}
+                      }
                   />
                   <label htmlFor='allBrands'>All</label>
                 </div>
                 {
                   props.brandName ?   props.brands.length > 0
                     ? props.brands?.map((b, key) => {
-                      // if(b.name === props.brandName) { props.onAdvSearch({
-                      //   type: "brand",
-                      //   value: b._id
-                      // })}
                         return (
                           <div className='form-check form-check-inline' key={key}>
                                 <input
@@ -291,13 +287,14 @@ const AdvancedFilter = (props) => {
                                     b.name === props.brandName
                                   }
                                   onChange={(e) => {
-                                    setBFlag(false);
+                                    setBFlag(false) 
                                     props.brandName
                                       ? e.preventDefault()
-                                      : props.onAdvSearch({
+                                      : 
+                                        props.onAdvSearch({
                                           type: "brand",
                                           value: e.target.value,
-                                        });
+                                        })
                                   }}
                                 />
                                 <label htmlFor={b.name}>{b.name}</label>
@@ -308,10 +305,6 @@ const AdvancedFilter = (props) => {
                     :
                     props.brands.length > 0
                   ? props.brands?.map((b, key) => {
-                    // if(b.name === props.brandName) { props.onAdvSearch({
-                    //   type: "brand",
-                    //   value: b._id
-                    // })}
                       return (
                         <div className='form-check form-check-inline' key={key}>
                         
@@ -334,8 +327,6 @@ const AdvancedFilter = (props) => {
                       );
                     })
                   : ""}
-                
-              
               </form>
             </li>
           </ul>

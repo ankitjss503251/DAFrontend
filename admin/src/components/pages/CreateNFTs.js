@@ -129,7 +129,7 @@ function CreateNFTs() {
 
     };
     fetch();
-  }, []);
+  }, [currentUser, isSuperAdmin]);
 
   const handleCreateNFT = async () => {
     if (handleValidationCheck()) {
@@ -498,6 +498,7 @@ function CreateNFTs() {
                     className='form-control'
                     id='recipient-name'
                     value={title}
+                    maxLength={25}
                     onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
@@ -555,6 +556,7 @@ function CreateNFTs() {
                     className='form-control'
                     id='message-text'
                     value={description}
+                    maxLength={300}
                     onChange={(e) => setDescription(e.target.value)}></textarea>
                 </div>
                 <div className='col-md-6 mt-2'>

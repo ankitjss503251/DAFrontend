@@ -99,7 +99,8 @@ function CreateCollection(props) {
 
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
-    const dt = ev.target["value"] + ":00Z";
+    console.log("evv.target", ev.target["value"]);
+    const dt = ev.target["value"];
     const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
     if (dt < ct) {
       NotificationManager.error(
@@ -114,7 +115,7 @@ function CreateCollection(props) {
 
   function handleChange2(evv) {
     if (!evv.target["validity"].valid) return;
-    const dtt = evv.target["value"] + ":00Z";
+    const dtt = evv.target["value"];
     if (dtt < preSaleStartTime) {
       NotificationManager.error(
         "End date should be greater than Start date",
@@ -270,8 +271,8 @@ function CreateCollection(props) {
         fd.append("categoryID", category);
         fd.append("brandID", brand);
         fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
-        fd.append("preSaleStartTime", new Date(preSaleStartTime)).toUTCString();
-        fd.append("preSaleEndTime", new Date(datetime2)).toUTCString();
+        fd.append("preSaleStartTime", preSaleStartTime);
+        fd.append("preSaleEndTime", datetime2);
         fd.append("preSaleTokenAddress", contracts.BUSD);
         fd.append("totalSupply", maxSupply);
         fd.append("type", Number(nftType));
@@ -286,7 +287,7 @@ function CreateCollection(props) {
           );
           setLoading(false);
           setTimeout(() => {
-            window.location.href = "/admin/createcollection";
+            window.location.href = "/createcollection";
           }, 1000);
         } catch (e) {
           console.log("error", e);
@@ -356,8 +357,8 @@ function CreateCollection(props) {
           //fd.append("chainID", chain);
           fd.append("link", importedCollectionLink);
           fd.append("contractAddress", contractAddress);
-          fd.append("preSaleStartTime", new Date(preSaleStartTime).toUTCString());
-          fd.append("preSaleEndTime", new Date(datetime2).toUTCString());
+          fd.append("preSaleStartTime", preSaleStartTime);
+          fd.append("preSaleEndTime", datetime2);
           fd.append("preSaleTokenAddress", contracts.BUSD);
           fd.append("totalSupply", maxSupply);
           fd.append("type", type);

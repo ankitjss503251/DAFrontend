@@ -52,7 +52,7 @@ function NFToffer(props) {
         let a = _data.data;
 
         setOffer(a);
-       
+
       }
     };
     fetch();
@@ -113,9 +113,9 @@ function NFToffer(props) {
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
 
-    const dt = ev.target["value"] + ":00Z";
+    const dt = ev.target["value"];
 
-    const ct = moment().add({'hours': 5, 'minutes': 30}).toISOString();
+    const ct = moment().add({ 'hours': 5, 'minutes': 30 }).toISOString();
 
     if (dt < ct) {
       NotificationManager.error(
@@ -131,25 +131,25 @@ function NFToffer(props) {
   return (
     <div className="row">
       {loading ? <Spinner /> : ""}
-      {offer && offer.length <= 0 ?  <div className="col-md-12">
-       <h4 className="no_data_text text-muted">No Offers Available</h4>
-     </div> : <div className="table-responsive">
-     <div className="col-md-12">
-        <div className="nft_list">
-          <table className="table text-light fixed_header">
-            <thead>
-              <tr>
-                <th scope="col">FROM</th>
-                <th scope="col">PRICE</th>
-                <th scope="col">DATE</th>
-                <th scope="col">ENDS IN</th>
-                <th scope="col">STATUS</th>
-                <th className="text-center">ACTION</th>
-              </tr>
-            </thead>
-            <tbody>
-              {offer && offer.length > 0
-                ? offer.map((b, i) => {
+      {offer && offer.length <= 0 ? <div className="col-md-12">
+        <h4 className="no_data_text text-muted">No Offers Available</h4>
+      </div> : <div className="table-responsive">
+        <div className="col-md-12">
+          <div className="nft_list">
+            <table className="table text-light fixed_header">
+              <thead>
+                <tr>
+                  <th scope="col">FROM</th>
+                  <th scope="col">PRICE</th>
+                  <th scope="col">DATE</th>
+                  <th scope="col">ENDS IN</th>
+                  <th scope="col">STATUS</th>
+                  <th className="text-center">ACTION</th>
+                </tr>
+              </thead>
+              <tbody>
+                {offer && offer.length > 0
+                  ? offer.map((b, i) => {
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
                     return (
@@ -159,8 +159,8 @@ function NFToffer(props) {
                           <span>
                             {b?.bidderID?.walletAddress
                               ? b?.bidderID?.walletAddress?.slice(0, 3) +
-                                "..." +
-                                b?.bidderID?.walletAddress?.slice(39, 42)
+                              "..." +
+                              b?.bidderID?.walletAddress?.slice(39, 42)
                               : ""}
                           </span>
                         </td>
@@ -176,19 +176,14 @@ function NFToffer(props) {
                           {Tokens[b?.paymentToken?.toLowerCase()]?.symbolName}
                         </td>
                         <td>
-                          {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
+                          {moment.utc(b.createdOn).local().format("DD/MM/YYYY")}{" "}
                           <span className="nft_time">
-                            {moment(b.createdOn).format("hh:mm:ss a")}
+                            {moment.utc(b.createdOn).local().format("hh:mm a")}
                           </span>
                         </td>
                         <td>
                           <Clock
-                            deadline={moment(new Date(b.bidDeadline * 1000))
-                              .subtract({
-                                'hours': 5,
-                                'minutes': 30,
-                              })
-                              }
+                            deadline={moment.utc(b.bidDeadline * 1000).local().format()}
                           ></Clock>
                         </td>
                         <td className="white_text">
@@ -197,7 +192,7 @@ function NFToffer(props) {
                         </td>
                         <td className="text-center">
                           {bidOwner === currentUser.toLowerCase() &&
-                          b.bidStatus === "MakeOffer" ? (
+                            b.bidStatus === "MakeOffer" ? (
                             <div className="d-flex justify-content-center align-items-center">
                               <button
                                 to={"/"}
@@ -230,30 +225,25 @@ function NFToffer(props) {
                           ) : bidOwner !== currentUser.toLowerCase() &&
                             bidder === currentUser.toLowerCase() ? (
                             <div
-                              className={`d-${
-                                b.bidStatus === "Accepted" ? "none" : "flex"
-                              } justify-content-center align-items-center`}
+                              className={`d-${b.bidStatus === "Accepted" ? "none" : "flex"
+                                } justify-content-center align-items-center`}
                             >
+                              {console.log("disabling", moment.utc(b?.bidDeadline * 1000).local().format(), moment().format())}
                               <button
                                 disabled={
-                                  moment(
-                                    new Date(b.bidDeadline * 1000)
-                                  ).subtract({
-                                    hours: 5,
-                                    minutes: 30,
-                                  })._d < new Date()
+                                  moment.utc(b?.bidDeadline * 1000).local().format() < new Date()
                                 }
                                 className="small_yellow_btn small_btn mr-3"
                                 data-bs-toggle="modal"
                                 data-bs-target="#brandModal"
                                 onClick={() => {
                                   setModal("active");
-                                 
+
                                   setOfferPrice(
                                     convertToEth(b?.bidPrice?.$numberDecimal)
                                   );
                                   setDatetime(
-                                    moment(b?.bidDeadline * 1000).toISOString()
+                                    moment.utc(b?.bidDeadline * 1000).local().format()
                                   );
                                 }}
                               >
@@ -261,12 +251,7 @@ function NFToffer(props) {
                               </button>
                               <button
                                 disabled={
-                                  moment(
-                                    new Date(b.bidDeadline * 1000)
-                                  ).subtract({
-                                    hours: 5,
-                                    minutes: 30,
-                                  })._d < new Date()
+                                  moment.utc(b?.bidDeadline * 1000).local().format() < new Date()
                                 }
                                 className="small_border_btn small_btn"
                                 onClick={async () => {
@@ -295,13 +280,13 @@ function NFToffer(props) {
                       </tr>
                     );
                   })
-                : ""}
-            </tbody>
-          </table>
+                  : ""}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
       </div>}
-     
+
 
       {/*update offer modal*/}
       <div className="modal marketplace" id="brandModal">
@@ -348,13 +333,13 @@ function NFToffer(props) {
                             if (val.split(".").length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
-                           
+
                           }
                         } else {
                           if (val.split(".").length > 2) {
                             val = val.replace(/\.+$/, "");
                           }
-                         
+
                         }
                         setOfferPrice(val);
                       }
