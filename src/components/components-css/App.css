@@ -5367,3 +5367,12 @@ section.collection_info .justify-content-end {
 .navbar-toggler:focus {
   box-shadow: none;
 }
+
+
+.modal.marketplace.active{
+  display: block;
+}
+
+.modal.marketplace.inactive{
+  display: none !important;
+}

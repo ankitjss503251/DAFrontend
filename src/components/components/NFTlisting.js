@@ -41,32 +41,36 @@ function NFTlisting(props) {
   }, [cookies.selected_account]);
 
   useEffect(() => {
-    const fetch = async () => {
-      if (props.id) {
-        const _orders = await getOrderByNftID({ nftID: props.id });
-        setOrders(_orders?.results);
-      }
-    };
-    fetch();
+    if (props.id)
+      fetch();
   }, [props.id]);
+
+  const fetch = async () => {
+    if (props.id) {
+      const _orders = await getOrderByNftID({ nftID: props.id });
+      setOrders(_orders?.results);
+    }
+  };
 
   useEffect(() => {
-    const fetch = async () => {
-      let searchParams = {
-        nftID: props.id,
-        buyerID: localStorage.getItem("userId"),
-        bidStatus: "All",
-        orderID: "All",
-      };
-
-      let _data = await fetchBidNft(searchParams);
-      console.log("bid data123", _data);
-      if (_data && _data.data.length > 0) {
-        setHaveBid(true);
-      }
-    };
-    fetch();
+    if (props.id)
+      fetchListing();
   }, [props.id]);
+
+  const fetchListing = async () => {
+    let searchParams = {
+      nftID: props.id,
+      buyerID: localStorage.getItem("userId"),
+      bidStatus: "All",
+      orderID: "All",
+    };
+
+    let _data = await fetchBidNft(searchParams);
+
+    if (_data && _data.data.length > 0) {
+      setHaveBid(true);
+    }
+  };
 
   useEffect(() => {
     var body = document.body;
@@ -283,6 +287,7 @@ function NFTlisting(props) {
                 false,
                 props?.NftDetails?.collectionAddress?.toLowerCase()
               );
+              await fetchListing()
               // setLoading(false);
             }}>
             {"Buy Now"}
@@ -305,6 +310,7 @@ function NFTlisting(props) {
       {isBuyNowModal ? buyNowModal : ""}
 
       {orders && orders.length <= 0 ?
+<<<<<<< HEAD
        <div className="col-md-12">
        <h4 className="no_data_text text-muted">No Listings Available</h4>
      </div> :
@@ -476,6 +482,164 @@ function NFTlisting(props) {
      </div>
     }
      
+=======
+        <div className="col-md-12">
+          <h4 className="no_data_text text-muted">No Listings Available</h4>
+        </div> :
+        <div className='table-responsive'>
+          <div className='col-md-12'>
+            <div className='nft_list'>
+              <table className='table text-light'>
+                <thead>
+                  <tr>
+                    <th scope='col'>FROM</th>
+                    <th scope='col'>PRICE</th>
+                    <th scope='col'>DATE</th>
+                    <th scope='col'>SALE TYPE</th>
+                    <th scope='col'>ENDS IN</th>
+                    <th scope='col'>STATUS</th>
+                    <th className='text-center'>ACTION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders && orders.length > 0
+                    ? orders.map((o, i) => {
+                      return (
+                        <tr>
+                          <td className="d-flex justify-content-start align-items-center mb-0">
+                            <span className="yellow_dot circle_dot"></span>
+                            <span>
+                              {o.sellerID && o.sellerID.walletAddress
+                                ? o.sellerID.walletAddress.slice(0, 3) +
+                                "..." +
+                                o.sellerID.walletAddress.slice(39, 42)
+                                : ""}
+                            </span>
+                          </td>
+                          <td>
+                            <img
+                              alt=""
+                              src={Tokens[o.paymentToken.toLowerCase()].icon}
+                              className="img-fluid hunter_fav"
+                            />{" "}
+                            {o.price && o.price.$numberDecimal
+                              ? Number(convertToEth(o.price.$numberDecimal)).toFixed(
+                                4
+                              )
+                              : "0"}{" "}
+                            {Tokens[o.paymentToken.toLowerCase()].symbolName}
+                          </td>
+                          <td>
+                            {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
+                            <span className="nft_time">
+                              {moment(o.createdOn).format("hh:mm a")}
+                            </span>
+                          </td>
+                          <td>
+                            {o.salesType === 0
+                              ? "Fixed Sale"
+                              : o.salesType === 1 && o.deadline !== GENERAL_TIMESTAMP
+                                ? "Auction"
+                                : "Open for Bids"}
+                          </td>
+                          <td>
+
+                            {moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format() || o.deadline === GENERAL_TIMESTAMP ? (
+                              "--:--:--"
+                            ) : (
+                              <Clock
+                                deadline={moment.utc(o.deadline * 1000).local().format()}
+                                fetch={fetchListing}
+                              ></Clock>
+                            )}
+                          </td>
+                          {console.log("new Date()", moment(new Date()).format())}
+                          <td className="blue_text">
+                            {moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
+                              ? "Active"
+                              : "Ended"}
+                          </td>
+                          <td>
+                            {console.log("datee", moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format(), moment.utc(o.deadline * 1000).local().format(), moment(new Date()).format())}
+
+                            <div className="text-center">
+                              {o.sellerID?.walletAddress?.toLowerCase() ===
+                                currentUser?.toLowerCase() ? (
+                                <button
+                                  to={"/"}
+                                  className="small_yellow_btn small_btn mr-3"
+                                  onClick={async () => {
+                                    setLoading(true);
+                                    await handleRemoveFromSale(o._id, currentUser);
+                                    setLoading(false);
+                                  }}
+                                >
+                                  Remove From Sale
+                                </button>
+                              ) : (
+                                <button
+                                  to={"/"}
+                                  disabled={
+                                    moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format()
+                                  }
+                                  className="small_border_btn small_btn"
+                                  onClick={async () => {
+                                    console.log("current order", o);
+                                    if (
+                                      moment.utc(new Date(o.deadline * 1000)).local().format()
+                                      < moment(new Date()).format()
+                                    ) {
+                                      NotificationManager.error(
+                                        "Auction Ended",
+                                        "",
+                                        800
+                                      );
+                                      return;
+                                    }
+                                    if (currentUser) {
+                                      o.salesType === 0
+                                        ? setPrice(
+                                          Number(
+                                            convertToEth(o.price.$numberDecimal)
+                                          ).toFixed(4)
+                                        )
+                                        : setPrice("");
+                                      props.NftDetails.type === 1 &&
+                                        setCurrentOrder(o);
+                                      o.salesType === 0
+                                        ? setIsBuyNowModal(true)
+                                        : setIsPlaceBidModal(true);
+                                    } else {
+                                      NotificationManager.error(
+                                        "wallet not connected",
+                                        "",
+                                        800
+                                      );
+                                      return;
+                                    }
+                                  }}
+                                >
+                                  {o.salesType === 0
+                                    ? "Buy Now"
+                                    : haveBid
+                                      ? "Update Bid"
+                                      : "Place Bid"}
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                    : ""}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      }
+
+>>>>>>> c3a54beb561fd1d0fd1f6efd7fb8810d74d1ebac
     </div>
   );
 }

@@ -319,7 +319,7 @@ function NFTBids(props) {
                             --:--:--
                           </td>
                           <td className="blue_text">
-                            {new Date(b.bidDeadline * 1000) < new Date()
+                            {moment.utc(b.bidDeadline * 1000).local().format()
                               ? "Ended"
                               : "Active"}
                           </td>
@@ -360,9 +360,7 @@ function NFTBids(props) {
                               <div className="d-flex flex-column justify-content-center align-items-center ">
                                 <button
                                   disabled={
-                                    moment.utc(
-                                      new Date(b.bidDeadline * 1000)
-                                    ).local().format() < new Date()
+                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
                                   }
                                   className="small_yellow_btn small_btn mb-2"
                                   onClick={() => {
@@ -392,9 +390,7 @@ function NFTBids(props) {
                                 ).local().format())}
                                 <button
                                   disabled={
-                                    moment.utc(
-                                      new Date(b.bidDeadline * 1000)
-                                    ).local().format() < new Date()
+                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
                                   }
                                   className="small_border_btn small_btn"
                                   onClick={async () => {
@@ -413,9 +409,7 @@ function NFTBids(props) {
                                 to={"/"}
                                 className="small_border_btn small_btn"
                                 disabled={
-                                  moment.utc(
-                                    new Date(b.bidDeadline * 1000)
-                                  ).local().format() < new Date()
+                                  moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
                                 }
                               >
                                 Place Bid
