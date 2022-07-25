@@ -99,8 +99,9 @@ function CreateCollection(props) {
 
   function handleChange(ev) {
     if (!ev.target["validity"].valid) return;
+    console.log("evv.target", ev.target["value"]);
     const dt = ev.target["value"];
-    const ct = moment();
+    const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
     if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
@@ -270,8 +271,8 @@ function CreateCollection(props) {
         fd.append("categoryID", category);
         fd.append("brandID", brand);
         fd.append("isOnMarketplace", isOnMarketplace === "Yes" ? 1 : 0);
-        fd.append("preSaleStartTime", new Date(preSaleStartTime));
-        fd.append("preSaleEndTime", new Date(datetime2));
+        fd.append("preSaleStartTime", preSaleStartTime);
+        fd.append("preSaleEndTime", datetime2);
         fd.append("preSaleTokenAddress", contracts.BUSD);
         fd.append("totalSupply", maxSupply);
         fd.append("type", Number(nftType));
@@ -356,8 +357,8 @@ function CreateCollection(props) {
           //fd.append("chainID", chain);
           fd.append("link", importedCollectionLink);
           fd.append("contractAddress", contractAddress);
-          fd.append("preSaleStartTime", new Date(preSaleStartTime));
-          fd.append("preSaleEndTime", new Date(datetime2));
+          fd.append("preSaleStartTime", preSaleStartTime);
+          fd.append("preSaleEndTime", datetime2);
           fd.append("preSaleTokenAddress", contracts.BUSD);
           fd.append("totalSupply", maxSupply);
           fd.append("type", type);
@@ -599,7 +600,7 @@ function CreateCollection(props) {
                   ? myCollections.map((item, index) => {
                     return (
                       <>
-                        <tr key={index}>
+                        <tr>
                           <td>
                             {" "}
                             <div className="first-col">

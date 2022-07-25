@@ -33,16 +33,18 @@ import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { fetchBidNft, viewNFTDetails } from "../../apiServices";
+import { fetchBidNft, InsertHistory, viewNFTDetails } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
-
 import { useGLTF } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import {
+  Canvas, useFrame, extend, useThree,
 
+} from "@react-three/fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
+extend({ OrbitControls });
 function loadGLTFModel(scene, glbPath, options) {
   const { receiveShadow, castShadow } = options;
   return new Promise((resolve, reject) => {
@@ -78,6 +80,21 @@ function loadGLTFModel(scene, glbPath, options) {
 function easeOutCirc(x) {
   return Math.sqrt(1 - Math.pow(x - 1, 4));
 }
+
+const CameraControls = () => {
+  // Get a reference to the Three.js Camera, and the canvas html element.
+  // We need these to setup the OrbitControls component.
+  // https://threejs.org/docs/#examples/en/controls/OrbitControls
+  const {
+    camera,
+    gl: { domElement },
+  } = useThree();
+  // Ref to the controls, so that we can update them on every frame using useFrame
+  const controls = useRef();
+  useFrame((state) => controls.current.update());
+  return <orbitControls ref={controls} args={[camera, domElement]} />;
+};
+
 
 const Show3DImage = () => {
   const refContainer = useRef();
@@ -216,6 +233,7 @@ function NFTDetails() {
   const [haveOffer, setHaveOffer] = useState("none");
   const [ownedBy, setOwnedBy] = useState("");
   const [bidStatus, setBidStatus] = useState("");
+  const [modalImage, setModalImge] = useState("")
 
   useEffect(() => {
     async function setUser() {
@@ -243,6 +261,13 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+        console.log("nft details is---------->", res[0])
+        if (res[0].fileType === "3D") {
+
+          let image = res[0].image.split("//");
+          setModalImge(image[1])
+          console.log("3d Image is------->", image[1]);
+        }
         setOrders(res[0]?.OrderData);
         if (res[0]?.OrderData.length <= 0) {
           setOrders([]);
@@ -369,32 +394,46 @@ function NFTDetails() {
         return;
       }
     }
-    let orderData = {
-      nftId: NFTDetails.id,
-      collection: NFTDetails.collectionAddress,
-      price: itemprice,
-      quantity: item_qt,
-      saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
-      salt: Math.round(Math.random() * 10000000),
-      endTime: datetime ? datetime : GENERAL_DATE,
-      chosenType: marketplaceSaleType,
-      minimumBid: item_bid !== "" ? item_bid : 0,
-      // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
-      tokenAddress:
-        marketplaceSaleType === 0
+    try {
+      let orderData = {
+        nftId: NFTDetails.id,
+        collection: NFTDetails.collectionAddress,
+        price: itemprice,
+        quantity: item_qt,
+        saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
+        salt: Math.round(Math.random() * 10000000),
+        endTime: datetime ? datetime : GENERAL_DATE,
+        chosenType: marketplaceSaleType,
+        minimumBid: item_bid !== "" ? item_bid : 0,
+        // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
+        tokenAddress:
+          marketplaceSaleType === 0
+            ? contracts[selectedTokenFS]
+            : contracts[selectedToken],
+        tokenId: NFTDetails.tokenId,
+        erc721: NFTDetails.type === 1,
+      };
+      let res = await putOnMarketplace(currentUser, orderData);
+      if (res === false) {
+        setLoading(false);
+        return;
+      }
+      let historyReqData = {
+        nftID: NFTDetails.id,
+        sellerID: localStorage.getItem('userId'),
+        action: "PutOnSale",
+        type: "List",
+        price: ethers.utils.parseEther(itemprice.toString()).toString(),
+        paymentToken: marketplaceSaleType === 0
           ? contracts[selectedTokenFS]
           : contracts[selectedToken],
-      tokenId: NFTDetails.tokenId,
-      erc721: NFTDetails.type === 1,
-    };
-    let res = await putOnMarketplace(currentUser, orderData);
-    if (res === false) {
-      setLoading(false);
-      return;
-    } else {
-      // NotificationManager.success("Imported successfully");
-      setLoading(false);
-      return;
+        quantity: item_qt,
+        createdBy: localStorage.getItem('userId')
+      }
+      await InsertHistory(historyReqData);
+    }
+    catch (e) {
+      console.log("Error in putOnMarketplace", e);
     }
   };
 
@@ -513,7 +552,7 @@ function NFTDetails() {
     console.log("ev", ev, new Date(ev), moment.utc(ev));
     if (!ev.target["validity"].valid) return;
 
-    const dt = ev.target["value"] + ":00Z";
+    const dt = ev.target["value"];
 
     const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
 
@@ -658,6 +697,18 @@ function NFTDetails() {
                   setLoading(false);
                   return;
                 }
+                let historyReqData = {
+                  nftID: orders[0].nftID,
+                  buyerID: localStorage.getItem('userId'),
+                  sellerID: orders[0].sellerID,
+                  action: "Bid",
+                  type: haveBid && haveBid !== "none" ? "Updated" : "Created",
+                  price: ethers.utils.parseEther(price.toString()).toString(),
+                  paymentToken: contracts[selectedToken],
+                  quantity: orders[0].total_quantity,
+                  createdBy: localStorage.getItem('userId')
+                }
+                await InsertHistory(historyReqData);
                 NotificationManager.success("Bid Placed Successfully", "", 800);
                 setLoading(false);
                 slowRefresh(1000);
@@ -760,8 +811,21 @@ function NFTDetails() {
                 setLoading(false);
                 return;
               }
+
+              let historyReqData = {
+                nftID: NFTDetails.id,
+                buyerID: localStorage.getItem('userId'),
+                sellerID: orders[0].sellerID,
+                action: "Sold",
+                price: orders[0]?.price?.$numberDecimal,
+                paymentToken: contracts[selectedTokenFS],
+                quantity: orders[0].total_quantity,
+                createdBy: localStorage.getItem('userId')
+              }
+              await InsertHistory(historyReqData);
+
               setLoading(false);
-              // slowRefresh(1000);
+              slowRefresh(1000);
             }}
           >
             {"Buy Now"}
@@ -791,7 +855,7 @@ function NFTDetails() {
                   className="img-fluid nftimg"
                   alt=""
                   onError={(e) => {
-                    e.target.src = "../img/collections/list4.png";
+                    e.target.src = "../img/collectCanvasions/list4.png";
                   }}
                 />
               ) : (
@@ -808,9 +872,9 @@ function NFTDetails() {
                 <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
                   <pointLight position={[10, 10, 10]} intensity={1.3} />
                   <Suspense fallback={null}>
-                    <Model image={NFTDetails.image} />
+                    <Model image={`http://${modalImage}`} />
                   </Suspense>
-                  <OrbitControls />
+                  <CameraControls />
                 </Canvas>
               ) : (
                 ""
@@ -879,36 +943,36 @@ function NFTDetails() {
                   <div className="row">
                     {NFTDetails
                       ? NFTDetails?.attributes?.map((attr, key) => {
-                          const rarity = parseInt(attr?.rarity);
-                          return (
-                            <div className="col-md-6 mb-4" key={key}>
-                              <div className="tab_label">
-                                <div className="d-flex align-items-start flex-column">
-                                  <p>{attr.trait_type}</p>
-                                  <span className="big_text">{attr.value}</span>
-                                </div>
-                                {rarity ? (
-                                  <p>
-                                    {rarity}% <span>have this traits</span>
-                                  </p>
-                                ) : (
-                                  ""
-                                )}
+                        const rarity = parseInt(attr?.rarity);
+                        return (
+                          <div className="col-md-6 mb-4" key={key}>
+                            <div className="tab_label">
+                              <div className="d-flex align-items-start flex-column">
+                                <p>{attr.trait_type}</p>
+                                <span className="big_text">{attr.value}</span>
                               </div>
                               {rarity ? (
-                                <div className="progress mt-2">
-                                  <div
-                                    className={`progress-bar w-${rarity}`}
-                                    role="progressbar"
-                                    aria-valuenow={rarity}
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                  ></div>
-                                </div>
+                                <p>
+                                  {rarity}% <span>have this traits</span>
+                                </p>
                               ) : (
                                 ""
                               )}
-                              {/* <div className='progress'>
+                            </div>
+                            {rarity ? (
+                              <div className="progress mt-2">
+                                <div
+                                  className={`progress-bar w-${rarity}`}
+                                  role="progressbar"
+                                  aria-valuenow={rarity}
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                ></div>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                            {/* <div className='progress'>
                           <div
                             className='progress-bar w-75'
                             role='progressbar'
@@ -916,9 +980,9 @@ function NFTDetails() {
                             aria-valuemin='0'
                             aria-valuemax='100'></div>
                         </div> */}
-                            </div>
-                          );
-                        })
+                          </div>
+                        );
+                      })
                       : ""}
                   </div>
                 </div>
@@ -999,9 +1063,22 @@ function NFTDetails() {
                     data-bs-target="#detailPop"
                     onClick={async () => {
                       console.log("orders[0]", orders[0], orders);
-                      setLoading(true);
-                      await handleRemoveFromSale(orders[0]._id, currentUser);
-                      setLoading(false);
+                      try {
+                        setLoading(true);
+                        await handleRemoveFromSale(orders[0]._id, currentUser);
+                        let historyReqData = {
+                          nftID: NFTDetails.id,
+                          sellerID: localStorage.getItem('userId'),
+                          action: "RemoveFromSale",
+                          price: orders[0].price?.$numberDecimal,
+                          createdBy: localStorage.getItem('userId')
+                        }
+                        await InsertHistory(historyReqData);
+                        setLoading(false);
+                      }
+                      catch (e) {
+                        console.log("Error in remove from sale", e);
+                      }
                     }}
                   >
                     Remove From Sale
@@ -1147,7 +1224,7 @@ function NFTDetails() {
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">History</h3>
               <div className="table-responsive">
-                <NFThistory />
+                <NFThistory nftID={NFTDetails.id} />
               </div>
             </div>
             {allNFTs.length > 1 ? (

@@ -1306,7 +1306,7 @@ header#myHeader {
   width: 90px;
   object-fit: cover;
   margin: auto;
-  background-image: url(../../assets/images/woman.png);
+  /* background-image: url(../../assets/images/woman.png); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2268,7 +2268,7 @@ button.filter_btn.active {
   padding: 0px;
   margin: 0;
   list-style: none;
-  max-height: 178px;
+  max-height: 250px;
 }
 .nft_list th,
 .nft_list h6 {
@@ -3338,6 +3338,8 @@ button#btn-submit {
   padding: 40px;
   transition: 2s ease;
   -webkit-transition: 2s ease;
+  height: 100%;
+  width: 100%;
 }
 .feature-box:hover {
   background: linear-gradient(180deg, #ef981d 53.11%, #f9bf50 100%);
@@ -4653,11 +4655,12 @@ a:hover {
   display: flex;
   margin-bottom: 10px;
   transition: all 0.1s ease;
+  justify-content: center;
 }
 
 .status_ul li:hover,
 .status_ul li.filter_border.active {
-  color: #000;
+  color: #fff;
   background-color: #ef981d;
 }
 
@@ -4887,7 +4890,7 @@ a:hover {
   color: #fff;
 }
 .tab-content {
-  padding: 0px 20px;
+  padding: 0px 0px;
 }
 .select_bg {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAC/SURBVHgB7ZHBDQIhEEWHzXLfEihhW9g6uEglloIX6qCEtQRK8AwkiAaMIbAOnkzkXyAw8x5kAEZGfj4kb6SUbJ7nk/f+IoQw8EVqjClfUko1IeQc110ptUJnInyN8D0xdD6fKrVLCEH3SBL88cClvHsJnHNbXEyvpAI3ifUMKYpZ+h5LR7fYuHHOrz3w9xmSShNKgoFXBRgJFt4UHEmstYCFHwpakjh8wMI/ChoSwMJRgoYEBUcLCglg4SN/kjub65Rl4R0gGAAAAABJRU5ErkJggg==);
@@ -5190,7 +5193,7 @@ a:hover {
   width: 82.56px;
   height: 80px;
   border-radius: 100%;
-  background-image: url(../../assets/images/woman.png);
+  /* background-image: url(../../assets/images/woman.png); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -5314,7 +5317,7 @@ section.collection_info .justify-content-end {
   object-fit: cover;
 }
 @media screen and (min-width:992px) {
-  .collection_items img.img-fluid.width-100 {height: 260px;}
+  .collection_items img.img-fluid.width-100 {height: 260px;object-fit: cover;}
 }
 @media screen and (max-width:991px) and (min-width:767px) {
   .collection_items img.img-fluid.width-100 {
@@ -5334,7 +5337,13 @@ section.collection_info .justify-content-end {
   .follow_btns .white_btn {margin-bottom:10px;}
 
 }
-
+@media screen and (max-width:1024px) {
+  .filter.filtershow {flex-wrap: wrap;}
+.filtercol {width: 100%;}
+.status_ul li {
+  justify-content: center;
+}
+}
 @media screen and (max-width:767px) {
 
 section.collection_info .justify-content-end {
@@ -5357,4 +5366,76 @@ section.collection_info .justify-content-end {
 
 }
 
+}
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+.Autherpagetab svg {
+  fill: #ef981d;
+}
+.author_cart li .Autherpagetab button {
+  font-weight: 600 !important;
+    font-size: 18px !important;
+    text-align: center;
+    padding: 10px 20px;
+    color: #fff;
+}
+.author_cart li .Autherpagetab li {margin-bottom: 10px;text-align: center;}
+.author_cart li .Autherpagetab button:hover,
+.author_cart li .Autherpagetab button.active {
+  border-bottom: 0px solid #ef981d;
+  background: #ef981d;
+  border-radius: 50px;
+  color: #fff !important;
+  font-style: normal;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+  text-align: center;
+  padding: 10px 20px;
+}
+.author_cart li .Autherpagetab button:hover svg, 
+.author_cart li .Autherpagetab button.active svg {fill: #fff;}
+.displaynone {display: none;}
+.usersidebar .nav-link {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: #ffffff;
+  list-style: none;
+  background: transparent !important;
+  width: fit-content;
+  display: inline-block;
+  padding: 0px !important;
+  border-radius: 0px !important;
+  margin-bottom: 40px;
+}
+.usersidebar .nav-link svg {
+  margin-right: 10px;
+}
+.usersidebar .nav-link.active {
+  color: #ef981d;
+}
+.usersidebar .nav-link.active svg,
+.usersidebar .nav-link.active path,
+.usersidebar .nav-link.active g {
+  fill: #ef981d !important;
+}
+/* .usersidebar li .active svg, 
+.usersidebar li .active path,
+.usersidebar li .active g, 
+.usersidebar li:hover svg, 
+.usersidebar li:hover path, 
+.usersidebar li:hover g {
+
+} */
+
+
+.modal.marketplace.active{
+  display: block;
+}
+
+.modal.marketplace.inactive{
+  display: none !important;
 }

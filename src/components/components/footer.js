@@ -8,7 +8,7 @@ const footer= () => (
                     <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12">
                         <div className="widget text-widget">
                             <img alt='' src={'../img/logo.svg'} className="mb-3"/>
-                            <p>The #1 NFT firearms supplier for the new era of interoperable metaverse gaming. </p>
+                            <p>The #1 NFT firearms supplier for interoperable gaming.</p>
                         </div>
                     </div>
                     <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12">
@@ -81,15 +81,15 @@ const footer= () => (
                     <div className="row align-items-end">
                         <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12">
                             <span onClick={()=> window.open("", "_self")}>
-                                <span className="copy">&copy;Copyright 2022 - HunterToken by BlockchainAustralia</span>
+                                <span className="copy">&copy;Copyright 2022 - HunterToken - in partnership with BlockchainAustralia</span>
                             </span>
                         </div>
                         <div className='col-lg-3 col-md-6 col-sm-12 col-xs-12'></div>
                         <div className='col-lg-3 col-md-6 col-sm-12 col-xs-12'></div>
                         <div className='col-lg-3 col-md-6 col-sm-12 col-xs-12'>
                             <ul className="social-icons">
-                                <li><Link to=""><i className="fa fa-facebook fa-lg"></i></Link></li>
-                                <li><Link to=""><i className="fa fa-twitter fa-lg"></i></Link></li>
+                                <li><Link to="https://www.facebook.com/digitalarmsnft"><i className="fa fa-facebook fa-lg"></i></Link></li>
+                                <li><Link to="https://twitter.com/DigitalArmsNFT"><i className="fa fa-twitter fa-lg"></i></Link></li>
                                 <li><Link to=""><i className="fa fa-linkedin fa-lg"></i></Link></li>
                                 <li><Link to=""><i className="fa fa-gamepad fa-lg"></i></Link></li>
                             </ul>

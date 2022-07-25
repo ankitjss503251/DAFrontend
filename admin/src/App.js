@@ -15,9 +15,8 @@ import Admins1 from "./components/pages/admins";
 import { NotificationContainer } from "react-notifications";
 import NftDetail from "./components/pages/ImportedData/nftDetail";
 import withLogin from "./components/components/withLogin";
-
+import Error404 from "./components/pages/Error404";
 import Navbar from "./components/Navbar";
-import LandingPage from "./LandingPage";
 import { isSuperAdmin } from "./apiServices";
 
 const Home = withLogin(Home1);
@@ -87,6 +86,7 @@ function App() {
           /> */}
 
           <Route path="sadmin" element={<Login />} />
+          {/* <Route path="404" element={<Error404 />} /> */}
 
           <Route
             element={<>
@@ -125,7 +125,10 @@ function App() {
             /> : <Route path="/" />}
           </Route>
 
-
+          <Route
+            path="*"
+            element={<Error404 />}
+          />
 
         </Routes>
 

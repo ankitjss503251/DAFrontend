@@ -47,7 +47,7 @@ const Helpcenter= () => (
       <div className="col-lg-4 col-md-6 mb-5">
         <div className="feature-box f-boxed style-3 text-center">
           <h4 className="mb-4">Getting Started</h4>
-          <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam.</p>
+          <p>Learn how to create an account, set up your wallet.</p>
           <Link to="" className="hlp-btn mt-4">Read more</Link>
         </div>
       </div>    
@@ -56,7 +56,7 @@ const Helpcenter= () => (
           <div className="feature-box f-boxed style-3 text-center">
               <div className="text">
                   <h4 className="mb-4">Buying</h4>
-                  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam.</p>
+                  <p>Learn how to purchase your first NFT</p>
                   <Link to="" className="hlp-btn mt-4">Read more</Link>
               </div>
           </div>
@@ -66,13 +66,13 @@ const Helpcenter= () => (
           <div className="feature-box f-boxed style-3 text-center">
               <div className="text">
                   <h4 className="mb-4">Selling</h4>
-                  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam.</p>
+                  <p>How to list an item.</p>
                   <Link to="" className="hlp-btn mt-4">Read more</Link>
               </div>
           </div>
       </div>  
 
-      <div className="col-lg-4 col-md-6 mb-5">
+      {/* <div className="col-lg-4 col-md-6 mb-5">
           <div className="feature-box f-boxed style-3 text-center">
               <div className="text">
                   <h4 className="mb-4">Creating</h4>
@@ -100,7 +100,7 @@ const Helpcenter= () => (
                   <Link to="" className="hlp-btn mt-4">Read more</Link>
               </div>
           </div>
-      </div>  
+      </div>   */}
     </div>
   </div>
   </section>
