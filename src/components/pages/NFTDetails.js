@@ -23,12 +23,161 @@ import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { fetchBidNft, viewNFTDetails } from "../../apiServices";
+import { fetchBidNft, InsertHistory, viewNFTDetails } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
 import { useGLTF } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import {
+  Canvas, useFrame, extend, useThree,
+
+} from "@react-three/fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
+extend({ OrbitControls });
+function loadGLTFModel(scene, glbPath, options) {
+  const { receiveShadow, castShadow } = options;
+  return new Promise((resolve, reject) => {
+    const loader = new GLTFLoader();
+    loader.load(
+      glbPath,
+      (gltf) => {
+        const obj = gltf.scene;
+        obj.name = "dinosaur";
+        obj.position.y = 0;
+        obj.position.x = 0;
+        obj.receiveShadow = receiveShadow;
+        obj.castShadow = castShadow;
+        scene.add(obj);
+
+        obj.traverse(function (child) {
+          if (child.isMesh) {
+            child.castShadow = castShadow;
+            child.receiveShadow = receiveShadow;
+          }
+        });
+
+        resolve(obj);
+      },
+      undefined,
+      function (error) {
+        console.log(error);
+        reject(error);
+      }
+    );
+  });
+}
+function easeOutCirc(x) {
+  return Math.sqrt(1 - Math.pow(x - 1, 4));
+}
+
+const CameraControls = () => {
+  // Get a reference to the Three.js Camera, and the canvas html element.
+  // We need these to setup the OrbitControls component.
+  // https://threejs.org/docs/#examples/en/controls/OrbitControls
+  const {
+    camera,
+    gl: { domElement },
+  } = useThree();
+  // Ref to the controls, so that we can update them on every frame using useFrame
+  const controls = useRef();
+  useFrame((state) => controls.current.update());
+  return <orbitControls ref={controls} args={[camera, domElement]} />;
+};
+
+
+const Show3DImage = () => {
+  const refContainer = useRef();
+  const [loading, setLoading] = useState(true);
+  const [renderer, setRenderer] = useState();
+
+  useEffect(() => {
+    const { current: container } = refContainer;
+    if (container && !renderer) {
+      const scW = container.clientWidth;
+      const scH = container.clientHeight;
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+      });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(scW, scH);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      container.appendChild(renderer.domElement);
+      setRenderer(renderer);
+
+      const scene = new THREE.Scene();
+      const scale = 2;
+      const camera = new THREE.OrthographicCamera(
+        -scale,
+        scale,
+        scale,
+        -scale,
+        0.01,
+        50000
+      );
+      const target = new THREE.Vector3(-0.5, 1.2, 0);
+      const initialCameraPosition = new THREE.Vector3(
+        20 * Math.sin(0.2 * Math.PI),
+        10,
+        20 * Math.cos(0.2 * Math.PI)
+      );
+      const ambientLight = new THREE.AmbientLight(0xcccccc, 1);
+      scene.add(ambientLight);
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.autoRotate = true;
+      controls.target = target;
+
+      loadGLTFModel(scene, "https://hunter.techdigital.com.au/Parrot.glb", {
+        receiveShadow: false,
+        castShadow: false,
+      }).then(() => {
+        animate();
+        setLoading(false);
+      });
+
+      let req = null;
+      let frame = 0;
+      const animate = () => {
+        req = requestAnimationFrame(animate);
+        frame = frame <= 100 ? frame + 1 : frame;
+
+        if (frame <= 100) {
+          const p = initialCameraPosition;
+          const rotSpeed = -easeOutCirc(frame / 120) * Math.PI * 20;
+
+          camera.position.y = 10;
+          camera.position.x =
+            p.x * Math.cos(rotSpeed) + p.z * Math.sin(rotSpeed);
+          camera.position.z =
+            p.z * Math.cos(rotSpeed) - p.x * Math.sin(rotSpeed);
+          camera.lookAt(target);
+        } else {
+          controls.update();
+        }
+
+        renderer.render(scene, camera);
+      };
+
+      return () => {
+        cancelAnimationFrame(req);
+        renderer.dispose();
+      };
+    }
+  }, []);
+
+  return (
+    <div
+      style={{ height: "350px", width: "350px", position: "relative" }}
+      ref={refContainer}
+    >
+      {loading && (
+        <span style={{ position: "absolute", left: "50%", top: "50%" }}>
+          Loading...
+        </span>
+      )}
+    </div>
+  );
+};
 
 var textColor = {
   textColor: "#EF981D",
@@ -73,6 +222,7 @@ function NFTDetails() {
   const [haveOffer, setHaveOffer] = useState("none");
   const [ownedBy, setOwnedBy] = useState("");
   const [bidStatus, setBidStatus] = useState("");
+  const [modalImage, setModalImge] = useState("")
 
   useEffect(() => {
     async function setUser() {
@@ -101,46 +251,13 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+        console.log("nft details is---------->", res[0])
+        if (res[0].fileType === "3D") {
 
-        let searchParams = {
-          nftID: res[0].id,
-          buyerID: localStorage.getItem("userId"),
-          bidStatus: "All",
-          orderID: "All",
-        };
-  
-        let _data = await fetchBidNft(searchParams);
-        console.log("have bids", _data);
-        if (_data && _data.data.length > 0) {
-          const b = _data.data[0];
-          setHaveBid(true);
-  
-          setPrice(convertToEth(b?.bidPrice?.$numberDecimal));
-          setBidStatus(b?.bidStatus);
-        } else {
-          setHaveBid(false);
+          let image = res[0].image.split("//");
+          setModalImge(image[1])
+          console.log("3d Image is------->", image[1]);
         }
-  
-        let searchParams1 = {
-          nftID: res[0].id,
-          buyerID: localStorage.getItem("userId"),
-          bidStatus: "MakeOffer",
-          orderID: "All",
-        };
-  
-        let _data1 = await fetchOfferNft(searchParams1);
-  
-        if (_data1 && _data1.data.length > 0) {
-          console.log("offer data is------>", _data1);
-          const b = _data1.data[0];
-          setHaveOffer(true);
-  
-          setOfferPrice(convertToEth(b?.bidPrice?.$numberDecimal));
-          setDatetime(moment(b?.bidDeadline * 1000).toISOString());
-        } else {
-          setHaveOffer(false);
-        }
-
         setOrders(res[0]?.OrderData);
         if (res[0]?.OrderData.length <= 0) {
           setOrders([]);
@@ -219,32 +336,46 @@ function NFTDetails() {
         return;
       }
     }
-    let orderData = {
-      nftId: NFTDetails.id,
-      collection: NFTDetails.collectionAddress,
-      price: itemprice,
-      quantity: item_qt,
-      saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
-      salt: Math.round(Math.random() * 10000000),
-      endTime: datetime ? datetime : GENERAL_DATE,
-      chosenType: marketplaceSaleType,
-      minimumBid: item_bid !== "" ? item_bid : 0,
-      // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
-      tokenAddress:
-        marketplaceSaleType === 0
+    try {
+      let orderData = {
+        nftId: NFTDetails.id,
+        collection: NFTDetails.collectionAddress,
+        price: itemprice,
+        quantity: item_qt,
+        saleType: marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
+        salt: Math.round(Math.random() * 10000000),
+        endTime: datetime ? datetime : GENERAL_DATE,
+        chosenType: marketplaceSaleType,
+        minimumBid: item_bid !== "" ? item_bid : 0,
+        // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
+        tokenAddress:
+          marketplaceSaleType === 0
+            ? contracts[selectedTokenFS]
+            : contracts[selectedToken],
+        tokenId: NFTDetails.tokenId,
+        erc721: NFTDetails.type === 1,
+      };
+      let res = await putOnMarketplace(currentUser, orderData);
+      if (res === false) {
+        setLoading(false);
+        return;
+      }
+      let historyReqData = {
+        nftID: NFTDetails.id,
+        sellerID: localStorage.getItem('userId'),
+        action: "PutOnSale",
+        type: "List",
+        price: ethers.utils.parseEther(itemprice.toString()).toString(),
+        paymentToken: marketplaceSaleType === 0
           ? contracts[selectedTokenFS]
           : contracts[selectedToken],
-      tokenId: NFTDetails.tokenId,
-      erc721: NFTDetails.type === 1,
-    };
-    let res = await putOnMarketplace(currentUser, orderData);
-    if (res === false) {
-      setLoading(false);
-      return;
-    } else {
-      // NotificationManager.success("Imported successfully");
-      setLoading(false);
-      return;
+        quantity: item_qt,
+        createdBy: localStorage.getItem('userId')
+      }
+      await InsertHistory(historyReqData);
+    }
+    catch (e) {
+      console.log("Error in putOnMarketplace", e);
     }
   };
 
@@ -508,6 +639,18 @@ function NFTDetails() {
                   setLoading(false);
                   return;
                 }
+                let historyReqData = {
+                  nftID: orders[0].nftID,
+                  buyerID: localStorage.getItem('userId'),
+                  sellerID: orders[0].sellerID,
+                  action: "Bid",
+                  type: haveBid && haveBid !== "none" ? "Updated" : "Created",
+                  price: ethers.utils.parseEther(price.toString()).toString(),
+                  paymentToken: contracts[selectedToken],
+                  quantity: orders[0].total_quantity,
+                  createdBy: localStorage.getItem('userId')
+                }
+                await InsertHistory(historyReqData);
                 NotificationManager.success("Bid Placed Successfully", "", 800);
                 setLoading(false);
                 slowRefresh(1000);
@@ -610,8 +753,21 @@ function NFTDetails() {
                 setLoading(false);
                 return;
               }
+
+              let historyReqData = {
+                nftID: NFTDetails.id,
+                buyerID: localStorage.getItem('userId'),
+                sellerID: orders[0].sellerID,
+                action: "Sold",
+                price: orders[0]?.price?.$numberDecimal,
+                paymentToken: contracts[selectedTokenFS],
+                quantity: orders[0].total_quantity,
+                createdBy: localStorage.getItem('userId')
+              }
+              await InsertHistory(historyReqData);
+
               setLoading(false);
-              // slowRefresh(1000);
+              slowRefresh(1000);
             }}
           >
             {"Buy Now"}
@@ -641,7 +797,7 @@ function NFTDetails() {
                   className="img-fluid nftimg"
                   alt=""
                   onError={(e) => {
-                    e.target.src = "../img/collections/list4.png";
+                    e.target.src = "../img/collectCanvasions/list4.png";
                   }}
                 />
               ) : (
@@ -658,9 +814,9 @@ function NFTDetails() {
                 <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
                   <pointLight position={[10, 10, 10]} intensity={1.3} />
                   <Suspense fallback={null}>
-                    <Model image={NFTDetails.image} />
+                    <Model image={`http://${modalImage}`} />
                   </Suspense>
-                  <OrbitControls />
+                  <CameraControls />
                 </Canvas>
               ) : (
                 ""
@@ -849,9 +1005,22 @@ function NFTDetails() {
                     data-bs-target="#detailPop"
                     onClick={async () => {
                       console.log("orders[0]", orders[0], orders);
-                      setLoading(true);
-                      await handleRemoveFromSale(orders[0]._id, currentUser);
-                      setLoading(false);
+                      try {
+                        setLoading(true);
+                        await handleRemoveFromSale(orders[0]._id, currentUser);
+                        let historyReqData = {
+                          nftID: NFTDetails.id,
+                          sellerID: localStorage.getItem('userId'),
+                          action: "RemoveFromSale",
+                          price: orders[0].price?.$numberDecimal,
+                          createdBy: localStorage.getItem('userId')
+                        }
+                        await InsertHistory(historyReqData);
+                        setLoading(false);
+                      }
+                      catch (e) {
+                        console.log("Error in remove from sale", e);
+                      }
                     }}
                   >
                     Remove From Sale
@@ -997,7 +1166,7 @@ function NFTDetails() {
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">History</h3>
               <div className="table-responsive">
-                <NFThistory />
+                <NFThistory nftID={NFTDetails.id} />
               </div>
             </div>
             {allNFTs.length > 1 ? (

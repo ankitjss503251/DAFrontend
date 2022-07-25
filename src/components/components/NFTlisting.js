@@ -41,32 +41,36 @@ function NFTlisting(props) {
   }, [cookies.selected_account]);
 
   useEffect(() => {
-    const fetch = async () => {
-      if (props.id) {
-        const _orders = await getOrderByNftID({ nftID: props.id });
-        setOrders(_orders?.results);
-      }
-    };
-    fetch();
+    if (props.id)
+      fetch();
   }, [props.id]);
+
+  const fetch = async () => {
+    if (props.id) {
+      const _orders = await getOrderByNftID({ nftID: props.id });
+      setOrders(_orders?.results);
+    }
+  };
 
   useEffect(() => {
-    const fetch = async () => {
-      let searchParams = {
-        nftID: props.id,
-        buyerID: localStorage.getItem("userId"),
-        bidStatus: "All",
-        orderID: "All",
-      };
-
-      let _data = await fetchBidNft(searchParams);
-      console.log("bid data123", _data);
-      if (_data && _data.data.length > 0) {
-        setHaveBid(true);
-      }
-    };
-    fetch();
+    if (props.id)
+      fetchListing();
   }, [props.id]);
+
+  const fetchListing = async () => {
+    let searchParams = {
+      nftID: props.id,
+      buyerID: localStorage.getItem("userId"),
+      bidStatus: "All",
+      orderID: "All",
+    };
+
+    let _data = await fetchBidNft(searchParams);
+
+    if (_data && _data.data.length > 0) {
+      setHaveBid(true);
+    }
+  };
 
   useEffect(() => {
     var body = document.body;
@@ -283,6 +287,7 @@ function NFTlisting(props) {
                 false,
                 props?.NftDetails?.collectionAddress?.toLowerCase()
               );
+              await fetchListing()
               // setLoading(false);
             }}>
             {"Buy Now"}
@@ -354,7 +359,7 @@ function NFTlisting(props) {
                           <td>
                             {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
                             <span className="nft_time">
-                              {moment(o.createdOn).format("hh:mm a")}
+                              {moment(o.createdOn).format("LT")}
                             </span>
                           </td>
                           <td>
@@ -366,16 +371,28 @@ function NFTlisting(props) {
                           </td>
                           <td>
 
-                            {moment.utc(o.deadline * 1000).local().format() < new Date() || o.deadline === GENERAL_TIMESTAMP ? (
+                            {moment(new Date(o.deadline * 1000))
+                              .subtract({
+                                hours: 5,
+                                minutes: 30,
+                              })._d < new Date() || o.deadline === GENERAL_TIMESTAMP ? (
                               "--:--:--"
                             ) : (
                               <Clock
-                                deadline={moment.utc(o.deadline * 1000).local().format()}
+                                deadline={moment(new Date(o.deadline * 1000))
+                                  .subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })
+                                  .toISOString()}
                               ></Clock>
                             )}
                           </td>
                           <td className="blue_text">
-                            {moment.utc(o.deadline * 1000).local().format() > new Date()
+                            {moment(new Date(o.deadline * 1000)).subtract({
+                              hours: 5,
+                              minutes: 30,
+                            })._d > new Date()
                               ? "Active"
                               : "Ended"}
                           </td>

@@ -21,7 +21,7 @@ import UpArrow from "../SVG/dropdown";
 import { getCategory } from "../../helpers/getterFunctions";
 import BGImg from "../../assets/images/background.jpg";
 import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
-
+import GeneralOffer from '../components/GeneralOffer'
 
 function MyNFTs() {
   const { id } = useParams();
@@ -36,7 +36,8 @@ function MyNFTs() {
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
   const [priceSort, setPriceSort] = useState('ASC');
   const [ERCType, setERCType] = useState();
-  const [currPage, setCurrPage] = useState(1)
+  const [currPage, setCurrPage] = useState(1);
+  const [onSaleCount, setOnSaleCount] = useState(0);
 
   const bgImage = {
     backgroundImage: `url(${coverImg})`,
@@ -103,8 +104,11 @@ function MyNFTs() {
         let _owned = await GetOwnedNftList(reqBody);
         setCardCount(cardCount + _owned.count);
         setTotalOwned(_owned.count);
-        if (_owned && _owned.results.length > 0)
+        if (_owned && _owned.results.length > 0){
+          console.log("owned nft is------>",_owned.results)
           setOwnedNFTs(_owned.results);
+        }
+         
         setLoader(false);
       } catch (e) {
         console.log("Error in fetching owned nfts", e);
@@ -117,6 +121,7 @@ function MyNFTs() {
           userWalletAddress: _profile?.walletAddress?.toLowerCase(),
         };
         const onsale = await getOnSaleItems(reqBody);
+        setOnSaleCount(onsale?.length);
         setOnSaleNFTs(onsale);
       } catch (e) {
         console.log("Error in fetching onSale Items", e);
@@ -262,7 +267,7 @@ function MyNFTs() {
                 role='tab'
                 aria-controls='pills-Sale'
                 aria-selected='true'>
-                On Sale
+                On Sale ({onSaleCount})
               </button>
             </li>
             <li>
@@ -308,19 +313,28 @@ function MyNFTs() {
                 aria-expanded='false'>
                 Offers
               </button>
-              <ul className='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+              <ul className='dropdown-menu Autherpagetab' aria-labelledby='dropdownMenuLink'>
                 <li>
-                  <NavLink
-                    activeclassname='active-link'
-                    className='dropdown-item'
-                    to={"/"}>
-                    <DownloadSVG /> Offer Received
-                  </NavLink>
+                <button
+                  data-bs-toggle='pill'
+                  data-bs-target='#pills-NFToffer'
+                  type='button'
+                  role='tab'
+                  aria-controls='pills-NFToffer'
+                  aria-selected='true'>
+                  <DownloadSVG /> Offer Received
+                </button>
                 </li>
                 <li>
-                  <NavLink className='dropdown-item' to={"/"}>
+                  <button
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-NFTmade'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-NFTmade'
+                    aria-selected='true'>
                     <OffermadeSVG /> Offer Made
-                  </NavLink>
+                  </button>
                 </li>
               </ul>
             </li>
@@ -581,6 +595,7 @@ function MyNFTs() {
                     <div className={grid} key={key}>
                       <AuthorListing
                         image={card.image}
+                        fileType={card.fileType}
                         card={card}
                         link={`/nftDetails/${card._id}`}
                       />
@@ -607,6 +622,7 @@ function MyNFTs() {
                       <div className={grid} key={key}>
                         <AuthorListing
                           image={card.image}
+                          fileType={card.fileType}
                           card={card}
                           link={`/nftDetails/${card._id}`}
                           bttn={card.OrderData[0].salesType}
@@ -633,6 +649,7 @@ function MyNFTs() {
                       date={card.Date}
                       button={card.Slug}
                       link={card.Like}
+                      fileType={card.fileType}
                     />
                   </div>
                 ))}
@@ -654,9 +671,34 @@ function MyNFTs() {
                       date={card.Date}
                       button={card.Slug}
                       link={card.Like}
+                      fileType={card.fileType}
                     />
                   </div>
                 ))}
+              </div>
+            </div>
+            <div
+              className='tab-pane fade'
+              id='pills-NFToffer'
+              role='tabpanel'
+              aria-labelledby='pills-NFToffer-tab'>
+              <div className='row'>
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">Offers Received</h3>
+                  <GeneralOffer />
+                </div>
+              </div>
+            </div>
+            <div
+              className='tab-pane fade'
+              id='pills-NFTmade'
+              role='tabpanel'
+              aria-labelledby='pills-NFTmade-tab'>
+              <div className='row'>
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">Offers Made</h3>
+                  <GeneralOffer />
+                </div>
               </div>
             </div>
           </div>

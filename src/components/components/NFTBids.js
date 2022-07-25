@@ -277,39 +277,39 @@ function NFTBids(props) {
                             <span className="blue_dot circle_dot"></span>
                             <span>
                               {console.log('currentuser length', currentUser, currentUser.length)}
-                              {b?.bidderID?.walletAddress
-                                ? b?.bidderID?.walletAddress?.slice(0, 3) +
-                                "..." +
-                                b?.bidderID?.walletAddress?.slice(39, 42)
-                                : ""}
-                            </span>
-                          </td>
-                          <td>
-                            <img
-                              alt=""
-                              src={
-                                b?.orderID?.length > 0
-                                  ? Tokens[
-                                    b?.orderID[0]?.paymentToken?.toLowerCase()
-                                  ]?.icon
-                                  : "-"
-                              }
-                              className="img-fluid hunter_fav"
-                            />{" "}
-                            {Number(
-                              convertToEth(b?.bidPrice?.$numberDecimal)
-                            ).toFixed(4)}{" "}
-                            {Tokens[b?.orderID[0]?.paymentToken]?.symbolName}
-                          </td>
-                          <td>
-                            {moment.utc(b.createdOn).local().format("DD/MM/YYYY")}{" "}
-                            <span className="nft_time">
-                              {moment.utc(b.createdOn).local().format("hh:mm a")}
-                            </span>
-                          </td>
-                          <td>Auction</td>
-                          <td>
-                            {/* <Clock
+                                {b?.bidderID?.walletAddress
+                                  ? b?.bidderID?.walletAddress?.slice(0, 4) +
+                                    "..." +
+                                    b?.bidderID?.walletAddress?.slice(38, 42)
+                                  : ""}
+                              </span>
+                            </td>
+                            <td>
+                              <img
+                                alt=""
+                                src={
+                                  b?.orderID?.length > 0
+                                    ? Tokens[
+                                        b?.orderID[0]?.paymentToken?.toLowerCase()
+                                      ]?.icon
+                                    : "-"
+                                }
+                                className="img-fluid hunter_fav"
+                              />{" "}
+                              {Number(
+                                convertToEth(b?.bidPrice?.$numberDecimal)
+                              ).toFixed(4)}{" "}
+                              {Tokens[b?.orderID[0]?.paymentToken]?.symbolName}
+                            </td>
+                            <td>
+                              {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
+                              <span className="nft_time">
+                                {moment(b.createdOn).format("LT")}
+                              </span>
+                            </td>
+                            <td>Auction</td>
+                            <td>
+                              {/* <Clock
                             deadline={moment(new Date(b.bidDeadline * 1000))
                               .subtract({
                                 hours: 5,
@@ -319,7 +319,7 @@ function NFTBids(props) {
                             --:--:--
                           </td>
                           <td className="blue_text">
-                            {new Date(b.bidDeadline * 1000) < new Date()
+                            {moment.utc(b.bidDeadline * 1000).local().format()
                               ? "Ended"
                               : "Active"}
                           </td>
@@ -360,9 +360,7 @@ function NFTBids(props) {
                               <div className="d-flex flex-column justify-content-center align-items-center ">
                                 <button
                                   disabled={
-                                    moment.utc(
-                                      new Date(b.bidDeadline * 1000)
-                                    ).local().format() < new Date()
+                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
                                   }
                                   className="small_yellow_btn small_btn mb-2"
                                   onClick={() => {
@@ -392,9 +390,7 @@ function NFTBids(props) {
                                 ).local().format())}
                                 <button
                                   disabled={
-                                    moment.utc(
-                                      new Date(b.bidDeadline * 1000)
-                                    ).local().format() < new Date()
+                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
                                   }
                                   className="small_border_btn small_btn"
                                   onClick={async () => {
@@ -413,9 +409,7 @@ function NFTBids(props) {
                                 to={"/"}
                                 className="small_border_btn small_btn"
                                 disabled={
-                                  moment.utc(
-                                    new Date(b.bidDeadline * 1000)
-                                  ).local().format() < new Date()
+                                  moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
                                 }
                               >
                                 Place Bid
