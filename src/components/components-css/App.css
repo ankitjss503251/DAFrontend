@@ -5430,3 +5430,12 @@ section.collection_info .justify-content-end {
 .usersidebar li:hover g {
 
 } */
+
+
+.modal.marketplace.active{
+  display: block;
+}
+
+.modal.marketplace.inactive{
+  display: none !important;
+}

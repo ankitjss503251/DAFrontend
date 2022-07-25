@@ -40,7 +40,6 @@
     "react": "^18.0.2",
     "react-3d-viewer": "^1.0.12",
     "react-awesome-reveal": "^3.8.1",
-    "react-bootstrap": "^1.6.3",
     "react-cookie": "^4.1.1",
     "react-cool-onclickoutside": "^1.6.2",
     "react-copy-to-clipboard": "^5.1.0",
@@ -62,7 +61,6 @@
     "react-spring-lightbox": "^1.6.0",
     "react-tsparticles": "^1.34.0",
     "redux-devtools-extension": "^2.13.9",
-    
     "redux-thunk": "^2.4.1",
     "sass": "^1.39.2",
     "semantic-ui-css": "^2.4.1",

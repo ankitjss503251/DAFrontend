@@ -288,7 +288,7 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
-  // slowRefresh(1000);
+  slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -937,7 +937,7 @@ export const handleAcceptBids = async (
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-  slowRefresh(1000);
+
 };
 
 export const handleAcceptOffers = async (bidData, props, account) => {
@@ -1124,7 +1124,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-  slowRefresh(1000);
+  // slowRefresh(1000);
 };
 
 export const handleUpdateBidStatus = async (
@@ -1139,7 +1139,7 @@ export const handleUpdateBidStatus = async (
     await updateBidNft(reqParams);
 
     NotificationManager.success(`Bid ${action} Successfully`);
-    slowRefresh(1000);
+    // slowRefresh(1000);
   } catch (e) {
     console.log("error in api", e);
   }
