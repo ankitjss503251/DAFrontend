@@ -6,20 +6,10 @@ import NFToffer from "../components/NFToffer";
 import NFTBids from "../components/NFTBids";
 import { ethers } from "ethers";
 import NFThistory from "../components/NFThistory";
-import {
-  getCollections,
-  getNFTs,
-  getNFTDetails,
-} from "../../helpers/getterFunctions";
-
+import { getCollections, getNFTs, getNFTDetails } from "../../helpers/getterFunctions";
 import { useParams } from "react-router-dom";
 import { convertToEth } from "../../helpers/numberFormatter";
-import {
-  createOffer,
-  putOnMarketplace,
-  handleBuyNft,
-  createBid,
-} from "../../helpers/sendFunctions";
+import { createOffer, putOnMarketplace, handleBuyNft, createBid, } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
 import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
 import { handleRemoveFromSale } from "./../../helpers/sendFunctions";
@@ -35,143 +25,10 @@ import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { fetchBidNft, viewNFTDetails } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
-
 import { useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-
-function loadGLTFModel(scene, glbPath, options) {
-  const { receiveShadow, castShadow } = options;
-  return new Promise((resolve, reject) => {
-    const loader = new GLTFLoader();
-    loader.load(
-      glbPath,
-      (gltf) => {
-        const obj = gltf.scene;
-        obj.name = "dinosaur";
-        obj.position.y = 0;
-        obj.position.x = 0;
-        obj.receiveShadow = receiveShadow;
-        obj.castShadow = castShadow;
-        scene.add(obj);
-
-        obj.traverse(function (child) {
-          if (child.isMesh) {
-            child.castShadow = castShadow;
-            child.receiveShadow = receiveShadow;
-          }
-        });
-
-        resolve(obj);
-      },
-      undefined,
-      function (error) {
-        console.log(error);
-        reject(error);
-      }
-    );
-  });
-}
-function easeOutCirc(x) {
-  return Math.sqrt(1 - Math.pow(x - 1, 4));
-}
-
-const Show3DImage = () => {
-  const refContainer = useRef();
-  const [loading, setLoading] = useState(true);
-  const [renderer, setRenderer] = useState();
-
-  useEffect(() => {
-    const { current: container } = refContainer;
-    if (container && !renderer) {
-      const scW = container.clientWidth;
-      const scH = container.clientHeight;
-      const renderer = new THREE.WebGLRenderer({
-        antialias: true,
-        alpha: true,
-      });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(scW, scH);
-      renderer.outputEncoding = THREE.sRGBEncoding;
-      container.appendChild(renderer.domElement);
-      setRenderer(renderer);
-
-      const scene = new THREE.Scene();
-      const scale = 2;
-      const camera = new THREE.OrthographicCamera(
-        -scale,
-        scale,
-        scale,
-        -scale,
-        0.01,
-        50000
-      );
-      const target = new THREE.Vector3(-0.5, 1.2, 0);
-      const initialCameraPosition = new THREE.Vector3(
-        20 * Math.sin(0.2 * Math.PI),
-        10,
-        20 * Math.cos(0.2 * Math.PI)
-      );
-      const ambientLight = new THREE.AmbientLight(0xcccccc, 1);
-      scene.add(ambientLight);
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.autoRotate = true;
-      controls.target = target;
-
-      loadGLTFModel(scene, "https://hunter.techdigital.com.au/Parrot.glb", {
-        receiveShadow: false,
-        castShadow: false,
-      }).then(() => {
-        animate();
-        setLoading(false);
-      });
-
-      let req = null;
-      let frame = 0;
-      const animate = () => {
-        req = requestAnimationFrame(animate);
-        frame = frame <= 100 ? frame + 1 : frame;
-
-        if (frame <= 100) {
-          const p = initialCameraPosition;
-          const rotSpeed = -easeOutCirc(frame / 120) * Math.PI * 20;
-
-          camera.position.y = 10;
-          camera.position.x =
-            p.x * Math.cos(rotSpeed) + p.z * Math.sin(rotSpeed);
-          camera.position.z =
-            p.z * Math.cos(rotSpeed) - p.x * Math.sin(rotSpeed);
-          camera.lookAt(target);
-        } else {
-          controls.update();
-        }
-
-        renderer.render(scene, camera);
-      };
-
-      return () => {
-        cancelAnimationFrame(req);
-        renderer.dispose();
-      };
-    }
-  }, []);
-
-  return (
-    <div
-      style={{ height: "350px", width: "350px", position: "relative" }}
-      ref={refContainer}
-    >
-      {loading && (
-        <span style={{ position: "absolute", left: "50%", top: "50%" }}>
-          Loading...
-        </span>
-      )}
-    </div>
-  );
-};
 
 var textColor = {
   textColor: "#EF981D",
@@ -236,6 +93,7 @@ function NFTDetails() {
       try {
         const reqData = {
           nftID: id,
+          buyerID: localStorage.getItem("userId"),
         };
         const res = await getNFTDetails(reqData);
         if (res.length === 0) {
@@ -243,6 +101,46 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+
+        let searchParams = {
+          nftID: res[0].id,
+          buyerID: localStorage.getItem("userId"),
+          bidStatus: "All",
+          orderID: "All",
+        };
+  
+        let _data = await fetchBidNft(searchParams);
+        console.log("have bids", _data);
+        if (_data && _data.data.length > 0) {
+          const b = _data.data[0];
+          setHaveBid(true);
+  
+          setPrice(convertToEth(b?.bidPrice?.$numberDecimal));
+          setBidStatus(b?.bidStatus);
+        } else {
+          setHaveBid(false);
+        }
+  
+        let searchParams1 = {
+          nftID: res[0].id,
+          buyerID: localStorage.getItem("userId"),
+          bidStatus: "MakeOffer",
+          orderID: "All",
+        };
+  
+        let _data1 = await fetchOfferNft(searchParams1);
+  
+        if (_data1 && _data1.data.length > 0) {
+          console.log("offer data is------>", _data1);
+          const b = _data1.data[0];
+          setHaveOffer(true);
+  
+          setOfferPrice(convertToEth(b?.bidPrice?.$numberDecimal));
+          setDatetime(moment(b?.bidDeadline * 1000).toISOString());
+        } else {
+          setHaveOffer(false);
+        }
+
         setOrders(res[0]?.OrderData);
         if (res[0]?.OrderData.length <= 0) {
           setOrders([]);
@@ -293,54 +191,6 @@ function NFTDetails() {
     fetch();
   }, [id, currentUser]);
 
-  useEffect(() => {
-    const fetch = async () => {
-      let searchParams = {
-        nftID: NFTDetails.id,
-        buyerID: localStorage.getItem("userId"),
-        bidStatus: "All",
-        orderID: "All",
-      };
-
-      let _data = await fetchBidNft(searchParams);
-      console.log("have bids", _data);
-      if (_data && _data.data.length > 0) {
-        const b = _data.data[0];
-        setHaveBid(true);
-
-        setPrice(convertToEth(b?.bidPrice?.$numberDecimal));
-        setBidStatus(b?.bidStatus);
-      } else {
-        setHaveBid(false);
-      }
-    };
-    fetch();
-  }, [NFTDetails]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      let searchParams = {
-        nftID: NFTDetails.id,
-        buyerID: localStorage.getItem("userId"),
-        bidStatus: "MakeOffer",
-        orderID: "All",
-      };
-
-      let _data = await fetchOfferNft(searchParams);
-
-      if (_data && _data.data.length > 0) {
-        console.log("offer data is------>", _data);
-        const b = _data.data[0];
-        setHaveOffer(true);
-
-        setOfferPrice(convertToEth(b?.bidPrice?.$numberDecimal));
-        setDatetime(moment(b?.bidDeadline * 1000).toISOString());
-      } else {
-        setHaveOffer(false);
-      }
-    };
-    fetch();
-  }, [NFTDetails]);
 
   const PutMarketplace = async () => {
     setLoading(true);
