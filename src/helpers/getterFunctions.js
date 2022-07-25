@@ -501,8 +501,8 @@ const getOfferMade = async(req) => {
   arr
     ? arr.map((order, key) => {
       formattedData[key] = {
-        buyerAddress: order.BidderData[0].walletAddress,
-        sellerAddress: order.ownerData[0].walletAddress
+        buyerAddress: order?.BidderData[0]?.walletAddress,
+        sellerAddress: order?.ownerData[0]?.walletAddress
       }
       })
     : (formattedData[0] = {});

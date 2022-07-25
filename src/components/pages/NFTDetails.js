@@ -368,6 +368,7 @@ function NFTDetails() {
         return;
       }
     }
+    try{
     let orderData = {
       nftId: NFTDetails.id,
       collection: NFTDetails.collectionAddress,
@@ -387,7 +388,10 @@ function NFTDetails() {
       erc721: NFTDetails.type === 1,
     };
     let res = await putOnMarketplace(currentUser, orderData);
-    try{
+    if (res === false) {
+      setLoading(false);
+      return;
+    }
       let historyReqData = {
         nftID: NFTDetails.id,
         sellerID: localStorage.getItem('userId'),
@@ -403,16 +407,7 @@ function NFTDetails() {
       await InsertHistory(historyReqData);
     }
     catch(e){
-      console.log("Error in history insert api", e);
-    }
-
-    if (res === false) {
-      setLoading(false);
-      return;
-    } else {
-      // NotificationManager.success("Imported successfully");
-      setLoading(false);
-      return;
+      console.log("Error in putOnMarketplace", e);
     }
   };
 
@@ -676,6 +671,18 @@ function NFTDetails() {
                   setLoading(false);
                   return;
                 }
+                let historyReqData = {
+                  nftID: orders[0].nftID,
+                  buyerID: localStorage.getItem('userId'),
+                  sellerID:orders[0].sellerID, 
+                  action: "Bid",
+                  type: haveBid && haveBid !== "none" ? "Updated" : "Created",
+                  price: ethers.utils.parseEther(price.toString()).toString(),
+                  paymentToken: contracts[selectedToken],
+                  quantity: orders[0].total_quantity,
+                  createdBy: localStorage.getItem('userId')
+                }
+                await InsertHistory(historyReqData);
                 NotificationManager.success("Bid Placed Successfully", "", 800);
                 setLoading(false);
                 slowRefresh(1000);
@@ -778,8 +785,21 @@ function NFTDetails() {
                 setLoading(false);
                 return;
               }
+
+              let historyReqData = {
+                nftID: NFTDetails.id,
+                buyerID: localStorage.getItem('userId'),
+                sellerID:  orders[0].sellerID,
+                action: "Sold",
+                price: orders[0]?.price?.$numberDecimal,
+                paymentToken: contracts[selectedTokenFS],
+                quantity: orders[0].total_quantity,
+                createdBy: localStorage.getItem('userId')
+              }
+              await InsertHistory(historyReqData);
+
               setLoading(false);
-              // slowRefresh(1000);
+              slowRefresh(1000);
             }}
           >
             {"Buy Now"}
@@ -1017,9 +1037,22 @@ function NFTDetails() {
                     data-bs-target="#detailPop"
                     onClick={async () => {
                       console.log("orders[0]", orders[0], orders);
-                      setLoading(true);
-                      await handleRemoveFromSale(orders[0]._id, currentUser);
-                      setLoading(false);
+                      try{
+                        setLoading(true);
+                        await handleRemoveFromSale(orders[0]._id, currentUser);
+                        let historyReqData = {
+                          nftID: NFTDetails.id,
+                          sellerID: localStorage.getItem('userId'),
+                          action: "RemoveFromSale",
+                          price: orders[0].price?.$numberDecimal,
+                          createdBy: localStorage.getItem('userId')
+                        }
+                        await InsertHistory(historyReqData);
+                        setLoading(false);
+                      }
+                      catch(e){
+                        console.log("Error in remove from sale", e);
+                      }
                     }}
                   >
                     Remove From Sale
@@ -1165,7 +1198,7 @@ function NFTDetails() {
             <div className="col-md-12 mb-5">
               <h3 className="title_36 mb-4">History</h3>
               <div className="table-responsive">
-                <NFThistory />
+                <NFThistory nftID={NFTDetails.id}/>
               </div>
             </div>
             {allNFTs.length > 1 ? (
