@@ -228,7 +228,7 @@ function NFToffer(props) {
                               className={`d-${b.bidStatus === "Accepted" ? "none" : "flex"
                                 } justify-content-center align-items-center`}
                             >
-                              {console.log("disabling", moment.utc(b?.bidDeadline * 1000).local().format(), new Date())}
+                              {console.log("disabling", moment.utc(b?.bidDeadline * 1000).local().format(), moment().format())}
                               <button
                                 disabled={
                                   moment.utc(b?.bidDeadline * 1000).local().format() < new Date()
