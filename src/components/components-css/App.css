@@ -3338,6 +3338,8 @@ button#btn-submit {
   padding: 40px;
   transition: 2s ease;
   -webkit-transition: 2s ease;
+  height: 100%;
+  width: 100%;
 }
 .feature-box:hover {
   background: linear-gradient(180deg, #ef981d 53.11%, #f9bf50 100%);
@@ -4653,11 +4655,12 @@ a:hover {
   display: flex;
   margin-bottom: 10px;
   transition: all 0.1s ease;
+  justify-content: center;
 }
 
 .status_ul li:hover,
 .status_ul li.filter_border.active {
-  color: #000;
+  color: #fff;
   background-color: #ef981d;
 }
 
