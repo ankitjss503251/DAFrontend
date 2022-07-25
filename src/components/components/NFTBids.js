@@ -278,9 +278,9 @@ function NFTBids(props) {
                               <span>
                               {console.log('currentuser length', currentUser, currentUser.length)}
                                 {b?.bidderID?.walletAddress
-                                  ? b?.bidderID?.walletAddress?.slice(0, 3) +
+                                  ? b?.bidderID?.walletAddress?.slice(0, 4) +
                                     "..." +
-                                    b?.bidderID?.walletAddress?.slice(39, 42)
+                                    b?.bidderID?.walletAddress?.slice(38, 42)
                                   : ""}
                               </span>
                             </td>

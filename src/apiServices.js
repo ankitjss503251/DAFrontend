@@ -126,7 +126,7 @@ export const getProfile = async () => {
       .get("content-type")
       ?.includes("application/json");
     const data = isJson && (await response.json());
-   
+
     return data;
   } catch (e) {
     console.log("error in profile", e);
@@ -784,7 +784,6 @@ export const acceptOffer = async (data) => {
   }
 };
 
-
 export const updateBidNft = async (data) => {
   const requestOptions = {
     method: "POST",
@@ -853,6 +852,79 @@ export const getMintCollections = async (data) => {
     const datas = isJson && (await response.json());
     if (datas.statusCode === 200) return datas.data;
     else return [];
+  } catch (err) {
+    return err;
+  }
+};
+
+export const InsertHistory = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/history/insert",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    console.log("history data", datas.data);
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const GetHistory = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/history/fetchHistory",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const fetchOfferMade = async (data) => {
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/nft/fetchOfferMade",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+    // console.log("fetchOfferMade API", datas.data)
+    return datas.data;
   } catch (err) {
     return err;
   }

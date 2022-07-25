@@ -113,7 +113,6 @@ function Author() {
           page: 1,
           limit: 12,
           userWalletAddress: _profile?.walletAddress?.toLowerCase(),
-          searchType: "owned",
         };
         const onsale = await getOnSaleItems(reqBody);
         console.log("onsale items", onsale)

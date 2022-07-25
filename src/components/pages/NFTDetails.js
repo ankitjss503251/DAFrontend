@@ -33,9 +33,8 @@ import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
-import { fetchBidNft, viewNFTDetails } from "../../apiServices";
+import { fetchBidNft, InsertHistory, viewNFTDetails } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
-
 import { useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 
@@ -388,6 +387,25 @@ function NFTDetails() {
       erc721: NFTDetails.type === 1,
     };
     let res = await putOnMarketplace(currentUser, orderData);
+    try{
+      let historyReqData = {
+        nftID: NFTDetails.id,
+        sellerID: localStorage.getItem('userId'),
+        action: "PutOnSale",
+        type: "List",
+        price: ethers.utils.parseEther(itemprice.toString()).toString(),
+        paymentToken: marketplaceSaleType === 0
+        ? contracts[selectedTokenFS]
+        : contracts[selectedToken],
+        quantity: item_qt,
+        createdBy: localStorage.getItem('userId')
+      }
+      await InsertHistory(historyReqData);
+    }
+    catch(e){
+      console.log("Error in history insert api", e);
+    }
+
     if (res === false) {
       setLoading(false);
       return;
