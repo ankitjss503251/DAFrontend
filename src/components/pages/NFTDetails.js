@@ -541,7 +541,7 @@ function NFTDetails() {
     console.log("ev",ev,new Date(ev),moment.utc(ev));
     if(!ev.target["validity"].valid) return;
 
-    const dt=ev.target["value"]+":00Z";
+    const dt = ev.target["value"];
 
     const ct=moment().add({hours: 5,minutes: 30}).toISOString();
 
@@ -906,8 +906,8 @@ function NFTDetails() {
                 >
                   <div className="row">
                     {NFTDetails
-                      ? NFTDetails?.attributes?.map((attr,key) => {
-                        const rarity=parseInt(attr?.rarity);
+                      ? NFTDetails?.attributes?.map((attr, key) => {
+                        const rarity = parseInt(attr?.rarity);
                         return (
                           <div className="col-md-6 mb-4" key={key}>
                             <div className="tab_label">
@@ -915,15 +915,15 @@ function NFTDetails() {
                                 <p>{attr.trait_type}</p>
                                 <span className="big_text">{attr.value}</span>
                               </div>
-                              {rarity? (
+                              {rarity ? (
                                 <p>
                                   {rarity}% <span>have this traits</span>
                                 </p>
-                              ):(
+                              ) : (
                                 ""
                               )}
                             </div>
-                            {rarity? (
+                            {rarity ? (
                               <div className="progress mt-2">
                                 <div
                                   className={`progress-bar w-${rarity}`}
@@ -933,7 +933,7 @@ function NFTDetails() {
                                   aria-valuemax="100"
                                 ></div>
                               </div>
-                            ):(
+                            ) : (
                               ""
                             )}
                             {/* <div className='progress'>
@@ -947,7 +947,7 @@ function NFTDetails() {
                           </div>
                         );
                       })
-                      :""}
+                      : ""}
                   </div>
                 </div>
               </div>
