@@ -18,6 +18,7 @@ import {
   getCategories,
   fetchOfferNft,
   fetchOfferMade,
+  GetHistory,
 } from "../apiServices";
 import { ethers } from "ethers";
 import contracts from "../config/contracts";
@@ -480,7 +481,7 @@ export const getPrice = async (data) => {
 };
 
 
-const getOfferMade = async(req) => {
+export const getOfferMade = async(req) => {
    let formattedData = [];
    let data = [];
    try {
@@ -492,7 +493,7 @@ const getOfferMade = async(req) => {
 
     data = await fetchOfferMade(reqBody);
   } catch (e) {
-    console.log("Error in getNFts API--->", e);
+    console.log("Error in getOfferMade API--->", e);
   }
 
   let arr = [];
@@ -509,7 +510,39 @@ const getOfferMade = async(req) => {
   return formattedData;
 }
 
-getOfferMade();
+export const fetchHistory = async (req) =>{
+  let formattedData = [];
+  let data = [];
+  try {
+   let reqBody = {
+     page: req.page,
+     limit: req.limit,
+    nftID: req.nftID
+   };
+
+   data = await GetHistory(reqBody);
+ } catch (e) {
+   console.log("Error in fetchHistory API--->", e);
+ }
+ let arr = [];
+ if (data && data.count > 0) arr = data.results;
+ else return [];
+ arr
+   ? arr.map((h, key) => {
+     formattedData[key] = {
+      nftID: h?.nftsData[0]?._id,
+      from: h?.BuyerData?.length >0 ? h?.BuyerData[0]?.walletAddress : "",
+      toTypedOrder: h?.SellerData?.length > 0 ? h?.SellerData[0]?.walletAddress : "",
+      action: h?.action,
+      type: h?.type,
+      price: h?.price?.$numberDecimal,
+      quantity: h?.quantity,
+      paymentToken: h?.paymentToken
+     }
+     })
+   : (formattedData[0] = {});
+ return formattedData;
+}
 
 // export const getUsersNFTs = async (
 //   paramType,

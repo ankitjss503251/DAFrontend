@@ -1,10 +1,10 @@
-import React,{useState,useEffect,useRef,Suspense} from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Footer from "../components/footer";
 import FirearmsCollection from "../components/FirearmsCollection";
 import NFTlisting from "../components/NFTlisting";
 import NFToffer from "../components/NFToffer";
 import NFTBids from "../components/NFTBids";
-import {ethers} from "ethers";
+import { ethers } from "ethers";
 import NFThistory from "../components/NFThistory";
 import {
   getCollections,
@@ -12,23 +12,23 @@ import {
   getNFTDetails,
 } from "../../helpers/getterFunctions";
 
-import {useParams} from "react-router-dom";
-import {convertToEth} from "../../helpers/numberFormatter";
+import { useParams } from "react-router-dom";
+import { convertToEth } from "../../helpers/numberFormatter";
 import {
   createOffer,
   putOnMarketplace,
   handleBuyNft,
   createBid,
 } from "../../helpers/sendFunctions";
-import {useCookies} from "react-cookie";
-import {GLTFModel,AmbientLight,DirectionLight} from "react-3d-viewer";
-import {handleRemoveFromSale} from "./../../helpers/sendFunctions";
+import { useCookies } from "react-cookie";
+import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
+import { handleRemoveFromSale } from "./../../helpers/sendFunctions";
 import contracts from "../../config/contracts";
-import {GENERAL_DATE} from "../../helpers/constants";
-import {NotificationManager} from "react-notifications";
+import { GENERAL_DATE } from "../../helpers/constants";
+import { NotificationManager } from "react-notifications";
 import BGImg from "../../assets/images/background.jpg";
 import moment from "moment";
-import {Tokens} from "../../helpers/tokensToSymbol";
+import { Tokens } from "../../helpers/tokensToSymbol";
 import Spinner from "../components/Spinner";
 import PopupModal from "../components/AccountModal/popupModal";
 import Logo from "../../assets/images/logo.svg";
@@ -36,39 +36,38 @@ import { slowRefresh } from "../../helpers/NotifyStatus";
 import { fetchBidNft, InsertHistory, viewNFTDetails } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
 import { useGLTF } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
-
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import { Canvas, useFrame, extend, useThree } from "@react-three/fiber";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
-import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-extend({OrbitControls});
-function loadGLTFModel(scene,glbPath,options) {
-  const {receiveShadow,castShadow}=options;
-  return new Promise((resolve,reject) => {
-    const loader=new GLTFLoader();
+extend({ OrbitControls });
+function loadGLTFModel(scene, glbPath, options) {
+  const { receiveShadow, castShadow } = options;
+  return new Promise((resolve, reject) => {
+    const loader = new GLTFLoader();
     loader.load(
       glbPath,
       (gltf) => {
-        const obj=gltf.scene;
-        obj.name="dinosaur";
-        obj.position.y=0;
-        obj.position.x=0;
-        obj.receiveShadow=receiveShadow;
-        obj.castShadow=castShadow;
+        const obj = gltf.scene;
+        obj.name = "dinosaur";
+        obj.position.y = 0;
+        obj.position.x = 0;
+        obj.receiveShadow = receiveShadow;
+        obj.castShadow = castShadow;
         scene.add(obj);
 
-        obj.traverse(function(child) {
-          if(child.isMesh) {
-            child.castShadow=castShadow;
-            child.receiveShadow=receiveShadow;
+        obj.traverse(function (child) {
+          if (child.isMesh) {
+            child.castShadow = castShadow;
+            child.receiveShadow = receiveShadow;
           }
         });
 
         resolve(obj);
       },
       undefined,
-      function(error) {
+      function (error) {
         console.log(error);
         reject(error);
       }
@@ -76,47 +75,46 @@ function loadGLTFModel(scene,glbPath,options) {
   });
 }
 function easeOutCirc(x) {
-  return Math.sqrt(1-Math.pow(x-1,4));
+  return Math.sqrt(1 - Math.pow(x - 1, 4));
 }
 
-const CameraControls=() => {
+const CameraControls = () => {
   // Get a reference to the Three.js Camera, and the canvas html element.
   // We need these to setup the OrbitControls component.
   // https://threejs.org/docs/#examples/en/controls/OrbitControls
   const {
     camera,
-    gl: {domElement},
-  }=useThree();
+    gl: { domElement },
+  } = useThree();
   // Ref to the controls, so that we can update them on every frame using useFrame
-  const controls=useRef();
+  const controls = useRef();
   useFrame((state) => controls.current.update());
-  return <orbitControls ref={controls} args={[camera,domElement]} />;
+  return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 
-
-const Show3DImage=() => {
-  const refContainer=useRef();
-  const [loading,setLoading]=useState(true);
-  const [renderer,setRenderer]=useState();
+const Show3DImage = () => {
+  const refContainer = useRef();
+  const [loading, setLoading] = useState(true);
+  const [renderer, setRenderer] = useState();
 
   useEffect(() => {
-    const {current: container}=refContainer;
-    if(container&&!renderer) {
-      const scW=container.clientWidth;
-      const scH=container.clientHeight;
-      const renderer=new THREE.WebGLRenderer({
+    const { current: container } = refContainer;
+    if (container && !renderer) {
+      const scW = container.clientWidth;
+      const scH = container.clientHeight;
+      const renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true,
       });
       renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(scW,scH);
-      renderer.outputEncoding=THREE.sRGBEncoding;
+      renderer.setSize(scW, scH);
+      renderer.outputEncoding = THREE.sRGBEncoding;
       container.appendChild(renderer.domElement);
       setRenderer(renderer);
 
-      const scene=new THREE.Scene();
-      const scale=2;
-      const camera=new THREE.OrthographicCamera(
+      const scene = new THREE.Scene();
+      const scale = 2;
+      const camera = new THREE.OrthographicCamera(
         -scale,
         scale,
         scale,
@@ -124,19 +122,19 @@ const Show3DImage=() => {
         0.01,
         50000
       );
-      const target=new THREE.Vector3(-0.5,1.2,0);
-      const initialCameraPosition=new THREE.Vector3(
-        20*Math.sin(0.2*Math.PI),
+      const target = new THREE.Vector3(-0.5, 1.2, 0);
+      const initialCameraPosition = new THREE.Vector3(
+        20 * Math.sin(0.2 * Math.PI),
         10,
-        20*Math.cos(0.2*Math.PI)
+        20 * Math.cos(0.2 * Math.PI)
       );
-      const ambientLight=new THREE.AmbientLight(0xcccccc,1);
+      const ambientLight = new THREE.AmbientLight(0xcccccc, 1);
       scene.add(ambientLight);
-      const controls=new OrbitControls(camera,renderer.domElement);
-      controls.autoRotate=true;
-      controls.target=target;
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.autoRotate = true;
+      controls.target = target;
 
-      loadGLTFModel(scene,"https://hunter.techdigital.com.au/Parrot.glb",{
+      loadGLTFModel(scene, "https://hunter.techdigital.com.au/Parrot.glb", {
         receiveShadow: false,
         castShadow: false,
       }).then(() => {
@@ -144,27 +142,27 @@ const Show3DImage=() => {
         setLoading(false);
       });
 
-      let req=null;
-      let frame=0;
-      const animate=() => {
-        req=requestAnimationFrame(animate);
-        frame=frame<=100? frame+1:frame;
+      let req = null;
+      let frame = 0;
+      const animate = () => {
+        req = requestAnimationFrame(animate);
+        frame = frame <= 100 ? frame + 1 : frame;
 
-        if(frame<=100) {
-          const p=initialCameraPosition;
-          const rotSpeed=-easeOutCirc(frame/120)*Math.PI*20;
+        if (frame <= 100) {
+          const p = initialCameraPosition;
+          const rotSpeed = -easeOutCirc(frame / 120) * Math.PI * 20;
 
-          camera.position.y=10;
-          camera.position.x=
-            p.x*Math.cos(rotSpeed)+p.z*Math.sin(rotSpeed);
-          camera.position.z=
-            p.z*Math.cos(rotSpeed)-p.x*Math.sin(rotSpeed);
+          camera.position.y = 10;
+          camera.position.x =
+            p.x * Math.cos(rotSpeed) + p.z * Math.sin(rotSpeed);
+          camera.position.z =
+            p.z * Math.cos(rotSpeed) - p.x * Math.sin(rotSpeed);
           camera.lookAt(target);
         } else {
           controls.update();
         }
 
-        renderer.render(scene,camera);
+        renderer.render(scene, camera);
       };
 
       return () => {
@@ -172,15 +170,14 @@ const Show3DImage=() => {
         renderer.dispose();
       };
     }
-  },[]);
+  }, []);
 
   return (
     <div
-      style={{height: "350px",width: "350px",position: "relative"}}
-      ref={refContainer}
-    >
-      {loading&&(
-        <span style={{position: "absolute",left: "50%",top: "50%"}}>
+      style={{ height: "350px", width: "350px", position: "relative" }}
+      ref={refContainer}>
+      {loading && (
+        <span style={{ position: "absolute", left: "50%", top: "50%" }}>
           Loading...
         </span>
       )}
@@ -188,12 +185,12 @@ const Show3DImage=() => {
   );
 };
 
-var textColor={
+var textColor = {
   textColor: "#EF981D",
 };
 
 function NFTDetails() {
-  var bgImgStyle={
+  var bgImgStyle = {
     backgroundImage: `url(${BGImg})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
@@ -202,95 +199,93 @@ function NFTDetails() {
     backgroundColor: "#000",
   };
 
-  const {id}=useParams();
+  const { id } = useParams();
 
-  const [NFTDetails,setNFTDetails]=useState([]);
-  const [allNFTs,setAllNFTs]=useState([]);
-  const [collection,setCollection]=useState([]);
-  const [marketplaceSaleType,setmarketplaceSaleType]=useState(0);
-  const [itemprice,setItemprice]=useState(0);
-  const [item_qt,setItem_qt]=useState(1);
-  const [item_bid,setItem_bid]=useState(0);
-  const [selectedToken,setSelectedToken]=useState("BUSD");
-  const [selectedTokenFS,setSelectedTokenFS]=useState("BNB");
-  const [datetime,setDatetime]=useState("");
-  const [currentUser,setCurrentUser]=useState();
-  const [cookies]=useCookies([]);
-  const [owned,setOwned]=useState("none");
-  const [orders,setOrders]=useState("none");
-  const [loading,setLoading]=useState(false);
-  const [modal,setModal]=useState(false);
-  const [offerPrice,setOfferPrice]=useState();
-  const [offerQuantity,setOfferQuantity]=useState(1);
-  const [isBuyNowModal,setIsBuyNowModal]=useState(false);
-  const [isPlaceBidModal,setIsPlaceBidModal]=useState(false);
-  const [qty,setQty]=useState(1);
-  const [price,setPrice]=useState("");
-  const [firstOrderNFT,setFirstOrderNFT]=useState([]);
-  const [haveBid,setHaveBid]=useState("none");
-  const [haveOffer,setHaveOffer]=useState("none");
-  const [ownedBy,setOwnedBy]=useState("");
-  const [bidStatus,setBidStatus]=useState("");
-  const [modalImage,setModalImge]=useState("")
+  const [NFTDetails, setNFTDetails] = useState([]);
+  const [allNFTs, setAllNFTs] = useState([]);
+  const [collection, setCollection] = useState([]);
+  const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
+  const [itemprice, setItemprice] = useState(0);
+  const [item_qt, setItem_qt] = useState(1);
+  const [item_bid, setItem_bid] = useState(0);
+  const [selectedToken, setSelectedToken] = useState("BUSD");
+  const [selectedTokenFS, setSelectedTokenFS] = useState("BNB");
+  const [datetime, setDatetime] = useState("");
+  const [currentUser, setCurrentUser] = useState();
+  const [cookies] = useCookies([]);
+  const [owned, setOwned] = useState("none");
+  const [orders, setOrders] = useState("none");
+  const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [offerPrice, setOfferPrice] = useState();
+  const [offerQuantity, setOfferQuantity] = useState(1);
+  const [isBuyNowModal, setIsBuyNowModal] = useState(false);
+  const [isPlaceBidModal, setIsPlaceBidModal] = useState(false);
+  const [qty, setQty] = useState(1);
+  const [price, setPrice] = useState("");
+  const [firstOrderNFT, setFirstOrderNFT] = useState([]);
+  const [haveBid, setHaveBid] = useState("none");
+  const [haveOffer, setHaveOffer] = useState("none");
+  const [ownedBy, setOwnedBy] = useState("");
+  const [bidStatus, setBidStatus] = useState("");
+  const [modalImage, setModalImge] = useState("");
 
   useEffect(() => {
     async function setUser() {
-      if(cookies.selected_account) setCurrentUser(cookies.selected_account);
+      if (cookies.selected_account) setCurrentUser(cookies.selected_account);
     }
     setUser();
-  },[cookies.selected_account]);
+  }, [cookies.selected_account]);
 
   useEffect(() => {
     async function windowScroll() {
-      window.scrollTo(0,0);
+      window.scrollTo(0, 0);
     }
     windowScroll();
-  },[]);
+  }, []);
 
   useEffect(() => {
-    const fetch=async () => {
+    const fetch = async () => {
       try {
-        const reqData={
+        const reqData = {
           nftID: id,
         };
-        const res=await getNFTDetails(reqData);
-        if(res.length===0) {
-          window.location.href="/marketplace";
+        const res = await getNFTDetails(reqData);
+        if (res.length === 0) {
+          window.location.href = "/marketplace";
           return;
         }
         setNFTDetails(res[0]);
-        console.log("nft details is---------->",res[0])
-        if(res[0].fileType==="3D") {
-
-          let image=res[0].image.split("//");
-          setModalImge(image[1])
-          console.log("3d Image is------->",image[1]);
+        if (res[0].fileType === "3D") {
+          let image = res[0].image.split("//");
+          setModalImge(image[1]);
+          console.log("3d Image is------->", image[1]);
         }
         setOrders(res[0]?.OrderData);
-        if(res[0]?.OrderData.length<=0) {
+        if (res[0]?.OrderData.length <= 0) {
           setOrders([]);
         }
-        setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length-1]?.address);
-        const c=await getCollections({collectionID: res[0].collection});
+        setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length - 1]?.address);
+        const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
 
-        const reqData1={
+        const reqData1 = {
           page: 1,
           limit: 12,
           collectionID: res[0].collection,
         };
 
-        const nfts=await getNFTs(reqData1);
+        const nfts = await getNFTs(reqData1);
 
         setAllNFTs(nfts);
-        if(
-          currentUser&&
-          res[0].ownedBy&&
+        if (
+          currentUser &&
+          res[0].ownedBy &&
           res[0]?.ownedBy[0]?.address?.toLowerCase()
         ) {
-          for(let i=0;i<res[0]?.ownedBy?.length;i++) {
-            if(
-              res[0]?.ownedBy[i]?.address?.toLowerCase()===
+          for (let i = 0; i < res[0]?.ownedBy?.length; i++) {
+            if (
+              res[0]?.ownedBy[i]?.address?.toLowerCase() ===
               currentUser?.toLowerCase()
             ) {
               setOwned(true);
@@ -299,36 +294,35 @@ function NFTDetails() {
           }
         }
 
-        if(id) {
-          const _nft=await getNFTDetails({
+        if (id) {
+          const _nft = await getNFTDetails({
             nftID: id,
           });
           setOrders(_nft[0]?.OrderData);
-          if(_nft[0]?.OrderData.length<=0) {
+          if (_nft[0]?.OrderData.length <= 0) {
             setOrders([]);
           }
           setFirstOrderNFT(_nft[0]);
         }
-      } catch(e) {
-        console.log("Error in fetching nft Details",e);
+      } catch (e) {
+        console.log("Error in fetching nft Details", e);
       }
     };
     fetch();
-  },[id,currentUser]);
+  }, [id, currentUser]);
 
   useEffect(() => {
-    const fetch=async () => {
-      let searchParams={
+    const fetch = async () => {
+      let searchParams = {
         nftID: NFTDetails.id,
         buyerID: localStorage.getItem("userId"),
         bidStatus: "All",
         orderID: "All",
       };
 
-      let _data=await fetchBidNft(searchParams);
-      console.log("have bids",_data);
-      if(_data&&_data.data.length>0) {
-        const b=_data.data[0];
+      let _data = await fetchBidNft(searchParams);
+      if (_data && _data.data.length > 0) {
+        const b = _data.data[0];
         setHaveBid(true);
 
         setPrice(convertToEth(b?.bidPrice?.$numberDecimal));
@@ -338,164 +332,181 @@ function NFTDetails() {
       }
     };
     fetch();
-  },[NFTDetails]);
+  }, [NFTDetails]);
 
   useEffect(() => {
-    const fetch=async () => {
-      let searchParams={
+    const fetch = async () => {
+      let searchParams = {
         nftID: NFTDetails.id,
         buyerID: localStorage.getItem("userId"),
         bidStatus: "MakeOffer",
         orderID: "All",
       };
 
-      let _data=await fetchOfferNft(searchParams);
+      let _data = await fetchOfferNft(searchParams);
 
-      if(_data&&_data.data.length>0) {
-        console.log("offer data is------>",_data);
-        const b=_data.data[0];
+      if (_data && _data.data.length > 0) {
+        console.log("offer data is------>", _data);
+        const b = _data.data[0];
         setHaveOffer(true);
 
         setOfferPrice(convertToEth(b?.bidPrice?.$numberDecimal));
-        setDatetime(moment(b?.bidDeadline*1000).toISOString());
+        setDatetime(moment(b?.bidDeadline * 1000).toISOString());
       } else {
         setHaveOffer(false);
       }
     };
     fetch();
-  },[NFTDetails]);
+  }, [NFTDetails]);
 
-  const PutMarketplace=async () => {
+  const PutMarketplace = async () => {
     setLoading(true);
 
-    if(marketplaceSaleType===0) {
-      if(itemprice===undefined||itemprice===""||itemprice<=0) {
-        NotificationManager.error("Please Enter a price","",800);
+    if (marketplaceSaleType === 0) {
+      if (itemprice === undefined || itemprice === "" || itemprice <= 0) {
+        NotificationManager.error("Please Enter a price", "", 800);
         setLoading(false);
         return;
       }
-    } else if(marketplaceSaleType===1) {
-      if(datetime===""||datetime===undefined) {
-        NotificationManager.error("Please Enter Expiration date","",800);
+    } else if (marketplaceSaleType === 1) {
+      if (datetime === "" || datetime === undefined) {
+        NotificationManager.error("Please Enter Expiration date", "", 800);
         setLoading(false);
         return;
       }
-      if(item_bid===undefined||item_bid===""||item_bid<=0) {
-        NotificationManager.error("Please Enter Minimum Bid","",800);
+      if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
+        NotificationManager.error("Please Enter Minimum Bid", "", 800);
         setLoading(false);
         return;
       }
     } else {
-      if(item_bid===undefined||item_bid===""||item_bid<=0) {
-        NotificationManager.error("Please Enter Minimum Bid","",800);
+      if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
+        NotificationManager.error("Please Enter Minimum Bid", "", 800);
         setLoading(false);
         return;
       }
     }
-    try{
-    let orderData = {
-      nftId: NFTDetails.id,
-      collection: NFTDetails.collectionAddress,
-      price: itemprice,
-      quantity: item_qt,
-      saleType: marketplaceSaleType===1||marketplaceSaleType===2? 1:0,
-      salt: Math.round(Math.random()*10000000),
-      endTime: datetime? datetime:GENERAL_DATE,
-      chosenType: marketplaceSaleType,
-      minimumBid: item_bid!==""? item_bid:0,
-      // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
-      tokenAddress:
-        marketplaceSaleType===0
-          ? contracts[selectedTokenFS]
-          :contracts[selectedToken],
-      tokenId: NFTDetails.tokenId,
-      erc721: NFTDetails.type===1,
-    };
-    let res=await putOnMarketplace(currentUser,orderData);
-    if(res===false) {
-      setLoading(false);
-      return;
-    }
+    try {
+      let orderData = {
+        nftId: NFTDetails.id,
+        collection: NFTDetails.collectionAddress,
+        price: itemprice,
+        quantity: item_qt,
+        saleType:
+          marketplaceSaleType === 1 || marketplaceSaleType === 2 ? 1 : 0,
+        salt: Math.round(Math.random() * 10000000),
+        endTime: datetime ? datetime : GENERAL_DATE,
+        chosenType: marketplaceSaleType,
+        minimumBid: item_bid !== "" ? item_bid : 0,
+        // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
+        tokenAddress:
+          marketplaceSaleType === 0
+            ? contracts[selectedTokenFS]
+            : contracts[selectedToken],
+        tokenId: NFTDetails.tokenId,
+        erc721: NFTDetails.type === 1,
+      };
+      let res = await putOnMarketplace(currentUser, orderData);
+      if (res === false) {
+        setLoading(false);
+        return;
+      }
       let historyReqData = {
         nftID: NFTDetails.id,
-        sellerID: localStorage.getItem('userId'),
+        sellerID: localStorage.getItem("userId"),
         action: "PutOnSale",
         type: "List",
         price: ethers.utils.parseEther(itemprice.toString()).toString(),
-        paymentToken: marketplaceSaleType === 0
-        ? contracts[selectedTokenFS]
-        : contracts[selectedToken],
+        paymentToken:
+          marketplaceSaleType === 0
+            ? contracts[selectedTokenFS]
+            : contracts[selectedToken],
         quantity: item_qt,
-        createdBy: localStorage.getItem('userId')
-      }
+        createdBy: localStorage.getItem("userId"),
+      };
       await InsertHistory(historyReqData);
-    }
-    catch(e){
+    } catch (e) {
       console.log("Error in putOnMarketplace", e);
     }
   };
 
-  const PlaceOffer=async () => {
+  const PlaceOffer = async () => {
     setLoading(true);
 
-    if(currentUser===undefined||currentUser==="") {
+    if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);
       return;
     }
 
-    if(offerPrice===""||offerPrice===undefined||offerPrice<=0) {
+    if (offerPrice === "" || offerPrice === undefined || offerPrice <= 0) {
       NotificationManager.error("Enter Offer Price");
       setLoading(false);
       return;
     }
 
-    if(
-      offerQuantity===""||
-      (offerQuantity===undefined&&NFTDetails.type!==1)
+    if (
+      offerQuantity === "" ||
+      (offerQuantity === undefined && NFTDetails.type !== 1)
     ) {
       NotificationManager.error("Enter Offer Quantity");
       setLoading(false);
       return;
     }
-    if(datetime==="") {
+    if (datetime === "") {
       NotificationManager.error("Enter Offer EndTime");
       setLoading(false);
       return;
     }
 
-    let deadline=moment(datetime).unix();
-    // let tokenAddress =
-    //   marketplaceSaleType === 0
-    //     ? contracts[selectedTokenFS]
-    //     : contracts[selectedToken];
-    await createOffer(
-      NFTDetails?.tokenId,
-      collection?.contractAddress,
-      NFTDetails?.ownedBy[0],
-      currentUser,
-      NFTDetails?.type,
-      offerQuantity,
-      ethers.utils.parseEther(offerPrice.toString()),
-      deadline,
-      NFTDetails.id,
-      contracts.BUSD
-    );
-    setLoading(false);
 
-    slowRefresh(1000);
+    try{
 
+      let deadline = moment(datetime).unix();
+      // let tokenAddress =
+      //   marketplaceSaleType === 0
+      //     ? contracts[selectedTokenFS]
+      //     : contracts[selectedToken];
+      await createOffer(
+        NFTDetails?.tokenId,
+        collection?.contractAddress,
+        NFTDetails?.ownedBy[0],
+        currentUser,
+        NFTDetails?.type,
+        offerQuantity,
+        ethers.utils.parseEther(offerPrice.toString()),
+        deadline,
+        NFTDetails.id,
+        contracts.BUSD
+      );
+      let historyReqData = {
+        nftID: NFTDetails.id,
+        buyerID: localStorage.getItem("userId"),
+        action: "Offer",
+        type: haveOffer && haveOffer !== "none" ? "Updated" : "Created",
+        price: ethers.utils.parseEther(offerPrice.toString()).toString(),
+        paymentToken: contracts[selectedToken],
+        quantity: offerQuantity,
+        createdBy: localStorage.getItem("userId"),
+      }
+      await InsertHistory(historyReqData);
+      setLoading(false);
+      slowRefresh(1000);
+    }
+    catch(e){
+      console.log("Error", e);
+    }
     //await putOnMarketplace(currentUser, orderData);
   };
 
   function Model(props) {
-    const {scene}=useGLTF(props.image);
+    const { scene } = useGLTF(props.image);
     return <primitive object={scene} />;
   }
 
   // Popup
 
-  const handleMpShow=() => {
+  const handleMpShow = () => {
     document.getElementById("tab_opt_1").classList.remove("put_hide");
     document.getElementById("tab_opt_1").classList.add("put_show");
     document.getElementById("tab_opt_2").classList.remove("put_hide");
@@ -512,7 +523,7 @@ function NFTDetails() {
     setmarketplaceSaleType(0);
   };
 
-  const handleMpShow1=() => {
+  const handleMpShow1 = () => {
     document.getElementById("tab_opt_1").classList.remove("put_show");
     document.getElementById("tab_opt_1").classList.add("put_hide");
     document.getElementById("tab_opt_2").classList.remove("put_hide");
@@ -529,7 +540,7 @@ function NFTDetails() {
     setmarketplaceSaleType(1);
   };
 
-  const handleMpShow2=() => {
+  const handleMpShow2 = () => {
     document.getElementById("tab_opt_1").classList.remove("put_show");
     document.getElementById("tab_opt_1").classList.add("put_hide");
     document.getElementById("tab_opt_2").classList.remove("put_hide");
@@ -547,14 +558,14 @@ function NFTDetails() {
   };
 
   function handleChange(ev) {
-    console.log("ev",ev,new Date(ev),moment.utc(ev));
-    if(!ev.target["validity"].valid) return;
+    console.log("ev", ev, new Date(ev), moment.utc(ev));
+    if (!ev.target["validity"].valid) return;
 
     const dt = ev.target["value"];
 
-    const ct=moment().add({hours: 5,minutes: 30}).toISOString();
+    const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
 
-    if(dt<ct) {
+    if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
         "",
@@ -567,54 +578,54 @@ function NFTDetails() {
 
   useEffect(() => {
     async function addClassList() {
-      var body=document.body;
-      if(loading||isPlaceBidModal||isBuyNowModal) {
+      var body = document.body;
+      if (loading || isPlaceBidModal || isBuyNowModal) {
         body.classList.add("overflow_hidden");
       } else {
         body.classList.remove("overflow_hidden");
       }
     }
     addClassList();
-  },[loading,isPlaceBidModal,isBuyNowModal]);
+  }, [loading, isPlaceBidModal, isBuyNowModal]);
 
   // Place Bid Checkout Modal
 
-  const placeBidModal=(
+  const placeBidModal = (
     <PopupModal
       content={
-        <div className="popup-content1">
-          <h3 className="modal_heading ">Complete Checkout</h3>
-          <div className="bid_user_details my-4">
-            <img src={Logo} alt="" />
+        <div className='popup-content1'>
+          <h3 className='modal_heading '>Complete Checkout</h3>
+          <div className='bid_user_details my-4'>
+            <img src={Logo} alt='' />
 
-            <div className="bid_user_address">
+            <div className='bid_user_address'>
               <div>
-                <span className="adr">
-                  {currentUser?.slice(0,8)+
-                    "..."+
-                    currentUser?.slice(34,42)}
+                <span className='adr'>
+                  {currentUser?.slice(0, 8) +
+                    "..." +
+                    currentUser?.slice(34, 42)}
                 </span>
-                <span className="badge badge-success">Connected</span>
+                <span className='badge badge-success'>Connected</span>
               </div>
-              <span className="pgn">Polygon</span>
+              <span className='pgn'>Polygon</span>
             </div>
           </div>
-          <h6 className="enter_quantity_heading required">
+          <h6 className='enter_quantity_heading required'>
             Please Enter the Bid Quantity
           </h6>
           <input
-            className="form-control checkout_input"
-            type="text"
-            min="1"
-            step="1"
-            placeholder="Quantity e.g. 1,2,3..."
-            disabled={firstOrderNFT.type===1? true:false}
+            className='form-control checkout_input'
+            type='text'
+            min='1'
+            step='1'
+            placeholder='Quantity e.g. 1,2,3...'
+            disabled={firstOrderNFT.type === 1 ? true : false}
             value={qty}
             onKeyPress={(e) => {
-              if(!/^\d*$/.test(e.key)) e.preventDefault();
+              if (!/^\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if(Number(e.target.value)>Number(100)) {
+              if (Number(e.target.value) > Number(100)) {
                 NotificationManager.error(
                   "Quantity should be less than seller's order",
                   "",
@@ -623,51 +634,49 @@ function NFTDetails() {
                 return;
               }
               setQty(e.target.value);
-            }}
-          ></input>
-          <h6 className="enter_price_heading required">
+            }}></input>
+          <h6 className='enter_price_heading required'>
             Please Enter the Bid Price
           </h6>
 
           <input
-            className="form-control checkout_input"
-            type="text"
-            min="1"
-            placeholder="Price e.g. 0.001,1..."
+            className='form-control checkout_input'
+            type='text'
+            min='1'
+            placeholder='Price e.g. 0.001,1...'
             value={price}
             onKeyPress={(e) => {
-              if(!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+              if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              const re=/[+-]?[0-9]+\.?[0-9]*/;
-              let val=e.target.value;
+              const re = /[+-]?[0-9]+\.?[0-9]*/;
+              let val = e.target.value;
 
-              if(e.target.value===""||re.test(e.target.value)) {
-                const numStr=String(val);
-                if(numStr.includes(".")) {
-                  if(numStr.split(".")[1].length>8) {
+              if (e.target.value === "" || re.test(e.target.value)) {
+                const numStr = String(val);
+                if (numStr.includes(".")) {
+                  if (numStr.split(".")[1].length > 8) {
                   } else {
-                    if(val.split(".").length>2) {
-                      val=val.replace(/\.+$/,"");
+                    if (val.split(".").length > 2) {
+                      val = val.replace(/\.+$/, "");
                     }
                   }
                 } else {
-                  if(val.split(".").length>2) {
-                    val=val.replace(/\.+$/,"");
+                  if (val.split(".").length > 2) {
+                    val = val.replace(/\.+$/, "");
                   }
                 }
                 setPrice(val);
               }
-            }}
-          ></input>
+            }}></input>
 
           <button
-            className="btn-main mt-2 btn-placeABid"
+            className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
               setIsPlaceBidModal(false);
               setLoading(true);
-              if(
-                Number(price)<
+              if (
+                Number(price) <
                 Number(convertToEth(orders[0].price?.$numberDecimal))
               ) {
                 NotificationManager.error(
@@ -680,7 +689,7 @@ function NFTDetails() {
                 return;
               }
               try {
-                let res=await createBid(
+                let res = await createBid(
                   orders[0].nftID,
                   orders[0]._id,
                   orders[0].sellerID,
@@ -691,83 +700,82 @@ function NFTDetails() {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
-                if(res===false) {
+                if (res === false) {
                   setLoading(false);
                   return;
                 }
                 let historyReqData = {
                   nftID: orders[0].nftID,
-                  buyerID: localStorage.getItem('userId'),
-                  sellerID:orders[0].sellerID, 
+                  buyerID: localStorage.getItem("userId"),
+                  sellerID: orders[0].sellerID,
                   action: "Bid",
                   type: haveBid && haveBid !== "none" ? "Updated" : "Created",
                   price: ethers.utils.parseEther(price.toString()).toString(),
                   paymentToken: contracts[selectedToken],
                   quantity: orders[0].total_quantity,
-                  createdBy: localStorage.getItem('userId')
-                }
+                  createdBy: localStorage.getItem("userId"),
+                };
                 await InsertHistory(historyReqData);
                 NotificationManager.success("Bid Placed Successfully", "", 800);
                 setLoading(false);
                 slowRefresh(1000);
-              } catch(e) {
-                NotificationManager.error("Something went wrong","",800);
+              } catch (e) {
+                NotificationManager.error("Something went wrong", "", 800);
                 setLoading(false);
                 return;
               }
-            }}
-          >
-            {haveBid&&haveBid!=="none"? "Update Bid":"Place Bid"}
+            }}>
+            {haveBid && haveBid !== "none" ? "Update Bid" : "Place Bid"}
           </button>
         </div>
       }
       handleClose={() => {
         setIsPlaceBidModal(!isPlaceBidModal);
         setQty(1);
-        if(!haveBid) setPrice("");
+        if (!haveBid) setPrice("");
       }}
     />
   );
 
   // Buy Now Checkout Modal
 
-  const buyNowModal=(
+  const buyNowModal = (
     <PopupModal
       content={
-        <div className="popup-content1">
-          <h3 className="modal_heading ">Complete Checkout</h3>
-          <div className="bid_user_details my-4">
-            <img src={Logo} alt="" />
-            <div className="bid_user_address">
+        <div className='popup-content1'>
+          <h3 className='modal_heading '>Complete Checkout</h3>
+          <div className='bid_user_details my-4'>
+            <img src={Logo} alt='' />
+            <div className='bid_user_address'>
               <div>
-                <span className="adr">
-                  {currentUser?.slice(0,8)+
-                    "..."+
-                    currentUser?.slice(34,42)}
+                <span className='adr'>
+                  {currentUser?.slice(0, 8) +
+                    "..." +
+                    currentUser?.slice(34, 42)}
                 </span>
-                <span className="badge badge-success">Connected</span>
+                <span className='badge badge-success'>Connected</span>
               </div>
-              <span className="pgn">Polygon</span>
+              <span className='pgn'>Polygon</span>
             </div>
           </div>
-          <h6 className="enter_quantity_heading required">
-            {firstOrderNFT?.type===1
+          <h6 className='enter_quantity_heading required'>
+            {firstOrderNFT?.type === 1
               ? "Quantity"
-              :"Please Enter the Quantity"}
+              : "Please Enter the Quantity"}
           </h6>
           <input
-            className="form-control checkout_input"
-            type="text"
-            min="1"
-            step="1"
-            placeholder="Quantity e.g. 1,2,3..."
-            disabled={firstOrderNFT?.type===1? true:false}
+            className='form-control checkout_input'
+            type='text'
+            min='1'
+            step='1'
+            placeholder='Quantity e.g. 1,2,3...'
+            disabled={firstOrderNFT?.type === 1 ? true : false}
             value={qty}
             onKeyPress={(e) => {
-              if(!/^\d*$/.test(e.key)) e.preventDefault();
+              if (!/^\d*$/.test(e.key)) e.preventDefault();
             }}
             onChange={(e) => {
-              if(Number(e.target.value)>Number(orders[0].total_quantity)) {
+              if (Number(e.target.value) > Number(orders[0].total_quantity)) {
                 NotificationManager.error(
                   "Quantity should be less than seller's order",
                   "",
@@ -777,55 +785,52 @@ function NFTDetails() {
               }
 
               setQty(e.target.value);
-            }}
-          ></input>
-          <h6 className="enter_price_heading required">Price</h6>
+            }}></input>
+          <h6 className='enter_price_heading required'>Price</h6>
           <input
-            className="form-control checkout_input"
-            type="text"
-            min="1"
-            placeholder="Price e.g. 0.001,1..."
+            className='form-control checkout_input'
+            type='text'
+            min='1'
+            placeholder='Price e.g. 0.001,1...'
             disabled={true}
             value={Number(
               convertToEth(orders[0]?.price?.$numberDecimal)
-            ).toFixed(4)}
-          ></input>
+            ).toFixed(4)}></input>
 
           <button
-            className="btn-main mt-2 btn-placeABid"
+            className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
               setIsBuyNowModal(false);
               setLoading(true);
-              let res=await handleBuyNft(
+              let res = await handleBuyNft(
                 orders[0]._id,
-                firstOrderNFT.type===1,
+                firstOrderNFT.type === 1,
                 currentUser,
                 cookies.balance,
                 orders[0].total_quantity,
                 false,
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
-              if(res===false) {
+              if (res === false) {
                 setLoading(false);
                 return;
               }
 
               let historyReqData = {
                 nftID: NFTDetails.id,
-                buyerID: localStorage.getItem('userId'),
-                sellerID:  orders[0].sellerID,
+                buyerID: localStorage.getItem("userId"),
+                sellerID: orders[0].sellerID,
                 action: "Sold",
                 price: orders[0]?.price?.$numberDecimal,
                 paymentToken: contracts[selectedTokenFS],
                 quantity: orders[0].total_quantity,
-                createdBy: localStorage.getItem('userId')
-              }
+                createdBy: localStorage.getItem("userId"),
+              };
               await InsertHistory(historyReqData);
 
               setLoading(false);
               slowRefresh(1000);
-            }}
-          >
+            }}>
             {"Buy Now"}
           </button>
         </div>
@@ -840,137 +845,132 @@ function NFTDetails() {
 
   return (
     <div>
-      {loading? <Spinner />:""}
-      {isPlaceBidModal? placeBidModal:""}
-      {isBuyNowModal? buyNowModal:""}
-      <section style={bgImgStyle} className="pdd_8">
-        <div className="container">
-          <div className="row mb-5">
-            <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5">
-              {NFTDetails&&NFTDetails.fileType=="Image"? (
+      {loading ? <Spinner /> : ""}
+      {isPlaceBidModal ? placeBidModal : ""}
+      {isBuyNowModal ? buyNowModal : ""}
+      <section style={bgImgStyle} className='pdd_8'>
+        <div className='container'>
+          <div className='row mb-5'>
+            <div className='col-lg-6 mb-xl-5 mb-lg-5 mb-5'>
+              {NFTDetails && NFTDetails.fileType == "Image" ? (
                 <img
                   src={NFTDetails?.image}
-                  className="img-fluid nftimg"
-                  alt=""
+                  className='img-fluid nftimg'
+                  alt=''
                   onError={(e) => {
-                    e.target.src="../img/collectCanvasions/list4.png";
+                    e.target.src = "../img/collectCanvasions/list4.png";
                   }}
                 />
-              ):(
+              ) : (
                 ""
               )}
-              {NFTDetails&&NFTDetails.fileType=="Video"? (
-                <video className="img-fluid nftimg" controls>
-                  <source src={NFTDetails?.image} type="video/mp4" />
+              {NFTDetails && NFTDetails.fileType == "Video" ? (
+                <video className='img-fluid nftimg' controls>
+                  <source src={NFTDetails?.image} type='video/mp4' />
                 </video>
-              ):(
+              ) : (
                 ""
               )}
-              {NFTDetails&&NFTDetails.fileType=="3D"? (
-                <Canvas camera={{position: [10,100,100],fov: 1}}>
-                  <pointLight position={[10,10,10]} intensity={1.3} />
+              {NFTDetails && NFTDetails.fileType == "3D" ? (
+                <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
+                  <pointLight position={[10, 10, 10]} intensity={1.3} />
                   <Suspense fallback={null}>
                     <Model image={`http://${modalImage}`} />
                   </Suspense>
                   <CameraControls />
                 </Canvas>
-              ):(
+              ) : (
                 ""
               )}
             </div>
-            <div className="col-lg-6 nft_details">
-              <p className="mb-0">
+            <div className='col-lg-6 nft_details'>
+              <p className='mb-0'>
                 {collection?.name} Collection{" "}
-                <img src={"../img/check.png"} className="img-fluid" alt="" />
+                <img src={"../img/check.png"} className='img-fluid' alt='' />
               </p>
-              <h1 className="mb-3">{NFTDetails?.name}</h1>
-              <div className="owner_by mb-4">
+              <h1 className='mb-3'>{NFTDetails?.name}</h1>
+              <div className='owner_by mb-4'>
                 <p>
                   Owned by{" "}
                   <span style={textColor}>
-                    {ownedBy.slice(0,8)+"..."+ownedBy.slice(34,42)}
+                    {ownedBy.slice(0, 8) + "..." + ownedBy.slice(34, 42)}
                   </span>
                 </p>
-                <span className="add_wishlist">
+                <span className='add_wishlist'>
                   <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    xmlns='http://www.w3.org/2000/svg'>
                     <path
-                      d="M21.6328 6.64689C21.3187 5.91947 20.8657 5.2603 20.2992 4.70626C19.7323 4.15058 19.064 3.70898 18.3305 3.40548C17.5699 3.08953 16.7541 2.92781 15.9305 2.9297C14.775 2.9297 13.6477 3.24611 12.668 3.84377C12.4336 3.98673 12.2109 4.14376 12 4.31486C11.7891 4.14376 11.5664 3.98673 11.332 3.84377C10.3523 3.24611 9.225 2.9297 8.06953 2.9297C7.2375 2.9297 6.43125 3.08908 5.66953 3.40548C4.93359 3.71017 4.27031 4.14845 3.70078 4.70626C3.13359 5.25967 2.6805 5.919 2.36719 6.64689C2.04141 7.40392 1.875 8.20782 1.875 9.03516C1.875 9.81563 2.03438 10.6289 2.35078 11.4563C2.61563 12.1477 2.99531 12.8648 3.48047 13.5891C4.24922 14.7352 5.30625 15.9305 6.61875 17.1422C8.79375 19.1508 10.9477 20.5383 11.0391 20.5945L11.5945 20.9508C11.8406 21.1078 12.157 21.1078 12.4031 20.9508L12.9586 20.5945C13.05 20.5359 15.2016 19.1508 17.3789 17.1422C18.6914 15.9305 19.7484 14.7352 20.5172 13.5891C21.0023 12.8648 21.3844 12.1477 21.6469 11.4563C21.9633 10.6289 22.1227 9.81563 22.1227 9.03516C22.125 8.20782 21.9586 7.40392 21.6328 6.64689Z"
-                      fill="#9E9E9E"
+                      d='M21.6328 6.64689C21.3187 5.91947 20.8657 5.2603 20.2992 4.70626C19.7323 4.15058 19.064 3.70898 18.3305 3.40548C17.5699 3.08953 16.7541 2.92781 15.9305 2.9297C14.775 2.9297 13.6477 3.24611 12.668 3.84377C12.4336 3.98673 12.2109 4.14376 12 4.31486C11.7891 4.14376 11.5664 3.98673 11.332 3.84377C10.3523 3.24611 9.225 2.9297 8.06953 2.9297C7.2375 2.9297 6.43125 3.08908 5.66953 3.40548C4.93359 3.71017 4.27031 4.14845 3.70078 4.70626C3.13359 5.25967 2.6805 5.919 2.36719 6.64689C2.04141 7.40392 1.875 8.20782 1.875 9.03516C1.875 9.81563 2.03438 10.6289 2.35078 11.4563C2.61563 12.1477 2.99531 12.8648 3.48047 13.5891C4.24922 14.7352 5.30625 15.9305 6.61875 17.1422C8.79375 19.1508 10.9477 20.5383 11.0391 20.5945L11.5945 20.9508C11.8406 21.1078 12.157 21.1078 12.4031 20.9508L12.9586 20.5945C13.05 20.5359 15.2016 19.1508 17.3789 17.1422C18.6914 15.9305 19.7484 14.7352 20.5172 13.5891C21.0023 12.8648 21.3844 12.1477 21.6469 11.4563C21.9633 10.6289 22.1227 9.81563 22.1227 9.03516C22.125 8.20782 21.9586 7.40392 21.6328 6.64689Z'
+                      fill='#9E9E9E'
                     />
                   </svg>{" "}
                   {NFTDetails?.like} favourites
                 </span>
               </div>
-              {NFTDetails?.attributes?.length>0? (
+              {NFTDetails?.attributes?.length > 0 ? (
                 <ul
-                  className="nav nav-pills mb-4 w-100"
-                  id="pills-tab"
-                  role="tablist"
-                >
-                  <li className="nav-item w-100" role="presentation">
+                  className='nav nav-pills mb-4 w-100'
+                  id='pills-tab'
+                  role='tablist'>
+                  <li className='nav-item w-100' role='presentation'>
                     <button
-                      className="nav-link active details-btn "
-                      id="pills-home-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#pills-home"
-                      type="button"
-                      role="tab"
-                      aria-controls="pills-home"
-                      aria-selected="true"
-                    >
+                      className='nav-link active details-btn '
+                      id='pills-home-tab'
+                      data-bs-toggle='pill'
+                      data-bs-target='#pills-home'
+                      type='button'
+                      role='tab'
+                      aria-controls='pills-home'
+                      aria-selected='true'>
                       Details
                     </button>
                   </li>
                 </ul>
-              ):(
+              ) : (
                 ""
               )}
-              <div className="tab-content" id="pills-tabContent">
+              <div className='tab-content' id='pills-tabContent'>
                 <div
-                  className="tab-pane fade show active"
-                  id="pills-home"
-                  role="tabpanel"
-                  aria-labelledby="pills-home-tab"
-                >
-                  <div className="row">
+                  className='tab-pane fade show active'
+                  id='pills-home'
+                  role='tabpanel'
+                  aria-labelledby='pills-home-tab'>
+                  <div className='row'>
                     {NFTDetails
                       ? NFTDetails?.attributes?.map((attr, key) => {
-                        const rarity = parseInt(attr?.rarity);
-                        return (
-                          <div className="col-md-6 mb-4" key={key}>
-                            <div className="tab_label">
-                              <div className="d-flex align-items-start flex-column">
-                                <p>{attr.trait_type}</p>
-                                <span className="big_text">{attr.value}</span>
+                          const rarity = parseInt(attr?.rarity);
+                          return (
+                            <div className='col-md-6 mb-4' key={key}>
+                              <div className='tab_label'>
+                                <div className='d-flex align-items-start flex-column'>
+                                  <p>{attr.trait_type}</p>
+                                  <span className='big_text'>{attr.value}</span>
+                                </div>
+                                {rarity ? (
+                                  <p>
+                                    {rarity}% <span>have this traits</span>
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
                               </div>
                               {rarity ? (
-                                <p>
-                                  {rarity}% <span>have this traits</span>
-                                </p>
+                                <div className='progress mt-2'>
+                                  <div
+                                    className={`progress-bar w-${rarity}`}
+                                    role='progressbar'
+                                    aria-valuenow={rarity}
+                                    aria-valuemin='0'
+                                    aria-valuemax='100'></div>
+                                </div>
                               ) : (
                                 ""
                               )}
-                            </div>
-                            {rarity ? (
-                              <div className="progress mt-2">
-                                <div
-                                  className={`progress-bar w-${rarity}`}
-                                  role="progressbar"
-                                  aria-valuenow={rarity}
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                ></div>
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                            {/* <div className='progress'>
+                              {/* <div className='progress'>
                           <div
                             className='progress-bar w-75'
                             role='progressbar'
@@ -978,208 +978,203 @@ function NFTDetails() {
                             aria-valuemin='0'
                             aria-valuemax='100'></div>
                         </div> */}
-                          </div>
-                        );
-                      })
+                            </div>
+                          );
+                        })
                       : ""}
                   </div>
                 </div>
               </div>
-              <div className="price_box">
-                {orders?.length>0&&orders!=="none"? (
+              <div className='price_box'>
+                {orders?.length > 0 && orders !== "none" ? (
                   <>
                     <h4>Price</h4>
-                    <div className="price_div">
+                    <div className='price_div'>
                       <img
                         src={Tokens[orders[0].paymentToken]?.icon}
-                        className="img-fluid hunter_fav"
-                        alt=""
+                        className='img-fluid hunter_fav'
+                        alt=''
                       />
                       {Number(convertToEth(orders[0].price?.$numberDecimal))
                         .toFixed(6)
-                        .slice(0,-2)}{" "}
+                        .slice(0, -2)}{" "}
                       {Tokens[orders[0].paymentToken]?.symbolName}
                     </div>
                   </>
-                ):(
+                ) : (
                   ""
                 )}
-                {orders.length<=0&&orders!=="none"&&owned!=="none"? (
-                  owned? (
+                {orders.length <= 0 && orders !== "none" && owned !== "none" ? (
+                  owned ? (
                     <button
-                      type="button"
-                      className="title_color buy_now"
-                      data-bs-toggle="modal"
-                      data-bs-target="#detailPop"
-                    >
+                      type='button'
+                      className='title_color buy_now'
+                      data-bs-toggle='modal'
+                      data-bs-target='#detailPop'>
                       Put On Marketplace
                     </button>
-                  ):(
+                  ) : (
                     ""
                   )
-                ):!owned&&
-                  orders.length>0&&
-                  owned!=="none"&&
-                  haveBid!=="none"&&
-                  haveOffer!=="none"? (
-                  orders[0].salesType===0? (
+                ) : !owned &&
+                  orders.length > 0 &&
+                  owned !== "none" &&
+                  haveBid !== "none" &&
+                  haveOffer !== "none" ? (
+                  orders[0].salesType === 0 ? (
                     <button
-                      type="button"
-                      className="title_color buy_now"
+                      type='button'
+                      className='title_color buy_now'
                       onClick={() => {
                         setIsBuyNowModal(true);
-                      }}
-                    >
+                      }}>
                       Buy Now
                     </button>
-                  ):(
+                  ) : (
                     <button
-                      type="button"
+                      type='button'
                       disabled={
-                        moment(new Date(orders[0].deadline*1000)).subtract({
+                        moment(new Date(orders[0].deadline * 1000)).subtract({
                           hours: 5,
                           minutes: 30,
-                        })._d<new Date()
+                        })._d < new Date()
                       }
-                      className="title_color buy_now"
+                      className='title_color buy_now'
                       onClick={() => {
                         setIsPlaceBidModal(true);
-                      }}
-                    >
-                      {haveBid!=="none"
+                      }}>
+                      {haveBid !== "none"
                         ? haveBid
                           ? "Update Bid"
-                          :"Place Bid"
-                        :""}
+                          : "Place Bid"
+                        : ""}
                     </button>
                   )
-                ):owned&&owned!=="none"? (
+                ) : owned && owned !== "none" ? (
                   <button
-                    type="button"
-                    className="title_color buy_now"
-                    data-bs-toggle="modal"
-                    data-bs-target="#detailPop"
+                    type='button'
+                    className='title_color buy_now'
+                    data-bs-toggle='modal'
+                    data-bs-target='#detailPop'
                     onClick={async () => {
                       console.log("orders[0]", orders[0], orders);
-                      try{
+                      try {
                         setLoading(true);
                         await handleRemoveFromSale(orders[0]._id, currentUser);
                         let historyReqData = {
                           nftID: NFTDetails.id,
-                          sellerID: localStorage.getItem('userId'),
+                          sellerID: localStorage.getItem("userId"),
                           action: "RemoveFromSale",
                           price: orders[0].price?.$numberDecimal,
-                          createdBy: localStorage.getItem('userId')
-                        }
+                          paymentToken: orders[0].paymentToken,
+                          createdBy: localStorage.getItem("userId"),
+                        };
                         await InsertHistory(historyReqData);
                         setLoading(false);
-                      }
-                      catch(e){
+                      } catch (e) {
                         console.log("Error in remove from sale", e);
                       }
-                    }}
-                  >
+                    }}>
                     Remove From Sale
                   </button>
-                ):(
+                ) : (
                   ""
                 )}
-                {!owned&&owned!=="none"&&haveOffer!=="none"? (
+                {!owned && owned !== "none" && haveOffer !== "none" ? (
                   <button
-                    type="button"
-                    className="border_btn title_color"
-                    data-bs-toggle="modal"
-                    data-bs-target="#makeOfferModal"
-                    onClick={() => setModal("active")}
-                  >
-                    {haveOffer? "Update Offer":"Make Offers"}
+                    type='button'
+                    className='border_btn title_color'
+                    data-bs-toggle='modal'
+                    data-bs-target='#makeOfferModal'
+                    onClick={() => setModal("active")}>
+                    {haveOffer ? "Update Offer" : "Make Offers"}
                   </button>
-                ):(
+                ) : (
                   ""
                 )}
               </div>
             </div>
           </div>
-          <div className="row">
-            <div className="col-lg-6 mb-5 width_45 auto_right">
-              <h3 className="title_36 mb-4">Description</h3>
-              <p className="textdes">{NFTDetails?.desc} </p>
+          <div className='row'>
+            <div className='col-lg-6 mb-5 width_45 auto_right'>
+              <h3 className='title_36 mb-4'>Description</h3>
+              <p className='textdes'>{NFTDetails?.desc} </p>
             </div>
-            <div className="col-lg-6 mb-5 text-break">
-              <h3 className="title_36 mb-4 ">
+            <div className='col-lg-6 mb-5 text-break'>
+              <h3 className='title_36 mb-4 '>
                 About {collection?.name} Collection
               </h3>
-              <div className="row">
-                <div className="col-md-4 nftDetails_img_con">
-                  <img src={collection?.logoImg} alt="" className="img-fluid" />
+              <div className='row'>
+                <div className='col-md-4 nftDetails_img_con'>
+                  <img src={collection?.logoImg} alt='' className='img-fluid' />
                 </div>
-                <div className="col-md-8">
-                  <p className="textdes">{collection?.desc} </p>
+                <div className='col-md-8'>
+                  <p className='textdes'>{collection?.desc} </p>
                 </div>
               </div>
             </div>
-            <div className="col-lg-6 mb-5 width_45 auto_right">
-              <h3 className="title_36 mb-4">Asset Details</h3>
-              <ul className="nft_detaillist">
+            <div className='col-lg-6 mb-5 width_45 auto_right'>
+              <h3 className='title_36 mb-4'>Asset Details</h3>
+              <ul className='nft_detaillist'>
                 <li>
-                  <span className="asset_title">Size</span>
-                  <span className="asset_detail">
+                  <span className='asset_title'>Size</span>
+                  <span className='asset_detail'>
                     {NFTDetails?.assetsInfo?.size} KB
                   </span>
                 </li>
                 <li>
-                  <span className="asset_title">Dimension</span>
-                  <span className="asset_detail">
+                  <span className='asset_title'>Dimension</span>
+                  <span className='asset_detail'>
                     {NFTDetails?.assetsInfo?.dimension} px
                   </span>
                 </li>
                 <li>
-                  <span className="asset_title">Format</span>
-                  <span className="asset_detail">
+                  <span className='asset_title'>Format</span>
+                  <span className='asset_detail'>
                     {NFTDetails?.assetsInfo?.type}
                   </span>
                 </li>
               </ul>
             </div>
-            <div className="col-lg-6 mb-5">
-              <h3 className="title_36 mb-4">Blockchain Details</h3>
-              <ul className="nft_detaillist">
+            <div className='col-lg-6 mb-5'>
+              <h3 className='title_36 mb-4'>Blockchain Details</h3>
+              <ul className='nft_detaillist'>
                 <li>
-                  <span className="asset_title">Contact Address</span>
-                  <span className="asset_detail">
-                    {collection?.contractAddress?.slice(0,4)+
-                      "..."+
-                      collection?.contractAddress?.slice(38,42)}
+                  <span className='asset_title'>Contact Address</span>
+                  <span className='asset_detail'>
+                    {collection?.contractAddress?.slice(0, 4) +
+                      "..." +
+                      collection?.contractAddress?.slice(38, 42)}
                   </span>
                 </li>
                 <li>
-                  <span className="asset_title">Token ID</span>
-                  <span className="asset_detail">{NFTDetails?.tokenId}</span>
+                  <span className='asset_title'>Token ID</span>
+                  <span className='asset_detail'>{NFTDetails?.tokenId}</span>
                 </li>
                 <li>
-                  <span className="asset_title">Blockchain</span>
-                  <span className="asset_detail">Binance Smart Chain</span>
+                  <span className='asset_title'>Blockchain</span>
+                  <span className='asset_detail'>Binance Smart Chain</span>
                 </li>
               </ul>
             </div>
-            <div className="col-lg-6 mb-5 width_45 auto_right">
-              <h3 className="title_36 mb-4">Properties</h3>
-              <ul className="nft_detaillist">
+            <div className='col-lg-6 mb-5 width_45 auto_right'>
+              <h3 className='title_36 mb-4'>Properties</h3>
+              <ul className='nft_detaillist'>
                 <li>
-                  <span className="asset_title">SERIAL</span>
-                  <span className="asset_detail">{NFTDetails?.tokenId}</span>
+                  <span className='asset_title'>SERIAL</span>
+                  <span className='asset_detail'>{NFTDetails?.tokenId}</span>
                 </li>
                 <li>
-                  <span className="asset_title">TYPE</span>
-                  <span className="asset_detail">
+                  <span className='asset_title'>TYPE</span>
+                  <span className='asset_detail'>
                     {NFTDetails?.catergoryInfo?.name}
                   </span>
                 </li>
               </ul>
             </div>
-            <div className="col-lg-6 mb-5">
-              <h3 className="title_36 mb-4">Levels</h3>
-              <ul className="nft_detailnumber">
+            <div className='col-lg-6 mb-5'>
+              <h3 className='title_36 mb-4'>Levels</h3>
+              <ul className='nft_detailnumber'>
                 <li>
                   <span>1</span>Generation
                 </li>
@@ -1188,30 +1183,30 @@ function NFTDetails() {
                 </li>
               </ul>
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>
                 Trading History for Meta Marines
               </h3>
               <img
                 src={"../img/nftdetails/graf.png"}
-                alt=""
-                className="img-fluid box_shadow"
+                alt=''
+                className='img-fluid box_shadow'
               />
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Listings</h3>
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Listings</h3>
               {/* <div className='table-responsive'> */}
               <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
               {/* </div> */}
             </div>
 
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Bids</h3>
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Bids</h3>
 
               <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">Offers</h3>
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>Offers</h3>
 
               <NFToffer
                 id={NFTDetails.id}
@@ -1219,16 +1214,16 @@ function NFTDetails() {
                 collectionAddress={collection?.contractAddress}
               />
             </div>
-            <div className="col-md-12 mb-5">
-              <h3 className="title_36 mb-4">History</h3>
-              <div className="table-responsive">
-                <NFThistory nftID={NFTDetails.id}/>
+            <div className='col-md-12 mb-5'>
+              <h3 className='title_36 mb-4'>History</h3>
+              <div className='table-responsive'>
+                <NFThistory nftID={NFTDetails.id} />
               </div>
             </div>
-            {allNFTs.length>1? (
+            {allNFTs.length > 1 ? (
               <>
-                <div className="col-md-12 ">
-                  <h3 className="title_36 mb-4">
+                <div className='col-md-12 '>
+                  <h3 className='title_36 mb-4'>
                     More from {collection?.name} Collection
                   </h3>
                   <FirearmsCollection
@@ -1237,142 +1232,136 @@ function NFTDetails() {
                     collectionName={collection?.name}
                   />
                 </div>
-                {allNFTs.length>4? (
-                  <div className="col-md-12 text-center mt-5">
+                {allNFTs.length > 4 ? (
+                  <div className='col-md-12 text-center mt-5'>
                     <a
-                      className="view_all_bdr"
-                      href={`/collection/${collection?._id}`}
-                    >
+                      className='view_all_bdr'
+                      href={`/collection/${collection?._id}`}>
                       View All
                     </a>
                   </div>
-                ):(
+                ) : (
                   ""
                 )}
               </>
-            ):(
+            ) : (
               ""
             )}
           </div>
         </div>
       </section>
       {/* <!-- The Modal --> */}
-      <div className={`modal marketplace putOnMarketplace`} id="detailPop">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content">
+      <div className={`modal marketplace putOnMarketplace`} id='detailPop'>
+        <div className='modal-dialog modal-lg modal-dialog-centered'>
+          <div className='modal-content'>
             {/* <!-- Modal Header --> */}
-            <div className="modal-header p-4">
-              <h4 className="text-light title_20 mb-0">Put on Marketplace</h4>
+            <div className='modal-header p-4'>
+              <h4 className='text-light title_20 mb-0'>Put on Marketplace</h4>
               <button
-                type="button"
-                className="btn-close text-light"
-                data-bs-dismiss="modal"
-              ></button>
+                type='button'
+                className='btn-close text-light'
+                data-bs-dismiss='modal'></button>
             </div>
             {/* <!-- Modal body --> */}
-            <div className="modal-body">
-              <h3 className="text-light text_16">Select method</h3>
+            <div className='modal-body'>
+              <h3 className='text-light text_16'>Select method</h3>
               <ul
-                className="d-flex mb-4 justify-content-around g-3"
-                id="pills-tab"
-                role="tablist"
-              >
-                <li className="list-unstyled">
+                className='d-flex mb-4 justify-content-around g-3'
+                id='pills-tab'
+                role='tablist'>
+                <li className='list-unstyled'>
                   <button
-                    id="btn1"
-                    className="navbtn active"
-                    type="button"
-                    onClick={handleMpShow}
-                  >
-                    <i className="fa fa-tag"></i>
-                    <span className="title_20 d-block">Fixed price</span>
+                    id='btn1'
+                    className='navbtn active'
+                    type='button'
+                    onClick={handleMpShow}>
+                    <i className='fa fa-tag'></i>
+                    <span className='title_20 d-block'>Fixed price</span>
                   </button>
                 </li>
-                <li className="list-unstyled">
+                <li className='list-unstyled'>
                   <button
-                    id="btn2"
-                    className="navbtn"
-                    type="button"
-                    onClick={handleMpShow1}
-                  >
-                    <i className="fa fa-hourglass-1"></i>
-                    <span className="title_20 d-block">Timed auction</span>
+                    id='btn2'
+                    className='navbtn'
+                    type='button'
+                    onClick={handleMpShow1}>
+                    <i className='fa fa-hourglass-1'></i>
+                    <span className='title_20 d-block'>Timed auction</span>
                   </button>
                 </li>
-                <li className="list-unstyled">
+                <li className='list-unstyled'>
                   <button
-                    id="btn3"
-                    className="navbtn"
-                    type="button"
-                    onClick={handleMpShow2}
-                  >
-                    <i className="fa fa-users"></i>
-                    <span className="title_20 d-block">Open for bids</span>
+                    id='btn3'
+                    className='navbtn'
+                    type='button'
+                    onClick={handleMpShow2}>
+                    <i className='fa fa-users'></i>
+                    <span className='title_20 d-block'>Open for bids</span>
                   </button>
                 </li>
               </ul>
 
-              <div className="tab-content">
-                {marketplaceSaleType===0? (
-                  <div className="mb-3" id="tab_opt_1">
-                    <label htmlFor="item_price" className="form-label">
+              <div className='tab-content'>
+                {marketplaceSaleType === 0 ? (
+                  <div className='mb-3' id='tab_opt_1'>
+                    <label htmlFor='item_price' className='form-label'>
                       Price
                     </label>
                     <input
-                      type="text"
-                      name="item_price"
-                      id="item_price"
-                      min="0"
-                      max="18"
-                      className="form-control input_design"
-                      placeholder="Please Enter Price (MATIC)"
+                      type='text'
+                      name='item_price'
+                      id='item_price'
+                      min='0'
+                      max='18'
+                      className='form-control input_design'
+                      placeholder='Please Enter Price (MATIC)'
                       value={itemprice}
                       onKeyPress={(e) => {
-                        if(!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                        if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
                       }}
                       onChange={(e) => {
-                        const re=/[+-]?[0-9]+\.?[0-9]*/;
-                        let val=e.target.value;
-                        if(e.target.value===""||re.test(e.target.value)) {
-                          const numStr=String(val);
-                          if(numStr.includes(".")) {
-                            if(numStr.split(".")[1].length>8) {
+                        const re = /[+-]?[0-9]+\.?[0-9]*/;
+                        let val = e.target.value;
+                        if (e.target.value === "" || re.test(e.target.value)) {
+                          const numStr = String(val);
+                          if (numStr.includes(".")) {
+                            if (numStr.split(".")[1].length > 8) {
                             } else {
-                              if(val.split(".").length>2) {
-                                val=val.replace(/\.+$/,"");
+                              if (val.split(".").length > 2) {
+                                val = val.replace(/\.+$/, "");
                               }
                             }
                           } else {
-                            if(val.split(".").length>2) {
-                              val=val.replace(/\.+$/,"");
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
                             }
                           }
-                          console.log("valll",val,typeof val);
+                          console.log("valll", val, typeof val);
                           setItemprice(val);
                         }
                       }}
                     />
                   </div>
-                ):(
+                ) : (
                   ""
                 )}
-                <div className="mb-3" id="tab_opt_2">
-                  <label htmlFor="item_qt" className="form-label">
+                <div className='mb-3' id='tab_opt_2'>
+                  <label htmlFor='item_qt' className='form-label'>
                     Quantity
                   </label>
                   <input
-                    type="text"
-                    name="item_qt"
-                    id="item_qt"
-                    min="1"
-                    disabled={NFTDetails.type===1? "disabled":""}
-                    className="form-control input_design"
-                    placeholder="Please Enter Quantity"
+                    type='text'
+                    name='item_qt'
+                    id='item_qt'
+                    min='1'
+                    disabled={NFTDetails.type === 1 ? "disabled" : ""}
+                    className='form-control input_design'
+                    placeholder='Please Enter Quantity'
                     value={item_qt}
                     onChange={(event) => {
-                      if(
-                        NFTDetails.type!==1&&
-                        event.target.value>NFTDetails?.totalQuantity
+                      if (
+                        NFTDetails.type !== 1 &&
+                        event.target.value > NFTDetails?.totalQuantity
                       ) {
                         NotificationManager.error(
                           "Quantity must be less than or equal to total quantity.",
@@ -1385,38 +1374,38 @@ function NFTDetails() {
                     }}
                   />
                 </div>
-                <div id="tab_opt_3" className="mb-3 put_hide">
-                  <label htmlFor="item_bid" className="form-label">
+                <div id='tab_opt_3' className='mb-3 put_hide'>
+                  <label htmlFor='item_bid' className='form-label'>
                     Minimum bid
                   </label>
                   <input
-                    type="text"
-                    name="item_bid"
-                    id="item_bid"
-                    min="0"
-                    max="18"
-                    className="form-control input_design"
-                    placeholder="Enter Minimum Bid"
+                    type='text'
+                    name='item_bid'
+                    id='item_bid'
+                    min='0'
+                    max='18'
+                    className='form-control input_design'
+                    placeholder='Enter Minimum Bid'
                     value={item_bid}
                     onKeyPress={(e) => {
-                      if(!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
                     }}
                     onChange={(e) => {
-                      const re=/[+-]?[0-9]+\.?[0-9]*/;
-                      let val=e.target.value;
+                      const re = /[+-]?[0-9]+\.?[0-9]*/;
+                      let val = e.target.value;
 
-                      if(e.target.value===""||re.test(e.target.value)) {
-                        const numStr=String(val);
-                        if(numStr.includes(".")) {
-                          if(numStr.split(".")[1].length>8) {
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        const numStr = String(val);
+                        if (numStr.includes(".")) {
+                          if (numStr.split(".")[1].length > 8) {
                           } else {
-                            if(val.split(".").length>2) {
-                              val=val.replace(/\.+$/,"");
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
                             }
                           }
                         } else {
-                          if(val.split(".").length>2) {
-                            val=val.replace(/\.+$/,"");
+                          if (val.split(".").length > 2) {
+                            val = val.replace(/\.+$/, "");
                           }
                         }
                         setItem_bid(val);
@@ -1426,22 +1415,21 @@ function NFTDetails() {
                   />
                 </div>
 
-                <div id="tab_opt_4" className="mb-3">
-                  <label htmlFor="Payment" className="form-label">
+                <div id='tab_opt_4' className='mb-3'>
+                  <label htmlFor='Payment' className='form-label'>
                     Payment Token
                   </label>
-                  {marketplaceSaleType===0? (
+                  {marketplaceSaleType === 0 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="BNB"
+                        className='form-select input_design select_bg'
+                        name='BNB'
                         value={selectedTokenFS}
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
                           setSelectedTokenFS(event.target.value);
-                        }}
-                      >
+                        }}>
                         {" "}
                         <option value={"BNB"} defaultValue>
                           BNB
@@ -1450,32 +1438,30 @@ function NFTDetails() {
                         <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
-                  ):marketplaceSaleType===1? (
+                  ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="BUSD"
+                        className='form-select input_design select_bg'
+                        name='BUSD'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         {" "}
                         <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>
                     </>
-                  ):(
+                  ) : (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="BUSD"
+                        className='form-select input_design select_bg'
+                        name='BUSD'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         <option value={"BUSD"} selected>
                           BUSD
                         </option>
@@ -1483,30 +1469,29 @@ function NFTDetails() {
                     </>
                   )}
                 </div>
-                {marketplaceSaleType===1? (
-                  <div id="tab_opt_5" className="mb-3">
-                    <label for="item_ex_date" className="form-label">
+                {marketplaceSaleType === 1 ? (
+                  <div id='tab_opt_5' className='mb-3'>
+                    <label for='item_ex_date' className='form-label'>
                       Expiration date
                     </label>
                     <input
-                      type="datetime-local"
-                      value={datetime.toString().substring(0,16)}
+                      type='datetime-local'
+                      value={datetime.toString().substring(0, 16)}
                       onChange={handleChange}
-                      className="input_design"
+                      className='input_design'
                       required
                     />
                   </div>
-                ):(
+                ) : (
                   ""
                 )}
 
-                <div className="mt-5 mb-3 text-center">
+                <div className='mt-5 mb-3 text-center'>
                   <button
-                    type="button"
-                    className="square_yello"
-                    href="/mintcollectionlive"
-                    onClick={PutMarketplace}
-                  >
+                    type='button'
+                    className='square_yello'
+                    href='/mintcollectionlive'
+                    onClick={PutMarketplace}>
                     Put On Marketplace
                   </button>
                 </div>
@@ -1518,54 +1503,53 @@ function NFTDetails() {
 
       {/*Bid/Offer Modal*/}
 
-      <div className="modal marketplace" id="makeOfferModal">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content">
+      <div className='modal marketplace' id='makeOfferModal'>
+        <div className='modal-dialog modal-lg modal-dialog-centered'>
+          <div className='modal-content'>
             {/* <!-- Modal Header --> */}
-            <div className="modal-header p-4">
-              <h4 className="text-light title_20 mb-0">Offer</h4>
+            <div className='modal-header p-4'>
+              <h4 className='text-light title_20 mb-0'>Offer</h4>
               <button
-                type="button"
-                className="btn-close text-light"
-                data-bs-dismiss="modal"
-              ></button>
+                type='button'
+                className='btn-close text-light'
+                data-bs-dismiss='modal'></button>
             </div>
 
             {/* <!-- Modal body --> */}
-            <div className="modal-body">
-              <div className="tab-content">
-                <div className="mb-3" id="tab_opt_1">
-                  <label htmlFor="item_price" className="form-label">
+            <div className='modal-body'>
+              <div className='tab-content'>
+                <div className='mb-3' id='tab_opt_1'>
+                  <label htmlFor='item_price' className='form-label'>
                     Price
                   </label>
                   <input
-                    type="text"
-                    name="item_price"
-                    id="item_price"
-                    min="0"
-                    max="18"
-                    className="form-control input_design"
-                    placeholder="Please Enter Price"
+                    type='text'
+                    name='item_price'
+                    id='item_price'
+                    min='0'
+                    max='18'
+                    className='form-control input_design'
+                    placeholder='Please Enter Price'
                     value={offerPrice}
                     onKeyPress={(e) => {
-                      if(!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
+                      if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
                     }}
                     onChange={(e) => {
-                      const re=/[+-]?[0-9]+\.?[0-9]*/;
-                      let val=e.target.value;
+                      const re = /[+-]?[0-9]+\.?[0-9]*/;
+                      let val = e.target.value;
 
-                      if(e.target.value===""||re.test(e.target.value)) {
-                        const numStr=String(val);
-                        if(numStr.includes(".")) {
-                          if(numStr.split(".")[1].length>8) {
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        const numStr = String(val);
+                        if (numStr.includes(".")) {
+                          if (numStr.split(".")[1].length > 8) {
                           } else {
-                            if(val.split(".").length>2) {
-                              val=val.replace(/\.+$/,"");
+                            if (val.split(".").length > 2) {
+                              val = val.replace(/\.+$/, "");
                             }
                           }
                         } else {
-                          if(val.split(".").length>2) {
-                            val=val.replace(/\.+$/,"");
+                          if (val.split(".").length > 2) {
+                            val = val.replace(/\.+$/, "");
                           }
                         }
                         setOfferPrice(val);
@@ -1573,21 +1557,21 @@ function NFTDetails() {
                     }}
                   />
                 </div>
-                <div className="mb-3" id="tab_opt_2">
-                  <label htmlFor="item_qt" className="form-label">
+                <div className='mb-3' id='tab_opt_2'>
+                  <label htmlFor='item_qt' className='form-label'>
                     Quantity
                   </label>
                   <input
-                    type="text"
-                    name="item_qt"
-                    id="item_qt"
-                    min="1"
-                    disabled={NFTDetails.type===1? true:false}
-                    className="form-control input_design"
-                    placeholder="Please Enter Quantity"
+                    type='text'
+                    name='item_qt'
+                    id='item_qt'
+                    min='1'
+                    disabled={NFTDetails.type === 1 ? true : false}
+                    className='form-control input_design'
+                    placeholder='Please Enter Quantity'
                     value={offerQuantity}
                     onChange={(event) => {
-                      if(NFTDetails.type===1&&event.target.value>1) {
+                      if (NFTDetails.type === 1 && event.target.value > 1) {
                         setOfferQuantity(1);
                         NotificationManager.error(
                           "Quantity must be 1.",
@@ -1595,9 +1579,9 @@ function NFTDetails() {
                           800
                         );
                       }
-                      if(
-                        NFTDetails.type!==1&&
-                        event.target.value>NFTDetails?.totalQuantity
+                      if (
+                        NFTDetails.type !== 1 &&
+                        event.target.value > NFTDetails?.totalQuantity
                       ) {
                         NotificationManager.error(
                           "Quantity must be less than or equal to total quantity.",
@@ -1609,54 +1593,51 @@ function NFTDetails() {
                     }}
                   />
                 </div>
-                <div id="tab_opt_4" className="mb-3">
-                  <label htmlFor="Payment" className="form-label">
+                <div id='tab_opt_4' className='mb-3'>
+                  <label htmlFor='Payment' className='form-label'>
                     Payment Token
                   </label>
 
-                  {marketplaceSaleType===0? (
+                  {marketplaceSaleType === 0 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="BNB"
+                        className='form-select input_design select_bg'
+                        name='BNB'
                         value={selectedTokenFS}
                         onChange={(event) => {
                           event.preventDefault();
                           event.persist();
                           setSelectedTokenFS(event.target.value);
-                        }}
-                      >
+                        }}>
                         {" "}
                         {/* <option value={"HNTR"}>HNTR</option> */}
                         <option value={"BUSD"}>BUSD</option>
                       </select>
                     </>
-                  ):marketplaceSaleType===1? (
+                  ) : marketplaceSaleType === 1 ? (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="BUSD"
+                        className='form-select input_design select_bg'
+                        name='BUSD'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         {" "}
                         <option value={"BUSD"} defaultValue>
                           BUSD
                         </option>
                       </select>
                     </>
-                  ):(
+                  ) : (
                     <>
                       <select
-                        className="form-select input_design select_bg"
-                        name="BUSD"
+                        className='form-select input_design select_bg'
+                        name='BUSD'
                         value={selectedToken}
                         onChange={(event) =>
                           setSelectedToken(event.target.value)
-                        }
-                      >
+                        }>
                         <option value={"BUSD"} selected>
                           BUSD
                         </option>
@@ -1665,26 +1646,25 @@ function NFTDetails() {
                   )}
                 </div>
 
-                <div id="tab_opt_5" className="mb-3 ">
-                  <label htmlFor="item_ex_date" className="form-label">
+                <div id='tab_opt_5' className='mb-3 '>
+                  <label htmlFor='item_ex_date' className='form-label'>
                     Expiration date
                   </label>
                   {/* <input type="date" name="item_ex_date" id="item_ex_date" min="0" max="18" className="form-control input_design" placeholder="Enter Minimum Bid" value="" /> */}
                   <input
-                    type="datetime-local"
-                    value={(datetime||"").toString().substring(0,16)}
+                    type='datetime-local'
+                    value={(datetime || "").toString().substring(0, 16)}
                     //value={datetime}
                     onChange={handleChange}
-                    className="input_design"
+                    className='input_design'
                   />
                 </div>
-                <div className="mt-5 mb-3 text-center">
+                <div className='mt-5 mb-3 text-center'>
                   <button
-                    type="button"
-                    className="square_yello"
-                    onClick={PlaceOffer}
-                  >
-                    {haveOffer? "Update Offer":"Make Offers"}
+                    type='button'
+                    className='square_yello'
+                    onClick={PlaceOffer}>
+                    {haveOffer ? "Update Offer" : "Make Offers"}
                   </button>
                 </div>
               </div>
