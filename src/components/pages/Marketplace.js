@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense,useRef } from "react";
 import Footer from "../components/footer";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
@@ -18,7 +18,11 @@ import { getAllBrands } from "../../apiServices";
 import BGImg from "./../../assets/images/background.jpg";
 import SkeletonCard from "../components/Skeleton/NFTSkeletonCard";
 import { useGLTF, OrbitControls } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import {
+  Canvas,useFrame,
+  extend,
+  useThree,
+} from "@react-three/fiber";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import AdvancedFilter from "../components/AdvancedFilter";
 
@@ -26,7 +30,21 @@ var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
   backgroundRepeat: "no-repeat",
 };
+extend({OrbitControls});
 
+const CameraControls=() => {
+  // Get a reference to the Three.js Camera, and the canvas html element.
+  // We need these to setup the OrbitControls component.
+  // https://threejs.org/docs/#examples/en/controls/OrbitControls
+  const {
+    camera,
+    gl: {domElement},
+  }=useThree();
+  // Ref to the controls, so that we can update them on every frame using useFrame
+  const controls=useRef();
+  useFrame((state) => controls.current.update());
+  return <orbitControls ref={controls} args={[camera,domElement]} />;
+};
 function Marketplace() {
   var bgImgStyle = {
     backgroundImage: `url(${BGImg})`,
@@ -36,6 +54,8 @@ function Marketplace() {
     backgroundPositionY: "center",
     backgroundColor: "#000",
   };
+  
+  
 
   function Model(props) {
     const { scene } = useGLTF(props.image);
@@ -581,19 +601,19 @@ function Marketplace() {
                             ""
                           )}
 
-                          {card && card.fileType === "3D" ? ("hello"
-                            //<Canvas
-                            //  className='img-fluid items_img w-100 my-3'
-                            //  camera={{ position: [10, 100, 100], fov: 1 }}>
-                            //  <pointLight
-                            //    position={[10, 10, 10]}
-                            //    intensity={1.3}
-                            //  />
-                            //  <Suspense fallback={null}>
-                            //    <Model image={card.image} />
-                            //  </Suspense>
-                            //  <OrbitControls />
-                            //</Canvas>
+                          {card && card.fileType === "3D" ? (
+                            <Canvas
+                              className='img-fluid items_img w-100 my-3'
+                              camera={{ position: [10, 100, 100], fov: 1 }}>
+                              <pointLight
+                                position={[10, 10, 10]}
+                                intensity={1.3}
+                              />
+                              <Suspense fallback={null}>
+                                <Model image={card.image} />
+                              </Suspense>
+                              <CameraControls/>
+                            </Canvas>
                           ) : (
                             ""
                           )}
