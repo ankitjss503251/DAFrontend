@@ -42,7 +42,7 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
 export const buildSellOrder = async (id) => {
   let details;
   try {
-    details = await getOrderDetails({ orderId: id });
+    details = await getOrderDetails({ orderID: id });
     console.log("details 123", details);
     const order = [
       details.sellerID?.walletAddress.toLowerCase(),
@@ -208,25 +208,25 @@ export const getAllOffersByNftId = async (nftId) => {
 
   dummyData?.data
     ? // eslint-disable-next-line array-callback-return
-      dummyData.data.map((d, i) => {
-        data.push({
-          bidId: d._id,
-          bidQuantity: d.oBidQuantity,
-          bidPrice: d.oBidPrice.$numberDecimal,
-          seller: d.oOwner.sWalletAddress,
-          orderId: d.oOrderId,
-          bidder: d.oBidder.sWalletAddress,
-          bidderProfile: d.oBidder.sProfilePicUrl,
-          buyerSignature: d.oBuyerSignature,
-          bidderFullName: d.oBidder.oName
-            ? d.oBidder.oName.sFirstname
-            : d.oBidder
+    dummyData.data.map((d, i) => {
+      data.push({
+        bidId: d._id,
+        bidQuantity: d.oBidQuantity,
+        bidPrice: d.oBidPrice.$numberDecimal,
+        seller: d.oOwner.sWalletAddress,
+        orderId: d.oOrderId,
+        bidder: d.oBidder.sWalletAddress,
+        bidderProfile: d.oBidder.sProfilePicUrl,
+        buyerSignature: d.oBuyerSignature,
+        bidderFullName: d.oBidder.oName
+          ? d.oBidder.oName.sFirstname
+          : d.oBidder
             ? d.oBidder.sWalletAddress
             : "Unnamed",
-          nftId: d.oNFTId,
-          owner: d.oSeller,
-        });
-      })
+        nftId: d.oNFTId,
+        owner: d.oSeller,
+      });
+    })
     : data.push([]);
 
   console.log("dummyData", data);
@@ -262,24 +262,24 @@ export const getCollections = async (req) => {
   else return [];
   arr
     ? arr.map((coll, key) => {
-        formattedData[key] = {
-          _id: coll._id,
-          logoImg: coll.logoImage,
-          coverImg: coll.coverImage,
-          name: coll.name,
-          desc: coll.description,
-          saleStartTime: coll.preSaleStartTime,
-          saleEndTime: coll.preSaleEndTime,
-          price: coll.price.$numberDecimal,
-          items: coll.nftCount,
-          totalSupply: coll.totalSupply,
-          contractAddress: coll.contractAddress,
-          brand: coll.brandID,
-          createdBy: coll.createdBy,
-          link: coll.link,
-          volumeTraded: coll.volumeTraded,
-        };
-      })
+      formattedData[key] = {
+        _id: coll._id,
+        logoImg: coll.logoImage,
+        coverImg: coll.coverImage,
+        name: coll.name,
+        desc: coll.description,
+        saleStartTime: coll.preSaleStartTime,
+        saleEndTime: coll.preSaleEndTime,
+        price: coll.price.$numberDecimal,
+        items: coll.nftCount,
+        totalSupply: coll.totalSupply,
+        contractAddress: coll.contractAddress,
+        brand: coll.brandID,
+        createdBy: coll.createdBy,
+        link: coll.link,
+        volumeTraded: coll.volumeTraded,
+      };
+    })
     : (formattedData[0] = {});
   return formattedData;
 };
@@ -316,31 +316,31 @@ export const getNFTs = async (req) => {
   else return [];
   arr
     ? arr.map((nft, key) => {
-        formattedData[key] = {
-          id: nft?._id,
-          image: nft?.image,
-          name: nft?.name,
-          desc: nft?.description,
-          collectionAddress: nft?.collectionAddress,
-          ownedBy: nft?.ownedBy,
-          like:
-            nft?.user_likes?.length === undefined ? 0 : nft?.user_likes?.length,
-          Qty: nft?.totalQuantity,
-          collection: nft?.collectionID,
-          assetsInfo: nft?.assetsInfo[0],
-          catergoryInfo: nft?.categoryID,
-          tokenId: nft?.tokenID,
-          createdBy: nft?.createdBy,
-          type: nft?.type,
-          attributes: nft?.attributes,
-          totalQuantity: nft?.totalQuantity,
-          fileType: nft?.fileType,
-          collectionData: nft?.CollectionData,
-          orderData: nft?.OrderData,
-          brandData: nft?.BrandData[0],
-          count: count,
-        };
-      })
+      formattedData[key] = {
+        id: nft?._id,
+        image: nft?.image,
+        name: nft?.name,
+        desc: nft?.description,
+        collectionAddress: nft?.collectionAddress,
+        ownedBy: nft?.ownedBy,
+        like:
+          nft?.user_likes?.length === undefined ? 0 : nft?.user_likes?.length,
+        Qty: nft?.totalQuantity,
+        collection: nft?.collectionID,
+        assetsInfo: nft?.assetsInfo[0],
+        catergoryInfo: nft?.categoryID,
+        tokenId: nft?.tokenID,
+        createdBy: nft?.createdBy,
+        type: nft?.type,
+        attributes: nft?.attributes,
+        totalQuantity: nft?.totalQuantity,
+        fileType: nft?.fileType,
+        collectionData: nft?.CollectionData,
+        orderData: nft?.OrderData,
+        brandData: nft?.BrandData[0],
+        count: count,
+      };
+    })
     : (formattedData[0] = {});
   return formattedData;
 };
@@ -363,29 +363,29 @@ export const getNFTDetails = async (req) => {
   else return [];
   arr
     ? arr.map((nft, key) => {
-        formattedData[key] = {
-          id: nft._id,
-          image: nft.image,
-          name: nft.name,
-          desc: nft.description,
-          collectionAddress: nft.collectionAddress,
-          ownedBy: nft.ownedBy,
-          like:
-            nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
-          Qty: nft.totalQuantity,
-          collection: nft.collectionID,
-          assetsInfo: nft?.assetsInfo[0],
-          catergoryInfo: nft?.categoryID,
-          tokenId: nft.tokenID,
-          createdBy: nft.createdBy,
-          type: nft.type,
-          attributes: nft.attributes,
-          totalQuantity: nft.totalQuantity,
-          fileType: nft.fileType,
-          collectionData: nft.CollectionData,
-          OrderData: nft.OrderData,
-        };
-      })
+      formattedData[key] = {
+        id: nft._id,
+        image: nft.image,
+        name: nft.name,
+        desc: nft.description,
+        collectionAddress: nft.collectionAddress,
+        ownedBy: nft.ownedBy,
+        like:
+          nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
+        Qty: nft.totalQuantity,
+        collection: nft.collectionID,
+        assetsInfo: nft?.assetsInfo[0],
+        catergoryInfo: nft?.categoryID,
+        tokenId: nft.tokenID,
+        createdBy: nft.createdBy,
+        type: nft.type,
+        attributes: nft.attributes,
+        totalQuantity: nft.totalQuantity,
+        fileType: nft.fileType,
+        collectionData: nft.CollectionData,
+        OrderData: nft.OrderData,
+      };
+    })
     : (formattedData[0] = {});
   return formattedData;
 };
@@ -408,12 +408,12 @@ export const getAuthors = async () => {
   else return [];
   arr
     ? arr.map((author, key) => {
-        formattedData[key] = {
-          _id: author._id,
-          profile: author.profileIcon,
-          name: author.username,
-        };
-      })
+      formattedData[key] = {
+        _id: author._id,
+        profile: author.profileIcon,
+        name: author.username,
+      };
+    })
     : (formattedData[0] = {});
   return formattedData;
 };
@@ -480,10 +480,10 @@ export const getPrice = async (data) => {
 };
 
 
-const getOfferMade = async(req) => {
-   let formattedData = [];
-   let data = [];
-   try {
+const getOfferMade = async (req) => {
+  let formattedData = [];
+  let data = [];
+  try {
     let reqBody = {
       page: 1,
       limit: 13,
@@ -504,7 +504,7 @@ const getOfferMade = async(req) => {
         buyerAddress: order?.BidderData[0]?.walletAddress,
         sellerAddress: order?.ownerData[0]?.walletAddress
       }
-      })
+    })
     : (formattedData[0] = {});
   return formattedData;
 }

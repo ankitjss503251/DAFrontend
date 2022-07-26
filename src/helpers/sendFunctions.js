@@ -25,6 +25,7 @@ import {
   createOfferNFT,
   updateBidNft,
   acceptOffer,
+  UpdateStatus,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
 import contracts from "./../config/contracts";
@@ -48,7 +49,7 @@ export const handleBuyNft = async (
   let marketplace;
   try {
     order = await buildSellOrder(id);
-    details = await getOrderDetails({ orderId: id });
+    details = await getOrderDetails({ orderID: id });
   } catch (e) {
     console.log("error in API", e);
     return false;
@@ -209,9 +210,78 @@ export const handleBuyNft = async (
           signature,
           options
         );
+        try {
+          if (isERC721) {
+            await UpdateOrder({
+              orderID: id,
+              nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
+              seller: details.sellerID.walletAddress?.toLowerCase(), //to make sure we update the quantity left : walletAddress
+              qtyBought: Number(qty),
+              qty_sold: Number(details.quantity_sold) + Number(qty),
+              buyer: account?.toLowerCase(),
+              LazyMintingStatus:
+                details.nftID.quantity_minted + qty === details.nftID.totalQuantity
+                  ? 0
+                  : 1,
+              quantity_minted:
+                details.nftID.quantity_minted === details.nftID.totalQuantity
+                  ? details.nftID.quantity_minted
+                  : details.nftID.quantity_minted + qty,
+              hash: completeOrder.hash,
+              hashStatus: 0
+            });
+            // DeleteOrder({ orderID: id });
+          } else {
+            await UpdateOrder({
+              orderID: id,
+              nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
+              seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
+              qtyBought: Number(qty),
+              qty_sold: Number(details.quantity_sold) + Number(qty),
+              buyer: account?.toLowerCase(),
+              LazyMintingStatus:
+                details.nftID.quantity_minted + qty === details.nftID.totalQuantity
+                  ? 0
+                  : 1,
+              quantity_minted:
+                details.nftID.quantity_minted === details.nftID.totalQuantity
+                  ? details.nftID.quantity_minted
+                  : details.nftID.quantity_minted + qty,
+              hash: completeOrder.hash,
+              hashStatus: 0
+            });
+
+            if (
+              Number(details.quantity_sold) + Number(qty) >=
+              details.total_quantity
+            ) {
+              try {
+                // await DeleteOrder({ orderID: id });
+              } catch (e) {
+                console.log("error in updating order data", e);
+                return false;
+              }
+            }
+          }
+        } catch (e) {
+          console.log("error in updating order data", e);
+          return false;
+        }
         let res = await completeOrder.wait();
+
         if (res.status === 0) {
           return false;
+        }
+        let req = {
+          "recordID": id,
+          "DBCollection": "Order",
+          "hashStatus": 1
+        }
+        try {
+          await UpdateStatus(req)
+        }
+        catch (e) {
+          return
         }
       }
     } catch (e) {
@@ -233,62 +303,10 @@ export const handleBuyNft = async (
     return false;
   }
 
-  try {
-    if (isERC721) {
-      await UpdateOrder({
-        orderID: id,
-        nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
-        seller: details.sellerID.walletAddress?.toLowerCase(), //to make sure we update the quantity left : walletAddress
-        qtyBought: Number(qty),
-        qty_sold: Number(details.quantity_sold) + Number(qty),
-        buyer: account?.toLowerCase(),
-        LazyMintingStatus:
-          details.nftID.quantity_minted + qty === details.nftID.totalQuantity
-            ? 0
-            : 1,
-        quantity_minted:
-          details.nftID.quantity_minted === details.nftID.totalQuantity
-            ? details.nftID.quantity_minted
-            : details.nftID.quantity_minted + qty,
-      });
-      DeleteOrder({ orderID: id });
-    } else {
-      await UpdateOrder({
-        orderID: id,
-        nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
-        seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
-        qtyBought: Number(qty),
-        qty_sold: Number(details.quantity_sold) + Number(qty),
-        buyer: account?.toLowerCase(),
-        LazyMintingStatus:
-          details.nftID.quantity_minted + qty === details.nftID.totalQuantity
-            ? 0
-            : 1,
-        quantity_minted:
-          details.nftID.quantity_minted === details.nftID.totalQuantity
-            ? details.nftID.quantity_minted
-            : details.nftID.quantity_minted + qty,
-      });
 
-      if (
-        Number(details.quantity_sold) + Number(qty) >=
-        details.total_quantity
-      ) {
-        try {
-          await DeleteOrder({ orderID: id });
-        } catch (e) {
-          console.log("error in updating order data", e);
-          return false;
-        }
-      }
-    }
-  } catch (e) {
-    console.log("error in updating order data", e);
-    return false;
-  }
 
   NotificationManager.success("NFT Purchased Successfully");
-  slowRefresh(1000);
+  // slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -458,7 +476,7 @@ export const handleRemoveFromSale = async (orderId, account) => {
       value: "0",
     };
     order = await buildSellOrder(orderId);
-    details = await getOrderDetails({ orderId: orderId });
+    details = await getOrderDetails({ orderID: orderId });
     let res = await marketplace.cancelOrder(order, details.signature, options);
     res = await res.wait();
     if (res.status === 0) {
@@ -733,7 +751,7 @@ export const handleAcceptBids = async (
   let options;
   try {
     order = await buildSellOrder(bidData.orderID);
-    details = await getOrderDetails({ orderId: bidData.orderID });
+    details = await getOrderDetails({ orderID: bidData.orderID });
   } catch (e) {
     console.log("error in API", e);
     return false;

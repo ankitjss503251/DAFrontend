@@ -10,6 +10,7 @@ import {
   GetMyNftList,
   getNFTList,
   isSuperAdmin,
+  UpdateStatus,
   UpdateTokenCount,
 } from "../../apiServices";
 
@@ -222,10 +223,36 @@ function CreateNFTs() {
             collectionDetail.nextID,
             options
           );
+          formdata.append("hash", mintRes.hash)
+          formdata.append("hashStatus", 0)
+          let createdNft;
+          try {
+            createdNft = await createNft(formdata);
+            NotificationManager.success("NFT created successfully", "", 800);
+            setLoading(false);
+            slowRefresh(1000);
+          } catch (e) {
+            console.log("err", e);
+            NotificationManager.error("Something went wrong", "", 800);
+            setLoading(false);
+            return;
+          }
           res1 = await mintRes.wait();
+
           if (res1.status === 0) {
             NotificationManager.error("Transaction failed", "", 800);
             return;
+          }
+          let req = {
+            "recordID": createdNft._id,
+            "DBCollection": "NFT",
+            "hashStatus": 1
+          }
+          try {
+            await UpdateStatus(req)
+          }
+          catch (e) {
+            return
           }
         } catch (minterr) {
           setLoading(false);
@@ -238,17 +265,7 @@ function CreateNFTs() {
         return;
       }
 
-      try {
-        await createNft(formdata);
-        NotificationManager.success("NFT created successfully", "", 800);
-        setLoading(false);
-        slowRefresh(1000);
-      } catch (e) {
-        console.log("err", e);
-        NotificationManager.error("Something went wrong", "", 800);
-        setLoading(false);
-        return;
-      }
+
     }
   };
 

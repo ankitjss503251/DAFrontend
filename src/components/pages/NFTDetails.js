@@ -412,6 +412,8 @@ function NFTDetails() {
             : contracts[selectedToken],
         tokenId: NFTDetails.tokenId,
         erc721: NFTDetails.type === 1,
+        hash: "0x0",
+        hashStatus: 1
       };
       let res = await putOnMarketplace(currentUser, orderData);
       if (res === false) {
@@ -825,7 +827,7 @@ function NFTDetails() {
               await InsertHistory(historyReqData);
 
               setLoading(false);
-              slowRefresh(1000);
+              // slowRefresh(1000);
             }}
           >
             {"Buy Now"}
