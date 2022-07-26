@@ -1002,7 +1002,6 @@ function NFTDetails() {
                     type="button"
                     className="title_color buy_now"
                     data-bs-toggle="modal"
-                    data-bs-target="#detailPop"
                     onClick={async () => {
                       console.log("orders[0]", orders[0], orders);
                       try {
