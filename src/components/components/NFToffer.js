@@ -17,6 +17,11 @@ import { slowRefresh } from "../../helpers/NotifyStatus";
 import Clock from "./Clock";
 import Spinner from "../components/Spinner";
 import { Tokens } from "../../helpers/tokensToSymbol";
+import injectedModule from "@web3-onboard/injected-wallets";
+import walletConnectModule from "@web3-onboard/walletconnect";
+import Logo from "./../../assets/images/logo.svg";
+import { fetchWallet } from "../../helpers/getterFunctions";
+
 
 function NFToffer(props) {
   const [currentUser, setCurrentUser] = useState("");
@@ -31,13 +36,15 @@ function NFToffer(props) {
   const [modal, setModal] = useState(false);
   const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
 
+  const injected = injectedModule();
+  const walletConnect = walletConnectModule();
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Yout Wallet", "", 800);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
+
+
 
   useEffect(() => {
     if (props.id)
@@ -63,13 +70,17 @@ function NFToffer(props) {
 
   const PlaceOffer = async () => {
     setLoading(true);
+    let wallet = await fetchWallet();
+    if (wallet !== currentUser) {
+      console.log("wrong wallet")
+    }
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);
       return;
     }
 
-    if (offerPrice === "" || offerPrice == undefined) {
+    if (offerPrice === "" || offerPrice === undefined) {
       NotificationManager.error("Enter Offer Price");
       setLoading(false);
       return;
