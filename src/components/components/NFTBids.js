@@ -17,6 +17,7 @@ import Logo from "../../assets/images/logo.svg";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { ethers } from "ethers";
 import Spinner from "./Spinner";
+import { InsertHistory } from "./../../apiServices";
 
 function NFTBids(props) {
   const [currentUser, setCurrentUser] = useState("");
@@ -29,22 +30,9 @@ function NFTBids(props) {
   const [currentBid, setCurrentBid] = useState([]);
   const [reloadContent, setReloadContent] = useState(false);
 
-  // const checkoutCal = [
-  //   {
-  //     key: "Balance",
-  //     value: Number(userBalance).toFixed(4),
-  //   },
-  //   {
-  //     key: "You will pay",
-  //     value: willPay,
-  //   },
-  // ];
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    // else NotificationManager.error("Connect Your Wallet", "", 800);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.selected_account]);
 
   useEffect(() => {
@@ -59,7 +47,6 @@ function NFTBids(props) {
       let _data = await fetchBidNft(searchParams);
       if (_data && _data.data.length > 0) {
         setBids(_data.data);
-        console.log(".......bids data.......", _data.data);
       }
     };
     fetch();
@@ -211,18 +198,35 @@ function NFTBids(props) {
                   ethers.utils.parseEther(price.toString()),
                   false
                 );
-                if (res === true)
+                if (res !== false) {
+                  let historyReqData = {
+                    nftID: currentBid.nftID,
+                    buyerID: localStorage.getItem('userId'),
+                    sellerID: currentBid.sellerID?._id,
+                    action: "Bid",
+                    type: "Updated",
+                    price: ethers.utils.parseEther(price.toString()).toString(),
+                    paymentToken: currentBid?.paymentToken,
+                    quantity: qty,
+                    createdBy: localStorage.getItem("userId"),
+                  };
+                  await InsertHistory(historyReqData);
+
                   NotificationManager.success(
                     "Bid Updated Successfully",
                     "",
                     800
                   );
+                  setLoading(false);
+                  setReloadContent(!reloadContent);
+                }
                 else {
                   setLoading(false);
                   return;
                 }
-                setLoading(false);
-                setReloadContent(!reloadContent);
+
+
+
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
               }
@@ -276,40 +280,40 @@ function NFTBids(props) {
                           <td className="d-flex justify-content-start align-items-center mb-0">
                             <span className="blue_dot circle_dot"></span>
                             <span>
-                              {console.log('currentuser length', currentUser, currentUser.length)}
-                                {b?.bidderID?.walletAddress
-                                  ? b?.bidderID?.walletAddress?.slice(0, 4) +
-                                    "..." +
-                                    b?.bidderID?.walletAddress?.slice(38, 42)
-                                  : ""}
-                              </span>
-                            </td>
-                            <td>
-                              <img
-                                alt=""
-                                src={
-                                  b?.orderID?.length > 0
-                                    ? Tokens[
-                                        b?.orderID[0]?.paymentToken?.toLowerCase()
-                                      ]?.icon
-                                    : "-"
-                                }
-                                className="img-fluid hunter_fav"
-                              />{" "}
-                              {Number(
-                                convertToEth(b?.bidPrice?.$numberDecimal)
-                              ).toFixed(4)}{" "}
-                              {Tokens[b?.orderID[0]?.paymentToken]?.symbolName}
-                            </td>
-                            <td>
-                              {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
-                              <span className="nft_time">
-                                {moment(b.createdOn).format("LT")}
-                              </span>
-                            </td>
-                            <td>Auction</td>
-                            <td>
-                              {/* <Clock
+                             
+                              {b?.bidderID?.walletAddress
+                                ? b?.bidderID?.walletAddress?.slice(0, 4) +
+                                "..." +
+                                b?.bidderID?.walletAddress?.slice(38, 42)
+                                : ""}
+                            </span>
+                          </td>
+                          <td>
+                            <img
+                              alt=""
+                              src={
+                                b?.orderID?.length > 0
+                                  ? Tokens[
+                                    b?.orderID[0]?.paymentToken?.toLowerCase()
+                                  ]?.icon
+                                  : "-"
+                              }
+                              className="img-fluid hunter_fav"
+                            />{" "}
+                            {Number(
+                              convertToEth(b?.bidPrice?.$numberDecimal)
+                            ).toFixed(4)}{" "}
+                            {Tokens[b?.orderID[0]?.paymentToken]?.symbolName}
+                          </td>
+                          <td>
+                            {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
+                            <span className="nft_time">
+                              {moment(b.createdOn).format("LT")}
+                            </span>
+                          </td>
+                          <td>Auction</td>
+                          <td>
+                            {/* <Clock
                             deadline={moment(new Date(b.bidDeadline * 1000))
                               .subtract({
                                 hours: 5,
@@ -330,14 +334,30 @@ function NFTBids(props) {
                                   to={"/"}
                                   className="small_yellow_btn small_btn mb-3"
                                   onClick={async () => {
+                                    console.log("nnn", b)
                                     setLoading(true);
                                     await handleAcceptBids(
                                       b,
                                       props.NftDetails.type
                                     );
+
+                                    let historyReqData = {
+                                      nftID: b.nftID,
+                                      sellerID: localStorage.getItem('userId'),
+                                      buyerID: b?.bidderID?._id,
+                                      action: "Bid",
+                                      type: "Accepted",
+                                      price: b?.bidPrice?.$numberDecimal,
+                                      paymentToken: b?.orderID[0]?.paymentToken,
+                                      quantity: b?.bidQuantity,
+                                      createdBy: localStorage.getItem("userId"),
+                                    };
+                                    await InsertHistory(historyReqData);
                                     setLoading(false);
                                     setReloadContent(!reloadContent);
                                   }}
+
+
                                 >
                                   Accept
                                 </button>
@@ -349,6 +369,18 @@ function NFTBids(props) {
                                       b._id,
                                       "Rejected"
                                     );
+                                    let historyReqData = {
+                                      nftID: b.nftID,
+                                      sellerID: localStorage.getItem('userId'),
+                                      buyerID: b?.bidderID?._id,
+                                      action: "Bid",
+                                      type: "Rejected",
+                                      price: b?.bidPrice?.$numberDecimal,
+                                      paymentToken: b?.orderID[0]?.paymentToken,
+                                      quantity: b?.bidQuantity,
+                                      createdBy: localStorage.getItem("userId"),
+                                    };
+                                    await InsertHistory(historyReqData);
                                     setReloadContent(!reloadContent);
                                   }}
                                 >
@@ -365,7 +397,6 @@ function NFTBids(props) {
                                   className="small_yellow_btn small_btn mb-2"
                                   onClick={() => {
                                     setCurrentBid(b);
-
                                     setPrice(
                                       Number(
                                         convertToEth(
@@ -374,20 +405,12 @@ function NFTBids(props) {
                                       )
                                     );
                                     setIsUpdateBidModal(true);
-                                    console.log(
-                                      "current bid--->",
-                                      b,
-                                      moment.utc(b.bidDeadline * 1000)
-                                        .local()
-                                        .format()
-                                    );
+                                   
                                   }}
                                 >
                                   Update Bid
                                 </button>
-                                {console.log("momentt", moment.utc(
-                                  new Date(b.bidDeadline * 1000)
-                                ).local().format())}
+                               
                                 <button
                                   disabled={
                                     moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
@@ -398,8 +421,22 @@ function NFTBids(props) {
                                       b._id,
                                       "Cancelled"
                                     );
-                                    slowRefresh(1000);
+                                    let historyReqData = {
+                                      nftID: b.nftID,
+                                      sellerID: localStorage.getItem('userId'),
+                                      buyerID: b?.bidderID?._id,
+                                      action: "Bid",
+                                      type: "Cancelled",
+                                      price: b?.bidPrice?.$numberDecimal,
+                                      paymentToken: b?.orderID[0]?.paymentToken,
+                                      quantity: b?.bidQuantity,
+                                      createdBy: localStorage.getItem("userId"),
+                                    };
+                                    await InsertHistory(historyReqData);
+                                    setReloadContent(!reloadContent);
+                                   
                                   }}
+
                                 >
                                   Cancel
                                 </button>

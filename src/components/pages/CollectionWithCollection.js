@@ -15,6 +15,7 @@ import {
   getCategory,
   getPrice,
   getUserById,
+  fetchHistory
 } from "../../helpers/getterFunctions";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 // import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -204,6 +205,24 @@ function CollectionWithCollection() {
     searchedCol,
     salesType,
   ]);
+
+  useEffect(() => {
+    const fetch = async () => {
+     try{ const reqData = {
+        page: 1,
+        limit: 12,
+        nftID: "",
+        collectionID: "",
+        brandID: brandID
+      }
+      const history = await fetchHistory(reqData);
+      console.log("history on brand details", history)}
+      catch(e){
+        console.log(e);
+      }
+    }
+    fetch();
+  }, [])
 
   const bgImage = {
     backgroundImage: `url(${brandDetails?.coverImage})`,

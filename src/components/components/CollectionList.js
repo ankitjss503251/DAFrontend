@@ -27,7 +27,6 @@ function CollectionList(props) {
     const { scene } = useGLTF(props.image);
     return <primitive object={scene} />;
   }
-  console.log("props in coleection list is--------->",props.nft.image)
   return (
     <Link to={`/NFTdetails/${props.nft?.id}`}>
       <div className='collection_items'>
