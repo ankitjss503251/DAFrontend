@@ -21,7 +21,7 @@ import UpArrow from "../SVG/dropdown";
 import { getCategory } from "../../helpers/getterFunctions";
 import BGImg from "../../assets/images/background.jpg";
 import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
-
+import GeneralOffer from '../components/GeneralOffer'
 
 function MyNFTs() {
   const { id } = useParams();
@@ -313,19 +313,28 @@ function MyNFTs() {
                 aria-expanded='false'>
                 Offers
               </button>
-              <ul className='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+              <ul className='dropdown-menu Autherpagetab' aria-labelledby='dropdownMenuLink'>
                 <li>
-                  <NavLink
-                    activeclassname='active-link'
-                    className='dropdown-item'
-                    to={"/"}>
-                    <DownloadSVG /> Offer Received
-                  </NavLink>
+                <button
+                  data-bs-toggle='pill'
+                  data-bs-target='#pills-NFToffer'
+                  type='button'
+                  role='tab'
+                  aria-controls='pills-NFToffer'
+                  aria-selected='true'>
+                  <DownloadSVG /> Offer Received
+                </button>
                 </li>
                 <li>
-                  <NavLink className='dropdown-item' to={"/"}>
+                  <button
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-NFTmade'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-NFTmade'
+                    aria-selected='true'>
                     <OffermadeSVG /> Offer Made
-                  </NavLink>
+                  </button>
                 </li>
               </ul>
             </li>
@@ -666,6 +675,30 @@ function MyNFTs() {
                     />
                   </div>
                 ))}
+              </div>
+            </div>
+            <div
+              className='tab-pane fade'
+              id='pills-NFToffer'
+              role='tabpanel'
+              aria-labelledby='pills-NFToffer-tab'>
+              <div className='row'>
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">Offers Received</h3>
+                  <GeneralOffer />
+                </div>
+              </div>
+            </div>
+            <div
+              className='tab-pane fade'
+              id='pills-NFTmade'
+              role='tabpanel'
+              aria-labelledby='pills-NFTmade-tab'>
+              <div className='row'>
+                <div className="col-md-12 mb-5">
+                  <h3 className="title_36 mb-4">Offers Made</h3>
+                  <GeneralOffer />
+                </div>
               </div>
             </div>
           </div>

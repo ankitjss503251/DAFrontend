@@ -359,7 +359,7 @@ function NFTlisting(props) {
                           <td>
                             {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
                             <span className="nft_time">
-                              {moment(o.createdOn).format("hh:mm a")}
+                              {moment(o.createdOn).format("LT")}
                             </span>
                           </td>
                           <td>
@@ -371,24 +371,32 @@ function NFTlisting(props) {
                           </td>
                           <td>
 
-                            {moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format() || o.deadline === GENERAL_TIMESTAMP ? (
+                            {moment(new Date(o.deadline * 1000))
+                              .subtract({
+                                hours: 5,
+                                minutes: 30,
+                              })._d < new Date() || o.deadline === GENERAL_TIMESTAMP ? (
                               "--:--:--"
                             ) : (
                               <Clock
-                                deadline={moment.utc(o.deadline * 1000).local().format()}
-                                fetch={fetchListing}
+                                deadline={moment(new Date(o.deadline * 1000))
+                                  .subtract({
+                                    hours: 5,
+                                    minutes: 30,
+                                  })
+                                  .toISOString()}
                               ></Clock>
                             )}
                           </td>
-                          {console.log("new Date()", moment(new Date()).format())}
                           <td className="blue_text">
-                            {moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
+                            {moment(new Date(o.deadline * 1000)).subtract({
+                              hours: 5,
+                              minutes: 30,
+                            })._d > new Date()
                               ? "Active"
                               : "Ended"}
                           </td>
                           <td>
-                            {console.log("datee", moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format(), moment.utc(o.deadline * 1000).local().format(), moment(new Date()).format())}
-
                             <div className="text-center">
                               {o.sellerID?.walletAddress?.toLowerCase() ===
                                 currentUser?.toLowerCase() ? (
@@ -407,14 +415,21 @@ function NFTlisting(props) {
                                 <button
                                   to={"/"}
                                   disabled={
-                                    moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format()
+                                    moment(new Date(o.deadline * 1000)).subtract({
+                                      hours: 5,
+                                      minutes: 30,
+                                    })._d < new Date()
+                                      ? true
+                                      : false
                                   }
                                   className="small_border_btn small_btn"
                                   onClick={async () => {
                                     console.log("current order", o);
                                     if (
-                                      moment.utc(new Date(o.deadline * 1000)).local().format()
-                                      < moment(new Date()).format()
+                                      moment(new Date(o.deadline * 1000)).subtract({
+                                        hours: 5,
+                                        minutes: 30,
+                                      })._d < new Date()
                                     ) {
                                       NotificationManager.error(
                                         "Auction Ended",
