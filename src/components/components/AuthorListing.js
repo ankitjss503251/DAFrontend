@@ -37,10 +37,11 @@ function AuthorListing(props) {
   return (
     <Link to={props.link}>
       <div className='collection_items'>
-      {props && props.fileType === "Image" ? (
+        <div class="collection__img">
+          {props && props.fileType === "Image" ? (
                             <img
                               src={props?.image}
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100'
                               alt=''
                               onError={(e) => {
                                 console.log("image error is--->", e);
@@ -52,7 +53,7 @@ function AuthorListing(props) {
                           )}
                           {props && props.fileType === "Video" ? (
                             <video
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100'
                               controls>
                               <source src={props?.image} type='video/mp4' />
                             </video>
@@ -62,7 +63,7 @@ function AuthorListing(props) {
 
                           {props && props.fileType === "3D" ? (
                             <Canvas
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100'
                               camera={{ position: [10, 100, 100], fov: 1 }}>
                               <pointLight
                                 position={[10, 10, 10]}
@@ -76,6 +77,8 @@ function AuthorListing(props) {
                           ) : (
                             ""
                           )}
+
+          </div>
         <div className='coll_itemstext'>
           <div className='collection_row mb-3'>
             <div className='collection_col'>
