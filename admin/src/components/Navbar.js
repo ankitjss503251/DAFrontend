@@ -124,6 +124,7 @@ const Navbar = (props) => {
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
 
+
   useEffect(() => {
     init();
     console.log('rendered');
