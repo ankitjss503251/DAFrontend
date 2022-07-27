@@ -18,6 +18,7 @@ import { slowRefresh } from "../../helpers/NotifyStatus";
 import { ethers } from "ethers";
 import Spinner from "./Spinner";
 import { InsertHistory } from "./../../apiServices";
+import { GENERAL_TIMESTAMP } from "../../helpers/constants";
 
 function NFTBids(props) {
   const [currentUser, setCurrentUser] = useState("");
@@ -272,6 +273,7 @@ function NFTBids(props) {
                 <tbody>
                   {bids && bids.length > 0
                     ? bids.map((b, i) => {
+                      console.log("bid data", b)
                       const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                       const bidder =
                         b?.bidderID?.walletAddress?.toLowerCase();
@@ -280,7 +282,7 @@ function NFTBids(props) {
                           <td className="d-flex justify-content-start align-items-center mb-0">
                             <span className="blue_dot circle_dot"></span>
                             <span>
-                             
+
                               {b?.bidderID?.walletAddress
                                 ? b?.bidderID?.walletAddress?.slice(0, 4) +
                                 "..." +
@@ -311,7 +313,9 @@ function NFTBids(props) {
                               {moment(b.createdOn).format("LT")}
                             </span>
                           </td>
-                          <td>Auction</td>
+                          <td>{b?.orderID[0]?.salesType === 1 && b.deadline !== GENERAL_TIMESTAMP
+                            ? "Auction"
+                            : "Open for Bids"}</td>
                           <td>
                             {/* <Clock
                             deadline={moment(new Date(b.bidDeadline * 1000))
@@ -405,12 +409,12 @@ function NFTBids(props) {
                                       )
                                     );
                                     setIsUpdateBidModal(true);
-                                   
+
                                   }}
                                 >
                                   Update Bid
                                 </button>
-                               
+
                                 <button
                                   disabled={
                                     moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
@@ -434,7 +438,7 @@ function NFTBids(props) {
                                     };
                                     await InsertHistory(historyReqData);
                                     setReloadContent(!reloadContent);
-                                   
+
                                   }}
 
                                 >

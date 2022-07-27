@@ -13,12 +13,13 @@ const NFThistory = (props) => {
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    const fetch = async (nftID) => {
+    const fetch = async (nftID, userID) => {
       try {
         const data = {
           page: 1,
           limit: 12,
           nftID: nftID,
+          userID: userID
         };
         const hist = await fetchHistory(data);
         setHistory(hist);
@@ -26,20 +27,21 @@ const NFThistory = (props) => {
         console.log("Error in fetching history", e);
       }
     };
-    if (props.nftID) fetch(props.nftID);
-  }, [props.nftID]);
+    if (props) fetch(props.nftID, props.userID);
+  }, [props.nftID, props.userID]);
 
   return (
     <div className='row'>
 
       {history?.length > 0 ?
-
+<div className="table-responsive">
         <div className='col-md-12'>
           <div className='nft_list'>
             <table className='table text-light'>
               <thead>
                 <tr>
                   <th>EVENT</th>
+                  <th>TYPE</th>
                   <th>PRICE</th>
                   <th>FROM</th>
                   <th>TO</th>
@@ -83,6 +85,9 @@ const NFThistory = (props) => {
 
                         </td>
                         <td>
+                          {h?.type}
+                        </td>
+                        <td>
                           <img
                             alt=''
                             src={h?.paymentToken ? Tokens[h?.paymentToken?.toLowerCase()]?.icon : ""}
@@ -94,11 +99,33 @@ const NFThistory = (props) => {
                         </td>
                         <td>
                           <span className={`${h?.action === "putOnSale" ? "yellow_dot" : h?.action === "RemoveFromSale" ? "blue_dot" : h?.action === "Offer" ? "lightblue_dot" : "yellow_dot"} circle_dot`}></span>
-                          {h?.action === "PutOnSale" || h?.action === "RemoveFromSale" ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) : h?.action === "Offer" || h?.action === "Bid" ?  (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) : h?.action === "Sold" ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) : "0x0"}
+                          {(h?.action === "PutOnSale" || h?.action === "RemoveFromSale") ?  (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                            (h?.action === "Bid") ? ((h?.type === "Created" || h?.type === "Updated") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) : 
+                            (h?.type === "Accepted") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                            (h?.type === "Rejected") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) : 
+                            (h?.type === "Cancelled") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) : "0x0"
+                            ) :
+                             (h?.action === "Sold") ?  (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) : 
+                             (h?.action === "Offer") ? (h?.type === "Created" || h?.type === "Updated") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                             (h?.type === "Accepted") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                             (h?.type === "Rejected") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) : 
+                             h?.type === "Cancelled" ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                              "0x0" : "0x0" }
                         </td>
                         <td>
                           <span className={`${h?.action === "putOnSale" ? "yellow_dot" : h?.action === "RemoveFromSale" ? "blue_dot" : h?.action === "Offer" ? "lightblue_dot" : "yellow_dot"} circle_dot`}></span>
-                          {h?.action === "PutOnSale" || h?.action === "RemoveFromSale" ? "0x0" : h?.action === "Bid" ?  (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) : h?.action === "Sold" ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) : "0x0"}
+                          {h?.action === "PutOnSale" || h?.action === "RemoveFromSale" ? "0x0" :
+                           h?.action === "Bid" ? ((h?.type === "Created" || h?.type === "Updated") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) : 
+                           (h?.type === "Accepted") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                           (h?.type === "Rejected") ? "0x0" : 
+                           (h?.type === "Cancelled") ? "0x0" : "0x0"
+                           ) :
+                           h?.action === "Sold" ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                           (h?.action === "Offer") ? (h?.type === "Created" || h?.type === "Updated") ? "0x0" :
+                           (h?.type === "Accepted") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                           (h?.type === "Rejected") ? "0x0" : 
+                           h?.type === "Cancelled" ? "0x0" :
+                            "0x0" : "0x0"}
                         </td>
                         <td>{moment.utc(h?.createdOn).local().format("DD/MM/YYYY")}  <span className="nft_time">{moment.utc(h?.createdOn).local().format("hh:mm")}</span></td>
                       </tr>
@@ -234,7 +261,7 @@ const NFThistory = (props) => {
             </table>
           </div>
         </div>
-
+</div>
         : (
           <div className="col-md-12">
             <h4 className="no_data_text text-muted">No History Available</h4>

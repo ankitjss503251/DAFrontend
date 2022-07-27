@@ -5439,3 +5439,28 @@ section.collection_info .justify-content-end {
 .modal.marketplace.inactive{
   display: none !important;
 }
+
+
+.hist_tk{
+  height: 25px;
+  width: 25px;
+  border-radius: 100%;
+}
+
+.hist_tk img{
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 100%;
+}
+
+.hist_nft_img{
+  height: 50px;
+  width: 50px;
+}
+
+.hist_nft_img img{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}

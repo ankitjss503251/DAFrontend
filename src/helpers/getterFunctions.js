@@ -562,11 +562,11 @@ export const fetchHistory = async (req) => {
       limit: req.limit,
       nftID: req.nftID,
       collectionID: req.collectionID,
-      brandID: req.brandID
+      brandID: req.brandID,
+      userID: req.userID
     };
 
     data = await GetHistory(reqBody);
-    console.log("getHistory", data)
   } catch (e) {
     console.log("Error in fetchHistory API--->", e);
   }
@@ -585,7 +585,8 @@ export const fetchHistory = async (req) => {
         price: h?.price?.$numberDecimal,
         quantity: h?.quantity,
         paymentToken: h?.paymentToken,
-        createdOn: h?.createdOn
+        createdOn: h?.createdOn,
+        nftImg: h?.nftsData[0]?.image
       }
     })
     : (formattedData[0] = {});

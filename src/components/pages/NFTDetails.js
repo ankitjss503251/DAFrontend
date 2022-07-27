@@ -350,7 +350,6 @@ function NFTDetails() {
       let _data = await fetchOfferNft(searchParams);
 
       if (_data && _data?.data?.length > 0) {
-        console.log("offer data is------>", _data);
         const b = _data.data[0];
         setHaveOffer(true);
 
@@ -438,6 +437,7 @@ function NFTDetails() {
   };
 
   const PlaceOffer = async () => {
+    console.log("place offer", NFTDetails)
     setLoading(true);
 
     if (currentUser === undefined || currentUser === "") {
@@ -494,6 +494,7 @@ function NFTDetails() {
         let historyReqData = {
           nftID: NFTDetails.id,
           buyerID: localStorage.getItem("userId"),
+          
           action: "Offer",
           type: haveOffer && haveOffer !== "none" ? "Updated" : "Created",
           price: ethers.utils.parseEther(offerPrice.toString()).toString(),

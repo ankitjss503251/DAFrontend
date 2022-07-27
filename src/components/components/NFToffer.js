@@ -31,7 +31,7 @@ function NFToffer(props) {
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [modal, setModal] = useState(false);
   const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
-
+  const [currentOffer, setCurrentOffer] = useState();
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -54,6 +54,7 @@ function NFToffer(props) {
     };
 
     let _data = await fetchOfferNft(searchParams);
+
     if (_data && _data.data.length > 0) {
       let a = _data.data;
 
@@ -111,7 +112,7 @@ function NFToffer(props) {
     }
     else {
       let historyReqData = {
-        nftID: NFTDetails.id,
+        nftID:  props.NftDetails?.id,
         buyerID: localStorage.getItem("userId"),
         action: "Offer",
         type: "Updated",
@@ -167,7 +168,6 @@ function NFToffer(props) {
               <tbody>
                 {offer && offer.length > 0
                   ? offer.map((b, i) => {
-
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
                     return (
@@ -289,8 +289,8 @@ function NFToffer(props) {
                                 data-bs-toggle="modal"
                                 data-bs-target="#brandModal"
                                 onClick={() => {
+                                  setCurrentOffer(b);
                                   setModal("active");
-
                                   setOfferPrice(
                                     convertToEth(b?.bidPrice?.$numberDecimal)
                                   );
@@ -310,8 +310,7 @@ function NFToffer(props) {
                                   );
                                   let historyReqData = {
                                     nftID: b?.nftID,
-                                    sellerID: localStorage.getItem('userId'),
-                                    buyerID: b?.bidderID?._id,
+                                    buyerID: localStorage.getItem('userId'),
                                     action: "Offer",
                                     type: "Cancelled",
                                     price: b?.bidPrice?.$numberDecimal,
