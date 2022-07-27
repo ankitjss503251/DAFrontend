@@ -317,19 +317,18 @@ function NFTBids(props) {
                             ? "Auction"
                             : "Open for Bids"}</td>
                           <td>
-                            {/* <Clock
-                            deadline={moment(new Date(b.bidDeadline * 1000))
-                              .subtract({
-                                hours: 5,
-                                minutes: 30,
-                              })
-                              .toISOString()}></Clock> */}
-                            --:--:--
+                          {moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() || b?.deadline === GENERAL_TIMESTAMP ? (
+                              "--:--:--"
+                            ) : (
+                              <Clock
+                                deadline={moment.utc(b?.bidDeadline * 1000).local().format()}
+                              ></Clock>
+                            )}
                           </td>
                           <td className="blue_text">
-                            {moment.utc(b.bidDeadline * 1000).local().format()
-                              ? "Ended"
-                              : "Active"}
+                          { moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format()
+                              ? "Active"
+                              : "Ended"}
                           </td>
                           <td className="text-center">
                             {bidOwner === currentUser?.toLowerCase() ? (
@@ -396,7 +395,7 @@ function NFTBids(props) {
                               <div className="d-flex flex-column justify-content-center align-items-center ">
                                 <button
                                   disabled={
-                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
+                                    moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                   }
                                   className="small_yellow_btn small_btn mb-2"
                                   onClick={() => {
@@ -417,7 +416,7 @@ function NFTBids(props) {
 
                                 <button
                                   disabled={
-                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
+                                    moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                   }
                                   className="small_border_btn small_btn"
                                   onClick={async () => {

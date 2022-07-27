@@ -194,7 +194,6 @@ const Home = () => {
             {upcomingMints && upcomingMints?.length > 0
               ? upcomingMints.slice(0, 3).map((card, key) => {
                 const st = moment.utc(card.saleStartTime).local().format();
-                console.log("start date", st, st !== null);
                 const et = moment.utc(card.saleEndTime).local().format();
                 const ct = moment(new Date()).format();
                 return (

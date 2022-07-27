@@ -512,7 +512,6 @@ function CreateNFTs() {
                     aria-label='Default select example'
                     value={collection}
                     onChange={(e) => {
-                      console.log("e.target.value", e.target.value);
                       setCollection(e.target.value);
                       setQuantity(1);
                     }}>
@@ -526,7 +525,6 @@ function CreateNFTs() {
                       : ""}
                   </select>
                 </div>
-                {console.log("collection?.type == 2", collection)}
                 {collection && JSON.parse(collection)?.type == 2 ? (
                   <div className='col-md-12 mb-1'>
                     <label for='recipient-name' className='col-form-label'>
@@ -598,7 +596,6 @@ function CreateNFTs() {
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
                   >
-                    {console.log("brands--", brands)}
                     {brands && brands.length > 0
                       ? brands.map((b, i) => {
                           return (
@@ -722,7 +719,6 @@ function CreateNFTs() {
                       });
                     }
                     setAttributes(metaData);
-                    console.log("ATTRIBUTES", attributes);
                   }
                 }}>
                 Add Attributes

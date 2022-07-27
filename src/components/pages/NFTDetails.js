@@ -45,6 +45,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { onboard } from "../menu/header";
+import { WalletConditions } from "../components/WalletConditions";
 
 extend({ OrbitControls });
 function loadGLTFModel(scene, glbPath, options) {
@@ -510,7 +511,7 @@ function NFTDetails() {
         let historyReqData = {
           nftID: NFTDetails.id,
           buyerID: localStorage.getItem("userId"),
-          
+
           action: "Offer",
           type: haveOffer && haveOffer !== "none" ? "Updated" : "Created",
           price: ethers.utils.parseEther(offerPrice.toString()).toString(),
@@ -1061,6 +1062,8 @@ function NFTDetails() {
                       type='button'
                       className='title_color buy_now'
                       onClick={() => {
+                        const res = WalletConditions();
+                        console.log("Wallet condition params", res)
                         setIsBuyNowModal(true);
                       }}>
                       Buy Now

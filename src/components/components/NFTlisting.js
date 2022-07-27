@@ -415,28 +415,16 @@ function NFTlisting(props) {
                           </td>
                           <td>
 
-                            {moment(new Date(o.deadline * 1000))
-                              .subtract({
-                                hours: 5,
-                                minutes: 30,
-                              })._d < new Date() || o.deadline === GENERAL_TIMESTAMP ? (
+                            {moment.utc(o?.bidDeadline * 1000).local().format() < moment(new Date()).format() || o.deadline === GENERAL_TIMESTAMP ? (
                               "--:--:--"
                             ) : (
                               <Clock
-                                deadline={moment(new Date(o.deadline * 1000))
-                                  .subtract({
-                                    hours: 5,
-                                    minutes: 30,
-                                  })
-                                  .toISOString()}
+                                deadline={moment.utc(o.bidDeadline * 1000).local().format()}
                               ></Clock>
                             )}
                           </td>
                           <td className="blue_text">
-                            {moment(new Date(o.deadline * 1000)).subtract({
-                              hours: 5,
-                              minutes: 30,
-                            })._d > new Date()
+                            { moment.utc(o?.bidDeadline * 1000).local().format() < moment(new Date()).format()
                               ? "Active"
                               : "Ended"}
                           </td>
@@ -459,10 +447,7 @@ function NFTlisting(props) {
                                 <button
                                   to={"/"}
                                   disabled={
-                                    moment(new Date(o.deadline * 1000)).subtract({
-                                      hours: 5,
-                                      minutes: 30,
-                                    })._d < new Date()
+                                    moment.utc(o?.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                       ? true
                                       : false
                                   }
@@ -470,10 +455,7 @@ function NFTlisting(props) {
                                   onClick={async () => {
                                     console.log("current order", o);
                                     if (
-                                      moment(new Date(o.deadline * 1000)).subtract({
-                                        hours: 5,
-                                        minutes: 30,
-                                      })._d < new Date()
+                                      moment.utc(o?.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                     ) {
                                       NotificationManager.error(
                                         "Auction Ended",
