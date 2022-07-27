@@ -452,10 +452,10 @@ function NFTDetails() {
 
   const PlaceOffer = async () => {
     setLoading(true);
-    let wallet = await fetchWallet();
-    if (wallet !== currentUser) {
-      console.log("wrong wallet")
-    }
+    // let wallet = await fetchWallet();
+    // if (wallet !== currentUser) {
+    //   console.log("wrong wallet")
+    // }
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);
