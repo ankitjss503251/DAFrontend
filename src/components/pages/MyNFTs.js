@@ -583,7 +583,7 @@ function MyNFTs() {
         <div className='container'>
           <div className='tab-content' id='pills-tabContent'>
             <div
-              className='tab-pane fade show active'
+              className='tab-pane fade show active' 
               id='pills-Owned'
               role='tabpanel'
               aria-labelledby='pills-Owned-tab'>
