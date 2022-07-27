@@ -27,7 +27,6 @@ function CollectionList(props) {
     const { scene } = useGLTF(props.image);
     return <primitive object={scene} />;
   }
-  console.log("props in coleection list is--------->",props.nft.image)
   return (
     <Link to={`/NFTdetails/${props.nft?.id}`}>
       <div className='collection_items'>
@@ -36,7 +35,7 @@ function CollectionList(props) {
         {props.nft && props.nft.fileType === "Image" ? (
                             <img
                               src={props.nft?.image}
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100 '
                               alt=''
                               onError={(e) => {
                                 console.log("image error is--->", e);
