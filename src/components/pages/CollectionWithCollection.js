@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense,useRef } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import Footer from "../components/footer";
 import CollectionList from "../components/CollectionList";
 import Relatedcollection from "../components/Relatedcollection";
@@ -15,6 +15,7 @@ import {
   getCategory,
   getPrice,
   getUserById,
+  fetchHistory
 } from "../../helpers/getterFunctions";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 // import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -25,26 +26,28 @@ import NotificationManager from "react-notifications/lib/NotificationManager";
 import { getAllBrands } from "../../apiServices";
 import AdvancedFilter from "../components/AdvancedFilter";
 import {
-  Canvas,useFrame,
+  Canvas, useFrame,
   extend,
   useThree
 } from "@react-three/fiber";
 import { useGLTF, OrbitControls } from "@react-three/drei";
+import { Tokens } from "../../helpers/tokensToSymbol";
+import moment from "moment";
 
 //extend({OrbitControls});
 
-const CameraControls=() => {
+const CameraControls = () => {
   // Get a reference to the Three.js Camera, and the canvas html element.
   // We need these to setup the OrbitControls component.
   // https://threejs.org/docs/#examples/en/controls/OrbitControls
   const {
     camera,
-    gl: {domElement},
-  }=useThree();
+    gl: { domElement },
+  } = useThree();
   // Ref to the controls, so that we can update them on every frame using useFrame
-  const controls=useRef();
+  const controls = useRef();
   useFrame((state) => controls.current.update());
-  return <orbitControls ref={controls} args={[camera,domElement]} />;
+  return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 
 
@@ -77,6 +80,7 @@ function CollectionWithCollection() {
   const [searchedCol, setSearchedCol] = useState("");
   const [searchedBrand, setSearchedBrand] = useState("");
   const [searchedCat, setSearchedCat] = useState("");
+  const [history, setHistory] = useState([]);
 
   const filterToggle = () => {
     setLoadMoreDisabled("");
@@ -173,8 +177,8 @@ function CollectionWithCollection() {
                 order?.price?.$numberDecimal === undefined
                   ? "--"
                   : Number(convertToEth(order?.price?.$numberDecimal))
-                      .toFixed(6)
-                      .slice(0, -2),
+                    .toFixed(6)
+                    .slice(0, -2),
               saleType: order?.salesType,
               paymentToken: order?.paymentToken,
               collectionName: nft[i].collectionData[0].name,
@@ -204,6 +208,25 @@ function CollectionWithCollection() {
     searchedCol,
     salesType,
   ]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const reqData = {
+          page: 1,
+          limit: 12,
+          brandID: brandID
+        }
+        const _h = await fetchHistory(reqData);
+        console.log("history on brands page", _h)
+        setHistory(_h);
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
+    fetch();
+  }, [])
 
   const bgImage = {
     backgroundImage: `url(${brandDetails?.coverImage})`,
@@ -302,7 +325,6 @@ function CollectionWithCollection() {
 
           <ul className='collection_status mt-5 mb-5'>
             <li>
-              {console.log("nfts[0].count", nfts)}
               <h4>{cardCount}</h4>
               <p>items</p>
             </li>
@@ -729,437 +751,122 @@ function CollectionWithCollection() {
                   <div className='row mt-5'>
                     <div className='col-md-12'>
                       <div className='table-responsive'>
-                        <table className=' Action_table text-center'>
-                          <tr className=''>
-                            <th>
-                              <div className='tb_title'>List</div>
-                            </th>
-                            <th>
-                              <div className='tb_title'>Item</div>
-                            </th>
-                            <th>
-                              <div className='tb_title'>Price</div>
-                            </th>
-                            <th>
-                              <div className='tb_title'>Quantity</div>
-                            </th>
-                            <th>
-                              <div className='tb_title'>From</div>
-                            </th>
-                            <th>
-                              <div className='tb_title'>To</div>
-                            </th>
-                            <th>
-                              <div className='tb_title'>Time</div>
-                            </th>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/bxs_purchase-tag.png"}
-                                className='img-fluid'
-                              />{" "}
-                              List
-                            </td>
-                            <td>
-                              <img
-                                alt=''
-                                src={"../img/collections/item1.png"}
-                                className='img-fluid'
-                              />{" "}
-                              Firearms #5234
-                            </td>
-                            <td>
-                              <p className='table_p'>
-                                <img
-                                  alt=''
-                                  src={"../img/collections/hhh.png"}
-                                  className='img-fluid'
-                                />{" "}
-                                99.95
-                              </p>
-                              <span className='special_text'>$591,623.15</span>
-                            </td>
-                            <td>1</td>
-                            <td>UserName</td>
-                            <td>UserName</td>
-                            <td>an hour ago</td>
-                          </tr>
+                        <table className=" Action_table text-center">
+                          <thead>
+                            <tr className="">
+                              <th>
+                                <div className="tb_title">List</div>
+                              </th>
+                              <th>
+                                <div className="tb_title">Item</div>
+                              </th>
+                              <th>
+                                <div className="tb_title">Price</div>
+                              </th>
+                              <th>
+                                <div className="tb_title">Quantity</div>
+                              </th>
+                              <th>
+                                <div className="tb_title">From</div>
+                              </th>
+                              <th>
+                                <div className="tb_title">To</div>
+                              </th>
+                              <th>
+                                <div className="tb_title">Time</div>
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {
+                              history?.length > 0 ?
+                                history?.map((h, i) => {
+                                  return (
+                                    <tr key={i}>
+                                      <td className="text-left">
+                                        <img
+                                          alt=""
+                                          src={"../img/collections/bxs_purchase-tag.png"}
+                                          class="img-fluid"
+                                        />{" "}
+                                        {h.action}
+                                      </td>
+                                      <td className="d-flex justify-content-around align-items-center">
+                                        <div className="hist_nft_img">
+                                          <img
+                                            alt=""
+                                            src={h.nftImg}
+                                            class="img-fluid"
+                                            onError={(e) => {
+                                              e.target.src = "../img/collections/item1.png"
+                                            }}
+                                          />  </div>{" "}
+                                        {h.nftName}
+                                      </td>
+                                      <td>
+                                        <p className="table_p d-flex justify-content-around">
+                                          <div className="hist_tk">
+                                            <img
+                                              alt=''
+                                              src={h?.paymentToken ? Tokens[h?.paymentToken?.toLowerCase()]?.icon : ""}
+                                              className='img-fluid'
+                                            />
+                                          </div>
+                                          {" "}
+                                          {Number(convertToEth(h?.price))
+                                            .toFixed(6)
+                                            .slice(0, -2)}
+
+                                        </p>
+                                        <span className="special_text">$591,623.15</span>
+                                      </td>
+                                      <td>{h?.quantity}</td>
+                                      <td> {(h?.action === "PutOnSale" || h?.action === "RemoveFromSale") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                                        (h?.action === "Bid") ? ((h?.type === "Created" || h?.type === "Updated") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                                          (h?.type === "Accepted") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                                            (h?.type === "Rejected") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                                              (h?.type === "Cancelled") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) : "0x0"
+                                        ) :
+                                          (h?.action === "Sold") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                                            (h?.action === "Offer") ? (h?.type === "Created" || h?.type === "Updated") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                                              (h?.type === "Accepted") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                                                (h?.type === "Rejected") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                                                  h?.type === "Cancelled" ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                                                    "0x0" : "0x0"}</td>
+                                      <td> {h?.action === "PutOnSale" || h?.action === "RemoveFromSale" ? "0x0" :
+                                        h?.action === "Bid" ? ((h?.type === "Created" || h?.type === "Updated") ? (h?.sellerAddress?.slice(0, 4) + "..." + h?.sellerAddress?.slice(38, 42)) :
+                                          (h?.type === "Accepted") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                                            (h?.type === "Rejected") ? "0x0" :
+                                              (h?.type === "Cancelled") ? "0x0" : "0x0"
+                                        ) :
+                                          h?.action === "Sold" ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                                            (h?.action === "Offer") ? (h?.type === "Created" || h?.type === "Updated") ? "0x0" :
+                                              (h?.type === "Accepted") ? (h?.buyerAddress?.slice(0, 4) + "..." + h?.buyerAddress?.slice(38, 42)) :
+                                                (h?.type === "Rejected") ? "0x0" :
+                                                  h?.type === "Cancelled" ? "0x0" :
+                                                    "0x0" : "0x0"}</td>
+                                      <td>{
+                                        moment.utc(h?.createdOn).local().fromNow()
+                                      }</td>
+                                    </tr>)
+                                })
+
+                                : ""
+                            }
+
+                          </tbody>
+
                         </table>
                       </div>
                     </div>
                   </div>
-                  <div className='row mt-5'>
-                    <div className='col-md-12 text-center '>
-                      <button type='button' className={`btn view_all_bdr`}>
+                  {history?.length > 12 && <div className="row mt-5">
+                    <div class="col-md-12 text-center ">
+                      <a class="view_all_bdr" href="/">
                         Load More
-                      </button>
+                      </a>
                     </div>
-                  </div>
+                  </div>}
                 </div>
               </section>
             </div>

@@ -1,115 +1,56 @@
 import React, { useEffect, useState } from 'react';
-// import { useCookies } from "react-cookie";
-// import { fetchOfferNft } from "../../apiServices";
+import { Tokens } from '../../helpers/tokensToSymbol';
+import { convertToEth } from '../../helpers/numberFormatter';
+import Clock from './Clock';
+import moment from "moment";
 
 const GeneralOffer = (props) => {
 
-    // const [currentUser, setCurrentUser] = useState("");
-    // const [cookies] = useCookies([]);
-    // const [offer, setOffer] = useState([]);
-    
+    return (
+        <div className='row'>
+            {
+                props.offers?.length > 0 ?
+                <div className="col-md-12">
+                <div className='nft_list'>
+                    <table className="table text-light">
+                        <thead>
+                            <tr>
+                                <th>FROM</th>
+                                <th>PRICE</th>
+                                <th>DATE</th>
+                                <th>END IN</th>
+                                <th>STATUS</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {props.offers?.length > 0 && props.offers?.map((_o, i) => {
+                             return   <tr key={i}>
+                                    <td><span className="yellow_dot circle_dot"></span>{_o?.bidderAddress?.slice(0,4) + "..." + _o?.bidderAddress?.slice(38,42)}</td>
+                                    <td><img alt='' src={_o?.paymentToken ? Tokens[_o?.paymentToken.toLowerCase()]?.icon : ""} className="img-fluid hunter_fav" />{Number(convertToEth(_o?.bidPrice))
+                      .toFixed(6)
+                      .slice(0, -2)}</td>
+                                    <td>{moment.utc(_o?.createdOn).local().format("DD/MM/YYYY")}  <span className="nft_time">{moment.utc(_o?.createdOn).local().format("hh:mm")}</span></td>
+                                    <td><Clock  deadline={moment.utc(_o?.bidDeadline * 1000).local().format()} /></td>
+                                    <td>{_o?.bidStatus === "MakeOffer" ? "Active" : "Inactive"}</td>
+                                    <td>
+                                        <a  href={`/NFTdetails/${_o?.nftData}`} class="small_border_btn small_btn">View</a>
+                                    </td>
+                                </tr>
+                            })}
 
-    // useEffect(() => {
-    //     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
-    //     // else NotificationManager.error("Connect Yout Wallet", "", 800);
-    
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    //     console.log(selected_account);
-    //   }, [cookies.selected_account]);
-
-    //   useEffect(() => {
-    //     const fetch = async () => {
-    //       let searchParams = {
-    //         nftID: props.id,
-    //         buyerID: "All",
-    //         bidStatus: "All",
-    //         //orderID: "All",
-    //       };
-    
-    //       let _data = await fetchOfferNft(searchParams);
-    //       if (_data && _data.data.length > 0) {
-    //         let a = _data.data;
-    
-    //         setOffer(a);
-    
-    //       }
-    //     };
-    //     fetch();
-    //   }, [props.id]);
-
-
-  return (
-    <div className='row'>
-      <div className="col-md-12">
-      <div className='nft_list'>
-          <table className="table text-light">
-              <thead>
-                <tr>
-                    <th>FROM</th>
-                    <th>PRICE</th>
-                    <th>DATE</th>
-                    <th>END IN</th>
-                    <th>STATUS</th>
-                    <th>ACTION</th>              
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                    <td><span className="yellow_dot circle_dot"></span>0xc8b...6d74</td>
-                    <td><img alt='' src={'../img/favicon.png'} className="img-fluid hunter_fav" /> 5.02</td>
-                    <td>15/03/2022  <span className="nft_time">23:13</span></td>
-                    <td>00d 00h 00m 00s</td>
-                    <td>Active</td>
-                    <td>
-                        <button to="/" class="small_border_btn small_btn">View</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span className="yellow_dot circle_dot"></span>0xc8b...6d74</td>
-                    <td><img alt='' src={'../img/favicon.png'} className="img-fluid hunter_fav" /> 5.02</td>
-                    <td>15/03/2022  <span className="nft_time">23:13</span></td>
-                    <td>00d 00h 00m 00s</td>
-                    <td>Active</td>
-                    <td>
-                        <button to="/" class="small_border_btn small_btn">View</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span className="lightblue_dot circle_dot"></span>0xc8b...6d74</td>
-                    <td><img alt='' src={'../img/favicon.png'} className="img-fluid hunter_fav" /> 5.02</td>
-                    <td>15/03/2022  <span className="nft_time">23:13</span></td>
-                    <td>00d 00h 00m 00s</td>
-                    <td>Active</td>
-                    <td>
-                        <button to="/" class="small_border_btn small_btn">View</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span className="blue_dot circle_dot"></span>0xc8b...6d74</td>
-                    <td><img alt='' src={'../img/favicon.png'} className="img-fluid hunter_fav" /> 5.02</td>
-                    <td>15/03/2022  <span className="nft_time">23:13</span></td>
-                    <td>00d 00h 00m 00s</td>
-                    <td>Active</td>
-                    <td>
-                        <button to="/" class="small_border_btn small_btn">View</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span className="yellow_dot circle_dot"></span>0xc8b...6d74</td>
-                    <td><img alt='' src={'../img/favicon.png'} className="img-fluid hunter_fav" /> 5.02</td>
-                    <td>15/03/2022  <span className="nft_time">23:13</span></td>
-                    <td>00d 00h 00m 00s</td>
-                    <td>Active</td>
-                    <td>
-                        <button to="/" class="small_border_btn small_btn">View</button>
-                    </td>
-                </tr>
-              </tbody>
-          </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            :
+            <div className="col-md-12">
+          <h4 className="no_data_text text-muted">No Offers Available</h4>
         </div>
-      </div>
-    </div>
-  )
+            }
+          
+        </div>
+    )
 }
 
-export default GeneralOffer
+export default GeneralOffer;
