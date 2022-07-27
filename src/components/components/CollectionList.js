@@ -35,7 +35,7 @@ function CollectionList(props) {
         {props.nft && props.nft.fileType === "Image" ? (
                             <img
                               src={props.nft?.image}
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100 '
                               alt=''
                               onError={(e) => {
                                 console.log("image error is--->", e);

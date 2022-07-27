@@ -10,6 +10,7 @@ import {
   getCollections,
   getNFTs,
   getNFTDetails,
+  // fetchWallet,
 } from "../../helpers/getterFunctions";
 
 import { useParams } from "react-router-dom";
@@ -43,6 +44,7 @@ import {
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { onboard } from "../menu/header";
 
 extend({ OrbitControls });
 function loadGLTFModel(scene, glbPath, options) {
@@ -436,10 +438,24 @@ function NFTDetails() {
     }
   };
 
+  const fetchWallet = async () => {
+    await onboard.connectWallet({
+      disableModals: true
+    });
+    // else NotificationManager.error("Connect Your Wallet", "", 800);
+    const currentState = onboard.state.get()
+    console.log("curr state", currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : "")
+    return currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : ""
+  }
+
+
   const PlaceOffer = async () => {
     console.log("place offer", NFTDetails)
     setLoading(true);
-
+    // let wallet = await fetchWallet();
+    // if (wallet !== currentUser) {
+    //   console.log("wrong wallet")
+    // }
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
       setLoading(false);

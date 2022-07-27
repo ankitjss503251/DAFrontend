@@ -30,6 +30,7 @@ import Avatar from "./../assets/images/avatar5.jpg";
 // import { fetchBidNft } from "../apiServices";
 // import { GENERAL_DATE, GENERAL_TIMESTAMP } from "./constants";
 import NotificationManager from "react-notifications/lib/NotificationManager";
+import { onboard } from "../components/menu/header";
 
 // const ipfsAPI = require("ipfs-api");
 // const ipfs = ipfsAPI("ipfs.infura.io", "5001", {
@@ -483,6 +484,7 @@ export const getPrice = async (data) => {
 
 
 export const getOfferMade = async (req) => {
+
   let formattedData = [];
   let data = [];
   try {
@@ -591,6 +593,16 @@ export const fetchHistory = async (req) => {
     })
     : (formattedData[0] = {});
   return formattedData;
+
+export const fetchWallet = async () => {
+  await onboard.connectWallet({
+    disableModals: true
+  });
+  // else NotificationManager.error("Connect Your Wallet", "", 800);
+  const currentState = onboard.state.get()
+  console.log("curr state", currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : "")
+  return currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : ""
+
 }
 
 // export const getUsersNFTs = async (

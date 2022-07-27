@@ -30,7 +30,7 @@ setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
 
-const onboard = Onboard({
+export const onboard = Onboard({
   wallets: [walletConnect, injected],
   chains: [
     {
@@ -39,18 +39,7 @@ const onboard = Onboard({
       label: "Mumbai matic testnet",
       rpcUrl: `https://rpc-mumbai.maticvigil.com/`,
     },
-    // {
-    //   id: "0x1",
-    //   token: "ETH",
-    //   label: "Ethereum Mainnet",
-    //   rpcUrl: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
-    // },
-    // {
-    //   id: "0x3",
-    //   token: "tROP",
-    //   label: "Ethereum Ropsten Testnet",
-    //   rpcUrl: `https://ropsten.infura.io/v3/${process.env.INFURA_ID}`,
-    // },
+
     {
       id: "0x4",
       token: "rETH",
@@ -107,7 +96,6 @@ const onboard = Onboard({
   },
 });
 
-let locked;
 
 const Header = function () {
   const [cookies, setCookie, removeCookie] = useCookies([]);
@@ -127,9 +115,6 @@ const Header = function () {
     async function setCategory() {
       const cat = await getCategory();
       setCatg(cat);
-      
-      //const [primaryWallet] = await onboard.state.get().wallets;
-      //console.log("Active wallets",primaryWallet);
     }
     setCategory();
   }, []);
@@ -141,6 +126,7 @@ const Header = function () {
         const s = await onboard.connectWallet({
           autoSelect: { label: cookies["label"], disableModals: true },
         });
+
         await onboard.setChain({
           chainId: process.env.REACT_APP_CHAIN_ID,
         });
@@ -168,32 +154,32 @@ const Header = function () {
     setProvider(null);
   };
 
-  useEffect(() => {
-    console.log("provider in useEffect", provider);
-    async function setProvider() {
-      if (provider) {
-        provider.on("accountsChanged", (accounts) => {
-          if (account && accounts[0] !== undefined) {
-            const wallets = onboard.state.get().wallets;
-            setProvider(wallets[0].provider);
-            userAuth(wallets[0], wallets[0].accounts[0].address);
-          }
-          if (accounts[0] === undefined) {
-            refreshState();
-          }
-        });
-        provider.on("chainChanged", async (chains) => {
-          if (chains !== process.env.REACT_APP_CHAIN_ID) {
-            await onboard.setChain({
-              chainId: process.env.REACT_APP_CHAIN_ID,
-            });
-          }
-        });
-      }
-    }
+  // useEffect(() => {
+  //   console.log("provider in useEffect", provider);
+  //   async function setProvider() {
+  //     if (provider) {
+  //       provider.on("accountsChanged", (accounts) => {
+  //         if (account && accounts[0] !== undefined) {
+  //           const wallets = onboard.state.get().wallets;
+  //           setProvider(wallets[0].provider);
+  //           userAuth(wallets[0], wallets[0].accounts[0].address);
+  //         }
+  //         if (accounts[0] === undefined) {
+  //           refreshState();
+  //         }
+  //       });
+  //       provider.on("chainChanged", async (chains) => {
+  //         if (chains !== process.env.REACT_APP_CHAIN_ID) {
+  //           await onboard.setChain({
+  //             chainId: process.env.REACT_APP_CHAIN_ID,
+  //           });
+  //         }
+  //       });
+  //     }
+  //   }
 
-    setProvider();
-  }, [provider, account, chainId]);
+  //   setProvider();
+  // }, [provider, account, chainId]);
 
   function walletConnect() {
     connectWallet();
@@ -202,7 +188,7 @@ const Header = function () {
   const getUserProfile = async () => {
     const profile = await getProfile();
     setUserDetails(profile.data);
-  
+
   };
 
   useEffect(() => {
@@ -210,8 +196,8 @@ const Header = function () {
       if (account && !userDetails) getUserProfile();
     }
     getUserProfileData();
-    
-  }, [account, userDetails?.username]);
+
+  }, [account, userDetails]);
 
   const connectWallet = async () => {
     const wallets = await onboard.connectWallet();
@@ -321,68 +307,6 @@ const Header = function () {
     slowRefresh(1000);
   };
 
-  // const onLogin = async () => {
-  //   const wallets = await onboard.connectWallet();
-  //   if (wallets.length !== 0) {
-  //   await onboard.setChain({
-  //     chainId: process.env.REACT_APP_CHAIN_ID,
-  //   });
-  //   const primaryWallet = wallets[0];
-  //   setChainId(primaryWallet.chains[0].id);
-  //   setProvider(primaryWallet.provider);
-  //   const address = wallets[0].accounts[0].address;
-  //   try {
-  //     const isUserExist = await checkuseraddress(address);
-  //     console.log("selected_account", address);
-  //     console.log("isUserExist", isUserExist);
-  //     if (isUserExist === "User Found successfully") {
-  //       try {
-  //         const res = await Login(address);
-  //         console.log("Login API response", res);
-  //         if (res.message === "Wallet Address required") {
-  //           NotificationManager.info(res.message);
-  //           refreshState();
-  //           return;
-  //         } else if (
-  //           res.message === "User not found" ||
-  //           res.message === "Login invalid"
-  //         ) {
-  //           NotificationManager.error(res.message);
-  //           refreshState();
-  //           return;
-  //         } else {
-  //           setAccount(primaryWallet.accounts[0].address);
-  //           setLabel(primaryWallet.label);
-  //           setCookie("selected_account", address, { path: "/" });
-  //           setCookie("label", primaryWallet.label, { path: "/" });
-  //           setCookie(
-  //             "chain_id",
-  //             parseInt(wallets[0].chains[0].id, 16).toString(),
-  //             {
-  //               path: "/",
-  //             }
-  //           );
-  //           setCookie("balance", wallets[0].accounts[0].balance, {
-  //             path: "/",
-  //           });
-  //           getUserProfile();
-  //           NotificationManager.success(res.message);
-  //           slowRefresh(1000);
-  //           return;
-  //         }
-  //       } catch (e) {
-  //         NotificationManager.error(e);
-  //         return;
-  //       }
-  //     } else {
-  //       NotificationManager.error(isUserExist);
-  //     }
-  //   } catch (e) {
-  //     NotificationManager.error(e);
-  //   }
-  // }
-  // };
-
   const handleSearch = async (e) => {
     setShowSearchDiv("active");
     setSearchValue(e.target.value);
@@ -460,12 +384,12 @@ const Header = function () {
                 <ul>
                   {scolns
                     ? scolns.slice(0, 3).map((item) => {
-                        return (
-                          <a href={`/collection/${item._id}`}>
-                            <li> {item.name}</li>
-                          </a>
-                        );
-                      })
+                      return (
+                        <a href={`/collection/${item._id}`}>
+                          <li> {item.name}</li>
+                        </a>
+                      );
+                    })
                     : ""}
                 </ul>
                 {scolns.length > 3 && (
@@ -480,12 +404,12 @@ const Header = function () {
                 <ul>
                   {sNfts
                     ? sNfts.slice(0, 3).map((item) => {
-                        return (
-                          <a href={`/NFTdetails/${item.id}`}>
-                            <li>{item.name}</li>
-                          </a>
-                        );
-                      })
+                      return (
+                        <a href={`/NFTdetails/${item.id}`}>
+                          <li>{item.name}</li>
+                        </a>
+                      );
+                    })
                     : ""}
                 </ul>
                 {sNfts.length > 3 && (
@@ -519,18 +443,18 @@ const Header = function () {
                   </li>
                   {catg.length > 0
                     ? catg?.map((c, key) => {
-                        return (
-                          <li key={key}>
-                            <NavLink
-                              to={`/marketplacecollection/${c.name}`}
-                              className="sub-items"
-                            >
-                              <Firearmsvg />
-                              {c.name}
-                            </NavLink>
-                          </li>
-                        );
-                      })
+                      return (
+                        <li key={key}>
+                          <NavLink
+                            to={`/marketplacecollection/${c.name}`}
+                            className="sub-items"
+                          >
+                            <Firearmsvg />
+                            {c.name}
+                          </NavLink>
+                        </li>
+                      );
+                    })
                     : ""}
                 </ul>
               </li>
