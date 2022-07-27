@@ -593,6 +593,7 @@ export const fetchHistory = async (req) => {
     })
     : (formattedData[0] = {});
   return formattedData;
+}
 
 export const fetchWallet = async () => {
   await onboard.connectWallet({
