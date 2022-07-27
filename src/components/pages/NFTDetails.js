@@ -730,7 +730,7 @@ function NFTDetails() {
                   firstOrderNFT?.type,
                   orders[0].total_quantity,
                   ethers.utils.parseEther(price.toString()),
-                  false
+                  false,
                   // new Date(bidDeadline).valueOf() / 1000
                 );
                 if (res === false) {

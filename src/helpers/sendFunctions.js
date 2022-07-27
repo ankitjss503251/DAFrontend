@@ -290,6 +290,19 @@ export const handleBuyNft = async (
                   return false;
                 }
               }
+              else {
+                let req = {
+                  "recordID": id,
+                  "DBCollection": "Order",
+                  "hashStatus": 1
+                }
+                try {
+                  await UpdateStatus(req)
+                }
+                catch (e) {
+                  return
+                }
+              }
             }
             catch (e) {
               console.log("error in updating order data", e);
@@ -530,7 +543,7 @@ export const createBid = async (
   erc721,
   qty = 1,
   bidPrice,
-  isOffer = false
+  isOffer = false,
 ) => {
   console.log("ownerAccount", ownerAccount);
   let SellerOrder;
@@ -645,6 +658,7 @@ export const createBid = async (
           buyerSignature: signature,
           isOffer: isOffer,
           bidDeadline: SellerOrder[7],
+
         };
         await createBidNft(reqParams);
       }
@@ -892,38 +906,7 @@ export const handleAcceptBids = async (
         gasLimit: 9000000,
         value: 0,
       };
-      try {
-        let result = await marketplace.estimateGas.completeOrder(
-          sellerOrder,
-          sellerSignature,
-          buyerOrder,
-          buyerSignature,
-          options
-        );
-        console.log("result buy", result);
-        if (result) {
-          completeOrder = await marketplace.completeOrder(
-            sellerOrder,
-            sellerSignature,
-            buyerOrder,
-            buyerSignature,
-            options
-          );
-          let res = await completeOrder.wait();
-          if (res.status === 0) {
-            return false;
-          }
-        }
-      } catch (e) {
-        // console.log("JSON.parse(e)", JSON.parse(e));
 
-        if (JSON.stringify(e).includes(`"reason":"Not an owner"`)) {
-          alert("Not an owner");
-          console.log("error in contract function calling", e);
-          return;
-        }
-        return;
-      }
       completeOrder = await marketplace.completeOrder(
         sellerOrder,
         sellerSignature,
@@ -931,12 +914,22 @@ export const handleAcceptBids = async (
         buyerSignature,
         options
       );
+      let req = {
+        "recordID": bidData.orderID,
+        "DBCollection": "Order",
+        "hashStatus": 0,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req)
+      }
+      catch (e) {
+        return
+      }
       completeOrder = await completeOrder.wait();
       if (completeOrder.status === 0) {
         // NotificationManager.error("Transaction Failed");
         return false;
-      } else {
-        // NotificationManager.success("Transaction successful");
       }
     } catch (e) {
       console.log("error in contract", e);
@@ -952,12 +945,49 @@ export const handleAcceptBids = async (
         qty_sold: Number(details.quantity_sold) + Number(bidData.bidQuantity),
         buyer: buyerOrder[0]?.toLowerCase(),
       });
-
+      let req = {
+        "recordID": bidData.orderID,
+        "DBCollection": "Order",
+        "hashStatus": 1,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req)
+      }
+      catch (e) {
+        return
+      }
       if (
         Number(details.quantity_sold) + Number(bidData.bidQuantity) >=
         details.total_quantity
       ) {
         DeleteOrder({ orderID: bidData.orderID[0]?._id });
+      }
+      else {
+        let req = {
+          "recordID": bidData.orderID,
+          "DBCollection": "Order",
+          "hashStatus": 1,
+          "hash": completeOrder.hash
+        }
+        try {
+          await UpdateStatus(req)
+        }
+        catch (e) {
+          return
+        }
+      }
+      let req1 = {
+        "recordID": bidData.orderID,
+        "DBCollection": "Order",
+        "hashStatus": 1,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req1)
+      }
+      catch (e) {
+        return
       }
     } catch (e) {
       console.log("error in updating order data", e);
@@ -1121,6 +1151,18 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         buyerSignature,
         options
       );
+      let req = {
+        "recordID": bidData.orderID,
+        "DBCollection": "Bids",
+        "hashStatus": 0,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req)
+      }
+      catch (e) {
+        return
+      }
       completeOrder = await completeOrder.wait();
       if (completeOrder.status === 0) {
         return false;
@@ -1151,6 +1193,18 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     } catch (e) {
       console.log("error in updating order data", e);
       return false;
+    }
+    let req = {
+      "recordID": bidData._id,
+      "DBCollection": "Bids",
+      "hashStatus": 1,
+      "hash": completeOrder.hash
+    }
+    try {
+      await UpdateStatus(req)
+    }
+    catch (e) {
+      return
     }
   } catch (e) {
     console.log("error in contract function calling", e);
