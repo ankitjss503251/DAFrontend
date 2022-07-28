@@ -321,6 +321,7 @@ function CreateCollection(props) {
               ));
 
             let hash = res1;
+            console.log("hash", hash.hash)
             res1 = await res1.wait();
             contractAddress = await readReceipt(hash);
           } else {

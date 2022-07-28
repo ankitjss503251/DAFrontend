@@ -26,24 +26,23 @@ const CameraControls=() => {
 };
 
 function AuthorListing(props) {
-  console.log("Author listing props is",props)
   
  
   
   function Model(props) {
-    const { scene } = useGLTF(props.image);
+    const { scene } = useGLTF(props?.image);
     return <primitive object={scene} />;
   }
   return (
     <Link to={props.link}>
       <div className='collection_items'>
-      {props && props.fileType === "Image" ? (
+        <div class="collection__img">
+          {props && props.fileType === "Image" ? ( 
                             <img
                               src={props?.image}
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100'
                               alt=''
                               onError={(e) => {
-                                console.log("image error is--->", e);
                                 e.target.src = "../img/collections/list4.png";
                               }}
                             />
@@ -52,7 +51,7 @@ function AuthorListing(props) {
                           )}
                           {props && props.fileType === "Video" ? (
                             <video
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100'
                               controls>
                               <source src={props?.image} type='video/mp4' />
                             </video>
@@ -62,7 +61,7 @@ function AuthorListing(props) {
 
                           {props && props.fileType === "3D" ? (
                             <Canvas
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100'
                               camera={{ position: [10, 100, 100], fov: 1 }}>
                               <pointLight
                                 position={[10, 10, 10]}
@@ -76,11 +75,13 @@ function AuthorListing(props) {
                           ) : (
                             ""
                           )}
+
+          </div>
         <div className='coll_itemstext'>
           <div className='collection_row mb-3'>
             <div className='collection_col'>
               <span>
-                {props?.card?.CollectionData[0]?.name}
+                {props?.card?.CollectionData ? props?.card?.CollectionData[0]?.name : ""}
                 {" collection"}
               </span>
               <h6>{props?.card?.name}</h6>

@@ -18,6 +18,8 @@ import {
   getCategories,
   fetchOfferNft,
   fetchOfferMade,
+  GetHistory,
+  fetchOfferReceived,
 } from "../apiServices";
 import { ethers } from "ethers";
 import contracts from "../config/contracts";
@@ -28,6 +30,7 @@ import Avatar from "./../assets/images/avatar5.jpg";
 // import { fetchBidNft } from "../apiServices";
 // import { GENERAL_DATE, GENERAL_TIMESTAMP } from "./constants";
 import NotificationManager from "react-notifications/lib/NotificationManager";
+import { onboard } from "../components/menu/header";
 
 // const ipfsAPI = require("ipfs-api");
 // const ipfs = ipfsAPI("ipfs.infura.io", "5001", {
@@ -208,25 +211,25 @@ export const getAllOffersByNftId = async (nftId) => {
 
   dummyData?.data
     ? // eslint-disable-next-line array-callback-return
-      dummyData.data.map((d, i) => {
-        data.push({
-          bidId: d._id,
-          bidQuantity: d.oBidQuantity,
-          bidPrice: d.oBidPrice.$numberDecimal,
-          seller: d.oOwner.sWalletAddress,
-          orderId: d.oOrderId,
-          bidder: d.oBidder.sWalletAddress,
-          bidderProfile: d.oBidder.sProfilePicUrl,
-          buyerSignature: d.oBuyerSignature,
-          bidderFullName: d.oBidder.oName
-            ? d.oBidder.oName.sFirstname
-            : d.oBidder
+    dummyData.data.map((d, i) => {
+      data.push({
+        bidId: d._id,
+        bidQuantity: d.oBidQuantity,
+        bidPrice: d.oBidPrice.$numberDecimal,
+        seller: d.oOwner.sWalletAddress,
+        orderId: d.oOrderId,
+        bidder: d.oBidder.sWalletAddress,
+        bidderProfile: d.oBidder.sProfilePicUrl,
+        buyerSignature: d.oBuyerSignature,
+        bidderFullName: d.oBidder.oName
+          ? d.oBidder.oName.sFirstname
+          : d.oBidder
             ? d.oBidder.sWalletAddress
             : "Unnamed",
-          nftId: d.oNFTId,
-          owner: d.oSeller,
-        });
-      })
+        nftId: d.oNFTId,
+        owner: d.oSeller,
+      });
+    })
     : data.push([]);
 
   console.log("dummyData", data);
@@ -262,24 +265,24 @@ export const getCollections = async (req) => {
   else return [];
   arr
     ? arr.map((coll, key) => {
-        formattedData[key] = {
-          _id: coll._id,
-          logoImg: coll.logoImage,
-          coverImg: coll.coverImage,
-          name: coll.name,
-          desc: coll.description,
-          saleStartTime: coll.preSaleStartTime,
-          saleEndTime: coll.preSaleEndTime,
-          price: coll.price.$numberDecimal,
-          items: coll.nftCount,
-          totalSupply: coll.totalSupply,
-          contractAddress: coll.contractAddress,
-          brand: coll.brandID,
-          createdBy: coll.createdBy,
-          link: coll.link,
-          volumeTraded: coll.volumeTraded,
-        };
-      })
+      formattedData[key] = {
+        _id: coll._id,
+        logoImg: coll.logoImage,
+        coverImg: coll.coverImage,
+        name: coll.name,
+        desc: coll.description,
+        saleStartTime: coll.preSaleStartTime,
+        saleEndTime: coll.preSaleEndTime,
+        price: coll.price.$numberDecimal,
+        items: coll.nftCount,
+        totalSupply: coll.totalSupply,
+        contractAddress: coll.contractAddress,
+        brand: coll.brandID,
+        createdBy: coll.createdBy,
+        link: coll.link,
+        volumeTraded: coll.volumeTraded,
+      };
+    })
     : (formattedData[0] = {});
   return formattedData;
 };
@@ -316,31 +319,31 @@ export const getNFTs = async (req) => {
   else return [];
   arr
     ? arr.map((nft, key) => {
-        formattedData[key] = {
-          id: nft?._id,
-          image: nft?.image,
-          name: nft?.name,
-          desc: nft?.description,
-          collectionAddress: nft?.collectionAddress,
-          ownedBy: nft?.ownedBy,
-          like:
-            nft?.user_likes?.length === undefined ? 0 : nft?.user_likes?.length,
-          Qty: nft?.totalQuantity,
-          collection: nft?.collectionID,
-          assetsInfo: nft?.assetsInfo[0],
-          catergoryInfo: nft?.categoryID,
-          tokenId: nft?.tokenID,
-          createdBy: nft?.createdBy,
-          type: nft?.type,
-          attributes: nft?.attributes,
-          totalQuantity: nft?.totalQuantity,
-          fileType: nft?.fileType,
-          collectionData: nft?.CollectionData,
-          orderData: nft?.OrderData,
-          brandData: nft?.BrandData[0],
-          count: count,
-        };
-      })
+      formattedData[key] = {
+        id: nft?._id,
+        image: nft?.image,
+        name: nft?.name,
+        desc: nft?.description,
+        collectionAddress: nft?.collectionAddress,
+        ownedBy: nft?.ownedBy,
+        like:
+          nft?.user_likes?.length === undefined ? 0 : nft?.user_likes?.length,
+        Qty: nft?.totalQuantity,
+        collection: nft?.collectionID,
+        assetsInfo: nft?.assetsInfo[0],
+        catergoryInfo: nft?.categoryID,
+        tokenId: nft?.tokenID,
+        createdBy: nft?.createdBy,
+        type: nft?.type,
+        attributes: nft?.attributes,
+        totalQuantity: nft?.totalQuantity,
+        fileType: nft?.fileType,
+        collectionData: nft?.CollectionData,
+        orderData: nft?.OrderData,
+        brandData: nft?.BrandData[0],
+        count: count,
+      };
+    })
     : (formattedData[0] = {});
   return formattedData;
 };
@@ -363,29 +366,29 @@ export const getNFTDetails = async (req) => {
   else return [];
   arr
     ? arr.map((nft, key) => {
-        formattedData[key] = {
-          id: nft._id,
-          image: nft.image,
-          name: nft.name,
-          desc: nft.description,
-          collectionAddress: nft.collectionAddress,
-          ownedBy: nft.ownedBy,
-          like:
-            nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
-          Qty: nft.totalQuantity,
-          collection: nft.collectionID,
-          assetsInfo: nft?.assetsInfo[0],
-          catergoryInfo: nft?.categoryID,
-          tokenId: nft.tokenID,
-          createdBy: nft.createdBy,
-          type: nft.type,
-          attributes: nft.attributes,
-          totalQuantity: nft.totalQuantity,
-          fileType: nft.fileType,
-          collectionData: nft.CollectionData,
-          OrderData: nft.OrderData,
-        };
-      })
+      formattedData[key] = {
+        id: nft._id,
+        image: nft.image,
+        name: nft.name,
+        desc: nft.description,
+        collectionAddress: nft.collectionAddress,
+        ownedBy: nft.ownedBy,
+        like:
+          nft.user_likes?.length === undefined ? 0 : nft.user_likes?.length,
+        Qty: nft.totalQuantity,
+        collection: nft.collectionID,
+        assetsInfo: nft?.assetsInfo[0],
+        catergoryInfo: nft?.categoryID,
+        tokenId: nft.tokenID,
+        createdBy: nft.createdBy,
+        type: nft.type,
+        attributes: nft.attributes,
+        totalQuantity: nft.totalQuantity,
+        fileType: nft.fileType,
+        collectionData: nft.CollectionData,
+        OrderData: nft.OrderData,
+      };
+    })
     : (formattedData[0] = {});
   return formattedData;
 };
@@ -408,12 +411,12 @@ export const getAuthors = async () => {
   else return [];
   arr
     ? arr.map((author, key) => {
-        formattedData[key] = {
-          _id: author._id,
-          profile: author.profileIcon,
-          name: author.username,
-        };
-      })
+      formattedData[key] = {
+        _id: author._id,
+        profile: author.profileIcon,
+        name: author.username,
+      };
+    })
     : (formattedData[0] = {});
   return formattedData;
 };
@@ -480,19 +483,20 @@ export const getPrice = async (data) => {
 };
 
 
-const getOfferMade = async(req) => {
-   let formattedData = [];
-   let data = [];
-   try {
+export const getOfferMade = async (req) => {
+
+  let formattedData = [];
+  let data = [];
+  try {
     let reqBody = {
-      page: 1,
-      limit: 13,
-      userID: "62d923016af5725c1419be4d"
+      page: req.page,
+      limit: req.limit,
+      userID: req.userID
     };
 
     data = await fetchOfferMade(reqBody);
   } catch (e) {
-    console.log("Error in getNFts API--->", e);
+    console.log("Error in getOfferMade API--->", e);
   }
 
   let arr = [];
@@ -501,15 +505,106 @@ const getOfferMade = async(req) => {
   arr
     ? arr.map((order, key) => {
       formattedData[key] = {
-        buyerAddress: order?.BidderData[0]?.walletAddress,
-        sellerAddress: order?.ownerData[0]?.walletAddress
+        bidderAddress: order?.BidderData[0]?.walletAddress,
+        sellerAddress: order?.OwnerData[0]?.walletAddress,
+        bidPrice: order?.bidPrice?.$numberDecimal,
+        bidDeadline: order?.bidDeadline,
+        nftData: order?.nftsData[0]?._id,
+        bidStatus: order?.bidStatus,
+        paymentToken: order?.paymentToken,
+        createdOn: order?.createdOn
       }
-      })
+    })
     : (formattedData[0] = {});
   return formattedData;
 }
 
-getOfferMade();
+
+export const getOfferReceived = async (req) => {
+  let formattedData = [];
+  let data = [];
+  try {
+    let reqBody = {
+      page: req.page,
+      limit: req.limit,
+      userWalletAddress: req.userWalletAddress
+    };
+
+    data = await fetchOfferReceived(reqBody);
+  } catch (e) {
+    console.log("Error in getOfferMade API--->", e);
+  }
+
+  let arr = [];
+  if (data && data.count > 0) arr = data.results;
+  else return [];
+  arr
+    ? arr.map((order, key) => {
+      formattedData[key] = {
+        bidderAddress: order?.BidderData[0]?.walletAddress,
+        sellerAddress: order?.OwnerData[0]?.walletAddress,
+        bidPrice: order?.bidPrice?.$numberDecimal,
+        bidDeadline: order?.bidDeadline,
+        nftData: order?.nftsData[0]?._id,
+        bidStatus: order?.bidStatus,
+        paymentToken: order?.paymentToken,
+        createdOn: order?.createdOn
+      }
+    })
+    : (formattedData[0] = {});
+  return formattedData;
+}
+
+export const fetchHistory = async (req) => {
+  let formattedData = [];
+  let data = [];
+  try {
+    let reqBody = {
+      page: req.page,
+      limit: req.limit,
+      nftID: req.nftID,
+      collectionID: req.collectionID,
+      brandID: req.brandID,
+      userID: req.userID
+    };
+
+    data = await GetHistory(reqBody);
+  } catch (e) {
+    console.log("Error in fetchHistory API--->", e);
+  }
+  let arr = [];
+  if (data && data.count > 0) arr = data.results;
+  else return [];
+  arr
+    ? arr.map((h, key) => {
+      formattedData[key] = {
+        nftID: h?.nftsData[0]?._id,
+        nftName: h?.nftsData[0]?.name,
+        buyerAddress: h?.BuyerData?.length > 0 ? h?.BuyerData[0]?.walletAddress : "",
+        sellerAddress: h?.SellerData?.length > 0 ? h?.SellerData[0]?.walletAddress : "",
+        action: h?.action,
+        type: h?.type,
+        price: h?.price?.$numberDecimal,
+        quantity: h?.quantity,
+        paymentToken: h?.paymentToken,
+        createdOn: h?.createdOn,
+        nftImg: h?.nftsData[0]?.image
+      }
+    })
+    : (formattedData[0] = {});
+  return formattedData;
+}
+
+export const fetchWallet = async () => {
+  await onboard.connectWallet({
+    disableModals: true
+  });
+  // else NotificationManager.error("Connect Your Wallet", "", 800);
+  const currentState = onboard.state.get()
+  console.log("curr state", currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : "")
+  return currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : ""
+
+}
 
 // export const getUsersNFTs = async (
 //   paramType,

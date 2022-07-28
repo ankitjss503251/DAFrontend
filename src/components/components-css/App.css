@@ -965,6 +965,7 @@ a {
   text-align: center;
   color: #ffffff;
   text-shadow: 0px 0px 4px rgb(0 0 0 / 40%);
+  border:0px;
 }
 .main_btn:hover {
   color: #fff !important;
@@ -1087,6 +1088,7 @@ header#myHeader {
 .navbar-nav .nav-link.active,
 .navbar-nav .nav-link:hover {
   border-bottom: 2px solid #ef981d;
+  color: #ef981d;
 }
 .navbar-nav li.nav-item:hover .sub_menu {
   opacity: 1;
@@ -1959,6 +1961,7 @@ label {
 /* .market_grid img {
   width: 20px;
 } */
+
 button.filter_btn {
   background: transparent;
   font-family: "Montserrat";
@@ -1972,6 +1975,7 @@ button.filter_btn {
   border-radius: 40px;
   width: 10%;
 }
+
 button.filter_btn.active {
   background: #ef981d;
 }
@@ -4939,10 +4943,10 @@ a:hover {
   display: none;
 }
 
-.img-fluid.w-100 {
+/* .img-fluid.w-100 {
   height: 200px;
   object-fit: cover;
-}
+} */
 
 .details-btn {
   width: 100%;
@@ -5226,11 +5230,11 @@ body.overflow_hidden {
   overflow: hidden;
 }
 
-.items_img.my-3 {
+/* .items_img.my-3 {
   background-color: #c1bdbd2e;
   height: 260px !important;
   object-fit: cover !important;
-}
+} */
 button:disabled {
   opacity: 0.3;
 }
@@ -5315,6 +5319,7 @@ section.collection_info .justify-content-end {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px 10px 0px 0px;
 }
 @media screen and (min-width:992px) {
   .collection_items img.img-fluid.width-100 {height: 260px;object-fit: cover;}
@@ -5438,4 +5443,38 @@ section.collection_info .justify-content-end {
 
 .modal.marketplace.inactive{
   display: none !important;
+}
+
+button.filter_btn {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+
+.hist_tk{
+  height: 25px;
+  width: 25px;
+  border-radius: 100%;
+}
+
+.hist_tk img{
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 100%;
+}
+
+.hist_nft_img{
+  height: 50px;
+  width: 50px;
+}
+
+.hist_nft_img img{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+
 }

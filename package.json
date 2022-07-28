@@ -23,7 +23,6 @@
     "bitski": "^0.11.0",
     "bl": "^5.0.0",
     "bootstrap": "^5.1.1",
-    "cors": "^2.8.5",
     "cra-template": "1.1.2",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",

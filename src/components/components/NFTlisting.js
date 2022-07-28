@@ -19,6 +19,7 @@ import { ethers } from "ethers";
 import Spinner from "./Spinner";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import { fetchBidNft } from "../../apiServices";
+import { InsertHistory } from "./../../apiServices";
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);
@@ -185,7 +186,7 @@ function NFTlisting(props) {
                 return;
               }
               try {
-                await createBid(
+               const res= await createBid(
                   currentOrder.nftID,
                   currentOrder._id,
                   currentOrder.sellerID?._id,
@@ -196,9 +197,27 @@ function NFTlisting(props) {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
-                NotificationManager.success("Bid Placed Successfully", "", 800);
-                setLoading(false);
-                slowRefresh(1000);
+                if(res !== false){
+                  let historyReqData = {
+                    nftID: currentOrder.nftID,
+                    buyerID: localStorage.getItem('userId'),
+                    sellerID: currentOrder.sellerID?._id,
+                    action: "Bid",
+                    type: haveBid && haveBid !== "none" ? "Updated" : "Created",
+                    price: ethers.utils.parseEther(price.toString()).toString(),
+                    paymentToken: currentOrder?.paymentToken,
+                    quantity: qty,
+                    createdBy: localStorage.getItem("userId"),
+                  };
+                  await InsertHistory(historyReqData);
+                  NotificationManager.success("Bid Placed Successfully", "", 800);
+                  setLoading(false);
+                  slowRefresh(1000);
+                }else{
+                  setLoading(false);
+                  return;
+                }
+                
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
               }
@@ -278,17 +297,42 @@ function NFTlisting(props) {
             onClick={async () => {
               setIsBuyNowModal(false);
               setLoading(true);
-              const hbn = await handleBuyNft(
-                currentOrder._id,
-                props?.NftDetails?.type === 1,
-                currentUser,
-                cookies.balance,
-                currentOrder.total_quantity,
-                false,
-                props?.NftDetails?.collectionAddress?.toLowerCase()
-              );
-              await fetchListing()
-              // setLoading(false);
+              try{
+
+                const hbn = await handleBuyNft(
+                  currentOrder._id,
+                  props?.NftDetails?.type === 1,
+                  currentUser,
+                  cookies.balance,
+                  currentOrder.total_quantity,
+                  false,
+                  props?.NftDetails?.collectionAddress?.toLowerCase()
+                );
+                await fetchListing()
+                if(hbn !== false){
+                  let historyReqData = {
+                    nftID: currentOrder.nftID,
+                    buyerID: localStorage.getItem('userId'),
+                    sellerID: currentOrder?.sellerID?._id,
+                    action: "Sold",
+                    price: ethers.utils.parseEther(price.toString()).toString(),
+                    paymentToken: currentOrder?.paymentToken,
+                    quantity: currentOrder?.total_quantity,
+                    createdBy: localStorage.getItem("userId"),
+                  };
+                  await InsertHistory(historyReqData);
+                  setLoading(false);
+              }
+              else{
+                setLoading(false);
+                slowRefresh(1000);
+                return;
+              }
+              }
+              catch(e){
+                console.log("Error", e)
+              }
+             
             }}>
             {"Buy Now"}
           </button>
@@ -332,7 +376,7 @@ function NFTlisting(props) {
                   {orders && orders.length > 0
                     ? orders.map((o, i) => {
                       return (
-                        <tr>
+                        <tr key={i}>
                           <td className="d-flex justify-content-start align-items-center mb-0">
                             <span className="yellow_dot circle_dot"></span>
                             <span>

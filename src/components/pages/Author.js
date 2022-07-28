@@ -17,13 +17,14 @@ import moment from "moment";
 import coverImg from "./../../assets/images/authorbg.jpg";
 import arrow from "./../../assets/images/ep_arrow-right-bold.png";
 import UpArrow from "../SVG/dropdown";
-import { getCategory } from "../../helpers/getterFunctions";
+import { getCategory, getOfferMade, getOfferReceived } from "../../helpers/getterFunctions";
 import BGImg from "../../assets/images/background.jpg";
 import CollectionsNFT from "../components/Skeleton/CollectionsNFT";
 import { useCookies } from "react-cookie";
 import NFThistory from "../components/NFThistory";
 import NFToffer from "../components/NFToffer";
 import GeneralOffer from '../components/GeneralOffer'
+
 
 function Author() {
   const { id } = useParams();
@@ -38,7 +39,12 @@ function Author() {
   const [onSaleNFTs, setOnSaleNFTs] = useState([]);
   const [priceSort, setPriceSort] = useState('ASC');
   const [ERCType, setERCType] = useState();
-  const [currPage, setCurrPage] = useState(1)
+  const [currPage, setCurrPage] = useState(1);
+  const [onSaleCount, setOnSaleCount] = useState(0);
+  const [offerMade, setOfferMade] = useState([]);
+  const [offerReceived, setOfferReceived] = useState([]);
+  const [showFilter, setShowFilter] = useState(true);
+
 
   const bgImage = {
     backgroundImage: `url(${coverImg})`,
@@ -72,6 +78,10 @@ function Author() {
         .classList.remove("active");
     }
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const fetch = async () => {
@@ -118,18 +128,34 @@ function Author() {
           userWalletAddress: _profile?.walletAddress?.toLowerCase(),
         };
         const onsale = await getOnSaleItems(reqBody);
-        console.log("onsale items", onsale)
+        setOnSaleCount(onsale?.length);
         setOnSaleNFTs(onsale);
       } catch (e) {
         console.log("Error in fetching onSale Items", e);
       }
-    };
-    fetch();
+      try {
+        const _offerMade = await getOfferMade({
+          page: 1,
+          limit: 12,
+          userID: id
+        })
+        setOfferMade(_offerMade);
+
+        const _offerReceived = await getOfferReceived({
+          page: 1,
+          limit: 12,
+          userWalletAddress: _profile?.walletAddress?.toLowerCase()
+        })
+        setOfferReceived(_offerReceived);
+      }
+      catch (e) {
+        console.log("Error in fetching offers", e)
+      }
+    }
+    fetch()
+
   }, [id, searchFor, ERCType, priceSort]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const gridtwo = () => {
     setgrid("col-md-6 mb-4");
@@ -145,7 +171,7 @@ function Author() {
   const [grid, setgrid] = useState("col-md-3 mb-4");
 
 
-  
+
 
   return (
     <div style={bgImgStyle}>
@@ -231,8 +257,8 @@ function Author() {
               </svg>
               {profile?.walletAddress
                 ? profile?.walletAddress?.slice(0, 4) +
-                  "..." +
-                  profile?.walletAddress?.slice(38, 42)
+                "..." +
+                profile?.walletAddress?.slice(38, 42)
                 : "-"}
             </span>
           </div>
@@ -250,7 +276,9 @@ function Author() {
                 role='tab'
                 aria-controls='pills-Owned'
                 aria-selected='true'
-                className='active'>
+                className='active'
+                onClick={() => setShowFilter(true)}
+              >
                 <img
                   alt=''
                   src={"../img/author/icon1.svg"}
@@ -266,8 +294,10 @@ function Author() {
                 type='button'
                 role='tab'
                 aria-controls='pills-Sale'
-                aria-selected='true'>
-                On Sale
+                aria-selected='true'
+                onClick={() => setShowFilter(true)}
+              >
+                On Sale ({onSaleCount})
               </button>
             </li>
             <li>
@@ -277,7 +307,9 @@ function Author() {
                 type='button'
                 role='tab'
                 aria-controls='pills-Favourited'
-                aria-selected='true'>
+                aria-selected='true'
+                onClick={() => setShowFilter(true)}
+              >
                 <img
                   alt=''
                   src={"../img/author/icon3.svg"}
@@ -293,7 +325,9 @@ function Author() {
                 type='button'
                 role='tab'
                 aria-controls='pills-Activity'
-                aria-selected='true'>
+                aria-selected='true'
+                onClick={() => setShowFilter(false)}
+              >
                 <img
                   alt=''
                   src={"../img/author/icon4.svg"}
@@ -310,20 +344,24 @@ function Author() {
                 role='button'
                 id='dropdownMenuLink'
                 data-bs-toggle='dropdown'
-                aria-expanded='false'>
+                aria-expanded='false'
+               
+              >
                 Offers
               </button>
               <ul className='dropdown-menu Autherpagetab' aria-labelledby='dropdownMenuLink'>
                 <li>
-                <button
-                  data-bs-toggle='pill'
-                  data-bs-target='#pills-NFToffer'
-                  type='button'
-                  role='tab'
-                  aria-controls='pills-NFToffer'
-                  aria-selected='true'>
-                  <DownloadSVG /> Offer Received
-                </button>
+                  <button
+                    data-bs-toggle='pill'
+                    data-bs-target='#pills-NFToffer'
+                    type='button'
+                    role='tab'
+                    aria-controls='pills-NFToffer'
+                    aria-selected='true'
+                    onClick={() => setShowFilter(false)}
+                    >
+                    <DownloadSVG /> Offer Received
+                  </button>
                 </li>
                 <li>
                   <button
@@ -332,7 +370,9 @@ function Author() {
                     type='button'
                     role='tab'
                     aria-controls='pills-NFTmade'
-                    aria-selected='true'>
+                    aria-selected='true'
+                    onClick={() => setShowFilter(false)}
+                    >
                     <OffermadeSVG /> Offer Made
                   </button>
                 </li>
@@ -340,7 +380,7 @@ function Author() {
             </li>
           </ul>
 
-          <div className='row'>
+          {showFilter && <div className='row'>
             <div className='col-lg-12'>
               <div className='market_search_form mb-5'>
                 <form className='d-flex marketplace_form'>
@@ -386,7 +426,7 @@ function Author() {
                     setCardCount(0);
                     setPriceSort(e.target.value);
                   }}
-                  >
+                >
                   <option value='ASC' defaultValue>
                     Price: Low to High
                   </option>
@@ -523,18 +563,18 @@ function Author() {
                         </div>
                         {category
                           ? category.map((c, key) => {
-                              return (
-                                <div className='form-check form-check-inline' key={key}>
-                                  <input
-                                    type='radio'
-                                    id={c.name}
-                                    name='radio-group'
-                                    key={c}
-                                  />
-                                  <label htmlFor={c.name}>{c.name}</label>
-                                </div>
-                              );
-                            })
+                            return (
+                              <div className='form-check form-check-inline' key={key}>
+                                <input
+                                  type='radio'
+                                  id={c.name}
+                                  name='radio-group'
+                                  key={c}
+                                />
+                                <label htmlFor={c.name}>{c.name}</label>
+                              </div>
+                            );
+                          })
                           : ""}
                       </form>
                     </li>
@@ -574,7 +614,7 @@ function Author() {
                 </div>
               </div>
             </div>
-          </div>
+          </div>}
         </div>
       </section>
       <section className='collection_list mb-5 pb-5'>
@@ -589,18 +629,19 @@ function Author() {
                 {loader ? (
                   <CollectionsNFT cards={cardCount} grid={grid} />
                 ) : (
-                 ownedNFTs?.length > 0 ? ownedNFTs?.map((card, key) => (
+                  ownedNFTs?.length > 0 ? ownedNFTs?.map((card, key) => (
                     <div className={grid} key={key}>
                       <AuthorListing
-                        image={card.image}
+                        fileType={card?.fileType}
+                        image={card?.image}
                         card={card}
-                        link={`/nftDetails/${card._id}`}
+                        link={`/nftDetails/${card?._id}`}
                       />
                     </div>
                   )) : (
                     <div className="col-md-12">
-            <h4 className="no_data_text text-muted">No NFTs Available</h4>
-          </div>
+                      <h4 className="no_data_text text-muted">No NFTs Available</h4>
+                    </div>
                   )
                 )}
               </div>
@@ -618,6 +659,7 @@ function Author() {
                     return (
                       <div className={grid} key={key}>
                         <AuthorListing
+                          fileType={card?.fileType}
                           image={card.image}
                           card={card}
                           link={`/nftDetails/${card._id}`}
@@ -638,6 +680,7 @@ function Author() {
                 {AuthorCard.map((card, key) => (
                   <div className={grid} key={key}>
                     <AuthorListing
+                      fileType="Image"
                       image={card.img}
                       submenu={card.Subheading}
                       heading={card.Heading}
@@ -658,9 +701,9 @@ function Author() {
               <div className='row'>
                 <div className="col-md-12 mb-5">
                   <h3 className="title_36 mb-4">History</h3>
-                  <div className="table-responsive">
-                    <NFThistory />
-                  </div>
+
+                  <NFThistory />
+
                 </div>
               </div>
             </div>
@@ -672,7 +715,7 @@ function Author() {
               <div className='row'>
                 <div className="col-md-12 mb-5">
                   <h3 className="title_36 mb-4">Offers Received</h3>
-                  <GeneralOffer />
+                  <GeneralOffer offers={offerReceived} />
                 </div>
               </div>
             </div>
@@ -684,14 +727,14 @@ function Author() {
               <div className='row'>
                 <div className="col-md-12 mb-5">
                   <h3 className="title_36 mb-4">Offers Made</h3>
-                  <GeneralOffer />
+                  <GeneralOffer offers={offerMade} />
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-      
+
       <Footer />
     </div>
   );

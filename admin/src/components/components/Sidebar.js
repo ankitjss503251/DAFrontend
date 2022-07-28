@@ -37,7 +37,7 @@ function Sidebar() {
         {(isSuperAdmin && isSuperAdmin()) ? (
           <li>
             <NavLink to={"/admins"} className="text-decoration-none text-light">
-              <Formsvg /> Admins List
+              <Formsvg /> Admin's List
             </NavLink>
           </li>
         ) : null}

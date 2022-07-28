@@ -117,7 +117,7 @@ function Admins() {
         </div>
 
         <div className="adminbody table-widget text-light box-background">
-          <h5 className="admintitle font-600 font-24 text-yellow">Example</h5>
+          <h5 className="admintitle font-600 font-24 text-yellow">Admin's List</h5>
           <p className="admindescription">
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry's standard dummy text
