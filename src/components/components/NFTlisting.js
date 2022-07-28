@@ -186,7 +186,7 @@ function NFTlisting(props) {
                 return;
               }
               try {
-               const res= await createBid(
+                const res = await createBid(
                   currentOrder.nftID,
                   currentOrder._id,
                   currentOrder.sellerID?._id,
@@ -197,7 +197,7 @@ function NFTlisting(props) {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
-                if(res !== false){
+                if (res !== false) {
                   let historyReqData = {
                     nftID: currentOrder.nftID,
                     buyerID: localStorage.getItem('userId'),
@@ -213,11 +213,11 @@ function NFTlisting(props) {
                   NotificationManager.success("Bid Placed Successfully", "", 800);
                   setLoading(false);
                   slowRefresh(1000);
-                }else{
+                } else {
                   setLoading(false);
                   return;
                 }
-                
+
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
               }
@@ -297,7 +297,7 @@ function NFTlisting(props) {
             onClick={async () => {
               setIsBuyNowModal(false);
               setLoading(true);
-              try{
+              try {
 
                 const hbn = await handleBuyNft(
                   currentOrder._id,
@@ -309,7 +309,7 @@ function NFTlisting(props) {
                   props?.NftDetails?.collectionAddress?.toLowerCase()
                 );
                 await fetchListing()
-                if(hbn !== false){
+                if (hbn !== false) {
                   let historyReqData = {
                     nftID: currentOrder.nftID,
                     buyerID: localStorage.getItem('userId'),
@@ -322,17 +322,17 @@ function NFTlisting(props) {
                   };
                   await InsertHistory(historyReqData);
                   setLoading(false);
+                }
+                else {
+                  setLoading(false);
+                  slowRefresh(1000);
+                  return;
+                }
               }
-              else{
-                setLoading(false);
-                slowRefresh(1000);
-                return;
-              }
-              }
-              catch(e){
+              catch (e) {
                 console.log("Error", e)
               }
-             
+
             }}>
             {"Buy Now"}
           </button>
@@ -415,28 +415,16 @@ function NFTlisting(props) {
                           </td>
                           <td>
 
-                            {moment(new Date(o.deadline * 1000))
-                              .subtract({
-                                hours: 5,
-                                minutes: 30,
-                              })._d < new Date() || o.deadline === GENERAL_TIMESTAMP ? (
+                            {moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format() || o.deadline === GENERAL_TIMESTAMP ? (
                               "--:--:--"
                             ) : (
                               <Clock
-                                deadline={moment(new Date(o.deadline * 1000))
-                                  .subtract({
-                                    hours: 5,
-                                    minutes: 30,
-                                  })
-                                  .toISOString()}
+                                deadline={moment.utc(o.deadline * 1000).local().format()}
                               ></Clock>
                             )}
                           </td>
                           <td className="blue_text">
-                            {moment(new Date(o.deadline * 1000)).subtract({
-                              hours: 5,
-                              minutes: 30,
-                            })._d > new Date()
+                            {moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
                               ? "Active"
                               : "Ended"}
                           </td>
@@ -456,6 +444,7 @@ function NFTlisting(props) {
                                   Remove From Sale
                                 </button>
                               ) : (
+
                                 <button
                                   to={"/"}
                                   disabled={
@@ -507,9 +496,9 @@ function NFTlisting(props) {
                                 >
                                   {o.salesType === 0
                                     ? "Buy Now"
-                                    : haveBid
-                                      ? "Update Bid"
-                                      : "Place Bid"}
+                                    : !haveBid
+                                      ? "Place Bid"
+                                      : ""}
                                 </button>
                               )}
                             </div>

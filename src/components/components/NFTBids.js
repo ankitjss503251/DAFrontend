@@ -317,17 +317,13 @@ function NFTBids(props) {
                             ? "Auction"
                             : "Open for Bids"}</td>
                           <td>
-                            {/* <Clock
-                            deadline={moment(new Date(b.bidDeadline * 1000))
-                              .subtract({
-                                hours: 5,
-                                minutes: 30,
-                              })
-                              .toISOString()}></Clock> */}
-                            --:--:--
+                            {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format() ? <Clock
+                              deadline={moment.utc(b.bidDeadline * 1000).local().format()}></Clock> : " --:--:--"}
+
+
                           </td>
                           <td className="blue_text">
-                            {moment.utc(b.bidDeadline * 1000).local().format()
+                            {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                               ? "Ended"
                               : "Active"}
                           </td>

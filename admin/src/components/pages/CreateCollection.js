@@ -305,7 +305,39 @@ function CreateCollection(props) {
 
         try {
           setLoading(true);
-          fd = new FormData();
+
+
+          if (isOffChain === "No") {
+            nftType === "1"
+              ? (res1 = await creator.deployExtendedERC721(
+                title,
+                symbol,
+                "www.uri.com",
+                royalty * 100,
+                contracts.BUSD
+              ))
+              : (res1 = await creator.deployExtendedERC1155(
+                "www.uri.com",
+                royalty * 100,
+                contracts.BUSD
+              ));
+
+            let hash = res1;
+            console.log("hash", hash.hash)
+            res1 = await res1.wait();
+            contractAddress = await readReceipt(hash);
+          } else {
+            res1 = {};
+            res1.status = 1;
+          }
+        } catch (e) {
+          console.log(e);
+          setLoading(false);
+          NotificationManager.error(e.message, "", 900);
+          slowRefresh(1000);
+        }
+
+        if (res1 !== undefined) {
           let type;
           if (nftType === "1") {
             type = 1;
@@ -390,11 +422,6 @@ function CreateCollection(props) {
             }
           }
 
-        } catch (e) {
-          console.log(e);
-          setLoading(false);
-          NotificationManager.error(e.message, "", 900);
-          // slowRefresh(1000);
         }
 
         if (res1 !== undefined) {

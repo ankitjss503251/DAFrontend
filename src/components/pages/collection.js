@@ -185,6 +185,7 @@ function Collection() {
   }, [])
 
   return (
+    <>
     <div style={bgImgStyle}>
       {loadMoreDisabled && !nftList
         ? NotificationManager.info("No more items to load")
@@ -662,6 +663,7 @@ function Collection() {
 
       <Footer />
     </div>
+    </>
   );
 }
 

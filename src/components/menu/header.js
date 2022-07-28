@@ -25,6 +25,11 @@ import { getCategory } from "./../../helpers/getterFunctions";
 import defaultProfile from "../../assets/images/favicon.png";
 import menuIcon from "../../assets/menu.png";
 
+const Web3 = require('web3');
+// web3 lib instance
+const web3 = new Web3(window.ethereum);
+
+
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const injected = injectedModule();
@@ -202,23 +207,78 @@ const Header = function () {
   const connectWallet = async () => {
     const wallets = await onboard.connectWallet();
     if (wallets.length !== 0) {
+
       await onboard.setChain({
         chainId: process.env.REACT_APP_CHAIN_ID,
       });
+
       const primaryWallet = wallets[0];
       setChainId(primaryWallet.chains[0].id);
       setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
 
-      try {
-        userAuth(primaryWallet, address);
-      } catch (e) {
-        console.log("Error in user auth", e);
+      // const domain = {
+      //     name: 'Digital Arms',
+      //     version: '1',
+      //     chainId: 80001,
+      //     verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
+      // };
+      
+      // // The named list of all type definitions
+      // const types = {
+      //     Person: [
+      //         { name: 'name', type: 'string' },
+      //         { name: 'wallet', type: 'address' }
+      //     ],
+      //     Mail: [
+      //         { name: 'from', type: 'Person' },
+      //         { name: 'to', type: 'Person' },
+      //         { name: 'contents', type: 'string' }
+      //     ]
+      // };
+      // const timestamp = new Date().getTime();
+      // // The data to sign
+      // const value = {
+      //     from: {
+      //         name: 'Cow',
+      //         wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
+      //     },
+      //     to: {
+      //         name: 'Bob',
+      //         wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB'
+      //     },
+      //     contents: 'Digital Arms Marketplace uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address - '+ timestamp
+      // };
+
+
+      if (web3.eth) {
+        const timestamp = new Date().getTime();
+        const message = `Digital Arms Marketplace uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address - ${timestamp}`;
+
+        console.log(web3.utils.fromUtf8(message));
+
+        web3.eth.currentProvider.sendAsync({
+          method: 'personal_sign',
+          params: [message, address],
+          from: address,
+        }, async function (err, signature) {
+          if(!err){
+            console.log("Signature", signature);
+            try {
+              userAuth(primaryWallet, address, signature.result, message);
+            } catch (e) {
+              console.log("Error in user auth", e);
+            }
+          }
+          console.log("Error is", err);
+        })
       }
+
+      
     }
   };
 
-  const userAuth = async (primaryWallet, address) => {
+  const userAuth = async (primaryWallet, address, signature, message) => {
     try {
       const isUserExist = await checkuseraddress(address);
       if (isUserExist === "User not found") {
@@ -257,7 +317,7 @@ const Header = function () {
         }
       } else {
         try {
-          const res = await Login(address);
+          const res = await Login(address, signature, message);
           console.log("Login API response", res);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);

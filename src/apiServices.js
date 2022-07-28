@@ -59,12 +59,14 @@ export const Register = async (account) => {
   }
 };
 
-export const Login = async (account) => {
+export const Login = async (account, signature, message) => {
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       walletAddress: account,
+      signature: signature,
+      message: message,
     }),
   };
   try {
