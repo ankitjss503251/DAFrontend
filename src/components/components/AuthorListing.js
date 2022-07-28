@@ -26,12 +26,11 @@ const CameraControls=() => {
 };
 
 function AuthorListing(props) {
-  console.log("Author listing props is",props)
   
  
   
   function Model(props) {
-    const { scene } = useGLTF(props.image);
+    const { scene } = useGLTF(props?.image);
     return <primitive object={scene} />;
   }
   return (
@@ -44,7 +43,6 @@ function AuthorListing(props) {
                               className='img-fluid items_img w-100'
                               alt=''
                               onError={(e) => {
-                                console.log("image error is--->", e);
                                 e.target.src = "../img/collections/list4.png";
                               }}
                             />
@@ -83,7 +81,7 @@ function AuthorListing(props) {
           <div className='collection_row mb-3'>
             <div className='collection_col'>
               <span>
-                {props?.card?.CollectionData[0]?.name}
+                {props?.card?.CollectionData ? props?.card?.CollectionData[0]?.name : ""}
                 {" collection"}
               </span>
               <h6>{props?.card?.name}</h6>

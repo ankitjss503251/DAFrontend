@@ -20,9 +20,9 @@ const AuthorList = () => {
     <div>
       <div className="row author_list_section">
         {authors
-          ? authors.slice(0,9).map((card, key) => {
+          ? authors?.slice(0,9).map((card, key) => {
               return (
-                <div className="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div className="col-lg-4 col-md-6 col-sm-12 mb-4" key={key}>
                   <Link to={`/author/${card._id}`}>
                     <div className="author_list_box">
                       <img

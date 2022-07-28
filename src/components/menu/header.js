@@ -126,7 +126,7 @@ const Header = function () {
         const s = await onboard.connectWallet({
           autoSelect: { label: cookies["label"], disableModals: true },
         });
-        console.log("onboard is------->", s)
+
         await onboard.setChain({
           chainId: process.env.REACT_APP_CHAIN_ID,
         });
@@ -512,7 +512,6 @@ const Header = function () {
                   </ul>
                 </NavLink>
               </li>
-              {console.log("userDetails", userDetails)}
               {!userDetails ? (
                 <>
                   <li className="nav-item">

@@ -17,6 +17,9 @@ import { slowRefresh } from "../../helpers/NotifyStatus";
 import Clock from "./Clock";
 import Spinner from "../components/Spinner";
 import { Tokens } from "../../helpers/tokensToSymbol";
+
+import { InsertHistory } from "../../apiServices";
+
 import injectedModule from "@web3-onboard/injected-wallets";
 import walletConnectModule from "@web3-onboard/walletconnect";
 import Logo from "./../../assets/images/logo.svg";
@@ -28,7 +31,7 @@ function NFToffer(props) {
   const [cookies] = useCookies([]);
   const [offer, setOffer] = useState([]);
   const [selectedToken, setSelectedToken] = useState("BUSD");
-  const [selectedTokenFS, setSelectedTokenFS] = useState("BUSD");
+  const [selectedTokenFS, setSelectedTokenFS] = useState("BNB");
   const [datetime, setDatetime] = useState("");
   const [loading, setLoading] = useState(false);
   const [offerPrice, setOfferPrice] = useState();
@@ -36,8 +39,11 @@ function NFToffer(props) {
   const [modal, setModal] = useState(false);
   const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
 
+  const [currentOffer, setCurrentOffer] = useState();
+
   const injected = injectedModule();
   const walletConnect = walletConnectModule();
+
 
   useEffect(() => {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
@@ -60,6 +66,7 @@ function NFToffer(props) {
     };
 
     let _data = await fetchOfferNft(searchParams);
+
     if (_data && _data.data.length > 0) {
       let a = _data.data;
 
@@ -102,7 +109,7 @@ function NFToffer(props) {
 
     let deadline = moment(datetime).unix();
 
-    await createOffer(
+    const res = await createOffer(
       props.NftDetails?.tokenId,
       props.collectionAddress,
       props.NftDetails?.ownedBy[0],
@@ -112,15 +119,29 @@ function NFToffer(props) {
       ethers.utils.parseEther(offerPrice),
       deadline,
       props.NftDetails.id,
-      contracts[selectedTokenFS]
+      contracts[selectedToken]
     );
 
-    setLoading(false);
-    await fetch()
-    setModal("inactive")
-    // slowRefresh(1000);
-    //await putOnMarketplace(currentUser, orderData);
-    return;
+    if (res == false) {
+      setLoading(false);
+      return;
+    }
+    else {
+      let historyReqData = {
+        nftID:  props.NftDetails?.id,
+        buyerID: localStorage.getItem("userId"),
+        action: "Offer",
+        type: "Updated",
+        price: ethers.utils.parseEther(offerPrice.toString()).toString(),
+        paymentToken: contracts[selectedToken],
+        quantity: offerQuantity,
+        createdBy: localStorage.getItem("userId"),
+      }
+      const d = await InsertHistory(historyReqData);
+      setLoading(false);
+      await fetch()
+      setModal("inactive")
+    }
   };
 
   function handleChange(ev) {
@@ -163,7 +184,6 @@ function NFToffer(props) {
               <tbody>
                 {offer && offer.length > 0
                   ? offer.map((b, i) => {
-
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
                     return (
@@ -218,13 +238,25 @@ function NFToffer(props) {
                                   moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                 }
                                 onClick={async () => {
-
+                                  console.log("offer accept click", b)
                                   setLoading(true);
                                   await handleAcceptOffers(
                                     b,
                                     props,
                                     currentUser.toLowerCase()
                                   );
+                                  let historyReqData = {
+                                    nftID: b?.nftID,
+                                    sellerID: localStorage.getItem('userId'),
+                                    buyerID: b?.bidderID?._id,
+                                    action: "Offer",
+                                    type: "Accepted",
+                                    price: b?.bidPrice?.$numberDecimal,
+                                    paymentToken: b?.paymentToken,
+                                    quantity: b?.bidQuantity,
+                                    createdBy: localStorage.getItem("userId"),
+                                  };
+                                  await InsertHistory(historyReqData);
                                   await fetch()
                                   setLoading(false);
                                 }}
@@ -242,6 +274,18 @@ function NFToffer(props) {
                                     b._id,
                                     "Rejected"
                                   );
+                                  let historyReqData = {
+                                    nftID: b?.nftID,
+                                    sellerID: localStorage.getItem('userId'),
+                                    buyerID: b?.bidderID?._id,
+                                    action: "Offer",
+                                    type: "Rejected",
+                                    price: b?.bidPrice?.$numberDecimal,
+                                    paymentToken: b?.paymentToken,
+                                    quantity: b?.bidQuantity,
+                                    createdBy: localStorage.getItem("userId"),
+                                  };
+                                  await InsertHistory(historyReqData);
                                   await fetch()
                                 }}
 
@@ -261,8 +305,8 @@ function NFToffer(props) {
                                 data-bs-toggle="modal"
                                 data-bs-target="#brandModal"
                                 onClick={() => {
+                                  setCurrentOffer(b);
                                   setModal("active");
-
                                   setOfferPrice(
                                     convertToEth(b?.bidPrice?.$numberDecimal)
                                   );
@@ -280,6 +324,17 @@ function NFToffer(props) {
                                     b._id,
                                     "Cancelled"
                                   );
+                                  let historyReqData = {
+                                    nftID: b?.nftID,
+                                    buyerID: localStorage.getItem('userId'),
+                                    action: "Offer",
+                                    type: "Cancelled",
+                                    price: b?.bidPrice?.$numberDecimal,
+                                    paymentToken: b?.paymentToken,
+                                    quantity: b?.bidQuantity,
+                                    createdBy: localStorage.getItem("userId"),
+                                  };
+                                  await InsertHistory(historyReqData);
                                   await fetch()
                                 }}
                               >
