@@ -15,7 +15,12 @@ import {
 
 import { useParams } from "react-router-dom";
 import { convertToEth } from "../../helpers/numberFormatter";
-import { createOffer, putOnMarketplace, handleBuyNft, createBid, } from "../../helpers/sendFunctions";
+import {
+  createOffer,
+  putOnMarketplace,
+  handleBuyNft,
+  createBid,
+} from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
 import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
 import { handleRemoveFromSale } from "./../../helpers/sendFunctions";
@@ -37,6 +42,7 @@ import {
 
 } from "@react-three/fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { onboard } from "../menu/header";
 
@@ -249,7 +255,6 @@ function NFTDetails() {
       try {
         const reqData = {
           nftID: id,
-          buyerID: localStorage.getItem("userId"),
         };
         const res = await getNFTDetails(reqData);
         if (res.length === 0) {
