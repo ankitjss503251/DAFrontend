@@ -531,7 +531,6 @@ function CreateNFTs() {
                     aria-label='Default select example'
                     value={collection}
                     onChange={(e) => {
-                      console.log("e.target.value", e.target.value);
                       setCollection(e.target.value);
                       setQuantity(1);
                     }}>
@@ -621,7 +620,6 @@ function CreateNFTs() {
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
                   >
-                    {console.log("brands--", brands)}
                     {brands && brands.length > 0
                       ? brands.map((b, i) => {
                           return (
@@ -747,7 +745,6 @@ function CreateNFTs() {
                         });
                     }
                     setAttributes(metaData);
-                    console.log("ATTRIBUTES", attributes);
                   }
                 }}>
                 Add Attributes

@@ -102,7 +102,8 @@ function CreateCollection(props) {
     if (!ev.target["validity"].valid) return;
     console.log("evv.target", ev.target["value"]);
     const dt = ev.target["value"];
-    const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
+    const ct = moment(new Date()).format();
+    
     if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
