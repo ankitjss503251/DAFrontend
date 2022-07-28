@@ -34,7 +34,7 @@ function HelpCenterQuery() {
                     <div className="col-md-12">
                         
                         <h1 className='text-light second_hd'>Getting Started</h1>
-                        <p className="lead text-light">Learn how to list your NFTs fro sale and understand the different ways to list your NFTs</p>
+                        <p className="lead text-light">Learn how to list your NFTs for sale and understand the different ways to list your NFTs</p>
                         <ul className="help_qt">
                             <li><Link to=""><Star /> How do I set my NFT as my Twitter profile picture?</Link></li>
                             <li><Link to=""><Star /> How do I create a DigitalArms account?</Link></li>

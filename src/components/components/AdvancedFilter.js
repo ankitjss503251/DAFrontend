@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UpArrow from "../SVG/dropdown";
 import { getCollections } from "../../helpers/getterFunctions";
+import { NotificationManager } from "react-notifications";
 
 const AdvancedFilter = (props) => {
   const [activeSaleType, setActiveSaleType] = useState(-2);
@@ -8,12 +9,12 @@ const AdvancedFilter = (props) => {
   const [colsAdv, setColsAdv] = useState("");
   const [cFlag, setCFlag] = useState(true);
   const [bFlag, setBFlag] = useState(true);
-  
-  
+
+
 
   useEffect(() => {
-    if(props.brandName !== undefined && bFlag){
-       setBFlag(false)
+    if (props.brandName !== undefined && bFlag) {
+      setBFlag(false)
     }
   }, [props.brandName])
 
@@ -31,9 +32,8 @@ const AdvancedFilter = (props) => {
           <div id='demo' className='collapse show'>
             <ul className='status_ul d-flex flex-wrap'>
               <li
-                className={`filter_border mr-2 ${
-                  activeSaleType === -2 ? "active" : ""
-                }`}
+                className={`filter_border mr-2 ${activeSaleType === -2 ? "active" : ""
+                  }`}
                 value='-2'
                 onClick={(e) => {
                   props.onAdvSearch({
@@ -45,9 +45,8 @@ const AdvancedFilter = (props) => {
                 All NFTs
               </li>
               <li
-                className={`filter_border mr-2 ${
-                  activeSaleType === 2 ? "active" : ""
-                }`}
+                className={`filter_border mr-2 ${activeSaleType === 2 ? "active" : ""
+                  }`}
                 value='2'
                 onClick={(e) => {
                   props.onAdvSearch({
@@ -59,9 +58,8 @@ const AdvancedFilter = (props) => {
                 Not For Sale
               </li>
               <li
-                className={`filter_border mr-2 ${
-                  activeSaleType === 0 ? "active" : ""
-                }`}
+                className={`filter_border mr-2 ${activeSaleType === 0 ? "active" : ""
+                  }`}
                 value='0'
                 onClick={(e) => {
                   props.onAdvSearch({
@@ -73,9 +71,8 @@ const AdvancedFilter = (props) => {
                 Buy Now
               </li>
               <li
-                className={`filter_border mr-2 ${
-                  activeSaleType === 1 ? "active" : ""
-                }`}
+                className={`filter_border mr-2 ${activeSaleType === 1 ? "active" : ""
+                  }`}
                 value='1'
                 onClick={(e) => {
                   props.onAdvSearch({
@@ -150,6 +147,9 @@ const AdvancedFilter = (props) => {
               className='filter_apply filter-text-left filter_padd mb-3'
               value={colsAdv}
               onChange={async (e) => {
+                if (e.target.value.trim() === "") {
+                  e.target.value = ""
+                }
                 setColsAdv(e.target.value);
                 if (e.target.value === "") {
                   props.onAdvSearch({ type: "collection", value: "" });
@@ -170,25 +170,25 @@ const AdvancedFilter = (props) => {
             />
             {cols && cols.length > 0 && colsAdv !== ""
               ? cols.map((i, key) => {
-                  return (
-                    <div className='form-check form-check-inline' key={key}>
-                      <input
-                        type='radio'
-                        id={i.name}
-                        name='radio-group'
-                        key={i}
-                        value={i._id}
-                        onChange={(e) => {
-                          props.onAdvSearch({
-                            type: "collection",
-                            value: e.target.value,
-                          });
-                        }}
-                      />
-                      <label htmlFor={i.name}>{i.name}</label>
-                    </div>
-                  );
-                })
+                return (
+                  <div className='form-check form-check-inline' key={key}>
+                    <input
+                      type='radio'
+                      id={i.name}
+                      name='radio-group'
+                      key={i}
+                      value={i._id}
+                      onChange={(e) => {
+                        props.onAdvSearch({
+                          type: "collection",
+                          value: e.target.value,
+                        });
+                      }}
+                    />
+                    <label htmlFor={i.name}>{i.name}</label>
+                  </div>
+                );
+              })
               : ""}
           </div>
         </form>
@@ -220,26 +220,26 @@ const AdvancedFilter = (props) => {
                 </div>
                 {props.category.length > 0
                   ? props.category?.map((c, key) => {
-                      return (
-                        <div className='form-check form-check-inline' key={key}>
-                          <input
-                            type='radio'
-                            id={c.name}
-                            name='radio-group'
-                            key={c.name}
-                            value={c._id}
-                            onChange={(e) => {
-                              setCFlag(false);
-                              props.onAdvSearch({
-                                type: "category",
-                                value: e.target.value,
-                              });
-                            }}
-                          />
-                          <label htmlFor={c.name}>{c.name}</label>
-                        </div>
-                      );
-                    })
+                    return (
+                      <div className='form-check form-check-inline' key={key}>
+                        <input
+                          type='radio'
+                          id={c.name}
+                          name='radio-group'
+                          key={c.name}
+                          value={c._id}
+                          onChange={(e) => {
+                            setCFlag(false);
+                            props.onAdvSearch({
+                              type: "category",
+                              value: e.target.value,
+                            });
+                          }}
+                        />
+                        <label htmlFor={c.name}>{c.name}</label>
+                      </div>
+                    );
+                  })
                   : ""}
               </form>
             </li>
@@ -258,75 +258,77 @@ const AdvancedFilter = (props) => {
           <ul>
             <li>
               <form action='#' className='checked_form'>
-              <div className='form-check form-check-inline'>
+                <div className='form-check form-check-inline'>
                   <input
                     type='radio'
                     id='allBrands'
                     name='radio-group'
                     checked={bFlag}
                     onChange={() => {
-                      if(props.brandName === undefined){
+                      if (props.brandName === undefined) {
                         setBFlag(true);
-                        props.onAdvSearch({ type: "brand", value: "" });}}
+                        props.onAdvSearch({ type: "brand", value: "" });
                       }
+                    }
+                    }
                   />
                   <label htmlFor='allBrands'>All</label>
                 </div>
                 {
-                  props.brandName ?   props.brands.length > 0
+                  props.brandName ? props.brands.length > 0
                     ? props.brands?.map((b, key) => {
-                        return (
-                          <div className='form-check form-check-inline' key={key}>
-                                <input
-                                  type='radio'
-                                  id={b.name}
-                                  name='radio-group'
-                                  key={b}
-                                  value={b._id}
-                                  checked={
-                                    b.name === props.brandName
-                                  }
-                                  onChange={(e) => {
-                                    setBFlag(false) 
-                                    props.brandName
-                                      ? e.preventDefault()
-                                      : 
-                                        props.onAdvSearch({
-                                          type: "brand",
-                                          value: e.target.value,
-                                        })
-                                  }}
-                                />
-                                <label htmlFor={b.name}>{b.name}</label>
-                          </div>
-                        );
-                      })
-                    : ""
-                    :
-                    props.brands.length > 0
-                  ? props.brands?.map((b, key) => {
                       return (
                         <div className='form-check form-check-inline' key={key}>
-                        
-                              <input
-                                type='radio'
-                                id={b.name}
-                                name='radio-group'
-                                key={b}
-                                value={b._id}
-                                onChange={(e) => {
-                                  setBFlag(false);
-                                 props.onAdvSearch({
-                                        type: "brand",
-                                        value: e.target.value,
-                                      });
-                                }}
-                              />
-                              <label htmlFor={b.name}>{b.name}</label>
+                          <input
+                            type='radio'
+                            id={b.name}
+                            name='radio-group'
+                            key={b}
+                            value={b._id}
+                            checked={
+                              b.name === props.brandName
+                            }
+                            onChange={(e) => {
+                              setBFlag(false)
+                              props.brandName
+                                ? e.preventDefault()
+                                :
+                                props.onAdvSearch({
+                                  type: "brand",
+                                  value: e.target.value,
+                                })
+                            }}
+                          />
+                          <label htmlFor={b.name}>{b.name}</label>
                         </div>
                       );
                     })
-                  : ""}
+                    : ""
+                    :
+                    props.brands.length > 0
+                      ? props.brands?.map((b, key) => {
+                        return (
+                          <div className='form-check form-check-inline' key={key}>
+
+                            <input
+                              type='radio'
+                              id={b.name}
+                              name='radio-group'
+                              key={b}
+                              value={b._id}
+                              onChange={(e) => {
+                                setBFlag(false);
+                                props.onAdvSearch({
+                                  type: "brand",
+                                  value: e.target.value,
+                                });
+                              }}
+                            />
+                            <label htmlFor={b.name}>{b.name}</label>
+                          </div>
+                        );
+                      })
+                      : ""}
               </form>
             </li>
           </ul>
