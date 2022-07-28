@@ -434,6 +434,8 @@ function NFTDetails() {
             : contracts[selectedToken],
         tokenId: NFTDetails.tokenId,
         erc721: NFTDetails.type === 1,
+        hash: "0x0",
+        hashStatus: 1
       };
       let res = await putOnMarketplace(currentUser, orderData);
       if (res === false) {
@@ -758,7 +760,7 @@ function NFTDetails() {
                 Number(convertToEth(orders[0].price?.$numberDecimal))
               ) {
                 NotificationManager.error(
-                  "Bid Price must be greater than minimum bid",
+                  "Bid Price must be greater thanf minimum bid",
                   "",
                   800
                 );
@@ -775,7 +777,7 @@ function NFTDetails() {
                   firstOrderNFT?.type,
                   orders[0].total_quantity,
                   ethers.utils.parseEther(price.toString()),
-                  false
+                  false,
                   // new Date(bidDeadline).valueOf() / 1000
                 );
                 if (res === false) {
@@ -1064,7 +1066,7 @@ function NFTDetails() {
                 <p>
                   Owned by{" "}
                   <span style={textColor}>
-                    {ownedBy.slice(0, 8) + "..." + ownedBy.slice(34, 42)}
+                    {ownedBy?.slice(0, 8) + "..." + ownedBy?.slice(34, 42)}
                   </span>
                 </p>
                 <span className='add_wishlist'>
