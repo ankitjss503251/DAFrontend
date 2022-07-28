@@ -595,16 +595,7 @@ export const fetchHistory = async (req) => {
   return formattedData;
 }
 
-export const fetchWallet = async () => {
-  await onboard.connectWallet({
-    disableModals: true
-  });
-  // else NotificationManager.error("Connect Your Wallet", "", 800);
-  const currentState = onboard.state.get()
-  console.log("curr state", currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : "")
-  return currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : ""
 
-}
 
 // export const getUsersNFTs = async (
 //   paramType,

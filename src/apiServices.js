@@ -114,7 +114,6 @@ export const Logout = async () => {
 };
 
 export const getProfile = async () => {
-  console.log("get profile is called");
   try {
     const response = await fetch(
       process.env.REACT_APP_API_BASE_URL + "/user/profile",

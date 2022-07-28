@@ -337,7 +337,6 @@ function NFTBids(props) {
                                   to={"/"}
                                   className="small_yellow_btn small_btn mb-3"
                                   onClick={async () => {
-                                    console.log("nnn", b)
                                     setLoading(true);
                                     await handleAcceptBids(
                                       b,

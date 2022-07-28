@@ -23,7 +23,6 @@ import { InsertHistory } from "../../apiServices";
 import injectedModule from "@web3-onboard/injected-wallets";
 import walletConnectModule from "@web3-onboard/walletconnect";
 import Logo from "./../../assets/images/logo.svg";
-import { fetchWallet } from "../../helpers/getterFunctions";
 
 
 function NFToffer(props) {
@@ -146,7 +145,7 @@ function NFToffer(props) {
 
     const dt = ev.target["value"];
 
-    const ct = moment().add({ 'hours': 5, 'minutes': 30 }).toISOString();
+    const ct = moment(new Date()).format();
 
     if (dt < ct) {
       NotificationManager.error(

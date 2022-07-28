@@ -129,12 +129,6 @@ const Navbar = (props) => {
     init();
     console.log('rendered');
   }, []);
-
-
-  evt.on("wallet-connect", () => {
-    console.log("1111");
-  });
-
   const init = async () => {
     if (cookies["da_selected_account"]) {
       setAccount(cookies["da_selected_account"]);
