@@ -26,6 +26,11 @@ import defaultProfile from "../../assets/images/favicon.png";
 import menuIcon from "../../assets/menu.png";
 import evt from "./../../events/events";
 
+const Web3 = require('web3');
+// web3 lib instance
+const web3 = new Web3(window.ethereum);
+
+
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const injected = injectedModule();
@@ -157,9 +162,11 @@ const Header = function () {
   const connectWallet = async () => {
     const wallets = await onboard.connectWallet();
     if (wallets.length !== 0) {
+
       await onboard.setChain({
         chainId: process.env.REACT_APP_CHAIN_ID,
       });
+
       const primaryWallet = wallets[0];
       const address = primaryWallet.accounts[0].address;
       try {
@@ -167,10 +174,12 @@ const Header = function () {
       } catch (e) {
         console.log("Error in user auth", e);
       }
+
+      
     }
   };
 
-  const userAuth = async (primaryWallet, address) => {
+  const userAuth = async (primaryWallet, address, signature, message) => {
     try {
       const isUserExist = await checkuseraddress(address);
       if (isUserExist === "User not found") {

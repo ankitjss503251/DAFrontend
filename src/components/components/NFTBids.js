@@ -408,18 +408,15 @@ function NFTBids(props) {
                             ? "Auction"
                             : "Open for Bids"}</td>
                           <td>
-                            {moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() || b?.deadline === GENERAL_TIMESTAMP ? (
-                              "--:--:--"
-                            ) : (
-                              <Clock
-                                deadline={moment.utc(b?.bidDeadline * 1000).local().format()}
-                              ></Clock>
-                            )}
+                            {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format() ? <Clock
+                              deadline={moment.utc(b.bidDeadline * 1000).local().format()}></Clock> : " --:--:--"}
+
+
                           </td>
                           <td className="blue_text">
-                            {moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format()
-                              ? "Active"
-                              : "Ended"}
+                            {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
+                              ? "Ended"
+                              : "Active"}
                           </td>
                           <td className="text-center">
                             {bidOwner === currentUser?.toLowerCase() ? (

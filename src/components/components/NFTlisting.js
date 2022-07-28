@@ -522,7 +522,7 @@ function NFTlisting(props) {
                           </td>
                           <td>
 
-                            {moment.utc(o?.deadline * 1000).local().format() < moment(new Date()).format() || o.deadline === GENERAL_TIMESTAMP ? (
+                            {moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format() || o.deadline === GENERAL_TIMESTAMP ? (
                               "--:--:--"
                             ) : (
 
@@ -532,7 +532,7 @@ function NFTlisting(props) {
                             )}
                           </td>
                           <td className="blue_text">
-                            {moment.utc(o?.deadline * 1000).local().format() > moment(new Date()).format()
+                            {moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
                               ? "Active"
                               : "Ended"}
                           </td>
@@ -570,6 +570,7 @@ function NFTlisting(props) {
                                   Remove From Sale
                                 </button>
                               ) : (
+
                                 <button
                                   to={"/"}
                                   disabled={
@@ -632,9 +633,9 @@ function NFTlisting(props) {
                                 >
                                   {o.salesType === 0
                                     ? "Buy Now"
-                                    : haveBid
-                                      ? "Update Bid"
-                                      : "Place Bid"}
+                                    : !haveBid
+                                      ? "Place Bid"
+                                      : ""}
                                 </button>
                               )}
                             </div>
