@@ -25,6 +25,7 @@ import {
   createOfferNFT,
   updateBidNft,
   acceptOffer,
+  UpdateStatus,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
 import contracts from "./../config/contracts";
@@ -48,7 +49,7 @@ export const handleBuyNft = async (
   let marketplace;
   try {
     order = await buildSellOrder(id);
-    details = await getOrderDetails({ orderId: id });
+    details = await getOrderDetails({ orderID: id });
   } catch (e) {
     console.log("error in API", e);
     return false;
@@ -201,10 +202,112 @@ export const handleBuyNft = async (
         signature,
         options
       );
-      let res = await completeOrder.wait();
-      if (res.status === 0) {
+      let req = {
+        "recordID": id,
+        "DBCollection": "Order",
+        "hashStatus": 0,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req)
+      }
+      catch (e) {
+        return
+      }
+      try {
+        if (isERC721) {
+          let res = await completeOrder.wait();
+
+          if (res.status === 0) {
+            return false;
+          }
+          try {
+            await UpdateOrder({
+              orderID: id,
+              nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
+              seller: details.sellerID.walletAddress?.toLowerCase(), //to make sure we update the quantity left : walletAddress
+              qtyBought: Number(qty),
+              qty_sold: Number(details.quantity_sold) + Number(qty),
+              buyer: account?.toLowerCase(),
+              LazyMintingStatus:
+                details.nftID.quantity_minted + qty === details.nftID.totalQuantity
+                  ? 0
+                  : 1,
+              quantity_minted:
+                details.nftID.quantity_minted === details.nftID.totalQuantity
+                  ? details.nftID.quantity_minted
+                  : details.nftID.quantity_minted + qty,
+              hashStatus: 1
+            });
+            await DeleteOrder({ orderID: id });
+          }
+          catch (e) {
+            console.log("error in updating order data", e);
+            return false;
+          }
+        } else {
+          let res = await completeOrder.wait();
+
+          if (res.status === 0) {
+            return false;
+          }
+          try {
+            await UpdateOrder({
+              orderID: id,
+              nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
+              seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
+              qtyBought: Number(qty),
+              qty_sold: Number(details.quantity_sold) + Number(qty),
+              buyer: account?.toLowerCase(),
+              LazyMintingStatus:
+                details.nftID.quantity_minted + qty === details.nftID.totalQuantity
+                  ? 0
+                  : 1,
+              quantity_minted:
+                details.nftID.quantity_minted === details.nftID.totalQuantity
+                  ? details.nftID.quantity_minted
+                  : details.nftID.quantity_minted + qty,
+
+              hashStatus: 0
+            });
+
+            if (
+              Number(details.quantity_sold) + Number(qty) >=
+              details.total_quantity
+            ) {
+              try {
+                await DeleteOrder({ orderID: id });
+              } catch (e) {
+                console.log("error in updating order data", e);
+                return false;
+              }
+            }
+            else {
+              let req = {
+                "recordID": id,
+                "DBCollection": "Order",
+                "hashStatus": 1
+              }
+              try {
+                await UpdateStatus(req)
+              }
+              catch (e) {
+                return
+              }
+            }
+          }
+          catch (e) {
+            console.log("error in updating order data", e);
+            return false;
+          }
+        }
+      } catch (e) {
+        console.log("error in updating order data", e);
         return false;
       }
+
+
+
     } catch (e) {
       // console.log("JSON.parse(e)", JSON.parse(e));
 
@@ -224,62 +327,10 @@ export const handleBuyNft = async (
     return false;
   }
 
-  try {
-    if (isERC721) {
-      await UpdateOrder({
-        orderID: id,
-        nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
-        seller: details.sellerID.walletAddress?.toLowerCase(), //to make sure we update the quantity left : walletAddress
-        qtyBought: Number(qty),
-        qty_sold: Number(details.quantity_sold) + Number(qty),
-        buyer: account?.toLowerCase(),
-        LazyMintingStatus:
-          details.nftID.quantity_minted + qty === details.nftID.totalQuantity
-            ? 0
-            : 1,
-        quantity_minted:
-          details.nftID.quantity_minted === details.nftID.totalQuantity
-            ? details.nftID.quantity_minted
-            : details.nftID.quantity_minted + qty,
-      });
-      DeleteOrder({ orderID: id });
-    } else {
-      await UpdateOrder({
-        orderID: id,
-        nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
-        seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
-        qtyBought: Number(qty),
-        qty_sold: Number(details.quantity_sold) + Number(qty),
-        buyer: account?.toLowerCase(),
-        LazyMintingStatus:
-          details.nftID.quantity_minted + qty === details.nftID.totalQuantity
-            ? 0
-            : 1,
-        quantity_minted:
-          details.nftID.quantity_minted === details.nftID.totalQuantity
-            ? details.nftID.quantity_minted
-            : details.nftID.quantity_minted + qty,
-      });
 
-      if (
-        Number(details.quantity_sold) + Number(qty) >=
-        details.total_quantity
-      ) {
-        try {
-          await DeleteOrder({ orderID: id });
-        } catch (e) {
-          console.log("error in updating order data", e);
-          return false;
-        }
-      }
-    }
-  } catch (e) {
-    console.log("error in updating order data", e);
-    return false;
-  }
 
   NotificationManager.success("NFT Purchased Successfully");
-  slowRefresh(1000);
+  // slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -449,7 +500,7 @@ export const handleRemoveFromSale = async (orderId, account) => {
       value: "0",
     };
     order = await buildSellOrder(orderId);
-    details = await getOrderDetails({ orderId: orderId });
+    details = await getOrderDetails({ orderID: orderId });
     let res = await marketplace.cancelOrder(order, details.signature, options);
     res = await res.wait();
     if (res.status === 0) {
@@ -484,7 +535,7 @@ export const createBid = async (
   erc721,
   qty = 1,
   bidPrice,
-  isOffer = false
+  isOffer = false,
 ) => {
   console.log("ownerAccount", ownerAccount);
   let SellerOrder;
@@ -599,6 +650,7 @@ export const createBid = async (
           buyerSignature: signature,
           isOffer: isOffer,
           bidDeadline: SellerOrder[7],
+
         };
         await createBidNft(reqParams);
       }
@@ -724,7 +776,7 @@ export const handleAcceptBids = async (
   let options;
   try {
     order = await buildSellOrder(bidData.orderID);
-    details = await getOrderDetails({ orderId: bidData.orderID });
+    details = await getOrderDetails({ orderID: bidData.orderID });
   } catch (e) {
     console.log("error in API", e);
     return false;
@@ -846,38 +898,7 @@ export const handleAcceptBids = async (
         gasLimit: 9000000,
         value: 0,
       };
-      try {
-        let result = await marketplace.estimateGas.completeOrder(
-          sellerOrder,
-          sellerSignature,
-          buyerOrder,
-          buyerSignature,
-          options
-        );
-        console.log("result buy", result);
-        if (result) {
-          completeOrder = await marketplace.completeOrder(
-            sellerOrder,
-            sellerSignature,
-            buyerOrder,
-            buyerSignature,
-            options
-          );
-          let res = await completeOrder.wait();
-          if (res.status === 0) {
-            return false;
-          }
-        }
-      } catch (e) {
-        // console.log("JSON.parse(e)", JSON.parse(e));
 
-        if (JSON.stringify(e).includes(`"reason":"Not an owner"`)) {
-          alert("Not an owner");
-          console.log("error in contract function calling", e);
-          return;
-        }
-        return;
-      }
       completeOrder = await marketplace.completeOrder(
         sellerOrder,
         sellerSignature,
@@ -885,12 +906,22 @@ export const handleAcceptBids = async (
         buyerSignature,
         options
       );
+      let req = {
+        "recordID": bidData.orderID,
+        "DBCollection": "Order",
+        "hashStatus": 0,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req)
+      }
+      catch (e) {
+        return
+      }
       completeOrder = await completeOrder.wait();
       if (completeOrder.status === 0) {
         // NotificationManager.error("Transaction Failed");
         return false;
-      } else {
-        // NotificationManager.success("Transaction successful");
       }
     } catch (e) {
       console.log("error in contract", e);
@@ -906,12 +937,49 @@ export const handleAcceptBids = async (
         qty_sold: Number(details.quantity_sold) + Number(bidData.bidQuantity),
         buyer: buyerOrder[0]?.toLowerCase(),
       });
-
+      let req = {
+        "recordID": bidData.orderID,
+        "DBCollection": "Order",
+        "hashStatus": 1,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req)
+      }
+      catch (e) {
+        return
+      }
       if (
         Number(details.quantity_sold) + Number(bidData.bidQuantity) >=
         details.total_quantity
       ) {
         DeleteOrder({ orderID: bidData.orderID[0]?._id });
+      }
+      else {
+        let req = {
+          "recordID": bidData.orderID,
+          "DBCollection": "Order",
+          "hashStatus": 1,
+          "hash": completeOrder.hash
+        }
+        try {
+          await UpdateStatus(req)
+        }
+        catch (e) {
+          return
+        }
+      }
+      let req1 = {
+        "recordID": bidData.orderID,
+        "DBCollection": "Order",
+        "hashStatus": 1,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req1)
+      }
+      catch (e) {
+        return
       }
     } catch (e) {
       console.log("error in updating order data", e);
@@ -1075,6 +1143,18 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         buyerSignature,
         options
       );
+      let req = {
+        "recordID": bidData._id,
+        "DBCollection": "Bids",
+        "hashStatus": 0,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req)
+      }
+      catch (e) {
+        return
+      }
       completeOrder = await completeOrder.wait();
       if (completeOrder.status === 0) {
         return false;
@@ -1105,6 +1185,18 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     } catch (e) {
       console.log("error in updating order data", e);
       return false;
+    }
+    let req = {
+      "recordID": bidData._id,
+      "DBCollection": "Bids",
+      "hashStatus": 1,
+      "hash": completeOrder.hash
+    }
+    try {
+      await UpdateStatus(req)
+    }
+    catch (e) {
+      return
     }
   } catch (e) {
     console.log("error in contract function calling", e);
