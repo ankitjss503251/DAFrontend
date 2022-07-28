@@ -148,7 +148,7 @@ const Header = function () {
 
   const getUserProfile = async () => {
     const profile = await getProfile();
-    setUserDetails(profile.data);
+    setUserDetails(profile?.data);
 
   };
 
