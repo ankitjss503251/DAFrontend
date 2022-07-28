@@ -47,7 +47,7 @@ function CollectionList(props) {
                           )}
                           {props.nft && props.nft.fileType === "Video" ? (
                             <video
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100 ' 
                               controls>
                               <source src={props.nft?.image} type='video/mp4' />
                             </video>
@@ -57,7 +57,7 @@ function CollectionList(props) {
 
                           {props.nft && props.nft.fileType === "3D" ? (
                             <Canvas
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100'
                               camera={{ position: [10, 100, 100], fov: 1 }}>
                               <pointLight
                                 position={[10, 10, 10]}
