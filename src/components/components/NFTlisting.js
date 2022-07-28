@@ -21,6 +21,9 @@ import { slowRefresh } from "../../helpers/NotifyStatus";
 import { fetchBidNft } from "../../apiServices";
 import { InsertHistory } from "./../../apiServices";
 import evt from "./../../events/events";
+import { onboard } from "../menu/header";
+import { WalletConditions } from "../components/WalletConditions";
+
 
 function NFTlisting(props) {
   const [orders, setOrders] = useState([]);

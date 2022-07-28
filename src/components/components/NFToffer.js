@@ -19,6 +19,9 @@ import { Tokens } from "../../helpers/tokensToSymbol";
 import { InsertHistory } from "../../apiServices";
 import Logo from "./../../assets/images/logo.svg";
 import evt from "./../../events/events";
+import { onboard } from "../menu/header";
+import { WalletConditions } from "../components/WalletConditions";
+import PopupModal from "../components/AccountModal/popupModal";
 
 
 function NFToffer(props) {
@@ -264,7 +267,7 @@ function NFToffer(props) {
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
                     return (
-                      <tr>
+                      <tr key={i}>
                         <td className="d-flex justify-content-start align-items-center mb-0">
                           <span className="blue_dot circle_dot"></span>
                           <span>

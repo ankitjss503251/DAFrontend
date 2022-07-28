@@ -19,6 +19,9 @@ import Spinner from "./Spinner";
 import { InsertHistory } from "./../../apiServices";
 import { GENERAL_TIMESTAMP } from "../../helpers/constants";
 import evt from "./../../events/events";
+import { onboard } from "../menu/header";
+import { WalletConditions } from "../components/WalletConditions";
+
 
 function NFTBids(props) {
   const [currentUser, setCurrentUser] = useState("");
