@@ -45,7 +45,7 @@ import { onboard } from "../components/menu/header";
 export const buildSellOrder = async (id) => {
   let details;
   try {
-    details = await getOrderDetails({ orderId: id });
+    details = await getOrderDetails({ orderID: id });
     console.log("details 123", details);
     const order = [
       details.sellerID?.walletAddress.toLowerCase(),

@@ -12,6 +12,7 @@ import {
   blockUnBlockCollection,
   isSuperAdmin,
   importNft,
+  UpdateStatus,
 } from "../../apiServices";
 import contracts from "../../config/contracts";
 import degnrABI from "./../../config/abis/dgnr8.json";
@@ -304,45 +305,13 @@ function CreateCollection(props) {
 
         try {
           setLoading(true);
-
-          if (isOffChain === "No") {
-            nftType === "1"
-              ? (res1 = await creator.deployExtendedERC721(
-                title,
-                symbol,
-                "www.uri.com",
-                royalty * 100,
-                contracts.BUSD
-              ))
-              : (res1 = await creator.deployExtendedERC1155(
-                "www.uri.com",
-                royalty * 100,
-                contracts.BUSD
-              ));
-
-            let hash = res1;
-            res1 = await res1.wait();
-            contractAddress = await readReceipt(hash);
-          } else {
-            res1 = {};
-            res1.status = 1;
-          }
-        } catch (e) {
-          console.log(e);
-          setLoading(false);
-          NotificationManager.error(e.message, "", 900);
-          slowRefresh(1000);
-        }
-
-        if (res1 !== undefined) {
+          fd = new FormData();
           let type;
           if (nftType === "1") {
             type = 1;
           } else {
             type = 2;
           }
-
-          fd = new FormData();
           fd.append("name", title);
           fd.append("symbol", symbol);
           fd.append("description", description);
@@ -365,21 +334,77 @@ function CreateCollection(props) {
           fd.append("price", ethers.utils.parseEther(price.toString()));
           fd.append("royality", royalty * 1000);
 
-          try {
-            await createCollection(fd);
-          } catch (e) {
-            setLoading(false);
-            NotificationManager.error(e.message, "", 800);
-            slowRefresh(1000);
+
+          if (isOffChain === "No") {
+            nftType === "1"
+              ? (res1 = await creator.deployExtendedERC721(
+                title,
+                symbol,
+                "www.uri.com",
+                royalty * 100,
+                contracts.BUSD
+              ))
+              : (res1 = await creator.deployExtendedERC1155(
+                "www.uri.com",
+                royalty * 100,
+                contracts.BUSD
+              ));
+
+            let hash = res1;
+            fd.append("hash", hash?.hash)
+            fd.append("hashStatus", 0)
+            let createdCollection;
+            try {
+              createdCollection = await createCollection(fd);
+            } catch (e) {
+              setLoading(false);
+              NotificationManager.error(e.message, "", 800);
+              slowRefresh(1000);
+            }
+            contractAddress = await readReceipt(hash);
+            res1 = await res1.wait();
+            let req = {
+              "contractAddress": contractAddress,
+              "recordID": createdCollection._id,
+              "DBCollection": "Collection",
+              "hashStatus": 1
+            }
+            try {
+              await UpdateStatus(req)
+            }
+            catch (e) {
+              return
+            }
+
+          } else {
+            res1 = {};
+            res1.status = 1;
+            fd.append("hash", "0x")
+            fd.append("hashStatus", 1)
+            try {
+              await createCollection(fd);
+            } catch (e) {
+              setLoading(false);
+              NotificationManager.error(e.message, "", 800);
+              // slowRefresh(1000);
+            }
           }
 
+        } catch (e) {
+          console.log(e);
+          setLoading(false);
+          NotificationManager.error(e.message, "", 900);
+          // slowRefresh(1000);
+        }
+
+        if (res1 !== undefined) {
           NotificationManager.success(
             "collection created successfully",
             "",
             1800
           );
           setLoading(false);
-          slowRefresh(1000);
+          // slowRefresh(1000);
         }
       }
     }
