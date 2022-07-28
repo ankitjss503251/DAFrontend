@@ -5443,6 +5443,14 @@ section.collection_info .justify-content-end {
   display: none !important;
 }
 
+button.filter_btn {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -o-user-select: none;
+  user-select: none;
+
+
 
 .hist_tk{
   height: 25px;
@@ -5466,4 +5474,5 @@ section.collection_info .justify-content-end {
     height: 100%;
     width: 100%;
     object-fit: contain;
+
 }
