@@ -376,7 +376,7 @@ function NFTlisting(props) {
                   {orders && orders.length > 0
                     ? orders.map((o, i) => {
                       return (
-                        <tr>
+                        <tr key={i}>
                           <td className="d-flex justify-content-start align-items-center mb-0">
                             <span className="yellow_dot circle_dot"></span>
                             <span>
