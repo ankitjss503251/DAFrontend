@@ -52,7 +52,7 @@ const NFThistory = (props) => {
                 {
                   history && history.length > 0 ? history?.map((h, i) => {
                     return (
-                      <tr>
+                      <tr key={i}>
                         <td>
                           {
                             (h?.action === "PutOnSale") ? <>
