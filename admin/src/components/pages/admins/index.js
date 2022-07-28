@@ -88,7 +88,11 @@ function Admins() {
         document.querySelector('.modal-backdrop')?.classList.toggle('show');
       } catch (e) {
         let error = await e.getBody();
-        NotificationManager.error(error.message, "", 2000);
+        if (error.message === "User already exists") {
+          NotificationManager.error("Admin already added or its an user account", "", 2000);
+        }
+        else
+          NotificationManager.error(error.message, "", 2000);
         setState(state => ({ ...state, loading: false }));
       }
       // setState(state=>({...state,loading:false}));
@@ -148,8 +152,8 @@ function Admins() {
                           src={item?.profileIcon ? item?.profileIcon : ""}
                           className="profile_i m-2"
                           alt=""
-                          onError={(e) => 
-                           ( e.target.src = "./../images/login.jpg")
+                          onError={(e) =>
+                            (e.target.src = "./../images/login.jpg")
                           }
                         />
                       </td>
@@ -170,7 +174,7 @@ function Admins() {
                               blockUnblockUser(item._id, item.status ? 0 : 1);
                             }}
                           >
-                            {item.status === 0 ? "Active" : "InActive"}
+                            {item.status === 0 ? "Active" : "Inactive"}
                           </button>
 
                           <button

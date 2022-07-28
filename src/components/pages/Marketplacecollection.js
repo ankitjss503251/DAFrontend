@@ -41,7 +41,7 @@ function Marketplacecollection() {
   useEffect(() => {
     const fetch = async () => {
       setLoader(true);
-      
+
       try {
         const res1 = await getCategory();
         setCategories(res1);
@@ -96,7 +96,7 @@ function Marketplacecollection() {
 
   const handleCategoryChange = async (category) => {
     setLoader(true);
-   
+
     try {
       let temp2 = activeCat;
       const reqBody = {
@@ -107,7 +107,7 @@ function Marketplacecollection() {
       };
       const ind = await getCollections(reqBody);
       setCardCount(cardCount + ind.length);
-      if (ind.length > 0 ) {
+      if (ind.length > 0) {
         setLoadMoreDisabled("");
         // temp2 = [...temp2, ind];
         temp2 = [ind]
@@ -134,7 +134,7 @@ function Marketplacecollection() {
         <div className="container">
           <div className="row">
             <div className="col-md-12">
-              <h1>Marketplace</h1>
+              <h1>Collections</h1>
             </div>
           </div>
         </div>
@@ -177,33 +177,33 @@ function Marketplacecollection() {
                 )}
                 {categories?.length > 0
                   ? categories.map((cat, key) => {
-                      return (
-                        <li className="nav-item" role="presentation" key={key}>
-                          <button
-                            className="nav-link"
-                            id={cat.name}
-                            data-bs-toggle="pill"
-                            data-bs-target={`#${cat.name}`}
-                            type="button"
-                            role="tab"
-                            aria-controls={`#${cat.name}`}
-                            aria-selected="true"
-                            onClick={() => {
-                              setActiveCat([]);
-                              setLoadMoreDisabledAll("");
-                              setLoadMoreDisabled("");
-                              setShowTab("show active");
-                              // setLoader(true);
-                              setCardCount(0);
-                              setCurrPage(1);
-                              handleCategoryChange(cat);
-                            }}
-                          >
-                            {cat.name}
-                          </button>
-                        </li>
-                      );
-                    })
+                    return (
+                      <li className="nav-item" role="presentation" key={key}>
+                        <button
+                          className="nav-link"
+                          id={cat.name}
+                          data-bs-toggle="pill"
+                          data-bs-target={`#${cat.name}`}
+                          type="button"
+                          role="tab"
+                          aria-controls={`#${cat.name}`}
+                          aria-selected="true"
+                          onClick={() => {
+                            setActiveCat([]);
+                            setLoadMoreDisabledAll("");
+                            setLoadMoreDisabled("");
+                            setShowTab("show active");
+                            // setLoader(true);
+                            setCardCount(0);
+                            setCurrPage(1);
+                            handleCategoryChange(cat);
+                          }}
+                        >
+                          {cat.name}
+                        </button>
+                      </li>
+                    );
+                  })
                   : ""}
               </ul>
             </div>
@@ -279,8 +279,8 @@ function Marketplacecollection() {
                   })
                 ) : (
                   <div className="col-md-12">
-          <h4 className="no_data_text text-muted">No Collections Available</h4>
-        </div>
+                    <h4 className="no_data_text text-muted">No Collections Available</h4>
+                  </div>
                 )}
                 {allCollections[0]?.length > 12 ? (
                   <div className="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
@@ -371,8 +371,8 @@ function Marketplacecollection() {
                   })
                 ) : (
                   <div className="col-md-12">
-          <h4 className="no_data_text text-muted">No Collections Available</h4>
-        </div>
+                    <h4 className="no_data_text text-muted">No Collections Available</h4>
+                  </div>
                 )}
                 {activeCat[0]?.length > 12 ? (
                   <div className="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">

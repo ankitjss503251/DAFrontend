@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getCategory } from '../../helpers/getterFunctions';
+import Firearmsvg from "../SVG/Firearmsvg";
 
-const footer= () => (
-  <footer className="footer-dark pt-5 pb-5">
+const Footer = function () {
+    const [catg, setCatg] = useState([])
+    useEffect(() => {
+        async function setCategory() {
+            const cat = await getCategory();
+            setCatg(cat);
+        }
+        setCategory();
+    }, []);
+    return (
+        <footer className="footer-dark pt-5 pb-5">
             <div className="container nav-container">
                 <div className="row">
                     <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12">
                         <div className="widget text-widget">
-                            <img alt='' src={'../img/logo.svg'} className="mb-3"/>
+                            <img alt='' src={'../img/logo.svg'} className="mb-3" />
                             <p>The #1 NFT firearms supplier for interoperable gaming.</p>
                         </div>
                     </div>
@@ -15,12 +26,23 @@ const footer= () => (
                         <div className="menu-widget widget">
                             <h5 className='mb-4'>Marketplace</h5>
                             <ul>
-                                <li><Link to="/NFTDetails">All NFTs</Link></li>
-                                <li><Link to="/marketplacecollection">Firearms</Link></li>
-                                <li><Link to="/marketplacecollection">Soldiers</Link></li>
-                                <li><Link to="/marketplacecollection">Hot List</Link></li>
-                                <li><Link to="">NFT Ranking</Link></li>
-                                <li><Link to="">Live Auctions</Link></li>
+                                <li><Link to="/marketplace">All NFTs</Link></li>
+                                {catg.length > 0
+                                    ? catg?.map((c, key) => {
+                                        return (
+                                            <li key={key}>
+                                                <Link
+                                                    to={`/marketplacecollection/${c.name}`}
+                                                    className="sub-items"
+                                                >
+                                                    <Firearmsvg />
+                                                    {c.name}
+                                                </Link>
+                                            </li>
+                                        );
+                                    })
+                                    : ""}
+
                             </ul>
                         </div>
                     </div>
@@ -63,15 +85,15 @@ const footer= () => (
                             <p>Signup for our newsletter to get the latest news in your inbox</p>
                             <form action="#" className="form-dark mb-1" id="form_subscribe" method="post" name="form_subscribe">
                                 <div className="newsletter_box">
-                                    <input className="form-control" id="txt_subscribe" name="txt_subscribe" placeholder="enter your email" type="text" /> 
+                                    <input className="form-control" id="txt_subscribe" name="txt_subscribe" placeholder="enter your email" type="text" />
                                     <button type='button' id="btn-subscribe">
-                                      <i className="arrow_right bg-color-secondary"></i>
+                                        <i className="arrow_right bg-color-secondary"></i>
                                     </button>
                                     <div className="clearfix"></div>
                                 </div>
                             </form>
                             <div className="botton-text">your email is safe with us. We don’t spam.</div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -80,7 +102,7 @@ const footer= () => (
                 <div className="container nav-container">
                     <div className="row align-items-end">
                         <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12">
-                            <span onClick={()=> window.open("", "_self")}>
+                            <span onClick={() => window.open("", "_self")}>
                                 <span className="copy">&copy;Copyright 2022 - HunterToken - in partnership with BlockchainAustralia</span>
                             </span>
                         </div>
@@ -98,5 +120,6 @@ const footer= () => (
                 </div>
             </div>
         </footer>
-);
-export default footer;
+    );
+}
+export default Footer;
