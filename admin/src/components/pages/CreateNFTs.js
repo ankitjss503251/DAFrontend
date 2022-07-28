@@ -277,7 +277,7 @@ function CreateNFTs() {
       return;
     }
 
-    if (attrKeys.includes(currAttrKey.toLowerCase())) {
+    if (attrKeys.includes(currAttrKey)) {
       NotificationManager.error("Cannot Add Same Property Twice", "", 800);
       return;
     }
@@ -285,7 +285,7 @@ function CreateNFTs() {
     let tempArr1 = [];
     let tempArr2 = [];
     if (currAttrKey) {
-      tempArr1.push(...attrKeys, currAttrKey.toLowerCase());
+      tempArr1.push(...attrKeys, currAttrKey);
       tempArr2.push(...attrValues, currAttrValue);
     }
 

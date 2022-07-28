@@ -148,8 +148,8 @@ function Admins() {
                           src={item?.profileIcon ? item?.profileIcon : ""}
                           className="profile_i m-2"
                           alt=""
-                          onError={(e) => 
-                           ( e.target.src = "./../images/login.jpg")
+                          onError={(e) =>
+                            (e.target.src = "./../images/login.jpg")
                           }
                         />
                       </td>
@@ -170,7 +170,7 @@ function Admins() {
                               blockUnblockUser(item._id, item.status ? 0 : 1);
                             }}
                           >
-                            {item.status === 0 ? "Active" : "InActive"}
+                            {item.status === 0 ? "Active" : "Inactive"}
                           </button>
 
                           <button

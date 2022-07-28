@@ -193,26 +193,17 @@ export const handleBuyNft = async (
     };
 
     try {
-      let result = await marketplace.estimateGas.completeOrder(
+
+      let completeOrder = await marketplace.completeOrder(
         sellerOrder,
         signature,
         buyerOrder,
         signature,
         options
       );
-      console.log("result buy", result);
-      if (result) {
-        let completeOrder = await marketplace.completeOrder(
-          sellerOrder,
-          signature,
-          buyerOrder,
-          signature,
-          options
-        );
-        let res = await completeOrder.wait();
-        if (res.status === 0) {
-          return false;
-        }
+      let res = await completeOrder.wait();
+      if (res.status === 0) {
+        return false;
       }
     } catch (e) {
       // console.log("JSON.parse(e)", JSON.parse(e));
