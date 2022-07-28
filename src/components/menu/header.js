@@ -242,7 +242,7 @@ const Header = function () {
     await onboard.disconnectWallet({ label: cookies["label"] });
     await Logout(cookies["selected_account"]);
     refreshState();
-    NotificationManager.success("User Logged out Successfully", "", 800);
+    // NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
 

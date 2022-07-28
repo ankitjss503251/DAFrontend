@@ -369,21 +369,20 @@ function NFTDetails() {
 
   const PutMarketplace = async () => {
 
-    const res = WalletConditions();
-    console.log("wallet conditions", res)
-    setWalletVariable(res)
+    const wCheck = WalletConditions();
+    setWalletVariable(wCheck)
 
-    if (res.isLocked) {
+    if (wCheck.isLocked) {
       setShowAlert("locked");
       return;
     }
 
-    if (!res.isLocked) {
-      if (!res.cCheck) {
+    if (!wCheck.isLocked) {
+      if (!wCheck.cCheck) {
         setShowAlert("chainId");
         return;
       }
-      if (!res.aCheck) {
+      if (!wCheck.aCheck) {
         setShowAlert("account")
         return;
       }
@@ -468,6 +467,24 @@ function NFTDetails() {
 
 
   const PlaceOffer = async () => {
+    const wCheck = WalletConditions();
+    setWalletVariable(wCheck)
+
+    if (wCheck.isLocked) {
+      setShowAlert("locked");
+      return;
+    }
+
+    if (!wCheck.isLocked) {
+      if (!wCheck.cCheck) {
+        setShowAlert("chainId");
+        return;
+      }
+      if (!wCheck.aCheck) {
+        setShowAlert("account")
+        return;
+      }
+    }
     setLoading(true);
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
@@ -718,6 +735,24 @@ function NFTDetails() {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
               setIsPlaceBidModal(false);
+              const wCheck = WalletConditions();
+              setWalletVariable(wCheck)
+
+              if (wCheck.isLocked) {
+                setShowAlert("locked");
+                return;
+              }
+
+              if (!wCheck.isLocked) {
+                if (!wCheck.cCheck) {
+                  setShowAlert("chainId");
+                  return;
+                }
+                if (!wCheck.aCheck) {
+                  setShowAlert("account")
+                  return;
+                }
+              }
               setLoading(true);
               if (
                 Number(price) <
@@ -848,6 +883,24 @@ function NFTDetails() {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
               setIsBuyNowModal(false);
+              const wCheck = WalletConditions();
+              setWalletVariable(wCheck)
+
+              if (wCheck.isLocked) {
+                setShowAlert("locked");
+                return;
+              }
+
+              if (!wCheck.isLocked) {
+                if (!wCheck.cCheck) {
+                  setShowAlert("chainId");
+                  return;
+                }
+                if (!wCheck.aCheck) {
+                  setShowAlert("account")
+                  return;
+                }
+              }
               setLoading(true);
               let res = await handleBuyNft(
                 orders[0]._id,
@@ -960,6 +1013,8 @@ function NFTDetails() {
               Connect Wallet
             </button>
           </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+
+
 
 
       {loading ? <Spinner /> : ""}
@@ -1175,7 +1230,25 @@ function NFTDetails() {
                     className="title_color buy_now"
                     data-bs-toggle="modal"
                     onClick={async () => {
-                      console.log("orders[0]", orders[0], orders);
+
+                      const wCheck = WalletConditions();
+                      setWalletVariable(wCheck)
+
+                      if (wCheck.isLocked) {
+                        setShowAlert("locked");
+                        return;
+                      }
+
+                      if (!wCheck.isLocked) {
+                        if (!wCheck.cCheck) {
+                          setShowAlert("chainId");
+                          return;
+                        }
+                        if (!wCheck.aCheck) {
+                          setShowAlert("account")
+                          return;
+                        }
+                      }
                       try {
                         setLoading(true);
                         const res = await handleRemoveFromSale(orders[0]._id, currentUser);
