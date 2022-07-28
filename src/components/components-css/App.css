@@ -5476,5 +5476,7 @@ button.filter_btn {
     height: 100%;
     width: 100%;
     object-fit: contain;
-
+}
+.img_3d {
+  height:500px;
 }

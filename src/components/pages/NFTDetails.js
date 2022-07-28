@@ -1024,7 +1024,7 @@ function NFTDetails() {
       <section style={bgImgStyle} className="pdd_8">
         <div className="container">
           <div className="row mb-5">
-            <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5">
+            <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5 img_3d" >
               {NFTDetails && NFTDetails.fileType == "Image" ? (
                 <img
                   src={NFTDetails?.image}
@@ -1045,12 +1045,17 @@ function NFTDetails() {
                 ""
               )}
               {NFTDetails && NFTDetails.fileType == "3D" ? (
-                <Canvas camera={{ position: [10, 100, 100], fov: 1 }}>
-                  <pointLight position={[10, 10, 10]} intensity={1.3} />
-                  <Suspense fallback={null}>
+                <Canvas>
+                  <pointLight position={[100, 10, 10, 10]} intensity={1.5} />
+                  <Suspense fallback={null} > 
                     <Model image={`http://${modalImage}`} />
                   </Suspense>
                   <CameraControls />
+                  {/* <pointLight position={[10, 10, 10]} />
+                  <mesh>
+                    <sphereBufferGeometry />
+                    <meshStandardMaterial color="hotpink" image={`http://${modalImage}`} />
+                  </mesh> */}
                 </Canvas>
               ) : (
                 ""
