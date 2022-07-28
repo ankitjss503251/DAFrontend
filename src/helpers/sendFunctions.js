@@ -1152,7 +1152,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
         options
       );
       let req = {
-        "recordID": bidData.orderID,
+        "recordID": bidData._id,
         "DBCollection": "Bids",
         "hashStatus": 0,
         "hash": completeOrder.hash
