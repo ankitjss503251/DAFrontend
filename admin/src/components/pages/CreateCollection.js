@@ -359,7 +359,7 @@ function CreateCollection(props) {
             } catch (e) {
               setLoading(false);
               NotificationManager.error(e.message, "", 800);
-              // slowRefresh(1000);
+              slowRefresh(1000);
             }
             contractAddress = await readReceipt(hash);
             res1 = await res1.wait();
@@ -610,7 +610,7 @@ function CreateCollection(props) {
                   <th>Title</th>
                   <th>Symbol</th>
                   <th>Description</th>
-                  <th>Max Supply</th>
+                  <th>Total Supply</th>
                   <th>Price</th>
                   <th>Category</th>
                   <th>Brand</th>
@@ -774,7 +774,7 @@ function CreateCollection(props) {
                               : "-"}
                           </td>
 
-                          <td>{item.totalSupply ? item.totalSupply : "-"}</td>
+                          <td>{item.totalSupply ? item.totalSupply : "0"}</td>
                           <td>
                             {item.price.$numberDecimal
                               ? Number(
@@ -1404,7 +1404,7 @@ function CreateCollection(props) {
                         }}
                         onClick={() => imageUploader2.current.click()}
                       >
-                        <h4 className="text-center">Click here</h4>
+                        <p className="text-center">Click here</p>
                         <img
                           alt=""
                           ref={uploadedImage2}
@@ -1484,7 +1484,7 @@ function CreateCollection(props) {
                   </div>
                   <div className="col-md-6 mb-1">
                     <label for="recipient-name" className="col-form-label">
-                      Max Supply
+                      Total Supply
                     </label>
                     <input
                       type="text"

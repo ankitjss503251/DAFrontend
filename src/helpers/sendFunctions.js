@@ -194,128 +194,120 @@ export const handleBuyNft = async (
     };
 
     try {
-      let result = await marketplace.estimateGas.completeOrder(
+
+      let completeOrder = await marketplace.completeOrder(
         sellerOrder,
         signature,
         buyerOrder,
         signature,
         options
       );
-      console.log("result buy", result);
-      if (result) {
-        let completeOrder = await marketplace.completeOrder(
-          sellerOrder,
-          signature,
-          buyerOrder,
-          signature,
-          options
-        );
-        let req = {
-          "recordID": id,
-          "DBCollection": "Order",
-          "hashStatus": 0,
-          "hash": completeOrder.hash
-        }
-        try {
-          await UpdateStatus(req)
-        }
-        catch (e) {
-          return
-        }
-        try {
-          if (isERC721) {
-            let res = await completeOrder.wait();
+      let req = {
+        "recordID": id,
+        "DBCollection": "Order",
+        "hashStatus": 0,
+        "hash": completeOrder.hash
+      }
+      try {
+        await UpdateStatus(req)
+      }
+      catch (e) {
+        return
+      }
+      try {
+        if (isERC721) {
+          let res = await completeOrder.wait();
 
-            if (res.status === 0) {
-              return false;
-            }
-            try {
-              await UpdateOrder({
-                orderID: id,
-                nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
-                seller: details.sellerID.walletAddress?.toLowerCase(), //to make sure we update the quantity left : walletAddress
-                qtyBought: Number(qty),
-                qty_sold: Number(details.quantity_sold) + Number(qty),
-                buyer: account?.toLowerCase(),
-                LazyMintingStatus:
-                  details.nftID.quantity_minted + qty === details.nftID.totalQuantity
-                    ? 0
-                    : 1,
-                quantity_minted:
-                  details.nftID.quantity_minted === details.nftID.totalQuantity
-                    ? details.nftID.quantity_minted
-                    : details.nftID.quantity_minted + qty,
-                hashStatus: 1
-              });
-              await DeleteOrder({ orderID: id });
-            }
-            catch (e) {
-              console.log("error in updating order data", e);
-              return false;
-            }
-          } else {
-            let res = await completeOrder.wait();
+          if (res.status === 0) {
+            return false;
+          }
+          try {
+            await UpdateOrder({
+              orderID: id,
+              nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
+              seller: details.sellerID.walletAddress?.toLowerCase(), //to make sure we update the quantity left : walletAddress
+              qtyBought: Number(qty),
+              qty_sold: Number(details.quantity_sold) + Number(qty),
+              buyer: account?.toLowerCase(),
+              LazyMintingStatus:
+                details.nftID.quantity_minted + qty === details.nftID.totalQuantity
+                  ? 0
+                  : 1,
+              quantity_minted:
+                details.nftID.quantity_minted === details.nftID.totalQuantity
+                  ? details.nftID.quantity_minted
+                  : details.nftID.quantity_minted + qty,
+              hashStatus: 1
+            });
+            await DeleteOrder({ orderID: id });
+          }
+          catch (e) {
+            console.log("error in updating order data", e);
+            return false;
+          }
+        } else {
+          let res = await completeOrder.wait();
 
-            if (res.status === 0) {
-              return false;
-            }
-            try {
-              await UpdateOrder({
-                orderID: id,
-                nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
-                seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
-                qtyBought: Number(qty),
-                qty_sold: Number(details.quantity_sold) + Number(qty),
-                buyer: account?.toLowerCase(),
-                LazyMintingStatus:
-                  details.nftID.quantity_minted + qty === details.nftID.totalQuantity
-                    ? 0
-                    : 1,
-                quantity_minted:
-                  details.nftID.quantity_minted === details.nftID.totalQuantity
-                    ? details.nftID.quantity_minted
-                    : details.nftID.quantity_minted + qty,
+          if (res.status === 0) {
+            return false;
+          }
+          try {
+            await UpdateOrder({
+              orderID: id,
+              nftID: details.nftID._id, //to make sure we update the quantity left : NFTid
+              seller: details.sellerID.walletAddress, //to make sure we update the quantity left : walletAddress
+              qtyBought: Number(qty),
+              qty_sold: Number(details.quantity_sold) + Number(qty),
+              buyer: account?.toLowerCase(),
+              LazyMintingStatus:
+                details.nftID.quantity_minted + qty === details.nftID.totalQuantity
+                  ? 0
+                  : 1,
+              quantity_minted:
+                details.nftID.quantity_minted === details.nftID.totalQuantity
+                  ? details.nftID.quantity_minted
+                  : details.nftID.quantity_minted + qty,
 
-                hashStatus: 0
-              });
+              hashStatus: 0
+            });
 
-              if (
-                Number(details.quantity_sold) + Number(qty) >=
-                details.total_quantity
-              ) {
-                try {
-                  await DeleteOrder({ orderID: id });
-                } catch (e) {
-                  console.log("error in updating order data", e);
-                  return false;
-                }
-              }
-              else {
-                let req = {
-                  "recordID": id,
-                  "DBCollection": "Order",
-                  "hashStatus": 1
-                }
-                try {
-                  await UpdateStatus(req)
-                }
-                catch (e) {
-                  return
-                }
+            if (
+              Number(details.quantity_sold) + Number(qty) >=
+              details.total_quantity
+            ) {
+              try {
+                await DeleteOrder({ orderID: id });
+              } catch (e) {
+                console.log("error in updating order data", e);
+                return false;
               }
             }
-            catch (e) {
-              console.log("error in updating order data", e);
-              return false;
+            else {
+              let req = {
+                "recordID": id,
+                "DBCollection": "Order",
+                "hashStatus": 1
+              }
+              try {
+                await UpdateStatus(req)
+              }
+              catch (e) {
+                return
+              }
             }
           }
-        } catch (e) {
-          console.log("error in updating order data", e);
-          return false;
+          catch (e) {
+            console.log("error in updating order data", e);
+            return false;
+          }
         }
-
-
+      } catch (e) {
+        console.log("error in updating order data", e);
+        return false;
       }
+
+
+
     } catch (e) {
       // console.log("JSON.parse(e)", JSON.parse(e));
 

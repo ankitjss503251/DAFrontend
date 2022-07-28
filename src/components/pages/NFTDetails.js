@@ -512,7 +512,7 @@ function NFTDetails() {
         let historyReqData = {
           nftID: NFTDetails.id,
           buyerID: localStorage.getItem("userId"),
-          
+
           action: "Offer",
           type: haveOffer && haveOffer !== "none" ? "Updated" : "Created",
           price: ethers.utils.parseEther(offerPrice.toString()).toString(),
@@ -930,7 +930,7 @@ function NFTDetails() {
                 <p>
                   Owned by{" "}
                   <span style={textColor}>
-                    {ownedBy.slice(0, 8) + "..." + ownedBy.slice(34, 42)}
+                    {ownedBy?.slice(0, 8) + "..." + ownedBy?.slice(34, 42)}
                   </span>
                 </p>
                 <span className='add_wishlist'>

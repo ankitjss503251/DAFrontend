@@ -294,7 +294,7 @@ function CreateNFTs() {
       return;
     }
 
-    if (attrKeys.includes(currAttrKey.toLowerCase())) {
+    if (attrKeys.includes(currAttrKey)) {
       NotificationManager.error("Cannot Add Same Property Twice", "", 800);
       return;
     }
@@ -302,7 +302,7 @@ function CreateNFTs() {
     let tempArr1 = [];
     let tempArr2 = [];
     if (currAttrKey) {
-      tempArr1.push(...attrKeys, currAttrKey.toLowerCase());
+      tempArr1.push(...attrKeys, currAttrKey);
       tempArr2.push(...attrValues, currAttrValue);
     }
 
@@ -319,6 +319,8 @@ function CreateNFTs() {
     let tempArr2 = [...attrValues];
     tempArr2[index] = "";
     setAttrValues(tempArr2);
+
+
   };
 
   return (
@@ -449,7 +451,7 @@ function CreateNFTs() {
                       onClick={() => imageUploader.current.click()}>
                       <p className='text-center'>Click here</p>
 
-                      {fileType == "Image" ? (
+                      {fileType === "Image" ? (
                         <img
                           alt=''
                           ref={uploadedImage}
@@ -461,7 +463,7 @@ function CreateNFTs() {
                         ""
                       )}
 
-                      {fileType == "Video" ? (
+                      {fileType === "Video" ? (
                         <video
                           className='img-fluid profile_circle_img admin_profile_img'
                           controls>
@@ -476,7 +478,7 @@ function CreateNFTs() {
                         ""
                       )}
 
-                      {fileType == "3D" ? (
+                      {fileType === "3D" ? (
                         <GLTFModel
                           height='280'
                           width='220'
@@ -543,6 +545,7 @@ function CreateNFTs() {
                       : ""}
                   </select>
                 </div>
+
                 {console.log("collection?.type == 2", collection)}
                 {collection && JSON.parse(collection)?.type == 2 ? (
                   <div className='col-md-12 mb-1'>
@@ -577,14 +580,23 @@ function CreateNFTs() {
                     onChange={(e) => setDescription(e.target.value)}></textarea>
                 </div>
                 <div className='col-md-6 mt-2'>
-                  {attrKeys.length > 0 ? (
-                    <p className='attr_header'>Attributes</p>
-                  ) : (
+                  <button
+                    type='button'
+                    data-bs-toggle='modal'
+                    data-bs-target='#AttributeModal'
+                    className='btn btn-admin text-light mb-3'>
+                    Add Attributes
+                  </button>
+                  {/* {attrKeys[0] === "" ? ( */}
+                  <p className='attr_header'>Attributes</p>
+                  {/* ) : (
                     ""
-                  )}
+                  )} */}
                   {attrKeys.length > 0 && attrValues.length > 0 ? (
                     attrKeys.map((attrKey, key) => {
+
                       return (
+                        attrKey.trim() !== "" &&
                         <ul>
                           <li>
                             <span>
@@ -595,13 +607,7 @@ function CreateNFTs() {
                       );
                     })
                   ) : (
-                    <button
-                      type='button'
-                      data-bs-toggle='modal'
-                      data-bs-target='#AttributeModal'
-                      className='btn btn-admin text-light'>
-                      Add Attributes
-                    </button>
+                    ""
                   )}
                 </div>
 
@@ -732,11 +738,13 @@ function CreateNFTs() {
                 onClick={() => {
                   if (attrKeys.length > 0) {
                     let metaData = [];
+
                     for (let i = 0; i < attrKeys.length; i++) {
-                      metaData.push({
-                        trait_type: attrKeys[i],
-                        value: attrValues[i],
-                      });
+                      if (attrKeys[i].trim() !== "" && attrValues[i].trim() !== "")
+                        metaData.push({
+                          trait_type: attrKeys[i],
+                          value: attrValues[i],
+                        });
                     }
                     setAttributes(metaData);
                     console.log("ATTRIBUTES", attributes);
