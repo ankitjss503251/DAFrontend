@@ -88,7 +88,11 @@ function Admins() {
         document.querySelector('.modal-backdrop')?.classList.toggle('show');
       } catch (e) {
         let error = await e.getBody();
-        NotificationManager.error(error.message, "", 2000);
+        if (error.message === "User already exists") {
+          NotificationManager.error("Admin already added or its an user account", "", 2000);
+        }
+        else
+          NotificationManager.error(error.message, "", 2000);
         setState(state => ({ ...state, loading: false }));
       }
       // setState(state=>({...state,loading:false}));
