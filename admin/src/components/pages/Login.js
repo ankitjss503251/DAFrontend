@@ -12,7 +12,7 @@ function Login(props) {
   function hasError() {
     return !(state.username?.trim() && state.password?.trim());
   }
-  
+
   function checkLogin(e) {
     e.preventDefault();
     setState(state => ({ ...state, error: '' }));
@@ -23,10 +23,10 @@ function Login(props) {
       })
         .catch((error) => {
           console.log(error.status);
-          error.getBody().then(res => {
+          // error.getBody().then(res => {
 
-            setState(state => ({ ...state, error: 'Wrong Username or Password' }));
-          })
+          //   setState(state => ({ ...state, error: 'Wrong Username or Password' }));
+          // })
         })
     }
     // else setState(state=>({...state,errors:{username:"Please Enter Username",password:"Please Enter Password"}}))  

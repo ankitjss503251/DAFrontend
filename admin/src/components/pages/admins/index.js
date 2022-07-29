@@ -82,7 +82,7 @@ function Admins() {
 
       try {
         let user = await saveAdminUser(fd, category?._id);
-        NotificationManager.success(user.message, "", 2000);
+        NotificationManager.success("Admin created", "", 2000);
         setState(state => ({ ...state, loading: false, reload: Math.random(), toggleModal: '', category: {} }));
         window.location.reload()
         document.querySelector('.modal-backdrop')?.classList.toggle('show');

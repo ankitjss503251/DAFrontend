@@ -182,7 +182,7 @@ const Header = function () {
           params: [message, address],
           from: address,
         }, async function (err, signature) {
-          if(!err){
+          if (!err) {
             console.log("Signature", signature);
             try {
               userAuth(primaryWallet, address, signature.result, message);
@@ -234,7 +234,7 @@ const Header = function () {
         }
       } else {
         try {
-          const res = await Login(address);
+          const res = await Login(address, signature, message);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
             return;
