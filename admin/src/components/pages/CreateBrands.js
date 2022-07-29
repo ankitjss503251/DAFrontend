@@ -5,6 +5,11 @@ import { useCookies } from "react-cookie";
 import { addBrand, GetBrand } from "../../apiServices";
 import { isEmptyObject } from "../../helpers/utils";
 import Spinner from "../components/Spinner";
+import { WalletConditions } from "./../../helpers/WalletConditions";
+import { onboard } from "../Navbar";
+import PopupModal from "../components/popupModal";
+import evt from "../../events/events";
+import Logo from "../../logo1.svg";
 
 function CreateBrands() {
   const [logoImg, setLogoImg] = useState();
@@ -16,6 +21,8 @@ function CreateBrands() {
   const [cookies, setCookie, removeCookie] = useCookies([]);
   const [loading, setLoading] = useState(false);
   const [isModal, setModal] = useState("");
+  const [showAlert, setShowAlert] = useState("");
+  const [walletVariable, setWalletVariable] = useState({});
 
   useEffect(() => {
     if (cookies.da_selected_account) setCurrentUser(cookies.da_selected_account);
@@ -92,6 +99,24 @@ function CreateBrands() {
   };
 
   const handleCreateBrand = async () => {
+    const wCheck = WalletConditions();
+    setWalletVariable(wCheck)
+
+    if (wCheck.isLocked) {
+      setShowAlert("locked");
+      return;
+    }
+
+    if (!wCheck.isLocked) {
+      if (!wCheck.cCheck) {
+        setShowAlert("chainId");
+        return;
+      }
+      if (!wCheck.aCheck) {
+        setShowAlert("account")
+        return;
+      }
+    }
     setLoading(true);
     setModal("");
     if (handleValidationCheck() == false) {
@@ -125,6 +150,75 @@ function CreateBrands() {
 
   return (
     <div className="wrapper">
+       {showAlert === "chainId" ? <PopupModal content={<div className='popup-content1'>
+        <div className='bid_user_details my-4'>
+          <img src={Logo} alt='' />
+          <div className='bid_user_address'>
+
+            <div className="d-flex">
+              <div className="mr-3">Required Network ID:&nbsp;</div>
+              <span className="adr">
+                {walletVariable.sChain}
+              </span>
+
+            </div>
+
+          </div>
+        </div>
+        <button
+          className='btn-main mt-2' onClick={async () => {
+            const isSwitched = await onboard.setChain({
+              chainId: process.env.REACT_APP_CHAIN_ID,
+            });
+            if (isSwitched)
+              setShowAlert("");
+          }}>
+          {"Switch Network"}
+        </button>
+      </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+        showAlert === "account" ? <PopupModal content={
+          <div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+                <p className="mb-3">Please switch to connected wallet address or click logout to continue with the current wallet address by disconnecting the already connected account.</p>
+              </div>
+
+              <button
+                className='btn-main mt-2' onClick={() => {
+                  console.log("logout btn click");
+                  evt.emit("disconnectWallet")
+                }}>
+                {"Logout"}
+              </button>
+            </div>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+          showAlert === "locked" ? <PopupModal content={<div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div>
+              <h4 className="mb-3">Your wallet is locked. Please unlock your wallet and connect again.</h4>
+            </div>
+            <button
+              className='btn-main mt-2' onClick={() => {
+                evt.emit("disconnectWallet")
+              }}>
+              Connect Wallet
+            </button>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
       {/* <!-- Sidebar  --> */}
       <Sidebar />
       {loading ? <Spinner /> : ""}

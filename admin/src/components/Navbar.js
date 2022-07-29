@@ -19,15 +19,14 @@ import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
 import Logo from "./../logo.svg";
 import PopupModal from "./components/popupModal";
-import evt from "./components/Events";
-import init from "@web3-onboard/core";
+import evt from "../events/events";
 import LandingPage from "../LandingPage";
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
- 
 
-const onboard = Onboard({
+
+export const onboard = Onboard({
   wallets: [walletConnect, injected],
 
   chains: [
@@ -107,7 +106,7 @@ const onboard = Onboard({
 });
 
 
-evt.removeAllListeners("wallet-connect", walletConnect);
+
 
 
 const Navbar = (props) => {
@@ -122,44 +121,27 @@ const Navbar = (props) => {
 
   useEffect(() => {
     init();
-    console.log('rendered');
   }, []);
+
   const init = async () => {
     if (cookies["da_selected_account"]) {
       setAccount(cookies["da_selected_account"]);
       const s = await onboard.connectWallet({
-        autoSelect: { label: cookies["label"], disableModals: true },
+        autoSelect: { label: cookies["da_label"], disableModals: true },
       });
-      await onboard.setChain({
-        chainId: process.env.REACT_APP_CHAIN_ID,
-      });
-      setProvider(s[0].provider);
-      setLabel(s[0].label);
-      setCookie("label", s[0].label, { path: "/" });
-      setCookie("da_selected_account", s[0].accounts[0].address, { path: "/" });
-      setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
-        path: "/",
-      });
-      setCookie("balance", s[0].accounts[0].balance, { path: "/" });
-
-
     }
   };
 
   const refreshState = () => {
     removeCookie("da_selected_account", { path: "/" });
-    removeCookie("chain_id", { path: "/" });
+    removeCookie("da_chain_id", { path: "/" });
     removeCookie("balance", { path: "/" });
-    removeCookie("label", { path: "/" });
+    removeCookie("da_label", { path: "/" });
     localStorage.clear();
     setAccount("");
     setChainId("");
     setProvider(null);
   };
-
-  function walletConnect() {
-    connectWallet();
-  }
 
   const getUserProfile = async () => {
     const profile = await getProfile();
@@ -175,7 +157,6 @@ const Navbar = (props) => {
         "Non-Ethereum browser detected. You should consider trying MetaMask!"
       );
     }
-    console.log("in connect wallet");
     const wallets = await onboard.connectWallet();
 
     if (wallets.length !== 0) {
@@ -184,7 +165,6 @@ const Navbar = (props) => {
       });
       const primaryWallet = wallets[0];
       setChainId(primaryWallet.chains[0].id);
-      console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
       try {
@@ -214,14 +194,13 @@ const Navbar = (props) => {
             return;
           } else {
             setAccount(primaryWallet.accounts[0].address);
-
             setLabel(primaryWallet.label);
             window.sessionStorage.setItem("role", res?.data?.userType);
             setCookie("da_selected_account", address, { path: "/" });
-            setCookie("label", primaryWallet.label, { path: "/" });
+            setCookie("da_label", primaryWallet.label, { path: "/" });
             setCookie(
-              "chain_id",
-              parseInt(primaryWallet.chains[0].id, 16).toString(),
+              "da_chain_id",
+              primaryWallet.chains[0].id,
               {
                 path: "/",
               }
@@ -249,13 +228,17 @@ const Navbar = (props) => {
   };
 
   const disconnectWallet = async () => {
-    await onboard.disconnectWallet({ label: label });
+    await onboard.disconnectWallet({ label: cookies["da_label"] });
     await Logout(cookies["da_selected_account"]);
     window.sessionStorage.removeItem("role");
     refreshState();
-    NotificationManager.success("User Logged out Successfully", "", 800);
+    // NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
+  evt.setMaxListeners(1)
+  evt.on("disconnectWallet", () => {
+    disconnectWallet();
+  });
 
   if (!account && !isSuperAdmin()) {
     return <LandingPage connectWallet={connectWallet} />
@@ -265,34 +248,7 @@ const Navbar = (props) => {
 
 
     <div className="admin-navbar d-flex w-100">
-      {isChainSwitched ? (
-        <PopupModal
-          content={
-            <div className="switch_container">
-              <h3>Chain Switched</h3>
-              <p className="my-4 mr-2">
-                Please Switch to Matic Testnet Network
-              </p>
-              <div className="d-flex justify-content-center align-items-center">
-                <button
-                  className="btn network_btn"
-                  onClick={async () => {
-                    await onboard.setChain({
-                      chainId: process.env.REACT_APP_CHAIN_ID,
-                    });
-                    setIsChainSwitched(false);
-                  }}
-                >
-                  Switch Network
-                </button>
-              </div>
-            </div>
-          }
-          handleClose={() => setIsChainSwitched(false)}
-        />
-      ) : (
-        ""
-      )}
+      
       <div className="profile_box text-light me-auto d-flex align-items-center text-uppercase montserrat font-400">
         <div className="profile_img">
           <img src={"../images/user.jpg"} alt="" className="img-fluid" />
