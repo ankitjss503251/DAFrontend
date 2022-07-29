@@ -371,6 +371,7 @@ function CreateCollection(props) {
           } else {
             type = 2;
           }
+          var fd = new FormData();
           fd.append("name", title);
           fd.append("symbol", symbol);
           fd.append("description", description);
@@ -445,7 +446,7 @@ function CreateCollection(props) {
             } catch (e) {
               setLoading(false);
               NotificationManager.error(e.message, "", 800);
-              // slowRefresh(1000);
+              slowRefresh(1000);
             }
           }
 
@@ -458,7 +459,7 @@ function CreateCollection(props) {
             1800
           );
           setLoading(false);
-          // slowRefresh(1000);
+          slowRefresh(1000);
         }
       }
     }
