@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Wallet from "./SVG/Wallet";
 import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
+import Logo from "./../logo.svg"
 import walletConnectModule from "@web3-onboard/walletconnect";
 import {
   checkuseraddress,
@@ -17,7 +18,7 @@ import { NotificationManager } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
-import Logo from "./../logo.svg";
+
 import PopupModal from "./components/popupModal";
 import evt from "../events/events";
 import LandingPage from "../LandingPage";
@@ -185,7 +186,7 @@ const Navbar = (props) => {
           params: [message, address],
           from: address,
         }, async function (err, signature) {
-          if(!err){
+          if (!err) {
             console.log("Signature", signature);
             try {
               userAuth(primaryWallet, address, signature.result, message);
@@ -278,10 +279,10 @@ const Navbar = (props) => {
 
 
     <div className="admin-navbar d-flex w-100">
-      
+
       <div className="profile_box text-light me-auto d-flex align-items-center text-uppercase montserrat font-400">
         <div className="profile_img">
-          <img src={"../images/user.jpg"} alt="" className="img-fluid" />
+          <img src={Logo} alt="" className="img-fluid" />
         </div>
         {props.model}
         <Link className="logo" to="/">
