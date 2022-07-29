@@ -94,8 +94,8 @@ const NFThistory = (props) => {
                             className='img-fluid hunter_fav'
                           />{" "}
                           {Number(convertToEth(h?.price))
-                            .toFixed(6)
-                            .slice(0, -2)}
+                            ?.toFixed(6)
+                            ?.slice(0, -2)}
                         </td>
                         <td>
                           <span className={`${h?.action === "putOnSale" ? "yellow_dot" : h?.action === "RemoveFromSale" ? "blue_dot" : h?.action === "Offer" ? "lightblue_dot" : "yellow_dot"} circle_dot`}></span>
