@@ -57,7 +57,7 @@ function MintCollectionLive() {
     allCollections.map((coln) => {
       const st = coln.saleStartTime;
       const et = coln.saleEndTime;
-      const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
+      const ct = moment(new Date()).format();
 
       if (ct < st) {
         _upcoming.push(coln);

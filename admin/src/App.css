@@ -1148,3 +1148,11 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 .tab-padd {
   padding: 0px;
 }
+.update_btn [data-loader="gltf"] {
+  position: relative;
+}
+.update_btn [data-loader="gltf"] canvas {
+  position: absolute;
+  top:0;
+  bottom:0;left:0px;right:0px;
+}

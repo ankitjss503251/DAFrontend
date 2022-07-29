@@ -9,7 +9,6 @@ import {
   handleAcceptBids,
   handleUpdateBidStatus,
 } from "../../helpers/sendFunctions";
-import NFTDetails from "../pages/NFTDetails";
 import Clock from "./Clock";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import PopupModal from "../components/AccountModal/popupModal";
@@ -19,6 +18,10 @@ import { ethers } from "ethers";
 import Spinner from "./Spinner";
 import { InsertHistory } from "./../../apiServices";
 import { GENERAL_TIMESTAMP } from "../../helpers/constants";
+import evt from "./../../events/events";
+import { onboard } from "../menu/header";
+import { WalletConditions } from "../components/WalletConditions";
+
 
 function NFTBids(props) {
   const [currentUser, setCurrentUser] = useState("");
@@ -30,6 +33,8 @@ function NFTBids(props) {
   const [isUpdateBidModal, setIsUpdateBidModal] = useState(false);
   const [currentBid, setCurrentBid] = useState([]);
   const [reloadContent, setReloadContent] = useState(false);
+  const [showAlert, setShowAlert] = useState("");
+  const [walletVariable, setWalletVariable] = useState({});
 
 
   useEffect(() => {
@@ -168,6 +173,24 @@ function NFTBids(props) {
             className="btn-main mt-2 btn-placeABid"
             onClick={async () => {
               setIsUpdateBidModal(false);
+              const wCheck = WalletConditions();
+              setWalletVariable(wCheck)
+
+              if (wCheck.isLocked) {
+                setShowAlert("locked");
+                return;
+              }
+
+              if (!wCheck.isLocked) {
+                if (!wCheck.cCheck) {
+                  setShowAlert("chainId");
+                  return;
+                }
+                if (!wCheck.aCheck) {
+                  setShowAlert("account")
+                  return;
+                }
+              }
               setLoading(true);
               console.log(
                 "Number(price)",
@@ -248,6 +271,74 @@ function NFTBids(props) {
 
   return (
     <div className="row">
+
+      {showAlert === "chainId" ? <PopupModal content={<div className='popup-content1'>
+        <div className='bid_user_details my-4'>
+          <img src={Logo} alt='' />
+          <div className='bid_user_address'>
+
+            <div >
+              <div className="mr-3">Required Network ID:</div>
+              <span className="adr">
+                {walletVariable.sChain}
+              </span>
+
+            </div>
+
+          </div>
+        </div>
+        <button
+          className='btn-main mt-2' onClick={async () => {
+            const isSwitched = await onboard.setChain({
+              chainId: process.env.REACT_APP_CHAIN_ID,
+            });
+            if (isSwitched)
+              setShowAlert("");
+          }}>
+          {"Switch Network"}
+        </button>
+      </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+        showAlert === "account" ? <PopupModal content={
+          <div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+                <h4 className="mb-3">Please switch to connected wallet address or click logout to continue with the current wallet address by disconnecting the already connected account.</h4>
+              </div>
+
+              <button
+                className='btn-main mt-2' onClick={() => { evt.emit("disconnectWallet") }}>
+                {"Logout"}
+              </button>
+            </div>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+          showAlert === "locked" ? <PopupModal content={<div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div>
+              <h4 className="mb-3">Your wallet is locked. Please unlock your wallet and connect again.</h4>
+            </div>
+            <button
+              className='btn-main mt-2' onClick={() => {
+                evt.emit("disconnectWallet")
+              }}>
+              Connect Wallet
+            </button>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+
       {loading ? <Spinner /> : ""}
       {isUpdateBidModal ? updateBidModal : ""}
       {bids && bids.length <= 0 ? (
@@ -317,17 +408,13 @@ function NFTBids(props) {
                             ? "Auction"
                             : "Open for Bids"}</td>
                           <td>
-                            {/* <Clock
-                            deadline={moment(new Date(b.bidDeadline * 1000))
-                              .subtract({
-                                hours: 5,
-                                minutes: 30,
-                              })
-                              .toISOString()}></Clock> */}
-                            --:--:--
+                            {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format() ? <Clock
+                              deadline={moment.utc(b.bidDeadline * 1000).local().format()}></Clock> : " --:--:--"}
+
+
                           </td>
                           <td className="blue_text">
-                            {moment.utc(b.bidDeadline * 1000).local().format()
+                            {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                               ? "Ended"
                               : "Active"}
                           </td>
@@ -338,7 +425,24 @@ function NFTBids(props) {
                                   to={"/"}
                                   className="small_yellow_btn small_btn mb-3"
                                   onClick={async () => {
-                                    console.log("nnn", b)
+                                    const wCheck = WalletConditions();
+                                    setWalletVariable(wCheck)
+
+                                    if (wCheck.isLocked) {
+                                      setShowAlert("locked");
+                                      return;
+                                    }
+
+                                    if (!wCheck.isLocked) {
+                                      if (!wCheck.cCheck) {
+                                        setShowAlert("chainId");
+                                        return;
+                                      }
+                                      if (!wCheck.aCheck) {
+                                        setShowAlert("account")
+                                        return;
+                                      }
+                                    }
                                     setLoading(true);
                                     await handleAcceptBids(
                                       b,
@@ -369,6 +473,24 @@ function NFTBids(props) {
                                   to={"/"}
                                   className="small_border_btn small_btn"
                                   onClick={async () => {
+                                    const wCheck = WalletConditions();
+                                    setWalletVariable(wCheck)
+
+                                    if (wCheck.isLocked) {
+                                      setShowAlert("locked");
+                                      return;
+                                    }
+
+                                    if (!wCheck.isLocked) {
+                                      if (!wCheck.cCheck) {
+                                        setShowAlert("chainId");
+                                        return;
+                                      }
+                                      if (!wCheck.aCheck) {
+                                        setShowAlert("account")
+                                        return;
+                                      }
+                                    }
                                     await handleUpdateBidStatus(
                                       b._id,
                                       "Rejected"
@@ -396,7 +518,7 @@ function NFTBids(props) {
                               <div className="d-flex flex-column justify-content-center align-items-center ">
                                 <button
                                   disabled={
-                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
+                                    moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                   }
                                   className="small_yellow_btn small_btn mb-2"
                                   onClick={() => {
@@ -417,10 +539,28 @@ function NFTBids(props) {
 
                                 <button
                                   disabled={
-                                    moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
+                                    moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                   }
                                   className="small_border_btn small_btn"
                                   onClick={async () => {
+                                    const wCheck = WalletConditions();
+                                    setWalletVariable(wCheck)
+
+                                    if (wCheck.isLocked) {
+                                      setShowAlert("locked");
+                                      return;
+                                    }
+
+                                    if (!wCheck.isLocked) {
+                                      if (!wCheck.cCheck) {
+                                        setShowAlert("chainId");
+                                        return;
+                                      }
+                                      if (!wCheck.aCheck) {
+                                        setShowAlert("account")
+                                        return;
+                                      }
+                                    }
                                     await handleUpdateBidStatus(
                                       b._id,
                                       "Cancelled"

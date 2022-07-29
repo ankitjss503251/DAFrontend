@@ -88,21 +88,16 @@ const toTypedOrder = (
 
 export const getSignature = async (signer, ...args) => {
   try {
-    console.log("111");
+   
     const order = toTypedOrder(...args);
-    console.log("order is---->", order);
     let provider = new ethers.providers.Web3Provider(window.ethereum);
-    console.log("222");
     const signer1 = provider.getSigner();
-    console.log("333");
     const signedTypedHash = await signer1._signTypedData(
       order.domain,
       order.types,
       order.value
     );
-    console.log("444");
     const sig = ethers.utils.splitSignature(signedTypedHash);
-    console.log("555");
 
     return [sig.v, sig.r, sig.s];
   } catch (e) {
@@ -121,15 +116,12 @@ export const GetOwnerOfToken = async (
   isERC721,
   account
 ) => {
-  console.log("collection token owner", collection, tokenId, isERC721, account);
   let collectionInstance = await exportInstance(collection, abi);
-  console.log("collectionInsatnce", collectionInstance);
   let balance = 0;
   try {
     if (isERC721) {
       let owner = await collectionInstance.ownerOf(Number(tokenId));
       // balance = await collectionInstance.methods.balanceOf(account).call();
-      console.log("owner123", owner);
       return owner;
       // if (owner.toLowerCase() === account.toLowerCase()) {
       //   balance = "1";
@@ -138,7 +130,6 @@ export const GetOwnerOfToken = async (
       balance = await collectionInstance.methods
         .balanceOf(account, tokenId)
         .call();
-    console.log("balance", balance.toString());
     return balance.toString();
   } catch (e) {
     console.log("error", e);
