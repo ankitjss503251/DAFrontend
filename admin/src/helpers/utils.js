@@ -1,3 +1,5 @@
+import { CheckIfBlocked } from "../apiServices";
+
 const ethers = require("ethers");
 const abi = [
   "event Transfer(address indexed src, address indexed dst, uint val)",
@@ -64,3 +66,4 @@ export function isEmptyObject(obj) {
     Object.getOwnPropertySymbols(obj).length === 0
   );
 }
+

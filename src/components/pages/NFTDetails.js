@@ -1047,7 +1047,7 @@ function NFTDetails() {
               {NFTDetails && NFTDetails.fileType == "3D" ? (
                 <Canvas>
                   <pointLight position={[100, 10, 10, 10]} intensity={1.5} />
-                  <Suspense fallback={null} > 
+                  <Suspense fallback={null} >
                     <Model image={`http://${modalImage}`} />
                   </Suspense>
                   <CameraControls />
@@ -1257,8 +1257,10 @@ function NFTDetails() {
                       }
                       try {
                         setLoading(true);
+                        console.log("loader Start");
                         const res = await handleRemoveFromSale(orders[0]._id, currentUser);
                         if (res === false) {
+                          console.log("remove 1");
                           setLoading(false);
                           return;
                         }
@@ -1274,10 +1276,11 @@ function NFTDetails() {
                           await InsertHistory(historyReqData);
                           setLoading(false);
                         }
-
                       }
                       catch (e) {
                         console.log("Error in remove from sale", e);
+                        setLoading(false)
+                        return
                       }
                     }}>
                     Remove From Sale

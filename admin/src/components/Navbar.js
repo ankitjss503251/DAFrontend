@@ -13,13 +13,12 @@ import {
   adminRegister,
   isSuperAdmin,
   logoutSuperAdmin,
+  CheckIfBlocked,
 } from "./../apiServices";
 import { NotificationManager } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
-
-import PopupModal from "./components/popupModal";
 import evt from "../events/events";
 import LandingPage from "../LandingPage";
 
@@ -120,14 +119,29 @@ const Navbar = (props) => {
   const [provider, setProvider] = useState();
   const [account, setAccount] = useState();
   const [chainId, setChainId] = useState();
-  const [isChainSwitched, setIsChainSwitched] = useState(false);
   const [userDetails, setUserDetails] = useState();
   const [label, setLabel] = useState("");
+  const [isBlocked, setIsBlocked] = useState(false)
+
 
 
   useEffect(() => {
     init();
   }, []);
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (cookies.da_selected_account || account) {
+        let res = await CheckIfBlocked({ "walletAddress": account ? account : cookies.da_selected_account })
+        console.log("ress", res);
+        if (res === false) {
+          window.sessionStorage.setItem("role", "admin")
+        }
+        setIsBlocked(res)
+      }
+    }
+    fetch()
+  }, [account, cookies.da_selected_account])
 
   const init = async () => {
     if (cookies["da_selected_account"]) {
@@ -266,12 +280,13 @@ const Navbar = (props) => {
     // NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
+
   evt.setMaxListeners(1)
   evt.on("disconnectWallet", () => {
     disconnectWallet();
   });
 
-  if (!account && !isSuperAdmin()) {
+  if ((!account && !isSuperAdmin()) || isBlocked) {
     return <LandingPage connectWallet={connectWallet} />
   }
 
