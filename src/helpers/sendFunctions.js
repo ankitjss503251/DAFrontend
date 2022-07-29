@@ -366,7 +366,6 @@ export const putOnMarketplace = async (account, orderData) => {
   if (!account) {
     return false;
   }
-  let nextId = await orderData.tokenId;
   let _deadline = GENERAL_TIMESTAMP;
   let _price;
   let sellerOrder;
@@ -403,17 +402,18 @@ export const putOnMarketplace = async (account, orderData) => {
       orderData.salt,
     ];
     console.log("seller Order is----------------->", sellerOrder);
-    // let usrHaveQuantity = await GetOwnerOfToken(
-    //   sellerOrder[1],
-    //   sellerOrder[2],
-    //   orderData.erc721,
-    //   sellerOrder[0]
-    // );
 
-    // if (parseInt(usrHaveQuantity) < parseInt(orderData.quantity)) {
-    //   NotificationManager.error("Not enough quantity", "", 800);
-    //   return false;
-    // }
+    let usrHaveQuantity = await GetOwnerOfToken(
+      sellerOrder[1],
+      sellerOrder[2],
+      orderData.erc721,
+      sellerOrder[0]
+    );
+
+    if (parseInt(usrHaveQuantity) < parseInt(orderData.quantity)) {
+      NotificationManager.error("Not enough quantity", "", 800);
+      return false;
+    }
 
     let NFTcontract = await exportInstance(orderData.collection, erc721Abi.abi);
 
@@ -488,34 +488,41 @@ export const handleRemoveFromSale = async (orderId, account) => {
   let marketplace;
   let order;
   let details;
+  // try {
+  // marketplace = await exportInstance(
+  //   contracts.MARKETPLACE,
+  //   marketPlaceABI.abi
+  // );
+  // const options = {
+  //   from: account,
+  //   gasLimit: 9000000,
+  //   value: "0",
+  // };
+
+
+  // let res = await marketplace.cancelOrder(order, details.signature, options);
+  // console.log("res22", res)
+  // res = await res.wait();
+  // console.log("res", res)
+  // if (res?.status === 0) {
+  //   NotificationManager.error("Transaction failed");
+  //   console.log("return 1");
+  //   return false;
+  // }
+  // } catch (e) {
+  //   console.log("error in contract function call", e);
+  //   if (e.code === 4001) {
+  //     NotificationManager.error("User denied ");
+  //     console.log("return 2");
+  //     return false;
+  //   }
+  //   console.log("return 3");
+  //   return false;
+  // }
   try {
-    marketplace = await exportInstance(
-      contracts.MARKETPLACE,
-      marketPlaceABI.abi
-    );
-    const options = {
-      from: account,
-      gasPrice: 10000000000,
-      gasLimit: 9000000,
-      value: "0",
-    };
-    order = await buildSellOrder(orderId);
-    details = await getOrderDetails({ orderID: orderId });
-    let res = await marketplace.cancelOrder(order, details.signature, options);
-    res = await res.wait();
-    if (res.status === 0) {
-      NotificationManager.error("Transaction failed");
-      return false;
-    }
-  } catch (e) {
-    console.log("error in contract function call", e);
-    if (e.code === 4001) {
-      NotificationManager.error("User denied ");
-      return false;
-    }
-    return false;
-  }
-  try {
+    // order = await buildSellOrder(orderId);
+    // details = await getOrderDetails({ orderID: orderId });
+    console.log("Delete Order Called");
     await DeleteOrder({
       orderID: orderId,
     });
