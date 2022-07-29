@@ -503,15 +503,15 @@ function NFTDetails() {
         NFTDetails.id,
         contracts.BUSD
       );
-      if (res == false) {
+      if (res == false || res === undefined) {
         setLoading(false);
+
         return;
       }
       else {
         let historyReqData = {
           nftID: NFTDetails.id,
           buyerID: localStorage.getItem("userId"),
-          
           action: "Offer",
           type: haveOffer && haveOffer !== "none" ? "Updated" : "Created",
           price: ethers.utils.parseEther(offerPrice.toString()).toString(),
@@ -519,7 +519,7 @@ function NFTDetails() {
           quantity: offerQuantity,
           createdBy: localStorage.getItem("userId"),
         }
-        const d = await InsertHistory(historyReqData);
+        await InsertHistory(historyReqData);
         setLoading(false);
         slowRefresh(1000);
       }
@@ -732,7 +732,7 @@ function NFTDetails() {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
-                if (res === false) {
+                if (res === false || res === undefined) {
                   setLoading(false);
                   return;
                 } else {
@@ -846,11 +846,8 @@ function NFTDetails() {
                 false,
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
-              if (res === false) {
-                setLoading(false);
-                return;
-              }
-              else {
+              if (res !== false && res !== undefined) {
+                
                 let historyReqData = {
                   nftID: NFTDetails.id,
                   buyerID: localStorage.getItem('userId'),
@@ -865,6 +862,10 @@ function NFTDetails() {
 
                 setLoading(false);
                 slowRefresh(1000);
+              }
+              else{
+                setLoading(false);
+                return;
               }
             }}>
             {"Buy Now"}

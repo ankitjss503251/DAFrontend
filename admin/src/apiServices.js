@@ -247,12 +247,13 @@ export const getAllCollections = async (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: localStorage.getItem("Authorization")
     },
     body: JSON.stringify(data),
   };
   try {
     let response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/nft/getCollections",
+      process.env.REACT_APP_API_BASE_URL + "/nft/myCollections",
       requestOptions
     );
     const isJson = response.headers
