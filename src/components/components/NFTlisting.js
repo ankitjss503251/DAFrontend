@@ -571,72 +571,74 @@ function NFTlisting(props) {
                                 </button>
                               ) : (
 
-                                <button
-                                  to={"/"}
-                                  disabled={
-                                    moment.utc(o?.deadline * 1000).local().format() < moment(new Date()).format()
-                                      ? true
-                                      : false
-                                  }
-                                  className="small_border_btn small_btn"
-                                  onClick={async () => {
-                                    const wCheck = WalletConditions();
-                                    setWalletVariable(wCheck)
-
-                                    if (wCheck.isLocked) {
-                                      setShowAlert("locked");
-                                      return;
-                                    }
-
-                                    if (!wCheck.isLocked) {
-                                      if (!wCheck.cCheck) {
-                                        setShowAlert("chainId");
-                                        return;
-                                      }
-                                      if (!wCheck.aCheck) {
-                                        setShowAlert("account")
-                                        return;
-                                      }
-                                    }
-                                    if (
+                                o?.salesType === 0 || (o?.salesType === 1 && !haveBid) ?
+                                  <button
+                                    to={"/"}
+                                    disabled={
                                       moment.utc(o?.deadline * 1000).local().format() < moment(new Date()).format()
-                                    ) {
-                                      NotificationManager.error(
-                                        "Auction Ended",
-                                        "",
-                                        800
-                                      );
-                                      return;
+                                        ? true
+                                        : false
                                     }
-                                    if (currentUser) {
-                                      o.salesType === 0
-                                        ? setPrice(
-                                          Number(
-                                            convertToEth(o.price.$numberDecimal)
-                                          ).toFixed(4)
-                                        )
-                                        : setPrice("");
-                                      props.NftDetails.type === 1 &&
-                                        setCurrentOrder(o);
-                                      o.salesType === 0
-                                        ? setIsBuyNowModal(true)
-                                        : setIsPlaceBidModal(true);
-                                    } else {
-                                      NotificationManager.error(
-                                        "wallet not connected",
-                                        "",
-                                        800
-                                      );
-                                      return;
-                                    }
-                                  }}
-                                >
-                                  {o.salesType === 0
-                                    ? "Buy Now"
-                                    : !haveBid
-                                      ? "Place Bid"
-                                      : ""}
-                                </button>
+                                    className="small_border_btn small_btn"
+                                    onClick={async () => {
+                                      const wCheck = WalletConditions();
+                                      setWalletVariable(wCheck)
+
+                                      if (wCheck.isLocked) {
+                                        setShowAlert("locked");
+                                        return;
+                                      }
+
+                                      if (!wCheck.isLocked) {
+                                        if (!wCheck.cCheck) {
+                                          setShowAlert("chainId");
+                                          return;
+                                        }
+                                        if (!wCheck.aCheck) {
+                                          setShowAlert("account")
+                                          return;
+                                        }
+                                      }
+                                      if (
+                                        moment.utc(o?.deadline * 1000).local().format() < moment(new Date()).format()
+                                      ) {
+                                        NotificationManager.error(
+                                          "Auction Ended",
+                                          "",
+                                          800
+                                        );
+                                        return;
+                                      }
+                                      if (currentUser) {
+                                        o.salesType === 0
+                                          ? setPrice(
+                                            Number(
+                                              convertToEth(o.price.$numberDecimal)
+                                            ).toFixed(4)
+                                          )
+                                          : setPrice("");
+                                        props.NftDetails.type === 1 &&
+                                          setCurrentOrder(o);
+                                        o.salesType === 0
+                                          ? setIsBuyNowModal(true)
+                                          : setIsPlaceBidModal(true);
+                                      } else {
+                                        NotificationManager.error(
+                                          "wallet not connected",
+                                          "",
+                                          800
+                                        );
+                                        return;
+                                      }
+                                    }}
+                                  >
+                                    {o.salesType === 0
+                                      ? "Buy Now"
+                                      : !haveBid
+                                        ? "Place Bid"
+                                        : ""}
+                                  </button> : ""
+
                               )}
                             </div>
                           </td>
