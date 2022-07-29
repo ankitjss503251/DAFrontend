@@ -194,7 +194,6 @@ const Home = () => {
             {upcomingMints && upcomingMints?.length > 0
               ? upcomingMints.slice(0, 3).map((card, key) => {
                 const st = moment.utc(card.saleStartTime).local().format();
-                console.log("start date", st, st !== null);
                 const et = moment.utc(card.saleEndTime).local().format();
                 const ct = moment(new Date()).format();
                 return (
@@ -203,42 +202,16 @@ const Home = () => {
                     key={key}
                   >
                     <div className="mint_box online_rotater" style={mint_bg}>
-                      {card.link ? (
-                        <Link to={card.link}>
-                          <div className="mint_img">
-                            <img
-                              alt=""
-                              src={card?.logoImg}
-                              className="img-fluid"
-                              onError={(e) =>
-                              (e.target.src =
-                                "../img/collections/list4.png")
-                              }
-                            />
-                            {st !== null ? (
-                              ct >= st && ct < et ? (
-                                <div className="mint_date">
-                                  <span>
-                                    {moment(card?.saleStartTime).format("DD")}
-                                  </span>{" "}
-                                  {moment(card?.saleStartTime).format("MMM")}
-                                </div>
-                              ) : (
-                                ""
-                              )
-                            ) : (
-                              ""
-                            )}
-                          </div>
-                        </Link>
-                      ) : (
+
+                      <Link to={card.link}>
                         <div className="mint_img">
                           <img
                             alt=""
                             src={card?.logoImg}
                             className="img-fluid"
                             onError={(e) =>
-                              (e.target.src = "../img/collections/list4.png")
+                            (e.target.src =
+                              "../img/collections/list4.png")
                             }
                           />
                           {st !== null ? (
@@ -256,7 +229,8 @@ const Home = () => {
                             ""
                           )}
                         </div>
-                      )}
+                      </Link>
+
                       <div className="mint_text p-4">
                         <div className="logoImg_con rotater_border">
                           <Link

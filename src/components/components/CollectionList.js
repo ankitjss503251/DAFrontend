@@ -27,7 +27,6 @@ function CollectionList(props) {
     const { scene } = useGLTF(props.image);
     return <primitive object={scene} />;
   }
-  console.log("props in coleection list is--------->",props.nft.image)
   return (
     <Link to={`/NFTdetails/${props.nft?.id}`}>
       <div className='collection_items'>
@@ -36,7 +35,7 @@ function CollectionList(props) {
         {props.nft && props.nft.fileType === "Image" ? (
                             <img
                               src={props.nft?.image}
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100 '
                               alt=''
                               onError={(e) => {
                                 console.log("image error is--->", e);
@@ -48,7 +47,7 @@ function CollectionList(props) {
                           )}
                           {props.nft && props.nft.fileType === "Video" ? (
                             <video
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100 ' 
                               controls>
                               <source src={props.nft?.image} type='video/mp4' />
                             </video>
@@ -58,7 +57,7 @@ function CollectionList(props) {
 
                           {props.nft && props.nft.fileType === "3D" ? (
                             <Canvas
-                              className='img-fluid items_img w-100 my-3'
+                              className='img-fluid items_img w-100'
                               camera={{ position: [10, 100, 100], fov: 1 }}>
                               <pointLight
                                 position={[10, 10, 10]}

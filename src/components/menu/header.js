@@ -24,13 +24,19 @@ import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
 import defaultProfile from "../../assets/images/favicon.png";
 import menuIcon from "../../assets/menu.png";
+import evt from "./../../events/events";
+
+const Web3 = require('web3');
+// web3 lib instance
+const web3 = new Web3(window.ethereum);
+
 
 setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
 
-const onboard = Onboard({
+export const onboard = Onboard({
   wallets: [walletConnect, injected],
   chains: [
     {
@@ -39,18 +45,7 @@ const onboard = Onboard({
       label: "Mumbai matic testnet",
       rpcUrl: `https://rpc-mumbai.maticvigil.com/`,
     },
-    // {
-    //   id: "0x1",
-    //   token: "ETH",
-    //   label: "Ethereum Mainnet",
-    //   rpcUrl: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
-    // },
-    // {
-    //   id: "0x3",
-    //   token: "tROP",
-    //   label: "Ethereum Ropsten Testnet",
-    //   rpcUrl: `https://ropsten.infura.io/v3/${process.env.INFURA_ID}`,
-    // },
+
     {
       id: "0x4",
       token: "rETH",
@@ -107,52 +102,37 @@ const onboard = Onboard({
   },
 });
 
-let locked;
 
 const Header = function () {
   const [cookies, setCookie, removeCookie] = useCookies([]);
-  const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState();
-  const [chainId, setChainId] = useState();
   const [userDetails, setUserDetails] = useState();
   const [scolns, setSColns] = useState([]);
   const [sNfts, setSNfts] = useState([]);
   const [showSearchDiv, setShowSearchDiv] = useState("");
   const [searchedText, setShowSearchedText] = useState("");
   const [catg, setCatg] = useState([]);
-  const [label, setLabel] = useState("");
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     async function setCategory() {
       const cat = await getCategory();
       setCatg(cat);
-      
-      //const [primaryWallet] = await onboard.state.get().wallets;
-      //console.log("Active wallets",primaryWallet);
     }
     setCategory();
   }, []);
+
+  evt.on("disconnectWallet", () => {
+    disconnectWallet()
+  });
 
   useEffect(() => {
     async function setCookies() {
       if (cookies["selected_account"]) {
         setAccount(cookies["selected_account"]);
-        const s = await onboard.connectWallet({
+        await onboard.connectWallet({
           autoSelect: { label: cookies["label"], disableModals: true },
         });
-        console.log("onboard is------->",s)
-        await onboard.setChain({
-          chainId: process.env.REACT_APP_CHAIN_ID,
-        });
-        setProvider(s[0].provider);
-        setLabel(s[0].label);
-        setCookie("label", s[0].label, { path: "/" });
-        setCookie("selected_account", s[0].accounts[0].address, { path: "/" });
-        setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
-          path: "/",
-        });
-        setCookie("balance", s[0].accounts[0].balance?.MATIC, { path: "/" });
       }
     }
     setCookies();
@@ -161,49 +141,15 @@ const Header = function () {
   const refreshState = () => {
     removeCookie("selected_account", { path: "/" });
     removeCookie("chain_id", { path: "/" });
-    removeCookie("balance", { path: "/" });
     removeCookie("label", { path: "/" });
     localStorage.clear();
     setAccount("");
-    setChainId("");
-    setProvider(null);
   };
-
-  useEffect(() => {
-    console.log("provider in useEffect", provider);
-    async function setProvider() {
-      if (provider) {
-        provider.on("accountsChanged", (accounts) => {
-          if (account && accounts[0] !== undefined) {
-            const wallets = onboard.state.get().wallets;
-            setProvider(wallets[0].provider);
-            userAuth(wallets[0], wallets[0].accounts[0].address);
-          }
-          if (accounts[0] === undefined) {
-            refreshState();
-          }
-        });
-        provider.on("chainChanged", async (chains) => {
-          if (chains !== process.env.REACT_APP_CHAIN_ID) {
-            await onboard.setChain({
-              chainId: process.env.REACT_APP_CHAIN_ID,
-            });
-          }
-        });
-      }
-    }
-
-    setProvider();
-  }, [provider, account, chainId]);
-
-  function walletConnect() {
-    connectWallet();
-  }
 
   const getUserProfile = async () => {
     const profile = await getProfile();
     setUserDetails(profile.data);
-  
+
   };
 
   useEffect(() => {
@@ -211,29 +157,29 @@ const Header = function () {
       if (account && !userDetails) getUserProfile();
     }
     getUserProfileData();
-    
-  }, [account, userDetails?.username]);
+  }, [account, userDetails]);
 
   const connectWallet = async () => {
     const wallets = await onboard.connectWallet();
     if (wallets.length !== 0) {
+
       await onboard.setChain({
         chainId: process.env.REACT_APP_CHAIN_ID,
       });
-      const primaryWallet = wallets[0];
-      setChainId(primaryWallet.chains[0].id);
-      setProvider(primaryWallet.provider);
-      const address = primaryWallet.accounts[0].address;
 
+      const primaryWallet = wallets[0];
+      const address = primaryWallet.accounts[0].address;
       try {
         userAuth(primaryWallet, address);
       } catch (e) {
         console.log("Error in user auth", e);
       }
+
+      
     }
   };
 
-  const userAuth = async (primaryWallet, address) => {
+  const userAuth = async (primaryWallet, address, signature, message) => {
     try {
       const isUserExist = await checkuseraddress(address);
       if (isUserExist === "User not found") {
@@ -241,26 +187,20 @@ const Header = function () {
           const res = await Register(address);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
-            refreshState();
             return;
           } else if (res?.message === "User already exists") {
             NotificationManager.error(res?.message);
-            refreshState();
             return;
           } else {
             localStorage.setItem("userId", res?.data?.userId);
             setAccount(primaryWallet.accounts[0].address);
-            setLabel(primaryWallet.label);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
-              parseInt(primaryWallet.chains[0].id, 16).toString(),
+              primaryWallet.chains[0].id,
               { path: "/" }
             );
-            setCookie("balance", primaryWallet.accounts[0].balance, {
-              path: "/",
-            });
             getUserProfile();
             NotificationManager.success(res.message);
             slowRefresh(1000);
@@ -273,32 +213,25 @@ const Header = function () {
       } else {
         try {
           const res = await Login(address);
-          console.log("Login API response", res);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
-            refreshState();
             return;
           } else if (
             res?.message === "User not found" ||
             res?.message === "Login Invalid"
           ) {
             NotificationManager.error(res?.message);
-            refreshState();
             return;
           } else {
             localStorage.setItem("userId", res?.data?.userId);
             setAccount(primaryWallet.accounts[0]?.address);
-            setLabel(primaryWallet.label);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
-              parseInt(primaryWallet.chains[0]?.id, 16).toString(),
+              primaryWallet.chains[0]?.id,
               { path: "/" }
             );
-            setCookie("balance", primaryWallet.accounts[0]?.balance, {
-              path: "/",
-            });
             getUserProfile();
             NotificationManager.success(res?.message, "", 800);
             slowRefresh(1000);
@@ -315,74 +248,12 @@ const Header = function () {
   };
 
   const disconnectWallet = async () => {
-    await onboard.disconnectWallet({ label: label });
+    await onboard.disconnectWallet({ label: cookies["label"] });
     await Logout(cookies["selected_account"]);
     refreshState();
-    NotificationManager.success("User Logged out Successfully", "", 800);
+    // NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
-
-  // const onLogin = async () => {
-  //   const wallets = await onboard.connectWallet();
-  //   if (wallets.length !== 0) {
-  //   await onboard.setChain({
-  //     chainId: process.env.REACT_APP_CHAIN_ID,
-  //   });
-  //   const primaryWallet = wallets[0];
-  //   setChainId(primaryWallet.chains[0].id);
-  //   setProvider(primaryWallet.provider);
-  //   const address = wallets[0].accounts[0].address;
-  //   try {
-  //     const isUserExist = await checkuseraddress(address);
-  //     console.log("selected_account", address);
-  //     console.log("isUserExist", isUserExist);
-  //     if (isUserExist === "User Found successfully") {
-  //       try {
-  //         const res = await Login(address);
-  //         console.log("Login API response", res);
-  //         if (res.message === "Wallet Address required") {
-  //           NotificationManager.info(res.message);
-  //           refreshState();
-  //           return;
-  //         } else if (
-  //           res.message === "User not found" ||
-  //           res.message === "Login invalid"
-  //         ) {
-  //           NotificationManager.error(res.message);
-  //           refreshState();
-  //           return;
-  //         } else {
-  //           setAccount(primaryWallet.accounts[0].address);
-  //           setLabel(primaryWallet.label);
-  //           setCookie("selected_account", address, { path: "/" });
-  //           setCookie("label", primaryWallet.label, { path: "/" });
-  //           setCookie(
-  //             "chain_id",
-  //             parseInt(wallets[0].chains[0].id, 16).toString(),
-  //             {
-  //               path: "/",
-  //             }
-  //           );
-  //           setCookie("balance", wallets[0].accounts[0].balance, {
-  //             path: "/",
-  //           });
-  //           getUserProfile();
-  //           NotificationManager.success(res.message);
-  //           slowRefresh(1000);
-  //           return;
-  //         }
-  //       } catch (e) {
-  //         NotificationManager.error(e);
-  //         return;
-  //       }
-  //     } else {
-  //       NotificationManager.error(isUserExist);
-  //     }
-  //   } catch (e) {
-  //     NotificationManager.error(e);
-  //   }
-  // }
-  // };
 
   const handleSearch = async (e) => {
     setShowSearchDiv("active");
@@ -461,12 +332,12 @@ const Header = function () {
                 <ul>
                   {scolns
                     ? scolns.slice(0, 3).map((item) => {
-                        return (
-                          <a href={`/collection/${item._id}`}>
-                            <li> {item.name}</li>
-                          </a>
-                        );
-                      })
+                      return (
+                        <a href={`/collection/${item._id}`}>
+                          <li> {item.name}</li>
+                        </a>
+                      );
+                    })
                     : ""}
                 </ul>
                 {scolns.length > 3 && (
@@ -481,12 +352,12 @@ const Header = function () {
                 <ul>
                   {sNfts
                     ? sNfts.slice(0, 3).map((item) => {
-                        return (
-                          <a href={`/NFTdetails/${item.id}`}>
-                            <li>{item.name}</li>
-                          </a>
-                        );
-                      })
+                      return (
+                        <a href={`/NFTdetails/${item.id}`}>
+                          <li>{item.name}</li>
+                        </a>
+                      );
+                    })
                     : ""}
                 </ul>
                 {sNfts.length > 3 && (
@@ -520,18 +391,18 @@ const Header = function () {
                   </li>
                   {catg.length > 0
                     ? catg?.map((c, key) => {
-                        return (
-                          <li key={key}>
-                            <NavLink
-                              to={`/marketplacecollection/${c.name}`}
-                              className="sub-items"
-                            >
-                              <Firearmsvg />
-                              {c.name}
-                            </NavLink>
-                          </li>
-                        );
-                      })
+                      return (
+                        <li key={key}>
+                          <NavLink
+                            to={`/marketplacecollection/${c.name}`}
+                            className="sub-items"
+                          >
+                            <Firearmsvg />
+                            {c.name}
+                          </NavLink>
+                        </li>
+                      );
+                    })
                     : ""}
                 </ul>
               </li>
@@ -589,7 +460,6 @@ const Header = function () {
                   </ul>
                 </NavLink>
               </li>
-              {console.log("userDetails", userDetails)}
               {!userDetails ? (
                 <>
                   <li className="nav-item">

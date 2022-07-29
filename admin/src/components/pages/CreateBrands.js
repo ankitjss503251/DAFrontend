@@ -144,7 +144,7 @@ function CreateBrands() {
           </div>
         )}
         <div className="adminbody table-widget text-light box-background">
-          <h5 className="admintitle font-600 font-24 text-yellow">Brand</h5>
+          <h5 className="admintitle font-600 font-24 text-yellow">Brands</h5>
 
           <table className="table table-hover text-light">
             <thead>
