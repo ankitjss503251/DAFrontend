@@ -23,6 +23,11 @@ import evt from "./components/Events";
 import init from "@web3-onboard/core";
 import LandingPage from "../LandingPage";
 
+const Web3 = require('web3');
+// web3 lib instance
+const web3 = new Web3(window.ethereum);
+
+
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
  
@@ -187,21 +192,46 @@ const Navbar = (props) => {
       console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
-      try {
-        userAuth(primaryWallet, address);
-      } catch (e) {
-        console.log("Error in user auth", e);
+
+
+      if (web3.eth) {
+        const timestamp = new Date().getTime();
+        const message = `Digital Arms Marketplace uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address - ${timestamp}`;
+
+        console.log(web3.utils.fromUtf8(message));
+
+        web3.eth.currentProvider.sendAsync({
+          method: 'personal_sign',
+          params: [message, address],
+          from: address,
+        }, async function (err, signature) {
+          if(!err){
+            console.log("Signature", signature);
+            try {
+              userAuth(primaryWallet, address, signature.result, message);
+            } catch (e) {
+              console.log("Error in user auth", e);
+            }
+          }
+          console.log("Error is", err);
+        })
       }
+
+      // try {
+      //   userAuth(primaryWallet, address);
+      // } catch (e) {
+      //   console.log("Error in user auth", e);
+      // }
     }
   };
 
-  const userAuth = async (primaryWallet, address) => {
+  const userAuth = async (primaryWallet, address, signature, message) => {
     try {
       const isUserExist = await checkuseraddress(address);
       if (isUserExist?.message !== "User not found") {
 
         try {
-          const res = await Login(address);
+          const res = await Login(address, signature, message);
           console.log("Login API response", res);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
