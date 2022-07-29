@@ -207,7 +207,7 @@ const Home = () => {
                         <div className="mint_img">
                           <img
                             alt=""
-                            src={card?.logoImg}
+                            src={card?.coverImg}
                             className="img-fluid"
                             onError={(e) =>
                             (e.target.src =
@@ -266,7 +266,7 @@ const Home = () => {
                           </li>
                           <li>
                             <img alt="" src={"../img/mint/items.svg"} />{" "}
-                            {`${card.totalSupply} items`}
+                            {`${card.totalSupply ? card.totalSupply : 0} items`}
                           </li>
                         </ul>
                         {ct < st ? (
@@ -307,11 +307,12 @@ const Home = () => {
                                 fill="#428BC1"
                               />
                             </svg>
-                            {console.log("moment.utc(st)", st, moment.utc(st).local().format(), new Date())}
-                            <Clock
+                            {console.log("stt", st, moment.utc(st).local().format() === "Invalid date", new Date())}
+                            {moment.utc(st).local().format() == "Invalid date" ? " --:--:--" : <Clock
                               deadline={moment.utc(st).local().format()
                               }
-                            ></Clock>
+                            ></Clock>}
+
                           </span>
 
                         ) : ct >= st && ct < et ? (

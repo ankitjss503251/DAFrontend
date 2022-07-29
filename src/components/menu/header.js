@@ -148,7 +148,7 @@ const Header = function () {
 
   const getUserProfile = async () => {
     const profile = await getProfile();
-    setUserDetails(profile.data);
+    setUserDetails(profile?.data);
 
   };
 
@@ -169,13 +169,35 @@ const Header = function () {
 
       const primaryWallet = wallets[0];
       const address = primaryWallet.accounts[0].address;
-      try {
-        userAuth(primaryWallet, address);
-      } catch (e) {
-        console.log("Error in user auth", e);
-      }
 
-      
+
+      if (web3.eth) {
+        const timestamp = new Date().getTime();
+        const message = `Digital Arms Marketplace uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address - ${timestamp}`;
+
+        console.log(web3.utils.fromUtf8(message));
+
+        web3.eth.currentProvider.sendAsync({
+          method: 'personal_sign',
+          params: [message, address],
+          from: address,
+        }, async function (err, signature) {
+          if (!err) {
+            console.log("Signature", signature);
+            try {
+              userAuth(primaryWallet, address, signature.result, message);
+            } catch (e) {
+              console.log("Error in user auth", e);
+            }
+          }
+          console.log("Error is", err);
+        })
+      }
+      // try {
+      //   userAuth(primaryWallet, address);
+      // } catch (e) {
+      //   console.log("Error in user auth", e);
+      // }
     }
   };
 
@@ -212,7 +234,7 @@ const Header = function () {
         }
       } else {
         try {
-          const res = await Login(address);
+          const res = await Login(address, signature, message);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
             return;

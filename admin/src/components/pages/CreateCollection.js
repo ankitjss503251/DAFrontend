@@ -24,6 +24,11 @@ import abi from "./../../config/abis/generalERC721Abi.json";
 import { GetOwnerOfToken } from "../../helpers/getterFunctions";
 import { slowRefresh } from "../../helpers/NotifyStatus";
 import Spinner from "../components/Spinner";
+import { WalletConditions } from "./../../helpers/WalletConditions";
+import { onboard } from "../Navbar";
+import PopupModal from "../components/popupModal";
+import evt from "../../events/events";
+import Logo from "../../logo1.svg";
 
 function CreateCollection(props) {
   const [logoImg, setLogoImg] = useState("");
@@ -58,6 +63,8 @@ function CreateCollection(props) {
   const [isMinted, setIsMinted] = useState(0);
   const [isEdit1, setIsEdit1] = useState(false);
   const [isEdit2, setIsEdit2] = useState(false);
+  const [showAlert, setShowAlert] = useState("");
+  const [walletVariable, setWalletVariable] = useState({});
 
   useEffect(() => {
     if (cookies.da_selected_account)
@@ -103,7 +110,7 @@ function CreateCollection(props) {
     console.log("evv.target", ev.target["value"]);
     const dt = ev.target["value"];
     const ct = moment(new Date()).format();
-    
+
     if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
@@ -199,8 +206,9 @@ function CreateCollection(props) {
 
   const readReceipt = async (hash) => {
     let provider = new ethers.providers.Web3Provider(window.ethereum);
-    const receipt = await provider.getTransactionReceipt(hash.hash);
-    let contractAddress = receipt.logs[0].address;
+    const reciept = await provider.getTransactionReceipt(hash.hash);
+    console.log("reciept", reciept)
+    let contractAddress = reciept?.logs?.length > 0 ? reciept.logs[0].address : "";
     return contractAddress;
   };
 
@@ -254,7 +262,24 @@ function CreateCollection(props) {
   const handleCollectionCreationAndUpdation = async (isUpdate = false) => {
     let res1;
     let creator;
+    const wCheck = WalletConditions();
+    setWalletVariable(wCheck)
 
+    if (wCheck.isLocked) {
+      setShowAlert("locked");
+      return;
+    }
+
+    if (!wCheck.isLocked) {
+      if (!wCheck.cCheck) {
+        setShowAlert("chainId");
+        return;
+      }
+      if (!wCheck.aCheck) {
+        setShowAlert("account")
+        return;
+      }
+    }
     if (handleValidationCheck()) {
       setLoading(true);
       setModal("");
@@ -306,39 +331,7 @@ function CreateCollection(props) {
 
         try {
           setLoading(true);
-
-
-          if (isOffChain === "No") {
-            nftType === "1"
-              ? (res1 = await creator.deployExtendedERC721(
-                title,
-                symbol,
-                "www.uri.com",
-                royalty * 100,
-                contracts.BUSD
-              ))
-              : (res1 = await creator.deployExtendedERC1155(
-                "www.uri.com",
-                royalty * 100,
-                contracts.BUSD
-              ));
-
-            let hash = res1;
-            console.log("hash", hash.hash)
-            res1 = await res1.wait();
-            contractAddress = await readReceipt(hash);
-          } else {
-            res1 = {};
-            res1.status = 1;
-          }
-        } catch (e) {
-          console.log(e);
-          setLoading(false);
-          NotificationManager.error(e.message, "", 900);
-          slowRefresh(1000);
-        }
-
-        if (res1 !== undefined) {
+          fd = new FormData();
           let type;
           if (nftType === "1") {
             type = 1;
@@ -394,8 +387,9 @@ function CreateCollection(props) {
               NotificationManager.error(e.message, "", 800);
               slowRefresh(1000);
             }
-            contractAddress = await readReceipt(hash);
+
             res1 = await res1.wait();
+            contractAddress = await readReceipt(hash);
             let req = {
               "contractAddress": contractAddress,
               "recordID": createdCollection._id,
@@ -419,10 +413,15 @@ function CreateCollection(props) {
             } catch (e) {
               setLoading(false);
               NotificationManager.error(e.message, "", 800);
-              // slowRefresh(1000);
+              slowRefresh(1000);
             }
           }
 
+        } catch (e) {
+          console.log(e);
+          setLoading(false);
+          NotificationManager.error(e.message, "", 900);
+          slowRefresh(1000);
         }
 
         if (res1 !== undefined) {
@@ -432,7 +431,7 @@ function CreateCollection(props) {
             1800
           );
           setLoading(false);
-          // slowRefresh(1000);
+          slowRefresh(1000);
         }
       }
     }
@@ -599,6 +598,76 @@ function CreateCollection(props) {
 
   return (
     <div className="wrapper">
+      {showAlert === "chainId" ? <PopupModal content={<div className='popup-content1'>
+        <div className='bid_user_details my-4'>
+          <img src={Logo} alt='' />
+          <div className='bid_user_address'>
+
+            <div className="d-flex">
+              <div className="mr-3">Required Network ID:&nbsp;</div>
+              <span className="adr">
+                {walletVariable.sChain}
+              </span>
+
+            </div>
+
+          </div>
+        </div>
+        <button
+          className='btn-main mt-2' onClick={async () => {
+            const isSwitched = await onboard.setChain({
+              chainId: process.env.REACT_APP_CHAIN_ID,
+            });
+            if (isSwitched)
+              setShowAlert("");
+          }}>
+          {"Switch Network"}
+        </button>
+      </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+        showAlert === "account" ? <PopupModal content={
+          <div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+                <p className="mb-3">Please switch to connected wallet address or click logout to continue with the current wallet address by disconnecting the already connected account.</p>
+              </div>
+
+              <button
+                className='btn-main mt-2' onClick={() => {
+                  console.log("logout btn click");
+                  evt.emit("disconnectWallet")
+                }}>
+                {"Logout"}
+              </button>
+            </div>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+          showAlert === "locked" ? <PopupModal content={<div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div>
+              <h4 className="mb-3">Your wallet is locked. Please unlock your wallet and connect again.</h4>
+            </div>
+            <button
+              className='btn-main mt-2' onClick={() => {
+                evt.emit("disconnectWallet")
+              }}>
+              Connect Wallet
+            </button>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+
       {/* <!-- Sidebar  --> */}
       <Sidebar />
       {loading ? <Spinner /> : ""}

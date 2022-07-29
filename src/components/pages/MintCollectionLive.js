@@ -63,7 +63,6 @@ function MintCollectionLive() {
         _upcoming.push(coln);
       } else if (ct >= st && ct < et) {
         _ongoing.push(coln);
-        // setOngoing(ongoing.push(coln));
       } else {
         _launched.push(coln);
       }
