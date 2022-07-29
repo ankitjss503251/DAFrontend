@@ -206,8 +206,9 @@ function CreateCollection(props) {
 
   const readReceipt = async (hash) => {
     let provider = new ethers.providers.Web3Provider(window.ethereum);
-    const receipt = await provider.getTransactionReceipt(hash.hash);
-    let contractAddress = receipt.logs[0].address;
+    const reciept = await provider.getTransactionReceipt(hash.hash);
+    console.log("reciept", reciept)
+    let contractAddress = reciept?.logs?.length > 0 ? reciept.logs[0].address : "";
     return contractAddress;
   };
 
@@ -261,7 +262,6 @@ function CreateCollection(props) {
   const handleCollectionCreationAndUpdation = async (isUpdate = false) => {
     let res1;
     let creator;
-
     const wCheck = WalletConditions();
     setWalletVariable(wCheck)
 
@@ -280,7 +280,6 @@ function CreateCollection(props) {
         return;
       }
     }
-
     if (handleValidationCheck()) {
       setLoading(true);
       setModal("");
@@ -332,46 +331,13 @@ function CreateCollection(props) {
 
         try {
           setLoading(true);
-
-
-          if (isOffChain === "No") {
-            nftType === "1"
-              ? (res1 = await creator.deployExtendedERC721(
-                title,
-                symbol,
-                "www.uri.com",
-                royalty * 100,
-                contracts.BUSD
-              ))
-              : (res1 = await creator.deployExtendedERC1155(
-                "www.uri.com",
-                royalty * 100,
-                contracts.BUSD
-              ));
-
-            let hash = res1;
-            console.log("hash", hash.hash)
-            res1 = await res1.wait();
-            contractAddress = await readReceipt(hash);
-          } else {
-            res1 = {};
-            res1.status = 1;
-          }
-        } catch (e) {
-          console.log(e);
-          setLoading(false);
-          NotificationManager.error(e.message, "", 900);
-          slowRefresh(1000);
-        }
-
-        if (res1 !== undefined) {
+          fd = new FormData();
           let type;
           if (nftType === "1") {
             type = 1;
           } else {
             type = 2;
           }
-          var fd = new FormData();
           fd.append("name", title);
           fd.append("symbol", symbol);
           fd.append("description", description);
@@ -421,8 +387,9 @@ function CreateCollection(props) {
               NotificationManager.error(e.message, "", 800);
               slowRefresh(1000);
             }
-            contractAddress = await readReceipt(hash);
+
             res1 = await res1.wait();
+            contractAddress = await readReceipt(hash);
             let req = {
               "contractAddress": contractAddress,
               "recordID": createdCollection._id,
@@ -450,6 +417,11 @@ function CreateCollection(props) {
             }
           }
 
+        } catch (e) {
+          console.log(e);
+          setLoading(false);
+          NotificationManager.error(e.message, "", 900);
+          slowRefresh(1000);
         }
 
         if (res1 !== undefined) {
