@@ -364,12 +364,11 @@ function NFTBids(props) {
                 <tbody>
                   {bids && bids.length > 0
                     ? bids.map((b, i) => {
-                      console.log("bid data", b)
                       const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                       const bidder =
                         b?.bidderID?.walletAddress?.toLowerCase();
                       return (
-                        <tr>
+                        <tr key={i}>
                           <td className="d-flex justify-content-start align-items-center mb-0">
                             <span className="blue_dot circle_dot"></span>
                             <span>
@@ -444,23 +443,26 @@ function NFTBids(props) {
                                       }
                                     }
                                     setLoading(true);
-                                    await handleAcceptBids(
+                                   const resp = await handleAcceptBids(
                                       b,
                                       props.NftDetails.type
                                     );
-
-                                    let historyReqData = {
-                                      nftID: b.nftID,
-                                      sellerID: localStorage.getItem('userId'),
-                                      buyerID: b?.bidderID?._id,
-                                      action: "Bid",
-                                      type: "Accepted",
-                                      price: b?.bidPrice?.$numberDecimal,
-                                      paymentToken: b?.orderID[0]?.paymentToken,
-                                      quantity: b?.bidQuantity,
-                                      createdBy: localStorage.getItem("userId"),
-                                    };
-                                    await InsertHistory(historyReqData);
+                                   
+                                    if(resp !== false){
+                                      let historyReqData = {
+                                        nftID: b.nftID,
+                                        sellerID: localStorage.getItem('userId'),
+                                        buyerID: b?.bidderID?._id,
+                                        action: "Bid",
+                                        type: "Accepted",
+                                        price: b?.bidPrice?.$numberDecimal,
+                                        paymentToken: b?.orderID[0]?.paymentToken,
+                                        quantity: b?.bidQuantity,
+                                        createdBy: localStorage.getItem("userId"),
+                                      };
+                                      await InsertHistory(historyReqData);
+                                    }
+                                    
                                     setLoading(false);
                                     setReloadContent(!reloadContent);
                                   }}
@@ -491,22 +493,26 @@ function NFTBids(props) {
                                         return;
                                       }
                                     }
-                                    await handleUpdateBidStatus(
+                                     await handleUpdateBidStatus(
                                       b._id,
                                       "Rejected"
                                     );
-                                    let historyReqData = {
-                                      nftID: b.nftID,
-                                      sellerID: localStorage.getItem('userId'),
-                                      buyerID: b?.bidderID?._id,
-                                      action: "Bid",
-                                      type: "Rejected",
-                                      price: b?.bidPrice?.$numberDecimal,
-                                      paymentToken: b?.orderID[0]?.paymentToken,
-                                      quantity: b?.bidQuantity,
-                                      createdBy: localStorage.getItem("userId"),
-                                    };
-                                    await InsertHistory(historyReqData);
+                                   
+                                   
+                                      let historyReqData = {
+                                        nftID: b.nftID,
+                                        sellerID: localStorage.getItem('userId'),
+                                        buyerID: b?.bidderID?._id,
+                                        action: "Bid",
+                                        type: "Rejected",
+                                        price: b?.bidPrice?.$numberDecimal,
+                                        paymentToken: b?.orderID[0]?.paymentToken,
+                                        quantity: b?.bidQuantity,
+                                        createdBy: localStorage.getItem("userId"),
+                                      };
+                                      await InsertHistory(historyReqData);
+                                   
+                                   
                                     setReloadContent(!reloadContent);
                                   }}
                                 >
@@ -561,22 +567,26 @@ function NFTBids(props) {
                                         return;
                                       }
                                     }
-                                    await handleUpdateBidStatus(
+                                     await handleUpdateBidStatus(
                                       b._id,
                                       "Cancelled"
                                     );
-                                    let historyReqData = {
-                                      nftID: b.nftID,
-                                      sellerID: localStorage.getItem('userId'),
-                                      buyerID: b?.bidderID?._id,
-                                      action: "Bid",
-                                      type: "Cancelled",
-                                      price: b?.bidPrice?.$numberDecimal,
-                                      paymentToken: b?.orderID[0]?.paymentToken,
-                                      quantity: b?.bidQuantity,
-                                      createdBy: localStorage.getItem("userId"),
-                                    };
-                                    await InsertHistory(historyReqData);
+                                   
+                                    
+                                      let historyReqData = {
+                                        nftID: b.nftID,
+                                        sellerID: localStorage.getItem('userId'),
+                                        buyerID: b?.bidderID?._id,
+                                        action: "Bid",
+                                        type: "Cancelled",
+                                        price: b?.bidPrice?.$numberDecimal,
+                                        paymentToken: b?.orderID[0]?.paymentToken,
+                                        quantity: b?.bidQuantity,
+                                        createdBy: localStorage.getItem("userId"),
+                                      };
+                                      await InsertHistory(historyReqData);
+                                    
+                                    
                                     setReloadContent(!reloadContent);
 
                                   }}
