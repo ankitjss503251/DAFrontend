@@ -30,11 +30,7 @@ const web3 = new Web3(window.ethereum);
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
-
-//evt.on("wallet-connect",()=>{
-//    console.log("1111 111jf;lskdjf");
-//    connectWallet()
-//  });  
+ 
 
 const onboard = Onboard({
   wallets: [walletConnect, injected],
@@ -133,12 +129,6 @@ const Navbar = (props) => {
     init();
     console.log('rendered');
   }, []);
-
-
-  evt.on("wallet-connect", () => {
-    console.log("1111");
-  });
-
   const init = async () => {
     if (cookies["da_selected_account"]) {
       setAccount(cookies["da_selected_account"]);
@@ -171,22 +161,6 @@ const Navbar = (props) => {
     setChainId("");
     setProvider(null);
   };
-
-  // useEffect(() => {
-  //   if (provider) {
-  //     provider.on("accountsChanged", (accounts) => {
-  //       const wallets = onboard.state.get().wallets;
-  //       setProvider(wallets[0].provider);
-  //       userAuth(wallets[0], wallets[0].accounts[0].address);
-  //     });
-  //     provider.on("chainChanged", (chains) => {
-  //       console.log("chain changed", chains);
-  //       if (chains !== process.env.REACT_APP_CHAIN_ID) {
-  //         setIsChainSwitched(true);
-  //       }
-  //     });
-  //   }
-  // }, [provider, account, chainId]);
 
   function walletConnect() {
     connectWallet();

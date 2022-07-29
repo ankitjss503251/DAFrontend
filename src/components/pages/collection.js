@@ -78,6 +78,8 @@ function Collection() {
   const [salesType, setSalesType] = useState(-2);
   const [priceSort, setPriceSort] = useState("ASC");
   const [history, setHistory] = useState([]);
+  const [historyLoadMore, setHistoryLoadMore] = useState(false);
+  const [currHistoryPage, setCurrHistoryPage] = useState(1)
 
   useEffect(() => {
     const fetch = async () => {
@@ -170,7 +172,7 @@ function Collection() {
   useEffect(() => {
     const fetch = async () => {
      try{ const reqData = {
-        page: 1,
+        page: currHistoryPage,
         limit: 12,
         collectionID: id
       }
@@ -182,7 +184,7 @@ function Collection() {
       }
     }
     fetch();
-  }, [])
+  }, [currHistoryPage])
 
   return (
     <>
@@ -650,7 +652,9 @@ function Collection() {
                 </div>
                { history?.length > 12 && <div className="row mt-5">
                   <div class="col-md-12 text-center ">
-                    <a class="view_all_bdr" href="/">
+                    <a class="view_all_bdr" href="/" disabled={historyLoadMore ? "disabled" : ""} onClick={() => {
+                      setCurrHistoryPage(currHistoryPage + 1);
+                    }}>
                       Load More
                     </a>
                   </div>

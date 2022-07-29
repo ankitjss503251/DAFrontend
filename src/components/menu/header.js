@@ -24,6 +24,7 @@ import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
 import defaultProfile from "../../assets/images/favicon.png";
 import menuIcon from "../../assets/menu.png";
+import evt from "./../../events/events";
 
 const Web3 = require('web3');
 // web3 lib instance
@@ -104,16 +105,13 @@ export const onboard = Onboard({
 
 const Header = function () {
   const [cookies, setCookie, removeCookie] = useCookies([]);
-  const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState();
-  const [chainId, setChainId] = useState();
   const [userDetails, setUserDetails] = useState();
   const [scolns, setSColns] = useState([]);
   const [sNfts, setSNfts] = useState([]);
   const [showSearchDiv, setShowSearchDiv] = useState("");
   const [searchedText, setShowSearchedText] = useState("");
   const [catg, setCatg] = useState([]);
-  const [label, setLabel] = useState("");
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
@@ -124,25 +122,17 @@ const Header = function () {
     setCategory();
   }, []);
 
+  evt.on("disconnectWallet", () => {
+    disconnectWallet()
+  });
+
   useEffect(() => {
     async function setCookies() {
       if (cookies["selected_account"]) {
         setAccount(cookies["selected_account"]);
-        const s = await onboard.connectWallet({
+        await onboard.connectWallet({
           autoSelect: { label: cookies["label"], disableModals: true },
         });
-
-        await onboard.setChain({
-          chainId: process.env.REACT_APP_CHAIN_ID,
-        });
-        setProvider(s[0].provider);
-        setLabel(s[0].label);
-        setCookie("label", s[0].label, { path: "/" });
-        setCookie("selected_account", s[0].accounts[0].address, { path: "/" });
-        setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
-          path: "/",
-        });
-        setCookie("balance", s[0].accounts[0].balance?.MATIC, { path: "/" });
       }
     }
     setCookies();
@@ -151,44 +141,10 @@ const Header = function () {
   const refreshState = () => {
     removeCookie("selected_account", { path: "/" });
     removeCookie("chain_id", { path: "/" });
-    removeCookie("balance", { path: "/" });
     removeCookie("label", { path: "/" });
     localStorage.clear();
     setAccount("");
-    setChainId("");
-    setProvider(null);
   };
-
-  // useEffect(() => {
-  //   console.log("provider in useEffect", provider);
-  //   async function setProvider() {
-  //     if (provider) {
-  //       provider.on("accountsChanged", (accounts) => {
-  //         if (account && accounts[0] !== undefined) {
-  //           const wallets = onboard.state.get().wallets;
-  //           setProvider(wallets[0].provider);
-  //           userAuth(wallets[0], wallets[0].accounts[0].address);
-  //         }
-  //         if (accounts[0] === undefined) {
-  //           refreshState();
-  //         }
-  //       });
-  //       provider.on("chainChanged", async (chains) => {
-  //         if (chains !== process.env.REACT_APP_CHAIN_ID) {
-  //           await onboard.setChain({
-  //             chainId: process.env.REACT_APP_CHAIN_ID,
-  //           });
-  //         }
-  //       });
-  //     }
-  //   }
-
-  //   setProvider();
-  // }, [provider, account, chainId]);
-
-  function walletConnect() {
-    connectWallet();
-  }
 
   const getUserProfile = async () => {
     const profile = await getProfile();
@@ -201,7 +157,6 @@ const Header = function () {
       if (account && !userDetails) getUserProfile();
     }
     getUserProfileData();
-
   }, [account, userDetails]);
 
   const connectWallet = async () => {
@@ -213,42 +168,7 @@ const Header = function () {
       });
 
       const primaryWallet = wallets[0];
-      setChainId(primaryWallet.chains[0].id);
-      setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
-
-      // const domain = {
-      //     name: 'Digital Arms',
-      //     version: '1',
-      //     chainId: 80001,
-      //     verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
-      // };
-      
-      // // The named list of all type definitions
-      // const types = {
-      //     Person: [
-      //         { name: 'name', type: 'string' },
-      //         { name: 'wallet', type: 'address' }
-      //     ],
-      //     Mail: [
-      //         { name: 'from', type: 'Person' },
-      //         { name: 'to', type: 'Person' },
-      //         { name: 'contents', type: 'string' }
-      //     ]
-      // };
-      // const timestamp = new Date().getTime();
-      // // The data to sign
-      // const value = {
-      //     from: {
-      //         name: 'Cow',
-      //         wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
-      //     },
-      //     to: {
-      //         name: 'Bob',
-      //         wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB'
-      //     },
-      //     contents: 'Digital Arms Marketplace uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address - '+ timestamp
-      // };
 
 
       if (web3.eth) {
@@ -273,8 +193,11 @@ const Header = function () {
           console.log("Error is", err);
         })
       }
-
-      
+      // try {
+      //   userAuth(primaryWallet, address);
+      // } catch (e) {
+      //   console.log("Error in user auth", e);
+      // }
     }
   };
 
@@ -286,26 +209,20 @@ const Header = function () {
           const res = await Register(address);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
-            refreshState();
             return;
           } else if (res?.message === "User already exists") {
             NotificationManager.error(res?.message);
-            refreshState();
             return;
           } else {
             localStorage.setItem("userId", res?.data?.userId);
             setAccount(primaryWallet.accounts[0].address);
-            setLabel(primaryWallet.label);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
-              parseInt(primaryWallet.chains[0].id, 16).toString(),
+              primaryWallet.chains[0].id,
               { path: "/" }
             );
-            setCookie("balance", primaryWallet.accounts[0].balance, {
-              path: "/",
-            });
             getUserProfile();
             NotificationManager.success(res.message);
             slowRefresh(1000);
@@ -317,33 +234,26 @@ const Header = function () {
         }
       } else {
         try {
-          const res = await Login(address, signature, message);
-          console.log("Login API response", res);
+          const res = await Login(address);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
-            refreshState();
             return;
           } else if (
             res?.message === "User not found" ||
             res?.message === "Login Invalid"
           ) {
             NotificationManager.error(res?.message);
-            refreshState();
             return;
           } else {
             localStorage.setItem("userId", res?.data?.userId);
             setAccount(primaryWallet.accounts[0]?.address);
-            setLabel(primaryWallet.label);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
             setCookie(
               "chain_id",
-              parseInt(primaryWallet.chains[0]?.id, 16).toString(),
+              primaryWallet.chains[0]?.id,
               { path: "/" }
             );
-            setCookie("balance", primaryWallet.accounts[0]?.balance, {
-              path: "/",
-            });
             getUserProfile();
             NotificationManager.success(res?.message, "", 800);
             slowRefresh(1000);
@@ -360,10 +270,10 @@ const Header = function () {
   };
 
   const disconnectWallet = async () => {
-    await onboard.disconnectWallet({ label: label });
+    await onboard.disconnectWallet({ label: cookies["label"] });
     await Logout(cookies["selected_account"]);
     refreshState();
-    NotificationManager.success("User Logged out Successfully", "", 800);
+    // NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
 

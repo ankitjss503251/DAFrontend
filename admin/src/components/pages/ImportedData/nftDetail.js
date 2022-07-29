@@ -21,7 +21,6 @@ import abi from "../../../config/abis/generalERC721Abi.json";
 
 const NftDetail = () => {
   let { address, id } = useParams();
-  console.log("address,id", address, id);
   const [nftDetails, setNftDetails] = useState({});
   const [currentUser, setCurrentUser] = useState("");
   const [cookies] = useCookies([]);
@@ -49,7 +48,6 @@ const NftDetail = () => {
       data = await data.json();
       if (currentUser) {
         owner = await GetOwnerOfToken(address, id, true, currentUser);
-        console.log("owner", owner);
       } else {
         owner = "";
       }
@@ -85,7 +83,6 @@ const NftDetail = () => {
       });
       if (orders && orders.results && orders.results.length > 0) {
         setOrders(orders.results);
-        console.log("here");
       }
 
     }
@@ -136,14 +133,7 @@ const NftDetail = () => {
           </div>
           <br></br>
           <div className="col">
-            {/* {console.log(
-              "dattaaa",
-              nftDetails && ownedBy.length>0?.ownedBy?.toLowerCase() ===
-                currentUser?.toLowerCase() && orders.length == 0,
-              nftDetails?.ownedBy?.toLowerCase(),
-              currentUser?.toLowerCase(),
-              orders.length
-            )} */}
+           
             {nftDetails && nftDetails.ownedBy?.length > 0 ? (
               nftDetails.ownedBy[0].address.toLowerCase() === currentUser.toLowerCase()
             ) : false && orders.length == 0 ? (
@@ -151,7 +141,6 @@ const NftDetail = () => {
                 className="putonmarketplace"
                 onClick={async () => {
                   {
-                    console.log("nftDetails", nftDetails);
                     await putOnMarketplace(currentUser, {
                       collection: address,
                       tokenID: id,
@@ -169,7 +158,6 @@ const NftDetail = () => {
                     className="putonmarketplace"
                     onClick={async () => {
                       {
-                        console.log("nftDetails", nftDetails);
                         nftDetails?.ownedBy?.toLowerCase() ===
                           currentUser?.toLowerCase() && orders.length == 0
                           ? await putOnMarketplace(currentUser, {
