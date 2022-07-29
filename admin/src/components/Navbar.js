@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Wallet from "./SVG/Wallet";
 import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
+import Logo from "./../logo.svg"
 import walletConnectModule from "@web3-onboard/walletconnect";
 import {
   checkuseraddress,
@@ -17,17 +18,21 @@ import { NotificationManager } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
-import Logo from "./../logo.svg";
+
 import PopupModal from "./components/popupModal";
-import evt from "./components/Events";
-import init from "@web3-onboard/core";
+import evt from "../events/events";
 import LandingPage from "../LandingPage";
+
+const Web3 = require('web3');
+// web3 lib instance
+const web3 = new Web3(window.ethereum);
+
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
- 
 
-const onboard = Onboard({
+
+export const onboard = Onboard({
   wallets: [walletConnect, injected],
 
   chains: [
@@ -107,7 +112,7 @@ const onboard = Onboard({
 });
 
 
-evt.removeAllListeners("wallet-connect", walletConnect);
+
 
 
 const Navbar = (props) => {
@@ -122,44 +127,27 @@ const Navbar = (props) => {
 
   useEffect(() => {
     init();
-    console.log('rendered');
   }, []);
+
   const init = async () => {
     if (cookies["da_selected_account"]) {
       setAccount(cookies["da_selected_account"]);
       const s = await onboard.connectWallet({
-        autoSelect: { label: cookies["label"], disableModals: true },
+        autoSelect: { label: cookies["da_label"], disableModals: true },
       });
-      await onboard.setChain({
-        chainId: process.env.REACT_APP_CHAIN_ID,
-      });
-      setProvider(s[0].provider);
-      setLabel(s[0].label);
-      setCookie("label", s[0].label, { path: "/" });
-      setCookie("da_selected_account", s[0].accounts[0].address, { path: "/" });
-      setCookie("chain_id", parseInt(s[0].chains[0].id, 16).toString(), {
-        path: "/",
-      });
-      setCookie("balance", s[0].accounts[0].balance, { path: "/" });
-
-
     }
   };
 
   const refreshState = () => {
     removeCookie("da_selected_account", { path: "/" });
-    removeCookie("chain_id", { path: "/" });
+    removeCookie("da_chain_id", { path: "/" });
     removeCookie("balance", { path: "/" });
-    removeCookie("label", { path: "/" });
+    removeCookie("da_label", { path: "/" });
     localStorage.clear();
     setAccount("");
     setChainId("");
     setProvider(null);
   };
-
-  function walletConnect() {
-    connectWallet();
-  }
 
   const getUserProfile = async () => {
     const profile = await getProfile();
@@ -175,7 +163,6 @@ const Navbar = (props) => {
         "Non-Ethereum browser detected. You should consider trying MetaMask!"
       );
     }
-    console.log("in connect wallet");
     const wallets = await onboard.connectWallet();
 
     if (wallets.length !== 0) {
@@ -184,24 +171,48 @@ const Navbar = (props) => {
       });
       const primaryWallet = wallets[0];
       setChainId(primaryWallet.chains[0].id);
-      console.log("provider", primaryWallet.provider);
       setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
-      try {
-        userAuth(primaryWallet, address);
-      } catch (e) {
-        console.log("Error in user auth", e);
+
+
+      if (web3.eth) {
+        const timestamp = new Date().getTime();
+        const message = `Digital Arms Marketplace uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address - ${timestamp}`;
+
+        console.log(web3.utils.fromUtf8(message));
+
+        web3.eth.currentProvider.sendAsync({
+          method: 'personal_sign',
+          params: [message, address],
+          from: address,
+        }, async function (err, signature) {
+          if (!err) {
+            console.log("Signature", signature);
+            try {
+              userAuth(primaryWallet, address, signature.result, message);
+            } catch (e) {
+              console.log("Error in user auth", e);
+            }
+          }
+          console.log("Error is", err);
+        })
       }
+
+      // try {
+      //   userAuth(primaryWallet, address);
+      // } catch (e) {
+      //   console.log("Error in user auth", e);
+      // }
     }
   };
 
-  const userAuth = async (primaryWallet, address) => {
+  const userAuth = async (primaryWallet, address, signature, message) => {
     try {
       const isUserExist = await checkuseraddress(address);
       if (isUserExist?.message !== "User not found") {
 
         try {
-          const res = await Login(address);
+          const res = await Login(address, signature, message);
           console.log("Login API response", res);
           if (res?.message === "Wallet Address required") {
             NotificationManager.info(res?.message);
@@ -214,14 +225,13 @@ const Navbar = (props) => {
             return;
           } else {
             setAccount(primaryWallet.accounts[0].address);
-
             setLabel(primaryWallet.label);
             window.sessionStorage.setItem("role", res?.data?.userType);
             setCookie("da_selected_account", address, { path: "/" });
-            setCookie("label", primaryWallet.label, { path: "/" });
+            setCookie("da_label", primaryWallet.label, { path: "/" });
             setCookie(
-              "chain_id",
-              parseInt(primaryWallet.chains[0].id, 16).toString(),
+              "da_chain_id",
+              primaryWallet.chains[0].id,
               {
                 path: "/",
               }
@@ -249,13 +259,17 @@ const Navbar = (props) => {
   };
 
   const disconnectWallet = async () => {
-    await onboard.disconnectWallet({ label: label });
+    await onboard.disconnectWallet({ label: cookies["da_label"] });
     await Logout(cookies["da_selected_account"]);
     window.sessionStorage.removeItem("role");
     refreshState();
-    NotificationManager.success("User Logged out Successfully", "", 800);
+    // NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
+  evt.setMaxListeners(1)
+  evt.on("disconnectWallet", () => {
+    disconnectWallet();
+  });
 
   if (!account && !isSuperAdmin()) {
     return <LandingPage connectWallet={connectWallet} />
@@ -265,37 +279,10 @@ const Navbar = (props) => {
 
 
     <div className="admin-navbar d-flex w-100">
-      {isChainSwitched ? (
-        <PopupModal
-          content={
-            <div className="switch_container">
-              <h3>Chain Switched</h3>
-              <p className="my-4 mr-2">
-                Please Switch to Matic Testnet Network
-              </p>
-              <div className="d-flex justify-content-center align-items-center">
-                <button
-                  className="btn network_btn"
-                  onClick={async () => {
-                    await onboard.setChain({
-                      chainId: process.env.REACT_APP_CHAIN_ID,
-                    });
-                    setIsChainSwitched(false);
-                  }}
-                >
-                  Switch Network
-                </button>
-              </div>
-            </div>
-          }
-          handleClose={() => setIsChainSwitched(false)}
-        />
-      ) : (
-        ""
-      )}
+
       <div className="profile_box text-light me-auto d-flex align-items-center text-uppercase montserrat font-400">
         <div className="profile_img">
-          <img src={"../images/user.jpg"} alt="" className="img-fluid" />
+          <img src={Logo} alt="" className="img-fluid" />
         </div>
         {props.model}
         <Link className="logo" to="/">
