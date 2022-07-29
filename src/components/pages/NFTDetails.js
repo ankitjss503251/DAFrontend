@@ -505,13 +505,13 @@ function NFTDetails() {
       );
       if (res == false || res === undefined) {
         setLoading(false);
+
         return;
       }
       else {
         let historyReqData = {
           nftID: NFTDetails.id,
           buyerID: localStorage.getItem("userId"),
-          
           action: "Offer",
           type: haveOffer && haveOffer !== "none" ? "Updated" : "Created",
           price: ethers.utils.parseEther(offerPrice.toString()).toString(),
@@ -519,7 +519,7 @@ function NFTDetails() {
           quantity: offerQuantity,
           createdBy: localStorage.getItem("userId"),
         }
-        const d = await InsertHistory(historyReqData);
+        await InsertHistory(historyReqData);
         setLoading(false);
         slowRefresh(1000);
       }
