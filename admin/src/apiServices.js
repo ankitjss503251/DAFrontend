@@ -412,7 +412,7 @@ export const createNft = async (data) => {
       ?.includes("application/json");
     const datas = isJson && (await response.json());
 
-    return datas;
+    return datas.data;
   } catch (err) {
     return err;
   }
