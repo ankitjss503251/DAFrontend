@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense,useRef } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import Footer from "../components/footer";
 import Threegrid from "../SVG/Threegrid";
 import Twogrid from "../SVG/Twogrid";
@@ -19,7 +19,7 @@ import BGImg from "./../../assets/images/background.jpg";
 import SkeletonCard from "../components/Skeleton/NFTSkeletonCard";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import {
-  Canvas,useFrame,
+  Canvas, useFrame,
   extend,
   useThree,
 } from "@react-three/fiber";
@@ -30,20 +30,20 @@ var bgImgarrow = {
   backgroundImage: "url(./img/ep_arrow-right-bold.png)",
   backgroundRepeat: "no-repeat",
 };
-extend({OrbitControls});
+extend({ OrbitControls });
 
-const CameraControls=() => {
+const CameraControls = () => {
   // Get a reference to the Three.js Camera, and the canvas html element.
   // We need these to setup the OrbitControls component.
   // https://threejs.org/docs/#examples/en/controls/OrbitControls
   const {
     camera,
-    gl: {domElement},
-  }=useThree();
+    gl: { domElement },
+  } = useThree();
   // Ref to the controls, so that we can update them on every frame using useFrame
-  const controls=useRef();
+  const controls = useRef();
   useFrame((state) => controls.current.update());
-  return <orbitControls ref={controls} args={[camera,domElement]} />;
+  return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 function Marketplace() {
   var bgImgStyle = {
@@ -54,8 +54,8 @@ function Marketplace() {
     backgroundPositionY: "center",
     backgroundColor: "#000",
   };
-  
-  
+
+
 
   function Model(props) {
     const { scene } = useGLTF(props.image);
@@ -104,9 +104,10 @@ function Marketplace() {
   const [loader, setLoader] = useState(false);
   const [cardCount, setCardCount] = useState(0);
   const [priceSort, setPriceSort] = useState("ASC");
-  const [searchedCol, setSearchedCol] = useState("");
+  const [searchedCol, setSearchedCol] = useState();
   const [searchedBrand, setSearchedBrand] = useState("");
   const [searchedCat, setSearchedCat] = useState("");
+  const [toggle, setToggle] = useState(false);
 
   const filterToggle = () => {
     if (togglemode === "filterhide") {
@@ -168,8 +169,8 @@ function Marketplace() {
                 orderDet?.price?.$numberDecimal === undefined
                   ? "--"
                   : Number(convertToEth(orderDet?.price?.$numberDecimal))
-                      .toFixed(6)
-                      .slice(0, -2),
+                    .toFixed(6)
+                    .slice(0, -2),
               paymentToken: orderDet?.paymentToken,
               brand: res[i].brandData,
             };
@@ -192,9 +193,10 @@ function Marketplace() {
     ERCType,
     sText,
     salesType,
-    priceSort,searchedBrand,
+    priceSort, searchedBrand,
     searchedCat,
     searchedCol,
+    toggle
   ]);
 
   const handleAdvSearch = (data) => {
@@ -202,15 +204,24 @@ function Marketplace() {
     setCurrPage(1);
     setCardCount(0);
     setLoadMoreDisabled("");
-    if (data.type === "salesType") setSalesType(data.value);
-    if (data.type === "collection") setSearchedCol(data.value);
-    if (data.type === "brand") setSearchedBrand(data.value);
-    if (data.type === "category") setSearchedCat(data.value);
+    if (data.type === "salesType") {
+      setSalesType(data.value);
+    }
+    if (data.type === "collection") {
+      setToggle(!toggle)
+      setSearchedCol(data.value);
+    }
+    if (data.type === "brand") {
+      setSearchedBrand(data.value);
+    }
+    if (data.type === "category") {
+      setSearchedCat(data.value);
+    }
   };
 
   return (
     <div>
-{/*        
+      {/*        
       {(loadMoreDisabled && allNFTs.length > 0)
         ? NotificationManager.info("No more items to load", "", 800)
         : ""} */}
@@ -546,9 +557,7 @@ function Marketplace() {
             </div> */}
           </div>
           <div className='row'>
-            {loader ? (
-              <SkeletonCard cards={cardCount} grid={grid} />
-            ) : allNFTs?.length > 0 ? (
+            {allNFTs?.length > 0 ? (
               allNFTs.map((oIndex, key) => {
                 return oIndex.map((card, key) => {
                   return (
@@ -570,8 +579,8 @@ function Marketplace() {
                                 }
                                 key={card}
                                 onError={(e) =>
-                                  (e.target.src =
-                                    "../img/collections/list4.png")
+                                (e.target.src =
+                                  "../img/collections/list4.png")
                                 }
                               />
                             </div>
@@ -612,7 +621,7 @@ function Marketplace() {
                               <Suspense fallback={null}>
                                 <Model image={card.image} />
                               </Suspense>
-                              <CameraControls/>
+                              <CameraControls />
                             </Canvas>
                           ) : (
                             ""
@@ -675,8 +684,8 @@ function Marketplace() {
                             {card.salesType === 0
                               ? "Buy Now"
                               : card.salesType === 1 || card.salesType === 2
-                              ? "Place Bid"
-                              : "View"}
+                                ? "Place Bid"
+                                : "View"}
                           </Link>
                         </div>
                       </div>
@@ -686,11 +695,11 @@ function Marketplace() {
               })
             ) : (
               <div className="col-md-12">
-          <h4 className="no_data_text text-muted">No NFTs Available</h4>
-        </div>
+                <h4 className="no_data_text text-muted">No NFTs Available</h4>
+              </div>
             )}
           </div>
-          {allNFTs[0]?.length > 11 ? (
+          {allNFTs[0]?.length > 12 ? (
             <div className='row'>
               <div className='col-md-12 text-center mt-5'>
                 <button
