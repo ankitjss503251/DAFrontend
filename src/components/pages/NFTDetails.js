@@ -371,23 +371,23 @@ function NFTDetails() {
 
   const PutMarketplace = async () => {
     const wCheck = WalletConditions();
-                                    setWalletVariable(wCheck)
+    setWalletVariable(wCheck)
 
-                                    if (wCheck.isLocked) {
-                                      setShowAlert("locked");
-                                      return;
-                                    }
+    if (wCheck.isLocked) {
+      setShowAlert("locked");
+      return;
+    }
 
-                                    if (!wCheck.isLocked) {
-                                      if (!wCheck.cCheck) {
-                                        setShowAlert("chainId");
-                                        return;
-                                      }
-                                      if (!wCheck.aCheck) {
-                                        setShowAlert("account")
-                                        return;
-                                      }
-                                    }
+    if (!wCheck.isLocked) {
+      if (!wCheck.cCheck) {
+        setShowAlert("chainId");
+        return;
+      }
+      if (!wCheck.aCheck) {
+        setShowAlert("account")
+        return;
+      }
+    }
     setLoading(true);
 
     if (marketplaceSaleType === 0) {
@@ -461,15 +461,6 @@ function NFTDetails() {
     }
   };
 
-  const fetchWallet = async () => {
-    await onboard.connectWallet({
-      disableModals: true
-    });
-    // else NotificationManager.error("Connect Your Wallet", "", 800);
-    const currentState = onboard.state.get()
-    console.log("curr state", currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : "")
-    return currentState.wallets.length > 0 ? currentState.wallets[0].accounts.length > 0 ? currentState.wallets[0].accounts[0].address : "" : ""
-  }
 
 
   const PlaceOffer = async () => {
@@ -542,9 +533,8 @@ function NFTDetails() {
         NFTDetails.id,
         contracts.BUSD
       );
-      if (res == false || res === undefined) {
+      if (res === false) {
         setLoading(false);
-
         return;
       }
       else {
@@ -789,7 +779,7 @@ function NFTDetails() {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
-                if (res === false || res === undefined) {
+                if (res === false) {
                   setLoading(false);
                   return;
                 } else {
@@ -894,23 +884,23 @@ function NFTDetails() {
             onClick={async () => {
               setIsBuyNowModal(false);
               const wCheck = WalletConditions();
-                                    setWalletVariable(wCheck)
+              setWalletVariable(wCheck)
 
-                                    if (wCheck.isLocked) {
-                                      setShowAlert("locked");
-                                      return;
-                                    }
+              if (wCheck.isLocked) {
+                setShowAlert("locked");
+                return;
+              }
 
-                                    if (!wCheck.isLocked) {
-                                      if (!wCheck.cCheck) {
-                                        setShowAlert("chainId");
-                                        return;
-                                      }
-                                      if (!wCheck.aCheck) {
-                                        setShowAlert("account")
-                                        return;
-                                      }
-                                    }
+              if (!wCheck.isLocked) {
+                if (!wCheck.cCheck) {
+                  setShowAlert("chainId");
+                  return;
+                }
+                if (!wCheck.aCheck) {
+                  setShowAlert("account")
+                  return;
+                }
+              }
               setLoading(true);
               let res = await handleBuyNft(
                 orders[0]._id,
@@ -922,7 +912,7 @@ function NFTDetails() {
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
               if (res !== false && res !== undefined) {
-                
+
                 let historyReqData = {
                   nftID: NFTDetails.id,
                   buyerID: localStorage.getItem('userId'),
@@ -938,7 +928,7 @@ function NFTDetails() {
                 setLoading(false);
                 slowRefresh(1000);
               }
-              else{
+              else {
                 setLoading(false);
                 return;
               }
@@ -958,7 +948,7 @@ function NFTDetails() {
   return (
     <div>
 
-{showAlert === "chainId" ? <PopupModal content={<div className='popup-content1'>
+      {showAlert === "chainId" ? <PopupModal content={<div className='popup-content1'>
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
@@ -1077,7 +1067,7 @@ function NFTDetails() {
                 <p>
                   Owned by{" "}
                   <span style={textColor}>
-                    {ownedBy.slice(0, 8) + "..." + ownedBy.slice(34, 42)}
+                    {ownedBy?.slice(0, 8) + "..." + ownedBy?.slice(34, 42)}
                   </span>
                 </p>
                 <span className='add_wishlist'>
@@ -1179,9 +1169,7 @@ function NFTDetails() {
                         className='img-fluid hunter_fav'
                         alt=''
                       />
-                      {Number(convertToEth(orders[0].price?.$numberDecimal))
-                        .toFixed(6)
-                        .slice(0, -2)}{" "}
+                      {Number(convertToEth(orders[0].price?.$numberDecimal))?.toFixed(6)?.slice(0, -2)}{" "}
                       {Tokens[orders[0].paymentToken]?.symbolName}
                     </div>
                   </>
@@ -1244,12 +1232,12 @@ function NFTDetails() {
                       console.log("orders[0]", orders[0], orders);
                       const wCheck = WalletConditions();
                       setWalletVariable(wCheck)
-                  
+
                       if (wCheck.isLocked) {
                         setShowAlert("locked");
                         return;
                       }
-                  
+
                       if (!wCheck.isLocked) {
                         if (!wCheck.cCheck) {
                           setShowAlert("chainId");
