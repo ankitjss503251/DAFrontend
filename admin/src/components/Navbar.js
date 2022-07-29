@@ -3,14 +3,13 @@ import { Link } from "react-router-dom";
 import Wallet from "./SVG/Wallet";
 import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
-import Logo from "./../logo.svg"
+import Logo from "./../user.jpg"
 import walletConnectModule from "@web3-onboard/walletconnect";
 import {
   checkuseraddress,
   getProfile,
   Login,
   Logout,
-  adminRegister,
   isSuperAdmin,
   logoutSuperAdmin,
   CheckIfBlocked,

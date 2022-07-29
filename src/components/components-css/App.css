@@ -1404,7 +1404,7 @@ button.slick-arrow.slick-next {
   display: none;
 }
 .view_all_bdr {
-  border: 2px solid #ef981d;
+  border: 2px solid #ef981d !important;
   padding: 10px 75px;
   border-radius: 50px;
   font-family: "Montserrat", sans-serif;
@@ -1413,7 +1413,7 @@ button.slick-arrow.slick-next {
   font-size: 20px;
   line-height: 22px;
   text-align: center;
-  color: #ef981d;
+  color: #ef981d !important;
   text-shadow: 0px 0px 4px rgb(0 0 0 / 40%);
   display: inline-block;
   transition: 0.5s ease;
@@ -1423,6 +1423,7 @@ button.slick-arrow.slick-next {
 .view_all_bdr:hover {
   background: linear-gradient(180deg, #ef981d 56.77%, #f9bf50 100%);
   color: #fff !important;
+  border: 2px solid #ef981d !important;
 }
 /* About Section*/
 .about_learnmore {
@@ -5479,4 +5480,13 @@ button.filter_btn {
 }
 .img_3d {
   height:500px;
+  
+}
+.img_3d canvas {
+  object-fit: contain;
+  border: 1px solid #ef981d;
+  border-radius: 10px;
+}
+.notification-container {
+  font-family: "Montserrat", sans-serif;
 }
