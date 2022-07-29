@@ -453,9 +453,7 @@ function Collection() {
               </div>
 
               <div className="row">
-                {loader ? (
-                  <CollectionsNFT cards={cardCount} grid={grid} />
-                ) : nftList.length > 0 ? (
+                { nftList.length > 0 ? (
                   nftList?.map((n, k) => {
                     return (
                       <div className={grid} key={k}>
@@ -469,7 +467,7 @@ function Collection() {
                   </div>
                 )}
 
-                {nftList.length > 8 ? (
+                {nftList.length > 12 ? (
                   <div class="col-md-12 text-center mt-5">
                     <button
                       class={`btn view_all_bdr ${loadMoreDisabled}`}

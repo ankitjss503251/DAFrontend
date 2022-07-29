@@ -147,12 +147,13 @@ const AdvancedFilter = (props) => {
               className='filter_apply filter-text-left filter_padd mb-3'
               value={colsAdv}
               onChange={async (e) => {
+                setColsAdv(e.target.value);
                 if (e.target.value.trim() === "") {
                   e.target.value = ""
-                }
-                setColsAdv(e.target.value);
-                if (e.target.value === "") {
-                  props.onAdvSearch({ type: "collection", value: "" });
+                  props.onAdvSearch({
+                    type: "collection",
+                    value: "",
+                  });
                 } else {
                   const reqData = {
                     page: 1,
@@ -166,6 +167,8 @@ const AdvancedFilter = (props) => {
                     console.log("Error", e);
                   }
                 }
+
+
               }}
             />
             {cols && cols.length > 0 && colsAdv !== ""

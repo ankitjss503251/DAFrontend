@@ -109,8 +109,8 @@ function Marketplacecollection() {
       setCardCount(cardCount + ind.length);
       if (ind.length > 0) {
         setLoadMoreDisabled("");
-        // temp2 = [...temp2, ind];
-        temp2 = [ind]
+        temp2 = [...temp2, ind];
+        // temp2 = [ind]
         setActiveCat(temp2);
       }
       if (ind?.length <= 0 && activeCat) {
@@ -162,8 +162,8 @@ function Marketplacecollection() {
                       aria-selected="true"
                       onClick={() => {
                         setAllCollections([]);
-                        setLoadMoreDisabledAll("");
-                        setLoadMoreDisabled("");
+                        // setLoadMoreDisabledAll("");
+                        // setLoadMoreDisabled("");
                         setShowTab("");
                         setCardCount(0);
                         setCurrPageAll(1);
@@ -188,10 +188,10 @@ function Marketplacecollection() {
                           role="tab"
                           aria-controls={`#${cat.name}`}
                           aria-selected="true"
-                          onClick={() => {
+                          onClick={(e) => {
                             setActiveCat([]);
-                            setLoadMoreDisabledAll("");
-                            setLoadMoreDisabled("");
+                            // setLoadMoreDisabledAll("");
+                            // setLoadMoreDisabled("");
                             setShowTab("show active");
                             // setLoader(true);
                             setCardCount(0);

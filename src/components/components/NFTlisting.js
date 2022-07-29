@@ -488,9 +488,9 @@ function NFTlisting(props) {
                             <span className="yellow_dot circle_dot"></span>
                             <span>
                               {o.sellerID && o.sellerID.walletAddress
-                                ? o.sellerID.walletAddress.slice(0, 3) +
+                                ? o.sellerID.walletAddress.slice(0, 4) +
                                 "..." +
-                                o.sellerID.walletAddress.slice(39, 42)
+                                o.sellerID.walletAddress.slice(38, 42)
                                 : ""}
                             </span>
                           </td>

@@ -156,7 +156,7 @@ function CollectionWithCollection() {
         let temp = nfts;
         const nft = await getNFTs({
           page: currPage,
-          limit: 8,
+          limit: 12,
           brandID: brandID,
           searchText: searchFor ? searchFor : "",
           ERCType: ERCType,
@@ -666,9 +666,7 @@ function CollectionWithCollection() {
               </div>
 
               <div className='row'>
-                {loader ? (
-                  <CollectionsNFT cards={cardCount} grid={grid} />
-                ) : nfts?.length > 0 ? (
+                { nfts?.length > 0 ? (
                   nfts.map((oIndex) => {
                     return oIndex?.map((card, key) => {
                       return (
@@ -685,7 +683,7 @@ function CollectionWithCollection() {
                     </h4>
                   </div>
                 )}
-                {nfts[0]?.length > 7 && (
+                {nfts[0]?.length > 12 && (
                   <div className='col-md-12 text-center mt-5'>
                     <button
                       type='button'
