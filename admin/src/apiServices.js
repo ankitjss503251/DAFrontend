@@ -547,32 +547,6 @@ export const importNft = async (data) => {
   }
 };
 
-// export const getImportedNFTs = async (data) => {
-//   const requestOptions = {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   };
-
-//   try {
-//     let response = await fetch(
-//       process.env.REACT_APP_API_BASE_URL + "/import/getNFT",
-//       requestOptions
-//     );
-
-//     const isJson = response.headers
-//       .get("content-type")
-//       ?.includes("application/json");
-//     const datas = isJson && (await response.json());
-
-//     return datas.data;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-
 export const getImportedCollections = async (data) => {
   const requestOptions = {
     method: "POST",
@@ -828,3 +802,29 @@ export const UpdateTokenCount = async (data) => {
   }
 };
 
+export const UpdateStatus = async (data) => {
+  const requestOptions = {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getHeaders(),
+    },
+    body: JSON.stringify(data)
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/nft/updateStatus",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
