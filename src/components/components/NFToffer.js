@@ -134,7 +134,7 @@ function NFToffer(props) {
       contracts[selectedToken]
     );
 
-    if (res == false) {
+    if (res === false) {
       setLoading(false);
       return;
     }
