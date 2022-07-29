@@ -45,7 +45,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { ContactShadows, Environment } from "@react-three/drei"
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import evt from "./../../events/events";
 import { onboard } from "../menu/header";
+import { WalletConditions } from "../components/WalletConditions";
 
 extend({ OrbitControls });
 function loadGLTFModel(scene, glbPath, options) {
@@ -236,6 +238,8 @@ function NFTDetails() {
   const [ownedBy, setOwnedBy] = useState("");
   const [bidStatus, setBidStatus] = useState("");
   const [modalImage, setModalImge] = useState("")
+  const [showAlert, setShowAlert] = useState("");
+  const [walletVariable, setWalletVariable] = useState({});
 
   useEffect(() => {
     async function setUser() {
@@ -366,6 +370,24 @@ function NFTDetails() {
   }, [NFTDetails]);
 
   const PutMarketplace = async () => {
+    const wCheck = WalletConditions();
+                                    setWalletVariable(wCheck)
+
+                                    if (wCheck.isLocked) {
+                                      setShowAlert("locked");
+                                      return;
+                                    }
+
+                                    if (!wCheck.isLocked) {
+                                      if (!wCheck.cCheck) {
+                                        setShowAlert("chainId");
+                                        return;
+                                      }
+                                      if (!wCheck.aCheck) {
+                                        setShowAlert("account")
+                                        return;
+                                      }
+                                    }
     setLoading(true);
 
     if (marketplaceSaleType === 0) {
@@ -451,7 +473,24 @@ function NFTDetails() {
 
 
   const PlaceOffer = async () => {
-    console.log("place offer", NFTDetails)
+    const wCheck = WalletConditions();
+    setWalletVariable(wCheck)
+
+    if (wCheck.isLocked) {
+      setShowAlert("locked");
+      return;
+    }
+
+    if (!wCheck.isLocked) {
+      if (!wCheck.cCheck) {
+        setShowAlert("chainId");
+        return;
+      }
+      if (!wCheck.aCheck) {
+        setShowAlert("account")
+        return;
+      }
+    }
     setLoading(true);
     // let wallet = await fetchWallet();
     // if (wallet !== currentUser) {
@@ -503,15 +542,15 @@ function NFTDetails() {
         NFTDetails.id,
         contracts.BUSD
       );
-      if (res == false) {
+      if (res == false || res === undefined) {
         setLoading(false);
+
         return;
       }
       else {
         let historyReqData = {
           nftID: NFTDetails.id,
           buyerID: localStorage.getItem("userId"),
-          
           action: "Offer",
           type: haveOffer && haveOffer !== "none" ? "Updated" : "Created",
           price: ethers.utils.parseEther(offerPrice.toString()).toString(),
@@ -519,7 +558,7 @@ function NFTDetails() {
           quantity: offerQuantity,
           createdBy: localStorage.getItem("userId"),
         }
-        const d = await InsertHistory(historyReqData);
+        await InsertHistory(historyReqData);
         setLoading(false);
         slowRefresh(1000);
       }
@@ -706,6 +745,24 @@ function NFTDetails() {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
               setIsPlaceBidModal(false);
+              const wCheck = WalletConditions();
+              setWalletVariable(wCheck)
+
+              if (wCheck.isLocked) {
+                setShowAlert("locked");
+                return;
+              }
+
+              if (!wCheck.isLocked) {
+                if (!wCheck.cCheck) {
+                  setShowAlert("chainId");
+                  return;
+                }
+                if (!wCheck.aCheck) {
+                  setShowAlert("account")
+                  return;
+                }
+              }
               setLoading(true);
               if (
                 Number(price) <
@@ -732,7 +789,7 @@ function NFTDetails() {
                   false
                   // new Date(bidDeadline).valueOf() / 1000
                 );
-                if (res === false) {
+                if (res === false || res === undefined) {
                   setLoading(false);
                   return;
                 } else {
@@ -836,6 +893,24 @@ function NFTDetails() {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
               setIsBuyNowModal(false);
+              const wCheck = WalletConditions();
+                                    setWalletVariable(wCheck)
+
+                                    if (wCheck.isLocked) {
+                                      setShowAlert("locked");
+                                      return;
+                                    }
+
+                                    if (!wCheck.isLocked) {
+                                      if (!wCheck.cCheck) {
+                                        setShowAlert("chainId");
+                                        return;
+                                      }
+                                      if (!wCheck.aCheck) {
+                                        setShowAlert("account")
+                                        return;
+                                      }
+                                    }
               setLoading(true);
               let res = await handleBuyNft(
                 orders[0]._id,
@@ -846,11 +921,8 @@ function NFTDetails() {
                 false,
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
-              if (res === false) {
-                setLoading(false);
-                return;
-              }
-              else {
+              if (res !== false && res !== undefined) {
+                
                 let historyReqData = {
                   nftID: NFTDetails.id,
                   buyerID: localStorage.getItem('userId'),
@@ -865,6 +937,10 @@ function NFTDetails() {
 
                 setLoading(false);
                 slowRefresh(1000);
+              }
+              else{
+                setLoading(false);
+                return;
               }
             }}>
             {"Buy Now"}
@@ -881,6 +957,73 @@ function NFTDetails() {
 
   return (
     <div>
+
+{showAlert === "chainId" ? <PopupModal content={<div className='popup-content1'>
+        <div className='bid_user_details my-4'>
+          <img src={Logo} alt='' />
+          <div className='bid_user_address'>
+
+            <div >
+              <div className="mr-3">Required Network ID:</div>
+              <span className="adr">
+                {walletVariable.sChain}
+              </span>
+
+            </div>
+
+          </div>
+        </div>
+        <button
+          className='btn-main mt-2' onClick={async () => {
+            const isSwitched = await onboard.setChain({
+              chainId: process.env.REACT_APP_CHAIN_ID,
+            });
+            if (isSwitched)
+              setShowAlert("");
+          }}>
+          {"Switch Network"}
+        </button>
+      </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+        showAlert === "account" ? <PopupModal content={
+          <div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+                <h4 className="mb-3">Please switch to connected wallet address or click logout to continue with the current wallet address by disconnecting the already connected account.</h4>
+              </div>
+
+              <button
+                className='btn-main mt-2' onClick={() => { evt.emit("disconnectWallet") }}>
+                {"Logout"}
+              </button>
+            </div>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+          showAlert === "locked" ? <PopupModal content={<div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div>
+              <h4 className="mb-3">Your wallet is locked. Please unlock your wallet and connect again.</h4>
+            </div>
+            <button
+              className='btn-main mt-2' onClick={() => {
+                evt.emit("disconnectWallet")
+              }}>
+              Connect Wallet
+            </button>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
       {loading ? <Spinner /> : ""}
       {isPlaceBidModal ? placeBidModal : ""}
       {isBuyNowModal ? buyNowModal : ""}
@@ -1099,6 +1242,24 @@ function NFTDetails() {
                     data-bs-toggle="modal"
                     onClick={async () => {
                       console.log("orders[0]", orders[0], orders);
+                      const wCheck = WalletConditions();
+                      setWalletVariable(wCheck)
+                  
+                      if (wCheck.isLocked) {
+                        setShowAlert("locked");
+                        return;
+                      }
+                  
+                      if (!wCheck.isLocked) {
+                        if (!wCheck.cCheck) {
+                          setShowAlert("chainId");
+                          return;
+                        }
+                        if (!wCheck.aCheck) {
+                          setShowAlert("account")
+                          return;
+                        }
+                      }
                       try {
                         setLoading(true);
                         console.log("loader Start");
