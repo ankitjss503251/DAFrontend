@@ -699,7 +699,7 @@ function Marketplace() {
               </div>
             )}
           </div>
-          {allNFTs[0]?.length > 12 ? (
+          {allNFTs[0]?.length >= 12 ? (
             <div className='row'>
               <div className='col-md-12 text-center mt-5'>
                 <button

@@ -694,7 +694,7 @@ function MyNFTs() {
               role='tabpanel'
               aria-labelledby='pills-Favourited-tab'>
               <div className='row'>
-                {AuthorCard?.map((card, key) => (
+                {/* {AuthorCard?.map((card, key) => (
                   <div className={grid} key={key}>
                     <AuthorListing
                       fileType="Image"
@@ -707,7 +707,7 @@ function MyNFTs() {
                       link={card.Like}
                     />
                   </div>
-                ))}
+                ))} */}
               </div>
             </div>
             <div

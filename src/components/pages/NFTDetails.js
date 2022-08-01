@@ -226,6 +226,7 @@ function NFTDetails() {
   const [owned, setOwned] = useState("none");
   const [orders, setOrders] = useState("none");
   const [loading, setLoading] = useState(false);
+  const [isModal, setIsModal] = useState("");
   const [offerPrice, setOfferPrice] = useState();
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [isBuyNowModal, setIsBuyNowModal] = useState(false);
@@ -240,7 +241,7 @@ function NFTDetails() {
   const [showAlert, setShowAlert] = useState("");
   const [walletVariable, setWalletVariable] = useState({});
   const [reloadContent, setReloadContent] = useState(false);
-  const [isModal, setIsModal] = useState("");
+
 
 
   const refreshState = () => {
@@ -376,6 +377,7 @@ function NFTDetails() {
   }, [NFTDetails, reloadContent]);
 
   const PutMarketplace = async () => {
+
     const wCheck = WalletConditions();
     setWalletVariable(wCheck)
 
@@ -421,7 +423,7 @@ function NFTDetails() {
       }
     }
     try {
-      setIsModal("")
+      setIsModal("");
       let orderData = {
         nftId: NFTDetails.id,
         collection: NFTDetails.collectionAddress,
@@ -450,7 +452,7 @@ function NFTDetails() {
           nftID: NFTDetails.id,
           sellerID: localStorage.getItem("userId"),
           action: "PutOnSale",
-          type: "List",
+          type: marketplaceSaleType === 0 ? "Fixed Sale" : marketplaceSaleType === 1 ? "Timed Auction" : "Open for Bids",
           price: ethers.utils.parseEther(itemprice.toString()).toString(),
           paymentToken: marketplaceSaleType === 0
             ? contracts[selectedTokenFS]
@@ -1023,6 +1025,8 @@ function NFTDetails() {
               Connect Wallet
             </button>
           </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+
+
       {loading ? <Spinner /> : ""}
       {isPlaceBidModal ? placeBidModal : ""}
       {isBuyNowModal ? buyNowModal : ""}
@@ -1125,7 +1129,7 @@ function NFTDetails() {
                   <div className='row'>
                     {NFTDetails
                       ? NFTDetails?.attributes?.map((attr, key) => {
-                        const rarity = parseInt(attr?.rarity);
+                        const rarity = attr?.trait_type === "rarity" ? attr?.value : "";
                         return (
                           <div className='col-md-6 mb-4' key={key}>
                             <div className='tab_label'>
@@ -1192,15 +1196,10 @@ function NFTDetails() {
                       type='button'
 
                       className='title_color buy_now'
-
                       // data-bs-toggle='modal'
-
                       // data-bs-target='#detailPop'
-
                       onClick={() => setIsModal("active")}
-
                     >
-
                       Put On Marketplace
 
                     </button>
@@ -1487,17 +1486,8 @@ function NFTDetails() {
                 type='button'
 
                 className='btn-close text-light'
-
-
-
-
-
-
-
                 // data-bs-dismiss='modal'
-
                 onClick={() => setIsModal("")}
-
               ></button>
             </div>
             {/* <!-- Modal body --> */}
