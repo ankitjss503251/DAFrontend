@@ -5490,6 +5490,19 @@ button.filter_btn {
 .notification-container {
   font-family: "Montserrat", sans-serif;
 }
+
+.modal.marketplace.putOnMarketplace.active{
+
+display: block;
+
+}
+
+
+
+.modal.marketplace.putOnMarketplace{
+
+display: none;
+}
 .drop_down_tlt svg {
   transition: .5s ease;
 }

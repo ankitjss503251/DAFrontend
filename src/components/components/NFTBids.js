@@ -56,7 +56,7 @@ function NFTBids(props) {
       }
     };
     fetch();
-  }, [props.id, reloadContent]);
+  }, [props.id, reloadContent, props.reloadContent]);
 
   useEffect(() => {
     var body = document.body;
@@ -466,12 +466,14 @@ function NFTBids(props) {
                                       await InsertHistory(historyReqData);
                                       setLoading(false);
                                       setReloadContent(!reloadContent);
+                                      await props.refreshState()
                                     }
                                     else {
                                       setLoading(false);
                                       setReloadContent(!reloadContent);
-                                    
-                                  }}}
+
+                                    }
+                                  }}
 
 
                                 >
@@ -594,6 +596,7 @@ function NFTBids(props) {
 
 
                                     setReloadContent(!reloadContent);
+                                    await props.refreshState()
 
                                   }}
 

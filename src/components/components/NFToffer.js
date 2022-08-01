@@ -52,7 +52,7 @@ function NFToffer(props) {
   useEffect(() => {
     if (props.id)
       fetch();
-  }, [props.id]);
+  }, [props.id, props.reloadContent]);
 
   const fetch = async () => {
     let searchParams = {
@@ -343,7 +343,7 @@ function NFToffer(props) {
                                     currentUser.toLowerCase()
                                   );
                                   console.log("accepted response", resp)
-                                  if(resp !== false){
+                                  if (resp !== false) {
                                     let historyReqData = {
                                       nftID: b?.nftID,
                                       sellerID: localStorage.getItem('userId'),
@@ -358,7 +358,7 @@ function NFToffer(props) {
                                     await InsertHistory(historyReqData);
                                     await fetch()
                                   }
-                                  
+
                                   setLoading(false);
                                 }}
                               >
@@ -393,21 +393,21 @@ function NFToffer(props) {
                                     b._id,
                                     "Rejected"
                                   );
-                                
-                                    let historyReqData = {
-                                      nftID: b?.nftID,
-                                      sellerID: localStorage.getItem('userId'),
-                                      buyerID: b?.bidderID?._id,
-                                      action: "Offer",
-                                      type: "Rejected",
-                                      price: b?.bidPrice?.$numberDecimal,
-                                      paymentToken: b?.paymentToken,
-                                      quantity: b?.bidQuantity,
-                                      createdBy: localStorage.getItem("userId"),
-                                    };
-                                    await InsertHistory(historyReqData);
-                                    await fetch()
-                                
+
+                                  let historyReqData = {
+                                    nftID: b?.nftID,
+                                    sellerID: localStorage.getItem('userId'),
+                                    buyerID: b?.bidderID?._id,
+                                    action: "Offer",
+                                    type: "Rejected",
+                                    price: b?.bidPrice?.$numberDecimal,
+                                    paymentToken: b?.paymentToken,
+                                    quantity: b?.bidQuantity,
+                                    createdBy: localStorage.getItem("userId"),
+                                  };
+                                  await InsertHistory(historyReqData);
+                                  await fetch()
+
                                 }}
 
                               >
@@ -458,25 +458,25 @@ function NFToffer(props) {
                                       return;
                                     }
                                   }
-                                   await handleUpdateBidStatus(
+                                  await handleUpdateBidStatus(
                                     b._id,
                                     "Cancelled"
                                   );
-                                 
-                                    let historyReqData = {
-                                      nftID: b?.nftID,
-                                      buyerID: localStorage.getItem('userId'),
-                                      action: "Offer",
-                                      type: "Cancelled",
-                                      price: b?.bidPrice?.$numberDecimal,
-                                      paymentToken: b?.paymentToken,
-                                      quantity: b?.bidQuantity,
-                                      createdBy: localStorage.getItem("userId"),
-                                    };
-                                    await InsertHistory(historyReqData);
-                                    await fetch()
-                                
-                                  
+
+                                  let historyReqData = {
+                                    nftID: b?.nftID,
+                                    buyerID: localStorage.getItem('userId'),
+                                    action: "Offer",
+                                    type: "Cancelled",
+                                    price: b?.bidPrice?.$numberDecimal,
+                                    paymentToken: b?.paymentToken,
+                                    quantity: b?.bidQuantity,
+                                    createdBy: localStorage.getItem("userId"),
+                                  };
+                                  await InsertHistory(historyReqData);
+                                  await fetch()
+                                  await props.refreshState()
+
                                 }}
                               >
                                 Cancel

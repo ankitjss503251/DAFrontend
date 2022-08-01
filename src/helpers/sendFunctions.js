@@ -327,10 +327,8 @@ export const handleBuyNft = async (
     return false;
   }
 
-
-
   NotificationManager.success("NFT Purchased Successfully");
-  slowRefresh(1000);
+  // slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -477,7 +475,7 @@ export const putOnMarketplace = async (account, orderData) => {
     await createOrder(reqParams);
 
     NotificationManager.success("Order created successfully");
-    slowRefresh(1000);
+    // slowRefresh(1000);
   } catch (err) {
     console.log("error in Api", err);
     return false;
@@ -527,7 +525,8 @@ export const handleRemoveFromSale = async (orderId, account) => {
       orderID: orderId,
     });
     NotificationManager.success("Removed from sale successfully");
-    slowRefresh(1000);
+
+    // slowRefresh(1000);
   } catch (e) {
     console.log("error while updating database", e);
     return false;
