@@ -48,9 +48,10 @@ function NFTlisting(props) {
   }, [cookies.selected_account]);
 
   useEffect(() => {
+    console.log("props.reloadContent", props.reloadContent);
     if (props.id)
       fetch();
-  }, [props.id]);
+  }, [props.id, props.reloadContent]);
 
   const fetch = async () => {
     if (props.id) {
@@ -233,7 +234,8 @@ function NFTlisting(props) {
                   await InsertHistory(historyReqData);
                   NotificationManager.success("Bid Placed Successfully", "", 800);
                   setLoading(false);
-                  slowRefresh(1000);
+                  await props.refreshState()
+                  // slowRefresh(1000);
                 } else {
                   setLoading(false);
                   return;
@@ -361,10 +363,11 @@ function NFTlisting(props) {
                   await InsertHistory(historyReqData);
                   await fetchListing()
                   setLoading(false);
+                  await props.refreshState()
                 }
                 else {
                   setLoading(false);
-                  slowRefresh(1000);
+                  // slowRefresh(1000);
                   return;
                 }
               }
@@ -564,6 +567,7 @@ function NFTlisting(props) {
                                     }
                                     setLoading(true);
                                     await handleRemoveFromSale(o._id, currentUser);
+                                    await props.refreshState()
                                     setLoading(false);
                                   }}
                                 >
