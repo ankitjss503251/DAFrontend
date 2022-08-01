@@ -293,7 +293,7 @@ function NFToffer(props) {
                         <td>
                           {moment.utc(b.createdOn).local().format("DD/MM/YYYY")}{" "}
                           <span className="nft_time">
-                            {moment.utc(b.createdOn).local().format("hh:mm a")}
+                            {moment.utc(b.createdOn).local().format("hh:mm A")}
                           </span>
                         </td>
                         <td>

@@ -403,7 +403,7 @@ function NFTBids(props) {
                           <td>
                             {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
                             <span className="nft_time">
-                              {moment(b.createdOn).format("LT")}
+                              {moment(b.createdOn).format("hh:mm A")}
                             </span>
                           </td>
                           <td>{b?.orderID[0]?.salesType === 1 && b.deadline !== GENERAL_TIMESTAMP

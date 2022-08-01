@@ -510,7 +510,7 @@ function NFTlisting(props) {
                           <td>
                             {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
                             <span className="nft_time">
-                              {moment(o.createdOn).format("LT")}
+                              {moment(o.createdOn).format("hh:mm A")}
                             </span>
                           </td>
                           <td>
