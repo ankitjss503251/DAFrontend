@@ -48,9 +48,10 @@ function NFTlisting(props) {
   }, [cookies.selected_account]);
 
   useEffect(() => {
+    console.log("props.reloadContent", props.reloadContent);
     if (props.id)
       fetch();
-  }, [props.id]);
+  }, [props.id, props.reloadContent]);
 
   const fetch = async () => {
     if (props.id) {
@@ -233,7 +234,8 @@ function NFTlisting(props) {
                   await InsertHistory(historyReqData);
                   NotificationManager.success("Bid Placed Successfully", "", 800);
                   setLoading(false);
-                  slowRefresh(1000);
+                  await props.refreshState()
+                  // slowRefresh(1000);
                 } else {
                   setLoading(false);
                   return;
@@ -361,10 +363,11 @@ function NFTlisting(props) {
                   await InsertHistory(historyReqData);
                   await fetchListing()
                   setLoading(false);
+                  await props.refreshState()
                 }
                 else {
                   setLoading(false);
-                  slowRefresh(1000);
+                  // slowRefresh(1000);
                   return;
                 }
               }
@@ -510,7 +513,7 @@ function NFTlisting(props) {
                           <td>
                             {moment(o.createdOn).format("DD/MM/YYYY")}{" "}
                             <span className="nft_time">
-                              {moment(o.createdOn).format("LT")}
+                              {moment(o.createdOn).format("hh:mm A")}
                             </span>
                           </td>
                           <td>
@@ -538,12 +541,13 @@ function NFTlisting(props) {
                           </td>
                           <td>
                             <div className="text-center">
-                              {o.sellerID?.walletAddress?.toLowerCase() ===
+                              {currentUser ?  (o.sellerID?.walletAddress?.toLowerCase() ===
                                 currentUser?.toLowerCase() ? (
                                 <button
                                   to={"/"}
                                   className="small_yellow_btn small_btn mr-3"
                                   onClick={async () => {
+                                    console.log("order details", o)
                                     const wCheck = WalletConditions();
                                     setWalletVariable(wCheck)
 
@@ -564,7 +568,18 @@ function NFTlisting(props) {
                                     }
                                     setLoading(true);
                                     await handleRemoveFromSale(o._id, currentUser);
-                                    setLoading(false);
+                                   
+                                      let historyReqData = {
+                                        nftID: o?.nftID,
+                                        sellerID: localStorage.getItem("userId"),
+                                        action: "RemoveFromSale",
+                                        price: o?.price?.$numberDecimal,
+                                        paymentToken: o?.paymentToken,
+                                        createdBy: localStorage.getItem("userId"),
+                                      };
+                                      await InsertHistory(historyReqData);
+                                      setLoading(false);
+                                    await props.refreshState()
                                   }}
                                 >
                                   Remove From Sale
@@ -639,7 +654,7 @@ function NFTlisting(props) {
                                         : ""}
                                   </button> : ""
 
-                              )}
+                              )) : ""}
                             </div>
                           </td>
                         </tr>

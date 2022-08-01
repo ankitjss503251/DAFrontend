@@ -56,7 +56,7 @@ function NFTBids(props) {
       }
     };
     fetch();
-  }, [props.id, reloadContent]);
+  }, [props.id, reloadContent, props.reloadContent]);
 
   useEffect(() => {
     var body = document.body;
@@ -403,7 +403,7 @@ function NFTBids(props) {
                           <td>
                             {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
                             <span className="nft_time">
-                              {moment(b.createdOn).format("LT")}
+                              {moment(b.createdOn).format("hh:mm A")}
                             </span>
                           </td>
                           <td>{b?.orderID[0]?.salesType === 1 && b.deadline !== GENERAL_TIMESTAMP
@@ -466,12 +466,14 @@ function NFTBids(props) {
                                       await InsertHistory(historyReqData);
                                       setLoading(false);
                                       setReloadContent(!reloadContent);
+                                      await props.refreshState()
                                     }
                                     else {
                                       setLoading(false);
                                       setReloadContent(!reloadContent);
-                                    
-                                  }}}
+
+                                    }
+                                  }}
 
 
                                 >
@@ -591,9 +593,8 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-
-
                                     setReloadContent(!reloadContent);
+                                    await props.refreshState()
 
                                   }}
 
