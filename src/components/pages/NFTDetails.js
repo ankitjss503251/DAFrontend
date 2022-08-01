@@ -1169,9 +1169,7 @@ function NFTDetails() {
                         className='img-fluid hunter_fav'
                         alt=''
                       />
-                      {Number(convertToEth(orders[0].price?.$numberDecimal))
-                        .toFixed(6)
-                        .slice(0, -2)}{" "}
+                      {Number(convertToEth(orders[0].price?.$numberDecimal))?.toFixed(6)?.slice(0, -2)}{" "}
                       {Tokens[orders[0].paymentToken]?.symbolName}
                     </div>
                   </>

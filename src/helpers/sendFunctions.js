@@ -330,7 +330,7 @@ export const handleBuyNft = async (
 
 
   NotificationManager.success("NFT Purchased Successfully");
-  // slowRefresh(1000);
+  slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -1226,7 +1226,7 @@ export const handleUpdateBidStatus = async (
       bidID: bidID,
       action: action, //Delete, Cancelled, Rejected
     };
-    const response  = await updateBidNft(reqParams);
+    const response = await updateBidNft(reqParams);
     NotificationManager.success(`Bid ${action} Successfully`);
     // slowRefresh(1000);
   } catch (e) {
