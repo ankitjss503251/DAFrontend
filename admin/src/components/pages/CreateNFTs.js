@@ -478,15 +478,15 @@ function CreateNFTs() {
                         </td>
                         <td>
                           {n.name
-                            ? n.name?.length > 8
-                              ? n.name?.slice(0, 8) + "..."
+                            ? n.name?.length > 15
+                              ? n.name?.slice(0, 15) + "..."
                               : n.name
                             : "-"}
                         </td>
                         <td>
                           {n.description
-                            ? n.description?.length > 15
-                              ? n.description?.slice(0, 15) + "..."
+                            ? n.description?.length > 25
+                              ? n.description?.slice(0, 25) + "..."
                               : n.description
                             : "-"}
                         </td>
@@ -649,7 +649,6 @@ function CreateNFTs() {
                   </select>
                 </div>
 
-                {console.log("collection?.type == 2", collection)}
                 {collection && JSON.parse(collection)?.type == 2 ? (
                   <div className='col-md-12 mb-1'>
                     <label for='recipient-name' className='col-form-label'>

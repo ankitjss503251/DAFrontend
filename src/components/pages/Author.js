@@ -677,7 +677,7 @@ function Author() {
               role='tabpanel'
               aria-labelledby='pills-Favourited-tab'>
               <div className='row'>
-                {AuthorCard.map((card, key) => (
+                {/* {AuthorCard.map((card, key) => (
                   <div className={grid} key={key}>
                     <AuthorListing
                       fileType="Image"
@@ -690,7 +690,7 @@ function Author() {
                       link={card.Like}
                     />
                   </div>
-                ))}
+                ))} */}
               </div>
             </div>
             <div

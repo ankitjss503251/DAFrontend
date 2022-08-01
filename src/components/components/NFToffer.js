@@ -153,6 +153,7 @@ function NFToffer(props) {
       setLoading(false);
       await fetch()
       setModal("inactive")
+      slowRefresh(1000);
     }
   };
 
@@ -342,7 +343,6 @@ function NFToffer(props) {
                                     props,
                                     currentUser.toLowerCase()
                                   );
-                                  console.log("accepted response", resp)
                                   if(resp !== false){
                                     let historyReqData = {
                                       nftID: b?.nftID,
@@ -360,6 +360,7 @@ function NFToffer(props) {
                                   }
                                   
                                   setLoading(false);
+                                  slowRefresh(1000);
                                 }}
                               >
                                 Accept
@@ -407,6 +408,7 @@ function NFToffer(props) {
                                     };
                                     await InsertHistory(historyReqData);
                                     await fetch()
+                                    slowRefresh(1000);
                                 
                                 }}
 
@@ -475,7 +477,7 @@ function NFToffer(props) {
                                     };
                                     await InsertHistory(historyReqData);
                                     await fetch()
-                                
+                                    slowRefresh(1000);
                                   
                                 }}
                               >

@@ -1116,7 +1116,7 @@ function NFTDetails() {
                   <div className='row'>
                     {NFTDetails
                       ? NFTDetails?.attributes?.map((attr, key) => {
-                        const rarity = parseInt(attr?.rarity);
+                        const rarity = attr?.trait_type === "rarity" ? attr?.value : "";
                         return (
                           <div className='col-md-6 mb-4' key={key}>
                             <div className='tab_label'>

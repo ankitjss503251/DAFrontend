@@ -591,10 +591,8 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-
-
                                     setReloadContent(!reloadContent);
-
+                                    slowRefresh(1000);
                                   }}
 
                                 >
