@@ -584,7 +584,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="container pdd_8 Most-recent">
+      <section className="marketplacecollection container pdd_8 Most-recent">
         <div className="row">
           <div className="col-lg-12">
             <div className="text-center">
