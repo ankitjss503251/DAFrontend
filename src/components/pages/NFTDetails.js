@@ -443,7 +443,7 @@ function NFTDetails() {
           nftID: NFTDetails.id,
           sellerID: localStorage.getItem("userId"),
           action: "PutOnSale",
-          type: "List",
+          type: marketplaceSaleType === 0 ? "Fixed Sale"  : marketplaceSaleType === 1 ? "Timed Auction" : "Open for Bids",
           price: ethers.utils.parseEther(itemprice.toString()).toString(),
           paymentToken: marketplaceSaleType === 0
             ? contracts[selectedTokenFS]
