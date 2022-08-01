@@ -434,6 +434,7 @@ function NFTDetails() {
         erc721: NFTDetails.type === 1,
       };
       let res = await putOnMarketplace(currentUser, orderData);
+
       if (res === false) {
         setLoading(false);
         return;
@@ -783,7 +784,6 @@ function NFTDetails() {
                   setLoading(false);
                   return;
                 } else {
-
                   let historyReqData = {
                     nftID: orders[0].nftID,
                     buyerID: localStorage.getItem('userId'),
@@ -911,8 +911,8 @@ function NFTDetails() {
                 false,
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
-              if (res !== false && res !== undefined) {
 
+              if (res !== false) {
                 let historyReqData = {
                   nftID: NFTDetails.id,
                   buyerID: localStorage.getItem('userId'),
@@ -1252,8 +1252,8 @@ function NFTDetails() {
                         setLoading(true);
                         console.log("loader Start");
                         const res = await handleRemoveFromSale(orders[0]._id, currentUser);
+                        console.log("response", res)
                         if (res === false) {
-                          console.log("remove 1");
                           setLoading(false);
                           return;
                         }

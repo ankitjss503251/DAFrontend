@@ -334,7 +334,7 @@ const Navbar = (props) => {
               ) : (
                 <>
                   <Wallet />
-                  {account.slice(0, 4) + "..." + account.slice(38, 42)}
+                  {account?.slice(0, 4) + "..." + account?.slice(38, 42)}
                 </>
               )}
             </button>
