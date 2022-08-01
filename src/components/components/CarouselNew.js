@@ -92,7 +92,7 @@ function ItemsList() {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          dots: true,
+          dots: false,
         },
       },
     ],
@@ -185,7 +185,7 @@ function ItemsList() {
               );
             })
           : ""}
-        {putOnSaleItems?.length !== 0 ? (
+        {putOnSaleItems?.length !== -1 ? (
           <div className="items_slide last_slide">
             <Link
               to={"/marketplace"}

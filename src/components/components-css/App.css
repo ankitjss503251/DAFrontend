@@ -1896,9 +1896,9 @@ label {
   justify-content: space-between;
 }
 .marketplacecollection .items_img {
-  background-color: #c1bdbd2e;
-  height: 260px !important;
-  object-fit: cover !important;
+  background-color: #151e25;
+  height: 200px !important;
+  object-fit: contain !important;
 }
 .marketplace_form input {
   border: 1px solid #e0e0e0;
@@ -5489,4 +5489,10 @@ button.filter_btn {
 }
 .notification-container {
   font-family: "Montserrat", sans-serif;
+}
+.drop_down_tlt svg {
+  transition: .5s ease;
+}
+.drop_down_tlt.collapsed svg {
+ transform: rotate(180deg);
 }
