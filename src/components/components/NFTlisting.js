@@ -218,7 +218,7 @@ function NFTlisting(props) {
                   false
                   // new Date(deadline).valueOf() / 1000
                 );
-                if (res !== false) {
+                if (res !== false && res !== undefined) {
                   let historyReqData = {
                     nftID: currentOrder.nftID,
                     buyerID: localStorage.getItem('userId'),
@@ -347,8 +347,7 @@ function NFTlisting(props) {
                   false,
                   props?.NftDetails?.collectionAddress?.toLowerCase()
                 );
-                await fetchListing()
-                if (hbn !== false) {
+                if (hbn !== false && hbn !== undefined) {
                   let historyReqData = {
                     nftID: currentOrder.nftID,
                     buyerID: localStorage.getItem('userId'),
@@ -360,6 +359,7 @@ function NFTlisting(props) {
                     createdBy: localStorage.getItem("userId"),
                   };
                   await InsertHistory(historyReqData);
+                  await fetchListing()
                   setLoading(false);
                 }
                 else {

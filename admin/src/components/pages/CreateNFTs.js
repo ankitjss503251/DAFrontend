@@ -140,8 +140,10 @@ function CreateNFTs() {
   }, [currentUser, isSuperAdmin]);
 
   const handleCreateNFT = async () => {
+    var formdata = new FormData();
     const wCheck = WalletConditions();
-   
+    let createdNft;
+
     setWalletVariable(wCheck)
 
     if (wCheck.isLocked) {
@@ -159,11 +161,12 @@ function CreateNFTs() {
         return;
       }
     }
+
     if (handleValidationCheck()) {
       setLoading(true);
       setModal("");
 
-      var formdata = new FormData();
+
       let collectionDetail;
       let NFTcontract;
       let reqBody = {
@@ -182,7 +185,7 @@ function CreateNFTs() {
       try {
         collectionDetail = await getAllCollections(reqBody);
         collectionDetail = collectionDetail?.results[0][0];
-
+        console.log("c1", collectionDetail);
         await UpdateTokenCount(collectionDetail.contractAddress);
 
         formdata.append("attributes", JSON.stringify(attributes));
@@ -251,20 +254,21 @@ function CreateNFTs() {
           );
           formdata.append("hash", mintRes.hash)
           formdata.append("hashStatus", 0)
-          let createdNft;
+
           try {
             createdNft = await createNft(formdata);
-            NotificationManager.success("NFT created successfully", "", 800);
-            setLoading(false);
-            slowRefresh(1000);
+            // NotificationManager.success("NFT created successfully", "", 800);
+            // setLoading(false);
+            // slowRefresh(1000);
           } catch (e) {
             console.log("err", e);
             NotificationManager.error("Something went wrong", "", 800);
             setLoading(false);
             return;
           }
+          console.log("createdNft", createdNft._id);
           res1 = await mintRes.wait();
-
+          console.log("res1", res1);
           if (res1.status === 0) {
             NotificationManager.error("Transaction failed", "", 800);
             return;
@@ -276,8 +280,13 @@ function CreateNFTs() {
           }
           try {
             await UpdateStatus(req)
+            NotificationManager.success("NFT created successfully", "", 800)
+            setLoading(false);
+            slowRefresh(1000)
+            return;
           }
           catch (e) {
+            setLoading(false);
             return
           }
         } catch (minterr) {
@@ -351,7 +360,7 @@ function CreateNFTs() {
 
   return (
     <div className='wrapper'>
-       {showAlert === "chainId" ? <PopupModal content={<div className='popup-content1'>
+      {showAlert === "chainId" ? <PopupModal content={<div className='popup-content1'>
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>

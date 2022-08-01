@@ -134,7 +134,7 @@ function NFToffer(props) {
       contracts[selectedToken]
     );
 
-    if (res == false) {
+    if (res === false) {
       setLoading(false);
       return;
     }
@@ -389,7 +389,7 @@ function NFToffer(props) {
                                       return;
                                     }
                                   }
-                                  const resp = await handleUpdateBidStatus(
+                                  await handleUpdateBidStatus(
                                     b._id,
                                     "Rejected"
                                   );
@@ -458,7 +458,7 @@ function NFToffer(props) {
                                       return;
                                     }
                                   }
-                                  const resp = await handleUpdateBidStatus(
+                                   await handleUpdateBidStatus(
                                     b._id,
                                     "Cancelled"
                                   );
