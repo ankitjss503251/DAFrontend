@@ -172,6 +172,7 @@ function NFTBids(props) {
           <button
             className="btn-main mt-2 btn-placeABid"
             onClick={async () => {
+              console.log("current bid", currentBid)
               setIsUpdateBidModal(false);
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
@@ -222,15 +223,16 @@ function NFTBids(props) {
                   ethers.utils.parseEther(price.toString()),
                   false
                 );
+
                 if (res !== false) {
                   let historyReqData = {
                     nftID: currentBid.nftID,
                     buyerID: localStorage.getItem('userId'),
-                    sellerID: currentBid.sellerID?._id,
+                    sellerID: currentBid?.owner?._id,
                     action: "Bid",
                     type: "Updated",
                     price: ethers.utils.parseEther(price.toString()).toString(),
-                    paymentToken: currentBid?.paymentToken,
+                    paymentToken: currentBid?.orderID[0]?.paymentToken,
                     quantity: qty,
                     createdBy: localStorage.getItem("userId"),
                   };
@@ -242,6 +244,7 @@ function NFTBids(props) {
                     800
                   );
                   setLoading(false);
+                  slowRefresh(1000);
                   setReloadContent(!reloadContent);
                 }
                 else {
@@ -364,12 +367,11 @@ function NFTBids(props) {
                 <tbody>
                   {bids && bids.length > 0
                     ? bids.map((b, i) => {
-                      console.log("bid data", b)
                       const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                       const bidder =
                         b?.bidderID?.walletAddress?.toLowerCase();
                       return (
-                        <tr>
+                        <tr key={i}>
                           <td className="d-flex justify-content-start align-items-center mb-0">
                             <span className="blue_dot circle_dot"></span>
                             <span>
@@ -444,26 +446,32 @@ function NFTBids(props) {
                                       }
                                     }
                                     setLoading(true);
-                                    await handleAcceptBids(
+                                    const resp = await handleAcceptBids(
                                       b,
                                       props.NftDetails.type
                                     );
 
-                                    let historyReqData = {
-                                      nftID: b.nftID,
-                                      sellerID: localStorage.getItem('userId'),
-                                      buyerID: b?.bidderID?._id,
-                                      action: "Bid",
-                                      type: "Accepted",
-                                      price: b?.bidPrice?.$numberDecimal,
-                                      paymentToken: b?.orderID[0]?.paymentToken,
-                                      quantity: b?.bidQuantity,
-                                      createdBy: localStorage.getItem("userId"),
-                                    };
-                                    await InsertHistory(historyReqData);
-                                    setLoading(false);
-                                    setReloadContent(!reloadContent);
-                                  }}
+                                    if (resp !== false || resp !== undefined) {
+                                      let historyReqData = {
+                                        nftID: b.nftID,
+                                        sellerID: localStorage.getItem('userId'),
+                                        buyerID: b?.bidderID?._id,
+                                        action: "Bid",
+                                        type: "Accepted",
+                                        price: b?.bidPrice?.$numberDecimal,
+                                        paymentToken: b?.orderID[0]?.paymentToken,
+                                        quantity: b?.bidQuantity,
+                                        createdBy: localStorage.getItem("userId"),
+                                      };
+                                      await InsertHistory(historyReqData);
+                                      setLoading(false);
+                                      setReloadContent(!reloadContent);
+                                    }
+                                    else {
+                                      setLoading(false);
+                                      setReloadContent(!reloadContent);
+                                    
+                                  }}}
 
 
                                 >
@@ -495,6 +503,8 @@ function NFTBids(props) {
                                       b._id,
                                       "Rejected"
                                     );
+
+
                                     let historyReqData = {
                                       nftID: b.nftID,
                                       sellerID: localStorage.getItem('userId'),
@@ -507,6 +517,8 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
+
+
                                     setReloadContent(!reloadContent);
                                   }}
                                 >
@@ -565,6 +577,8 @@ function NFTBids(props) {
                                       b._id,
                                       "Cancelled"
                                     );
+
+
                                     let historyReqData = {
                                       nftID: b.nftID,
                                       sellerID: localStorage.getItem('userId'),
@@ -577,6 +591,8 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
+
+
                                     setReloadContent(!reloadContent);
 
                                   }}

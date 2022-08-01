@@ -207,7 +207,7 @@ const Home = () => {
                         <div className="mint_img">
                           <img
                             alt=""
-                            src={card?.logoImg}
+                            src={card?.coverImg}
                             className="img-fluid"
                             onError={(e) =>
                             (e.target.src =

@@ -32,8 +32,8 @@ function ItemsList() {
             price: !orderDet?.price?.$numberDecimal
               ? "--"
               : Number(convertToEth(orderDet?.price?.$numberDecimal))
-                  .toFixed(6)
-                  .slice(0, -2),
+                  ?.toFixed(6)
+                  ?.slice(0, -2),
             saleType: orderDet?.salesType,
             brand: brandDet,
             paymentToken: orderDet?.paymentToken,
