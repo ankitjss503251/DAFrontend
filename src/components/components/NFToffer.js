@@ -91,7 +91,7 @@ function NFToffer(props) {
         return;
       }
     }
-   
+
 
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
@@ -116,7 +116,7 @@ function NFToffer(props) {
     }
     setLoading(true);
     setModal("")
-    try{
+    try {
       let deadline = moment(datetime).unix();
 
       const res = await createOffer(
@@ -131,7 +131,7 @@ function NFToffer(props) {
         props.NftDetails.id,
         contracts[selectedToken]
       );
-  
+
       if (res === false) {
         setLoading(false);
         return;
@@ -153,10 +153,10 @@ function NFToffer(props) {
         slowRefresh(1000);
       }
     }
-    catch(e){
+    catch (e) {
       console.log("error", e)
     }
-   
+
   };
 
   function handleChange(ev) {
@@ -288,8 +288,8 @@ function NFToffer(props) {
                             className="img-fluid hunter_fav"
                           />{" "}
                           {Number(convertToEth(b?.bidPrice?.$numberDecimal))
-                          ?.toFixed(6)
-                          ?.slice(0, -2)}{" "}
+                            ?.toFixed(6)
+                            ?.slice(0, -2)}{" "}
                           {Tokens[b?.paymentToken?.toLowerCase()]?.symbolName}
                         </td>
                         <td>
@@ -358,11 +358,12 @@ function NFToffer(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-                                    await fetch()
+
                                   }
 
                                   setLoading(false);
                                   await props.refreshState()
+                                  await fetch()
                                   // slowRefresh(1000);
                                 }}
                               >
