@@ -464,7 +464,6 @@ function NFTBids(props) {
                                         createdBy: localStorage.getItem("userId"),
                                       };
                                       await InsertHistory(historyReqData);
-                                      console.log("insert history calles", resp);
                                       setLoading(false);
                                       setReloadContent(!reloadContent);
                                       await props.refreshState()
@@ -472,7 +471,6 @@ function NFTBids(props) {
                                     else {
                                       setLoading(false);
                                       setReloadContent(!reloadContent);
-
                                     }
                                   }}
 
