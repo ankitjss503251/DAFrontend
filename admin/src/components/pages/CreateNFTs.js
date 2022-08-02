@@ -515,7 +515,7 @@ function CreateNFTs() {
                             className='profile_i'
                             alt=''
                             onError={(e) =>
-                              (e.target.src = "../images/login.jpg")
+                              (e.target.src = n.previewImg)
                             }
                           />
                         </td>

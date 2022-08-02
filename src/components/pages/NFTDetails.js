@@ -246,7 +246,7 @@ function NFTDetails() {
 
 
   const refreshState = () => {
-    setReloadContent(true)
+    setReloadContent(!reloadContent)
   }
 
   useEffect(() => {
@@ -463,8 +463,7 @@ function NFTDetails() {
         };
         await InsertHistory(historyReqData);
         setLoading(false);
-        setReloadContent(true);
-        
+        setReloadContent(!reloadContent)
       }
 
     }
@@ -568,7 +567,7 @@ function NFTDetails() {
         }
         await InsertHistory(historyReqData);
         setLoading(false);
-        setReloadContent(true)
+        setReloadContent(!reloadContent)
         // slowRefresh(1000);
       }
 
@@ -955,7 +954,7 @@ function NFTDetails() {
                 await InsertHistory(historyReqData);
 
                 setLoading(false);
-                setReloadContent(true)
+                setReloadContent(!reloadContent)
                 // slowRefresh(1000);
               }
               else {
@@ -1303,7 +1302,7 @@ function NFTDetails() {
                           };
                           await InsertHistory(historyReqData);
                           setLoading(false);
-                          setReloadContent(true)
+                          setReloadContent(!reloadContent)
                         }
                       }
                       catch (e) {

@@ -611,18 +611,27 @@ function Marketplace() {
                           )}
 
                           {card && card.fileType === "3D" ? (
-                            <Canvas
+                            // <Canvas
+                            //   className='img-fluid items_img w-100 my-3'
+                            //   camera={{ position: [10, 100, 100], fov: 1 }}>
+                            //   <pointLight
+                            //     position={[5, 10, 10]}
+                            //     intensity={1.1}
+                            //   />
+                            //   <Suspense fallback={null}>
+                            //     <Model image={card.image} />
+                            //   </Suspense>
+                            //   <CameraControls />
+                            // </Canvas>
+                            <img
+                              src={card?.image}
                               className='img-fluid items_img w-100 my-3'
-                              camera={{ position: [10, 100, 100], fov: 1 }}>
-                              <pointLight
-                                position={[5, 10, 10]}
-                                intensity={1.1}
-                              />
-                              <Suspense fallback={null}>
-                                <Model image={card.image} />
-                              </Suspense>
-                              <CameraControls />
-                            </Canvas>
+                              alt=''
+                              onError={(e) => {
+                                console.log("image error is--->", e);
+                                e.target.src = card.previewImg;
+                              }}
+                            />
                           ) : (
                             ""
                           )}

@@ -1,26 +1,26 @@
-import React,{useRef,Suspense} from "react";
+import React, { useRef, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Tokens } from "../../helpers/tokensToSymbol";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import {
-  Canvas,useFrame,
+  Canvas, useFrame,
   extend,
   useThree,
 } from "@react-three/fiber";
 
 //extend({OrbitControls});
-const CameraControls=() => {
+const CameraControls = () => {
   // Get a reference to the Three.js Camera, and the canvas html element.
   // We need these to setup the OrbitControls component.
   // https://threejs.org/docs/#examples/en/controls/OrbitControls
   const {
     camera,
-    gl: {domElement},
-  }=useThree();
+    gl: { domElement },
+  } = useThree();
   // Ref to the controls, so that we can update them on every frame using useFrame
-  const controls=useRef();
+  const controls = useRef();
   useFrame((state) => controls.current.update());
-  return <orbitControls ref={controls} args={[camera,domElement]} />;
+  return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 function CollectionList(props) {
   function Model(props) {
@@ -31,62 +31,72 @@ function CollectionList(props) {
     <Link to={`/NFTdetails/${props.nft?.id}`}>
       <div className='collection_items'>
         <div className="collection__img">
-          
-        {props.nft && props.nft.fileType === "Image" ? (
-                            <img
-                              src={props.nft?.image}
-                              className='img-fluid items_img w-100 '
-                              alt=''
-                              onError={(e) => {
-                                console.log("image error is--->", e);
-                                e.target.src = "../img/collections/list4.png";
-                              }}
-                            />
-                          ) : (
-                            ""
-                          )}
-                          {props.nft && props.nft.fileType === "Video" ? (
-                            <video
-                              className='img-fluid items_img w-100 ' 
-                              controls>
-                              <source src={props.nft?.image} type='video/mp4' />
-                            </video>
-                          ) : (
-                            ""
-                          )}
 
-                          {props.nft && props.nft.fileType === "3D" ? (
-                            <Canvas
-                              className='img-fluid items_img w-100'
-                              camera={{ position: [10, 100, 100], fov: 1 }}>
-                              <pointLight
-                                position={[10, 10, 10]}
-                                intensity={1.3}
-                              />
-                              <Suspense fallback={null}>
-                                <Model image={props.nft?.image} />
-                              </Suspense>
-                              <CameraControls/>
-                            </Canvas>
-                          ) : (
-                            ""
-                          )}
+          {props.nft && props.nft.fileType === "Image" ? (
+            <img
+              src={props.nft?.image}
+              className='img-fluid items_img w-100 '
+              alt=''
+              onError={(e) => {
+                console.log("image error is--->", e);
+                e.target.src = "../img/collections/list4.png";
+              }}
+            />
+          ) : (
+            ""
+          )}
+          {props.nft && props.nft.fileType === "Video" ? (
+            <video
+              className='img-fluid items_img w-100 '
+              controls>
+              <source src={props.nft?.image} type='video/mp4' />
+            </video>
+          ) : (
+            ""
+          )}
+
+          {props.nft && props.nft.fileType === "3D" ? (
+            // <Canvas
+            //   className='img-fluid items_img w-100'
+            //   camera={{ position: [10, 100, 100], fov: 1 }}>
+            //   <pointLight
+            //     position={[10, 10, 10]}
+            //     intensity={1.3}
+            //   />
+            //   <Suspense fallback={null}>
+            //     <Model image={props.nft?.image} />
+            //   </Suspense>
+            //   <CameraControls/>
+            // </Canvas>
+
+            <img
+              src={props.nft?.previewImg}
+              className='img-fluid items_img w-100 '
+              alt=''
+              onError={(e) => {
+                console.log("image error is--->", e);
+                e.target.src = "../img/collections/list4.png";
+              }}
+            />
+          ) : (
+            ""
+          )}
         </div>
         <div className='coll_itemstext'>
           <div className='collection_row mb-3'>
             <div className='collection_col'>
               <span>{props.nft?.collectionName} Collection</span>
-              <h6>{props.nft?.name?.length > 8 ? props.nft?.name?.slice(0,8) + "..." : props.nft?.name}</h6>
+              <h6>{props.nft?.name?.length > 8 ? props.nft?.name?.slice(0, 8) + "..." : props.nft?.name}</h6>
             </div>
             <div className='collection_col text-end'>
               <span>Price</span>
               <span className='col_proiduct_price d-flex align-items-center'>
-               <div className="token_img">
-                {props.nft?.paymentToken && <img src={Tokens[props?.nft?.paymentToken?.toLowerCase()]?.icon} alt="payment token symbol"/> }
-               </div>
-               <div className="ml-3">
-                {props.nft?.price}
-               </div>
+                <div className="token_img">
+                  {props.nft?.paymentToken && <img src={Tokens[props?.nft?.paymentToken?.toLowerCase()]?.icon} alt="payment token symbol" />}
+                </div>
+                <div className="ml-3">
+                  {props.nft?.price}
+                </div>
               </span>
               {/* <span>
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -102,8 +112,8 @@ function CollectionList(props) {
                 {props.nft?.saleType === 0
                   ? "Buy Now"
                   : props.nft?.saleType === 1 || props.nft?.saleType === 2
-                  ? "Place Bid"
-                  : "View"}
+                    ? "Place Bid"
+                    : "View"}
               </Link>
             </div>
             {/* <div className='collection_col text-end'>
