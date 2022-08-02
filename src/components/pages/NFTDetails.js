@@ -830,8 +830,9 @@ function NFTDetails() {
                   };
                   await InsertHistory(historyReqData);
                   NotificationManager.success("Bid Placed Successfully", "", 800);
+                  setReloadContent(!reloadContent)
                   setLoading(false);
-                  slowRefresh(1000);
+                  // slowRefresh(1000);
                 }
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
