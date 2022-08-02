@@ -925,6 +925,7 @@ export const handleAcceptBids = async (
         return
       }
       completeOrder = await completeOrder.wait();
+
       if (completeOrder.status === 0) {
         // NotificationManager.error("Transaction Failed");
         return false;
@@ -985,7 +986,7 @@ export const handleAcceptBids = async (
         await UpdateStatus(req1)
       }
       catch (e) {
-        return
+        return false;
       }
     } catch (e) {
       console.log("error in updating order data", e);
@@ -1002,7 +1003,7 @@ export const handleAcceptBids = async (
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-
+   return true;
 };
 
 export const handleAcceptOffers = async (bidData, props, account) => {
@@ -1202,7 +1203,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
       await UpdateStatus(req)
     }
     catch (e) {
-      return
+      return false
     }
   } catch (e) {
     console.log("error in contract function calling", e);
@@ -1213,6 +1214,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
+  return true;
   // slowRefresh(1000);
 };
 

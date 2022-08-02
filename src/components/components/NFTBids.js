@@ -450,7 +450,7 @@ function NFTBids(props) {
                                       b,
                                       props.NftDetails.type
                                     );
-                                      console.log("accept bid res", resp);
+                                      // console.log("accept bid res", resp);
                                     if(resp !== false){
                                       let historyReqData = {
                                         nftID: b.nftID,
@@ -473,8 +473,6 @@ function NFTBids(props) {
                                       setReloadContent(!reloadContent);
                                     }
                                   }}
-
-
                                 >
                                   Accept
                                 </button>

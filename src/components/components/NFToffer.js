@@ -91,17 +91,15 @@ function NFToffer(props) {
         return;
       }
     }
-    setLoading(true);
+   
 
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
-      setLoading(false);
       return;
     }
 
     if (offerPrice === "" || offerPrice === undefined) {
       NotificationManager.error("Enter Offer Price");
-      setLoading(false);
       return;
     }
 
@@ -110,51 +108,55 @@ function NFToffer(props) {
       (offerQuantity === undefined && NFTDetails?.type !== 1)
     ) {
       NotificationManager.error("Enter Offer Quantity");
-      setLoading(false);
       return;
     }
     if (datetime === "") {
       NotificationManager.error("Enter Offer EndTime");
-      setLoading(false);
       return;
     }
+    setLoading(true);
+    setModal("")
+    try{
+      let deadline = moment(datetime).unix();
 
-    let deadline = moment(datetime).unix();
-
-    const res = await createOffer(
-      props.NftDetails?.tokenId,
-      props.collectionAddress,
-      props.NftDetails?.ownedBy[0],
-      currentUser,
-      props.NftDetails?.type,
-      offerQuantity,
-      ethers.utils.parseEther(offerPrice),
-      deadline,
-      props.NftDetails.id,
-      contracts[selectedToken]
-    );
-
-    if (res === false) {
-      setLoading(false);
-      return;
-    }
-    else {
-      let historyReqData = {
-        nftID: props.NftDetails?.id,
-        buyerID: localStorage.getItem("userId"),
-        action: "Offer",
-        type: "Updated",
-        price: ethers.utils.parseEther(offerPrice.toString()).toString(),
-        paymentToken: contracts[selectedToken],
-        quantity: offerQuantity,
-        createdBy: localStorage.getItem("userId"),
+      const res = await createOffer(
+        props.NftDetails?.tokenId,
+        props.collectionAddress,
+        props.NftDetails?.ownedBy[0],
+        currentUser,
+        props.NftDetails?.type,
+        offerQuantity,
+        ethers.utils.parseEther(offerPrice),
+        deadline,
+        props.NftDetails.id,
+        contracts[selectedToken]
+      );
+  
+      if (res === false) {
+        setLoading(false);
+        return;
       }
-      const d = await InsertHistory(historyReqData);
-      setLoading(false);
-      await fetch()
-      setModal("inactive")
-      slowRefresh(1000);
+      else {
+        let historyReqData = {
+          nftID: props.NftDetails?.id,
+          buyerID: localStorage.getItem("userId"),
+          action: "Offer",
+          type: "Updated",
+          price: ethers.utils.parseEther(offerPrice.toString()).toString(),
+          paymentToken: contracts[selectedToken],
+          quantity: offerQuantity,
+          createdBy: localStorage.getItem("userId"),
+        }
+        const d = await InsertHistory(historyReqData);
+        setLoading(false);
+        await fetch()
+        slowRefresh(1000);
+      }
     }
+    catch(e){
+      console.log("error", e)
+    }
+   
   };
 
   function handleChange(ev) {
@@ -425,8 +427,8 @@ function NFToffer(props) {
                               <button
 
                                 className="small_yellow_btn small_btn mr-3"
-                                data-bs-toggle="modal"
-                                data-bs-target="#brandModal"
+                                // data-bs-toggle="modal"
+                                // data-bs-target="#brandModal"
                                 onClick={() => {
                                   setModal("active");
                                   setOfferPrice(
@@ -507,7 +509,7 @@ function NFToffer(props) {
 
 
       {/*update offer modal*/}
-      <div className={`modal marketplace ${modal}`} id="brandModal">
+      <div className={`modal marketplace makeOffer ${modal}`} id="brandModal">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             {/* <!-- Modal Header --> */}
@@ -516,7 +518,8 @@ function NFToffer(props) {
               <button
                 type="button"
                 className="btn-close text-light"
-                data-bs-dismiss="modal"
+                // data-bs-dismiss="modal"
+                onClick={() => setModal(false)}
               ></button>
             </div>
 
