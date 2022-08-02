@@ -132,7 +132,6 @@ const Navbar = (props) => {
     const fetch = async () => {
       if (cookies.da_selected_account || account) {
         let res = await CheckIfBlocked({ "walletAddress": account ? account : cookies.da_selected_account })
-        console.log("ress", res);
         if (res === false) {
           window.sessionStorage.setItem("role", "admin")
         }
