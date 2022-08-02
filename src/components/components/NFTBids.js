@@ -451,8 +451,8 @@ function NFTBids(props) {
                                       b,
                                       props.NftDetails.type
                                     );
-                                      // console.log("accept bid res", resp);
-                                    if(resp !== false){
+                                    // console.log("accept bid res", resp);
+                                    if (resp !== false) {
                                       let historyReqData = {
                                         nftID: b.nftID,
                                         sellerID: localStorage.getItem('userId'),
@@ -466,13 +466,13 @@ function NFTBids(props) {
                                       };
                                       await InsertHistory(historyReqData);
                                       setLoading(false);
-                                      setReloadContent(!reloadContent);
-                                      await props.refreshState()
+
                                     }
                                     else {
                                       setLoading(false);
-                                      setReloadContent(!reloadContent);
                                     }
+                                    await props.refreshState()
+                                    setReloadContent(!reloadContent);
                                   }}
                                 >
                                   Accept
@@ -520,6 +520,7 @@ function NFTBids(props) {
                                     await props.refreshState()
 
                                     setReloadContent(!reloadContent);
+                                    await props.refreshState()
                                   }}
                                 >
                                   Reject
