@@ -470,6 +470,7 @@ export const putOnMarketplace = async (account, orderData) => {
       signature: signature,
       tokenID: Number(orderData.tokenId),
       salt: orderData.salt,
+      hashStatus: 1
     };
 
     await createOrder(reqParams);

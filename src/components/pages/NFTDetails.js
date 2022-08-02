@@ -463,7 +463,8 @@ function NFTDetails() {
         };
         await InsertHistory(historyReqData);
         setLoading(false);
-        setReloadContent(true)
+        setReloadContent(true);
+        
       }
 
     }
@@ -1242,10 +1243,7 @@ function NFTDetails() {
                     <button
                       type='button'
                       disabled={
-                        moment(new Date(orders[0].deadline * 1000)).subtract({
-                          hours: 5,
-                          minutes: 30,
-                        })._d < new Date()
+                        moment.utc(orders[0].deadline * 1000).local().format() < moment(new Date()).format()
                       }
                       className='title_color buy_now'
                       onClick={() => {
