@@ -541,7 +541,7 @@ function NFTlisting(props) {
                           </td>
                           <td>
                             <div className="text-center">
-                              {currentUser ?  (o.sellerID?.walletAddress?.toLowerCase() ===
+                              {currentUser ? (o.sellerID?.walletAddress?.toLowerCase() ===
                                 currentUser?.toLowerCase() ? (
                                 <button
                                   to={"/"}
@@ -568,17 +568,17 @@ function NFTlisting(props) {
                                     }
                                     setLoading(true);
                                     await handleRemoveFromSale(o._id, currentUser);
-                                   
-                                      let historyReqData = {
-                                        nftID: o?.nftID,
-                                        sellerID: localStorage.getItem("userId"),
-                                        action: "RemoveFromSale",
-                                        price: o?.price?.$numberDecimal,
-                                        paymentToken: o?.paymentToken,
-                                        createdBy: localStorage.getItem("userId"),
-                                      };
-                                      await InsertHistory(historyReqData);
-                                      setLoading(false);
+
+                                    let historyReqData = {
+                                      nftID: o?.nftID,
+                                      sellerID: localStorage.getItem("userId"),
+                                      action: "RemoveFromSale",
+                                      price: o?.price?.$numberDecimal,
+                                      paymentToken: o?.paymentToken,
+                                      createdBy: localStorage.getItem("userId"),
+                                    };
+                                    await InsertHistory(historyReqData);
+                                    setLoading(false);
                                     await props.refreshState()
                                   }}
                                 >

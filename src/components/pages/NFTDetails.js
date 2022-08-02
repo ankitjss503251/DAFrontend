@@ -10,6 +10,7 @@ import {
   getCollections,
   getNFTs,
   getNFTDetails,
+  getUsersTokenBalance,
   // fetchWallet,
 } from "../../helpers/getterFunctions";
 
@@ -245,7 +246,7 @@ function NFTDetails() {
 
 
   const refreshState = () => {
-    setReloadContent(true)
+    setReloadContent(!reloadContent)
   }
 
   useEffect(() => {
@@ -462,7 +463,7 @@ function NFTDetails() {
         };
         await InsertHistory(historyReqData);
         setLoading(false);
-        setReloadContent(true)
+        setReloadContent(!reloadContent)
       }
 
     }
@@ -474,6 +475,7 @@ function NFTDetails() {
   };
 
   const PlaceOffer = async () => {
+
     const wCheck = WalletConditions();
     setWalletVariable(wCheck)
 
@@ -522,7 +524,12 @@ function NFTDetails() {
       setLoading(false);
       return;
     }
-
+    const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
+    if ((bal / 10 ** 18) <= Number(offerPrice)) {
+      NotificationManager.error("Insufficient Balance", "", 800);
+      setLoading(false);
+      return;
+    }
 
     try {
 
@@ -560,7 +567,7 @@ function NFTDetails() {
         }
         await InsertHistory(historyReqData);
         setLoading(false);
-        setReloadContent(true)
+        setReloadContent(!reloadContent)
         // slowRefresh(1000);
       }
 
@@ -635,7 +642,7 @@ function NFTDetails() {
 
     const dt = ev.target["value"];
 
-    const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
+    const ct = moment(new Date()).format();
 
     if (dt < ct) {
       NotificationManager.error(
@@ -745,26 +752,36 @@ function NFTDetails() {
           <button
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
-              setIsPlaceBidModal(false);
+             
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
 
               if (wCheck.isLocked) {
                 setShowAlert("locked");
+                setIsPlaceBidModal(false);
                 return;
               }
 
               if (!wCheck.isLocked) {
                 if (!wCheck.cCheck) {
                   setShowAlert("chainId");
+                  setIsPlaceBidModal(false);
                   return;
                 }
                 if (!wCheck.aCheck) {
                   setShowAlert("account")
+                  setIsPlaceBidModal(false);
                   return;
                 }
               }
-              setLoading(true);
+              
+              const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
+              if ((bal / 10 ** 18) <= Number(price)) {
+                NotificationManager.error("Insufficient Balance", "", 800);
+                setIsPlaceBidModal(true);
+                return;
+              }
+
               if (
                 Number(price) <
                 Number(convertToEth(orders[0].price?.$numberDecimal))
@@ -775,9 +792,10 @@ function NFTDetails() {
                   800
                 );
                 setIsPlaceBidModal(true);
-                setLoading(false);
                 return;
               }
+              setIsPlaceBidModal(false);
+              setLoading(true);
               try {
                 let res = await createBid(
                   orders[0].nftID,
@@ -936,7 +954,7 @@ function NFTDetails() {
                 await InsertHistory(historyReqData);
 
                 setLoading(false);
-                setReloadContent(true)
+                setReloadContent(!reloadContent)
                 // slowRefresh(1000);
               }
               else {
@@ -1287,7 +1305,7 @@ function NFTDetails() {
                           };
                           await InsertHistory(historyReqData);
                           setLoading(false);
-                          setReloadContent(true)
+                          setReloadContent(!reloadContent)
                         }
                       }
                       catch (e) {
