@@ -285,9 +285,9 @@ function NFToffer(props) {
                             src={Tokens[b?.paymentToken?.toLowerCase()]?.icon}
                             className="img-fluid hunter_fav"
                           />{" "}
-                          {Number(
-                            convertToEth(b?.bidPrice?.$numberDecimal)
-                          ).toFixed(4)}{" "}
+                          {Number(convertToEth(b?.bidPrice?.$numberDecimal))
+                          ?.toFixed(6)
+                          ?.slice(0, -2)}{" "}
                           {Tokens[b?.paymentToken?.toLowerCase()]?.symbolName}
                         </td>
                         <td>
