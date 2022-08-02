@@ -5492,17 +5492,22 @@ button.filter_btn {
 }
 
 .modal.marketplace.putOnMarketplace.active{
-
 display: block;
-
 }
-
-
 
 .modal.marketplace.putOnMarketplace{
-
 display: none;
 }
+
+.modal.marketplace.makeOffer.active{
+  display: block;
+}
+
+.modal.marketplace.makeOffer{
+  display: none;
+}
+
+
 .drop_down_tlt svg {
   transition: .5s ease;
 }

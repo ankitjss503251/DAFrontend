@@ -237,14 +237,15 @@ function NFTBids(props) {
                     createdBy: localStorage.getItem("userId"),
                   };
                   await InsertHistory(historyReqData);
-
+                  setReloadContent(!reloadContent);
+                  await props.refreshState()
                   NotificationManager.success(
                     "Bid Updated Successfully",
                     "",
                     800
                   );
                   setLoading(false);
-                  slowRefresh(1000);
+                  // slowRefresh(1000);
                   setReloadContent(!reloadContent);
                 }
                 else {
@@ -450,8 +451,8 @@ function NFTBids(props) {
                                       b,
                                       props.NftDetails.type
                                     );
-
-                                    if (resp !== false || resp !== undefined) {
+                                      // console.log("accept bid res", resp);
+                                    if(resp !== false){
                                       let historyReqData = {
                                         nftID: b.nftID,
                                         sellerID: localStorage.getItem('userId'),
@@ -471,11 +472,8 @@ function NFTBids(props) {
                                     else {
                                       setLoading(false);
                                       setReloadContent(!reloadContent);
-
                                     }
                                   }}
-
-
                                 >
                                   Accept
                                 </button>
@@ -519,7 +517,7 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-
+                                    await props.refreshState()
 
                                     setReloadContent(!reloadContent);
                                   }}
@@ -607,7 +605,7 @@ function NFTBids(props) {
                                 to={"/"}
                                 className="small_border_btn small_btn"
                                 disabled={
-                                  moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
+                                  moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                 }
                               >
                                 Place Bid

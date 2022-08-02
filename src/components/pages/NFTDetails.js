@@ -242,7 +242,17 @@ function NFTDetails() {
   const [showAlert, setShowAlert] = useState("");
   const [walletVariable, setWalletVariable] = useState({});
   const [reloadContent, setReloadContent] = useState(false);
+  const [isMakeOffer, setIsMakeOffer] = useState(false);
 
+  const refreshVariables = () => {
+    setQty("");
+    setPrice("");
+    setOfferPrice(0);
+    setOfferQuantity(1);
+    setDatetime("");
+    setItem_bid(0);
+    setItemprice(0);
+  }
 
 
   const refreshState = () => {
@@ -397,34 +407,32 @@ function NFTDetails() {
         return;
       }
     }
-    setLoading(true);
+
 
     if (marketplaceSaleType === 0) {
       if (itemprice === undefined || itemprice === "" || itemprice <= 0) {
         NotificationManager.error("Please Enter a price", "", 800);
-        setLoading(false);
         return;
       }
     } else if (marketplaceSaleType === 1) {
       if (datetime === "" || datetime === undefined) {
         NotificationManager.error("Please Enter Expiration date", "", 800);
-        setLoading(false);
         return;
       }
       if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
         NotificationManager.error("Please Enter Minimum Bid", "", 800);
-        setLoading(false);
         return;
       }
     } else {
       if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
         NotificationManager.error("Please Enter Minimum Bid", "", 800);
-        setLoading(false);
         return;
       }
     }
+    setLoading(true);
+    setIsModal("");
     try {
-      setIsModal("");
+
       let orderData = {
         nftId: NFTDetails.id,
         collection: NFTDetails.collectionAddress,
@@ -463,6 +471,8 @@ function NFTDetails() {
         };
         await InsertHistory(historyReqData);
         setLoading(false);
+
+        refreshVariables();
         setReloadContent(!reloadContent)
       }
 
@@ -494,20 +504,14 @@ function NFTDetails() {
         return;
       }
     }
-    setLoading(true);
-    // let wallet = await fetchWallet();
-    // if (wallet !== currentUser) {
-    //   console.log("wrong wallet")
-    // }
+
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
-      setLoading(false);
       return;
     }
 
     if (offerPrice === "" || offerPrice === undefined || offerPrice <= 0) {
       NotificationManager.error("Enter Offer Price");
-      setLoading(false);
       return;
     }
 
@@ -516,20 +520,19 @@ function NFTDetails() {
       (offerQuantity === undefined && NFTDetails.type !== 1)
     ) {
       NotificationManager.error("Enter Offer Quantity");
-      setLoading(false);
       return;
     }
     if (datetime === "") {
       NotificationManager.error("Enter Offer EndTime");
-      setLoading(false);
       return;
     }
     const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
     if ((bal / 10 ** 18) <= Number(offerPrice)) {
       NotificationManager.error("Insufficient Balance", "", 800);
-      setLoading(false);
       return;
     }
+    setLoading(true);
+    setIsMakeOffer("")
 
     try {
 
@@ -567,6 +570,7 @@ function NFTDetails() {
         }
         await InsertHistory(historyReqData);
         setLoading(false);
+        refreshVariables();
         setReloadContent(!reloadContent)
         // slowRefresh(1000);
       }
@@ -574,6 +578,7 @@ function NFTDetails() {
     }
     catch (e) {
       console.log("Error", e);
+      setLoading(false);
     }
     //await putOnMarketplace(currentUser, orderData);
   };
@@ -752,7 +757,7 @@ function NFTDetails() {
           <button
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
-             
+
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
 
@@ -774,7 +779,7 @@ function NFTDetails() {
                   return;
                 }
               }
-              
+
               const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
               if ((bal / 10 ** 18) <= Number(price)) {
                 NotificationManager.error("Insufficient Balance", "", 800);
@@ -825,8 +830,9 @@ function NFTDetails() {
                   };
                   await InsertHistory(historyReqData);
                   NotificationManager.success("Bid Placed Successfully", "", 800);
+                  setReloadContent(!reloadContent)
                   setLoading(false);
-                  slowRefresh(1000);
+                  // slowRefresh(1000);
                 }
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
@@ -1242,10 +1248,7 @@ function NFTDetails() {
                     <button
                       type='button'
                       disabled={
-                        moment(new Date(orders[0].deadline * 1000)).subtract({
-                          hours: 5,
-                          minutes: 30,
-                        })._d < new Date()
+                        moment.utc(orders[0].deadline * 1000).local().format() < moment(new Date()).format()
                       }
                       className='title_color buy_now'
                       onClick={() => {
@@ -1323,9 +1326,9 @@ function NFTDetails() {
                   <button
                     type="button"
                     className="border_btn title_color"
-                    data-bs-toggle="modal"
-                    data-bs-target="#makeOfferModal"
-
+                    // data-bs-toggle="modal"
+                    // data-bs-target="#makeOfferModal"
+                    onClick={() => setIsMakeOffer("active")}
                   >
                     {haveOffer ? "Update Offer" : "Make Offers"}
                   </button>
@@ -1750,7 +1753,7 @@ function NFTDetails() {
 
       {/*Bid/Offer Modal*/}
 
-      <div className='modal marketplace' id='makeOfferModal'>
+      <div className={`modal marketplace makeOffer ${isMakeOffer}`} id='makeOfferModal'>
         <div className='modal-dialog modal-lg modal-dialog-centered'>
           <div className='modal-content'>
             {/* <!-- Modal Header --> */}
@@ -1759,7 +1762,10 @@ function NFTDetails() {
               <button
                 type='button'
                 className='btn-close text-light'
-                data-bs-dismiss='modal'></button>
+                onClick={() => {
+                  refreshVariables();
+                  setIsMakeOffer("")
+                }}></button>
             </div>
 
             {/* <!-- Modal body --> */}

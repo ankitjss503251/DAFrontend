@@ -752,7 +752,7 @@ export const createOffer = async (
           let offer = await createOfferNFT(reqParams);
           if (!isEmptyObject(offer)) {
             NotificationManager.success("Offer Placed Successfully");
-            slowRefresh(1000);
+            // slowRefresh(1000);
           } else {
             NotificationManager.error("Something Went Wrong!");
             return false;
@@ -922,9 +922,10 @@ export const handleAcceptBids = async (
         await UpdateStatus(req)
       }
       catch (e) {
-        return
+        return false
       }
       completeOrder = await completeOrder.wait();
+
       if (completeOrder.status === 0) {
         // NotificationManager.error("Transaction Failed");
         return false;
@@ -953,7 +954,7 @@ export const handleAcceptBids = async (
         await UpdateStatus(req)
       }
       catch (e) {
-        return
+        return false
       }
       if (
         Number(details.quantity_sold) + Number(bidData.bidQuantity) >=
@@ -972,21 +973,10 @@ export const handleAcceptBids = async (
           await UpdateStatus(req)
         }
         catch (e) {
-          return
+          return false
         }
       }
-      let req1 = {
-        "recordID": bidData.orderID,
-        "DBCollection": "Order",
-        "hashStatus": 1,
-        "hash": completeOrder.hash
-      }
-      try {
-        await UpdateStatus(req1)
-      }
-      catch (e) {
-        return
-      }
+
     } catch (e) {
       console.log("error in updating order data", e);
       return false;
@@ -1002,7 +992,7 @@ export const handleAcceptBids = async (
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-
+   return true;
 };
 
 export const handleAcceptOffers = async (bidData, props, account) => {
@@ -1202,7 +1192,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
       await UpdateStatus(req)
     }
     catch (e) {
-      return
+      return false
     }
   } catch (e) {
     console.log("error in contract function calling", e);
@@ -1213,6 +1203,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
+  return true;
   // slowRefresh(1000);
 };
 
