@@ -342,6 +342,7 @@ export const getNFTs = async (req) => {
         orderData: nft?.OrderData,
         brandData: nft?.BrandData[0],
         count: count,
+        previewImg: nft?.previewImg
       };
     })
     : (formattedData[0] = {});
