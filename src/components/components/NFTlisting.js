@@ -23,6 +23,8 @@ import { InsertHistory } from "./../../apiServices";
 import evt from "./../../events/events";
 import { onboard } from "../menu/header";
 import { WalletConditions } from "../components/WalletConditions";
+import { getUsersTokenBalance } from "../../helpers/getterFunctions";
+import contracts from "../../config/contracts";
 
 
 function NFTlisting(props) {
@@ -171,7 +173,12 @@ function NFTlisting(props) {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
 
-              setIsPlaceBidModal(false);
+
+              if (currentUser === undefined || currentUser === "") {
+                setShowAlert("notConnected");
+                return;
+              }
+
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
 
@@ -190,7 +197,13 @@ function NFTlisting(props) {
                   return;
                 }
               }
-              setLoading(true);
+
+              const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
+              if ((bal / 10 ** 18) <= Number(price)) {
+                NotificationManager.error("Insufficient Balance", "", 800);
+                setIsPlaceBidModal(true);
+                return;
+              }
               if (
                 Number(price) <
                 Number(convertToEth(currentOrder.price?.$numberDecimal))
@@ -201,9 +214,11 @@ function NFTlisting(props) {
                   800
                 );
                 setIsPlaceBidModal(true);
-                setLoading(false);
+
                 return;
               }
+              setLoading(true);
+              setIsPlaceBidModal(false);
               try {
                 const res = await createBid(
                   currentOrder.nftID,
@@ -459,6 +474,26 @@ function NFTlisting(props) {
               }}>
               Connect Wallet
             </button>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              {/* <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div> */}
+              <h4 className="mb-3">Please connect your wallet. </h4>
+            </div>
+            <button
+              className='btn-main mt-2' onClick={() => {
+                setShowAlert("")
+                evt.emit("connectWallet")
+              }}>
+              Connect Wallet
+            </button>
           </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
 
       {loading ? <Spinner /> : ""}
@@ -536,7 +571,9 @@ function NFTlisting(props) {
                               ></Clock>
                             )}
                           </td>
-                          <td className="blue_text">
+                          <td className={moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
+                            ? "green_text"
+                            : "red_text"}>
                             {moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
                               ? "Active"
                               : "Ended"}
@@ -598,6 +635,12 @@ function NFTlisting(props) {
                                     }
                                     className="small_border_btn small_btn"
                                     onClick={async () => {
+
+                                      if (currentUser === undefined || currentUser === "") {
+                                        setShowAlert("notConnected");
+                                        return;
+                                      }
+
                                       const wCheck = WalletConditions();
                                       setWalletVariable(wCheck)
 
