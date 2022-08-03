@@ -93,8 +93,8 @@
 .close-icon {
   content: "x";
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: -30px;
+  top: -30px;
   /* border-radius: 50%; */
   line-height: 35px;
   text-align: center;
@@ -112,8 +112,8 @@
   justify-content: center;
   transition: all 0.12s ease-in-out 0s; */
   border-radius: 100%;
-  background-color: rgba(255, 255, 255, 0.08);
-  color: rgb(255, 255, 255);
+  background-color: rgb(255, 255, 255);
+  color: rgba(255, 255, 255, 0.08);
   /* transform-origin: center center; */
 }
 .popup-content {
