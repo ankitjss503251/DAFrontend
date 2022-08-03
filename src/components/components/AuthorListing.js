@@ -36,7 +36,7 @@ function AuthorListing(props) {
   return (
     <Link to={props.link}>
       <div className='collection_items'>
-        <div class="collection__img">
+        <div className="collection__img">
           {props && props.fileType === "Image" ? (
             <img
               src={props?.image}

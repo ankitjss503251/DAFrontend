@@ -34,7 +34,7 @@ const GeneralOffer = (props) => {
                                     <td><Clock  deadline={moment.utc(_o?.bidDeadline * 1000).local().format()} /></td>
                                     <td>{_o?.bidStatus === "MakeOffer" ? "Active" : "Inactive"}</td>
                                     <td>
-                                        <a  href={`/NFTdetails/${_o?.nftData}`} class="small_border_btn small_btn">View</a>
+                                        <a  href={`/NFTdetails/${_o?.nftData}`} className="small_border_btn small_btn">View</a>
                                     </td>
                                 </tr>
                             })}
