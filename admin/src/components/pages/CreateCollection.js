@@ -105,7 +105,6 @@ function CreateCollection(props) {
       setCategory(_cat[0]?._id);
     };
     fetch();
-    console.log('create collection')
   }, []);
 
   function handleChange(ev) {
@@ -725,7 +724,7 @@ function CreateCollection(props) {
                   ? myCollections.map((item, index) => {
                     return (
                       <>
-                        <tr>
+                        <tr key={index}>
                           <td>
                             {" "}
                             <div className="first-col">

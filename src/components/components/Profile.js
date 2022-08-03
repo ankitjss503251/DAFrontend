@@ -326,6 +326,7 @@ function Profile() {
                   ref={textAreaRef}
                   value={walletAddress}
                   id="myInput"
+                  disabled="true"
                   className="form-control profile_input"
                 />
 

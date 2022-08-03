@@ -95,10 +95,8 @@ function Marketplacecollection() {
   }, [loadMore, searchedText, showTab]);
 
   const handleCategoryChange = async (category) => {
-    console.log("active Cat before", activeCat);
     setLoader(true);
     setActiveCat([]);
-    console.log("active Cat", activeCat);
     try {
       let temp2 = activeCat;
       const reqBody = {
@@ -112,7 +110,6 @@ function Marketplacecollection() {
       if (ind.length > 0) {
         setLoadMoreDisabled("");
         temp2 = [...temp2, ind];
-        // temp2 = [ind]
         setActiveCat(temp2);
       }
       if (ind?.length <= 0 && activeCat) {

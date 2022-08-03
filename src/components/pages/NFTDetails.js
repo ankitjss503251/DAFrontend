@@ -152,6 +152,7 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+        console.log(res[0].id, id)
         if (res[0].fileType === "3D") {
 
           let image = res[0].image.split("//");
@@ -241,18 +242,18 @@ function NFTDetails() {
   useEffect(() => {
     const fetch = async () => {
       let searchParams = {
-        nftID: NFTDetails.id,
+        nftID: id,
         buyerID: localStorage.getItem("userId"),
         bidStatus: "MakeOffer",
         orderID: "All",
       };
 
       let _data = await fetchOfferNft(searchParams);
-
+      console.log("fetch offer nft called", id, reloadContent)
       if (_data && _data?.data?.length > 0) {
         const b = _data.data[0];
+        console.log("_data", _data)
         setHaveOffer(true);
-
         setOfferPrice(convertToEth(b?.bidPrice?.$numberDecimal));
         setDatetime(moment(b?.bidDeadline * 1000).toISOString());
       } else {
@@ -261,7 +262,7 @@ function NFTDetails() {
 
     };
     fetch();
-  }, [NFTDetails, reloadContent, currentUser]);
+  }, [id, reloadContent, currentUser]);
 
   const PutMarketplace = async () => {
     const wCheck = WalletConditions();
@@ -967,10 +968,13 @@ function NFTDetails() {
               )}
             </div>
             <div className='col-lg-6 nft_details'>
-              <p className='mb-0'>
-                {collection?.name} Collection{" "}
-                <img src={"../img/check.png"} className='img-fluid' alt='' />
-              </p>
+              <a href={`/collection/${collection._id}`}>
+                <p className='mb-0'>
+
+                  {collection?.name} Collection{" "}
+                  {/* <img src={"../img/check.png"} className='img-fluid' alt='' /> */}
+                </p>
+              </a>
               <h1 className='mb-3'>{NFTDetails?.name}</h1>
               <div className='owner_by mb-4'>
                 <p>
