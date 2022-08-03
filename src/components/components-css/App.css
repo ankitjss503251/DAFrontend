@@ -5539,8 +5539,11 @@ display: none;
   border-bottom: 1px dotted #999;
 }
 .box button.btn-main {
-  color: #ef981d !important;
+  color: #fff !important;
   }
+  .box button.btn-main:hover {
+    color: #ef981d !important;
+    }
 
 .form-control:disabled {
   background-color: none !important;
