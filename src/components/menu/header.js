@@ -176,7 +176,10 @@ const Header = function () {
   const connectWallet = async () => {
     console.log("11");
     try {
+
+
       const wallets = await onboard.connectWallet();
+
       if (wallets.length !== 0) {
 
         await onboard.setChain({
@@ -186,34 +189,40 @@ const Header = function () {
         const primaryWallet = wallets[0];
         const address = primaryWallet.accounts[0].address;
 
+        try {
+          if (web3.eth) {
+            const siteUrl = process.env.REACT_APP_SITE_URL;
+            let nonce = "";
+            await web3.eth.getTransactionCount(address).then(async (result) => {
+              console.log("encryptedData", result)
+              nonce = CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
+              console.log("encryptedData", nonce)
+            })
+            const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
 
-        if (web3.eth) {
-          const siteUrl = process.env.REACT_APP_SITE_URL;
-          let nonce = "";
-          await web3.eth.getTransactionCount(address).then(async (result) => {
-            console.log("encryptedData", result)
-            nonce = CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
-            console.log("encryptedData", nonce)
-          })
-          const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
+            console.log(web3.utils.fromUtf8(message));
 
-          console.log(web3.utils.fromUtf8(message));
-
-          web3.eth.currentProvider.sendAsync({
-            method: 'personal_sign',
-            params: [message, address],
-            from: address,
-          }, async function (err, signature) {
-            if (!err) {
-              console.log("Signature", signature);
-              try {
-                userAuth(primaryWallet, address, signature.result, message);
-              } catch (e) {
-                console.log("Error in user auth", e);
+            web3.eth.currentProvider.sendAsync({
+              method: 'personal_sign',
+              params: [message, address],
+              from: address,
+            }, async function (err, signature) {
+              if (!err) {
+                console.log("Signature", signature);
+                try {
+                  userAuth(primaryWallet, address, signature.result, message);
+                } catch (e) {
+                  console.log("Error in user auth", e);
+                }
               }
-            }
-            console.log("Error is", err);
-          })
+              console.log("Error is", err);
+              // window.location.reload()
+              // await onboard.disconnectWallet({ label: cookies["da_label"] });
+            })
+          }
+        }
+        catch (e) {
+
         }
       }
     }
