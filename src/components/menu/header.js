@@ -162,12 +162,11 @@ const Header = function () {
 
   const getUserProfile = async () => {
     const profile = await getProfile();
-    console.log("profile data", profile?.statusCode, typeof (profile?.statusCode));
     if (profile?.statusCode === 200) {
       localStorage.setItem("userId", profile?.data?._id)
     }else{
       NotificationManager.error(profile?.message);
-      disconnectWallet();
+      
     }
     setUserDetails(profile?.data);
 

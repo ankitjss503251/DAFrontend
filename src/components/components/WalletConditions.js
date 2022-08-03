@@ -14,32 +14,32 @@ export const WalletConditions = () => {
 
     if (result.selected_account === undefined || result.selected_account === "") {
         return "notConnected";
-        
+
     }
-    
-        const state = onboard.state.get();
-        if (state.wallets?.length > 0) {
-            const cWalletAccount = state.wallets[0].accounts[0].address;
-            const cWalletChainID = state.wallets[0].chains[0].id;
 
-            if (cWalletChainID !== result.chain_id) {
-                return "chainId";
-                
+    const state = onboard.state.get();
+    if (state.wallets?.length > 0) {
+        const cWalletAccount = state.wallets[0].accounts[0].address;
+        const cWalletChainID = state.wallets[0].chains[0].id;
+
+        if (cWalletChainID !== result.chain_id) {
+            return "chainId";
+
+        }
+        else
+            if (cWalletAccount !== result.selected_account) {
+                return "account";
+
             }
-            else
-                if (cWalletAccount !== result.selected_account) {
-                    return "account";
-                  
-                }
 
 
-        }
-            else {
-                return"locked";
-  
-        }
+    }
+    else {
+        return "locked";
 
-    
+    }
+
+
 
 }
 

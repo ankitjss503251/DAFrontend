@@ -118,7 +118,7 @@ export const Logout = async () => {
 export const getProfile = async () => {
   try {
     const response = await fetch(
-      process.env.REACT_APP_API_BASE_URL + "/user/profile1",
+      process.env.REACT_APP_API_BASE_URL + "/user/profile",
       {
         headers: { Authorization: getHeaders() },
       }
