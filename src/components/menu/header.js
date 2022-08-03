@@ -18,7 +18,6 @@ import { useCookies } from "react-cookie";
 import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import { slowRefresh } from "./../../helpers/NotifyStatus";
-import PopupModal from "./../components/AccountModal/popupModal";
 import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
@@ -143,7 +142,7 @@ const Header = function () {
     setCookies();
   }, []);
 
- 
+
 
   const refreshState = () => {
     removeCookie("selected_account", { path: "/" });
@@ -182,9 +181,9 @@ const Header = function () {
         const siteUrl = process.env.REACT_APP_SITE_URL;
         let nonce = "";
         await web3.eth.getTransactionCount(address).then(async (result) => {
-            console.log("encryptedData", result)
-            nonce =  CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
-            console.log("encryptedData", nonce)
+          console.log("encryptedData", result)
+          nonce = CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
+          console.log("encryptedData", nonce)
         })
         const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
 
@@ -215,83 +214,83 @@ const Header = function () {
   };
 
   const userAuth = async (primaryWallet, address, signature, message) => {
-  
-     try{
-      let res = await CheckIfBlocked({ "walletAddress": address })
-      
-     }catch(e){
-      console.log(e)
-     }
-   
+
     try {
       let res = await CheckIfBlocked({ "walletAddress": address })
-      if(!res){
-      const isUserExist = await checkuseraddress(address);
-      if (isUserExist === "User not found") {
-        try {
-          const res = await Register(address);
-          if (res?.message === "Wallet Address required") {
-            NotificationManager.info(res?.message);
-            return;
-          } else if (res?.message === "User already exists") {
-            NotificationManager.error(res?.message);
-            return;
-          } else {
-            localStorage.setItem("userId", res?.data?.userId);
-            setAccount(primaryWallet.accounts[0].address);
-            setCookie("selected_account", address, { path: "/" });
-            setCookie("label", primaryWallet.label, { path: "/" });
-            setCookie(
-              "chain_id",
-              primaryWallet.chains[0].id,
-              { path: "/" }
-            );
-            getUserProfile();
-            NotificationManager.success(res.message);
-            slowRefresh(1000);
-            return;
-          }
-        } catch (e) {
-          NotificationManager.error(e);
-          return;
-        }
-      } else {
-        try {
-          const res = await Login(address, signature, message);
-          if (res?.message === "Wallet Address required") {
-            NotificationManager.info(res?.message);
-            return;
-          } else if (
-            res?.message === "User not found" ||
-            res?.message === "Login Invalid"
-          ) {
-            NotificationManager.error(res?.message);
-            return;
-          } else {
-            localStorage.setItem("userId", res?.data?.userId);
-            setAccount(primaryWallet.accounts[0]?.address);
-            setCookie("selected_account", address, { path: "/" });
-            setCookie("label", primaryWallet.label, { path: "/" });
-            setCookie(
-              "chain_id",
-              primaryWallet.chains[0]?.id,
-              { path: "/" }
-            );
-            getUserProfile();
-            NotificationManager.success(res?.message, "", 800);
-            slowRefresh(1000);
+
+    } catch (e) {
+      console.log(e)
+    }
+
+    try {
+      let res = await CheckIfBlocked({ "walletAddress": address })
+      if (!res) {
+        const isUserExist = await checkuseraddress(address);
+        if (isUserExist === "User not found") {
+          try {
+            const res = await Register(address);
+            if (res?.message === "Wallet Address required") {
+              NotificationManager.info(res?.message);
+              return;
+            } else if (res?.message === "User already exists") {
+              NotificationManager.error(res?.message);
+              return;
+            } else {
+              localStorage.setItem("userId", res?.data?.userId);
+              setAccount(primaryWallet.accounts[0].address);
+              setCookie("selected_account", address, { path: "/" });
+              setCookie("label", primaryWallet.label, { path: "/" });
+              setCookie(
+                "chain_id",
+                primaryWallet.chains[0].id,
+                { path: "/" }
+              );
+              getUserProfile();
+              NotificationManager.success(res.message);
+              slowRefresh(1000);
+              return;
+            }
+          } catch (e) {
+            NotificationManager.error(e);
             return;
           }
-        } catch (e) {
-          NotificationManager.error(e);
-          return;
+        } else {
+          try {
+            const res = await Login(address, signature, message);
+            if (res?.message === "Wallet Address required") {
+              NotificationManager.info(res?.message);
+              return;
+            } else if (
+              res?.message === "User not found" ||
+              res?.message === "Login Invalid"
+            ) {
+              NotificationManager.error(res?.message);
+              return;
+            } else {
+              localStorage.setItem("userId", res?.data?.userId);
+              setAccount(primaryWallet.accounts[0]?.address);
+              setCookie("selected_account", address, { path: "/" });
+              setCookie("label", primaryWallet.label, { path: "/" });
+              setCookie(
+                "chain_id",
+                primaryWallet.chains[0]?.id,
+                { path: "/" }
+              );
+              getUserProfile();
+              NotificationManager.success(res?.message, "", 800);
+              slowRefresh(1000);
+              return;
+            }
+          } catch (e) {
+            NotificationManager.error(e);
+            return;
+          }
         }
       }
-    }
-    else{
-      NotificationManager.error("User is Blocked","",800);
-      return;
-    }
+      else {
+        NotificationManager.error("User is Blocked", "", 800);
+        return;
+      }
     } catch (e) {
       console.log(e);
     }
