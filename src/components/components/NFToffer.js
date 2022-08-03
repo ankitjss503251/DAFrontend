@@ -73,6 +73,11 @@ function NFToffer(props) {
   };
 
   const PlaceOffer = async () => {
+    if (currentUser === undefined || currentUser === "") {
+      setShowAlert("notConnected");
+      return;
+    }
+
     const wCheck = WalletConditions();
     setWalletVariable(wCheck)
 
@@ -93,10 +98,7 @@ function NFToffer(props) {
     }
 
 
-    if (currentUser === undefined || currentUser === "") {
-      NotificationManager.error("Please Connect Metamask");
-      return;
-    }
+   
 
     if (offerPrice === "" || offerPrice === undefined) {
       NotificationManager.error("Enter Offer Price");
@@ -242,7 +244,29 @@ function NFToffer(props) {
               }}>
               Connect Wallet
             </button>
-          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : 
+          showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
+              <div className='bid_user_details my-4'>
+                <img src={Logo} alt='' />
+                {/* <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div> */}
+                <h4 className="mb-3">Please connect your wallet. </h4>
+              </div>
+              <button
+                className='btn-main mt-2' onClick={() => {
+                  setShowAlert("");
+                  setModal("")
+                  evt.emit("connectWallet");
+                }}>
+                Connect Wallet
+              </button>
+            </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
 
       {loading ? <Spinner /> : ""}
       {offer && offer.length <= 0 ? <div className="col-md-12">
@@ -301,7 +325,8 @@ function NFToffer(props) {
                             fetch={fetch}
                           ></Clock>
                         </td>
-                        <td className="white_text">
+                        <td className={moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "red_text" :
+                              b.bidStatus === "MakeOffer" ? "white_text" :"blue_text"}>
                           {" "}
                           {
                             moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "Ended" :
@@ -318,6 +343,10 @@ function NFToffer(props) {
                                   moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                 }
                                 onClick={async () => {
+                                  if (currentUser === undefined || currentUser === "") {
+                                    setShowAlert("notConnected");
+                                    return;
+                                  }
                                   const wCheck = WalletConditions();
                                   setWalletVariable(wCheck)
 
@@ -373,6 +402,10 @@ function NFToffer(props) {
                                   moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                 }
                                 onClick={async () => {
+                                  if (currentUser === undefined || currentUser === "") {
+                                    setShowAlert("notConnected");
+                                    return;
+                                  }
                                   const wCheck = WalletConditions();
                                   setWalletVariable(wCheck)
 
@@ -431,6 +464,29 @@ function NFToffer(props) {
                                 // data-bs-toggle="modal"
                                 // data-bs-target="#brandModal"
                                 onClick={() => {
+                                  if (currentUser === undefined || currentUser === "") {
+                                    setShowAlert("notConnected");
+                                    return;
+                                  }
+                              
+                                  const wCheck = WalletConditions();
+                                  setWalletVariable(wCheck)
+                              
+                                  if (wCheck.isLocked) {
+                                    setShowAlert("locked");
+                                    return;
+                                  }
+                              
+                                  if (!wCheck.isLocked) {
+                                    if (!wCheck.cCheck) {
+                                      setShowAlert("chainId");
+                                      return;
+                                    }
+                                    if (!wCheck.aCheck) {
+                                      setShowAlert("account")
+                                      return;
+                                    }
+                                  }
                                   setModal("active");
                                   setOfferPrice(
                                     convertToEth(b?.bidPrice?.$numberDecimal)
@@ -445,6 +501,10 @@ function NFToffer(props) {
                               <button
                                 className="small_border_btn small_btn"
                                 onClick={async () => {
+                                  if (currentUser === undefined || currentUser === "") {
+                                    setShowAlert("notConnected");
+                                    return;
+                                  }
                                   const wCheck = WalletConditions();
                                   setWalletVariable(wCheck)
 
