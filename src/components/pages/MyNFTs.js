@@ -108,7 +108,6 @@ function MyNFTs() {
         setCardCount(cardCount + _owned.count);
         setTotalOwned(_owned.count);
         if (_owned && _owned.results.length > 0) {
-          console.log("owned nft is------>", _owned.results)
           setOwnedNFTs(_owned.results);
         }
 
@@ -637,9 +636,7 @@ function MyNFTs() {
               role='tabpanel'
               aria-labelledby='pills-Owned-tab'>
               <div className='row'>
-                {loader ? (
-                  <CollectionsNFT cards={cardCount} grid={grid} />
-                ) : (
+                {
                   ownedNFTs && ownedNFTs?.length > 0 ? ownedNFTs?.map((card, key) => (
                     <div className={grid} key={key}>
                       <AuthorListing
@@ -654,7 +651,7 @@ function MyNFTs() {
                       <h4 className="no_data_text text-muted">No NFTs Available</h4>
                     </div>
                   )
-                )}
+                }
               </div>
             </div>
             <div
