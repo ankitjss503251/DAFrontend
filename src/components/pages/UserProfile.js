@@ -39,7 +39,6 @@ useEffect(() => {
         userWalletAddress: cookies["selected_account"]
       })
       setOffers([..._offerMade, ..._offerReceived])
-      console.log("offers", _offerMade, _offerReceived, [..._offerMade, ..._offerReceived])
     }
     catch (e) {
       console.log("Error in fetching offers", e)
