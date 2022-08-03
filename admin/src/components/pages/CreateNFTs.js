@@ -251,6 +251,7 @@ function CreateNFTs() {
           );
           formdata.append("hash", mintRes.hash)
           formdata.append("hashStatus", 0)
+          console.log("formdata", formdata);
           let createdNft;
           try {
             createdNft = await createNft(formdata);

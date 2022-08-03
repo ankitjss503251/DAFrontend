@@ -20,6 +20,7 @@ import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
 import evt from "../events/events";
 import LandingPage from "../LandingPage";
+import crypto from "crypto";
 
 const Web3 = require('web3');
 // web3 lib instance
@@ -189,9 +190,10 @@ const Navbar = (props) => {
 
 
       if (web3.eth) {
-        const timestamp = new Date().getTime();
-        const message = `Digital Arms Marketplace uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address - ${timestamp}`;
-
+        const siteUrl = process.env.REACT_APP_SITE_URL;
+        const nonce = crypto.randomBytes(16).toString('hex');
+        const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
+        
         console.log(web3.utils.fromUtf8(message));
 
         web3.eth.currentProvider.sendAsync({
