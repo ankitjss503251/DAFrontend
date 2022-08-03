@@ -7,7 +7,7 @@
     "main.js": "/static/js/main.6c872268.chunk.js",
     "runtime-main.js": "/static/js/runtime-main.e39ddf53.js",
     "static/css/5.90cf8d79.chunk.css": "/static/css/5.90cf8d79.chunk.css",
-    "static/js/5.2fe906ee.chunk.js": "/static/js/5.2fe906ee.chunk.js",
+    "static/js/5.fec4e43c.chunk.js": "/static/js/5.fec4e43c.chunk.js",
     "static/js/6.51adfd53.chunk.js": "/static/js/6.51adfd53.chunk.js",
     "static/js/7.fdea7883.chunk.js": "/static/js/7.fdea7883.chunk.js",
     "static/js/8.faebe7be.chunk.js": "/static/js/8.faebe7be.chunk.js",
@@ -47,7 +47,7 @@
     "static/js/42.2a4b19fc.chunk.js": "/static/js/42.2a4b19fc.chunk.js",
     "static/js/43.dee91bcd.chunk.js": "/static/js/43.dee91bcd.chunk.js",
     "index.html": "/index.html",
-    "static/js/5.2fe906ee.chunk.js.LICENSE.txt": "/static/js/5.2fe906ee.chunk.js.LICENSE.txt",
+    "static/js/5.fec4e43c.chunk.js.LICENSE.txt": "/static/js/5.fec4e43c.chunk.js.LICENSE.txt",
     "static/media/style.css": "/static/media/et-line.d59b2385.woff",
     "static/media/authorbg.55d26785.jpg": "/static/media/authorbg.55d26785.jpg",
     "static/media/App.css": "/static/media/logo.6ce24c58.svg",
@@ -63,7 +63,7 @@
   "entrypoints": [
     "static/js/runtime-main.e39ddf53.js",
     "static/css/5.90cf8d79.chunk.css",
-    "static/js/5.2fe906ee.chunk.js",
+    "static/js/5.fec4e43c.chunk.js",
     "static/css/main.85728fa8.chunk.css",
     "static/js/main.6c872268.chunk.js"
   ]
