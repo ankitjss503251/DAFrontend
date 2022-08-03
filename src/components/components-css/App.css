@@ -2259,6 +2259,7 @@ button.filter_btn.active {
   width: 100%;
   border-radius: 10px;
   height: 260px;
+  object-fit: contain;
 }
 .nftdetails button.slick-arrow {
   background-color: transparent !important;
@@ -2273,7 +2274,7 @@ button.filter_btn.active {
   padding: 0px;
   margin: 0;
   list-style: none;
-  max-height: 250px;
+  max-height: 280px;
 }
 .nft_list th,
 .nft_list h6 {
@@ -3212,11 +3213,12 @@ button.yellow_btn.yellow_dark {
   font-family: "Montserrat";
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 13px;
+  line-height: 16px;
   color: #ffffff;
 }
-.date_task {
+.date_task,
+.date_task .link_btn {
   font-family: "Montserrat";
   font-style: normal;
   font-weight: 400;
@@ -3224,6 +3226,9 @@ button.yellow_btn.yellow_dark {
   line-height: 16px;
   color: #ffffff;
   margin-bottom: 10px;
+}
+.date_task .link_btn {
+  color: #ef981d;
 }
 .link_btn {
   color: #ef981d;
@@ -3271,7 +3276,7 @@ button.yellow_btn.yellow_dark {
   font-weight: 600;
   font-size: 18px;
   text-align: center;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 .blog_about p {
   font-family: "Montserrat";
@@ -5513,4 +5518,16 @@ display: none;
 }
 .drop_down_tlt.collapsed svg {
  transform: rotate(180deg);
+}
+.slick-slider .slick-track {
+  margin-left: 0;
+}
+.border-bottom-5 {
+  border-bottom: 5px solid #ef981d;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #1d8aef;
+}
+.table-responsive::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px #1d8aef;
 }

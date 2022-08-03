@@ -1436,19 +1436,19 @@ function NFTDetails() {
                 className='img-fluid box_shadow'
               />
             </div>
-            <div className='col-md-12 mb-5'>
+            <div className='col-md-12 pb-5 mb-5 border-bottom-5'>
               <h3 className='title_36 mb-4'>Listings</h3>
               {/* <div className='table-responsive'> */}
               <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} reloadContent={reloadContent} refreshState={refreshState} />
               {/* </div> */}
             </div>
 
-            <div className='col-md-12 mb-5'>
+            <div className='col-md-12 pb-5 mb-5 border-bottom-5'>
               <h3 className='title_36 mb-4'>Bids</h3>
 
               <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} reloadContent={reloadContent} refreshState={refreshState} />
             </div>
-            <div className='col-md-12 mb-5'>
+            <div className='col-md-12 pb-5 mb-5 border-bottom-5'>
               <h3 className='title_36 mb-4'>Offers</h3>
 
               <NFToffer
@@ -1459,7 +1459,7 @@ function NFTDetails() {
                 refreshState={refreshState}
               />
             </div>
-            <div className="col-md-12 mb-5">
+            <div className="col-md-12 pb-5 mb-5">
               <h3 className="title_36 mb-4">History</h3>
 
               <NFThistory nftID={NFTDetails.id} reloadContent={reloadContent} />
