@@ -149,7 +149,7 @@ function NFToffer(props) {
         }
         const d = await InsertHistory(historyReqData);
         setLoading(false);
-        await fetch()
+        // await fetch()
         slowRefresh(1000);
       }
     }
@@ -359,9 +359,9 @@ function NFToffer(props) {
                                   }
 
                                   setLoading(false);
-                                  await props.refreshState()
-                                  await fetch()
-                                  // slowRefresh(1000);
+                                  // await props.refreshState()
+                                  // await fetch()
+                                  slowRefresh(1000);
                                 }}
                               >
                                 Accept
@@ -408,10 +408,10 @@ function NFToffer(props) {
                                     createdBy: localStorage.getItem("userId"),
                                   };
                                   await InsertHistory(historyReqData);
-                                  await fetch()
-                                  props.refreshState()
+                                  // await fetch()
+                                  // props.refreshState()
 
-                                  // slowRefresh(1000);
+                                  slowRefresh(1000);
 
                                 }}
 
@@ -481,9 +481,9 @@ function NFToffer(props) {
                                     createdBy: localStorage.getItem("userId"),
                                   };
                                   await InsertHistory(historyReqData);
-                                  await fetch()
-                                  await props.refreshState()
-
+                                  // await fetch()
+                                  // await props.refreshState()
+                                  slowRefresh(1000)
                                 }}
                               >
                                 Cancel
