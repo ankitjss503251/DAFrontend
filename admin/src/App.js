@@ -85,7 +85,7 @@ function App() {
             toggleMode={toggleMode}
           /> */}
 
-          <Route path="sadmin" element={<Login />} />
+          <Route path="sadmin" exact element={<Login />} />
           {/* <Route path="404" element={<Error404 />} /> */}
 
           <Route
@@ -96,30 +96,32 @@ function App() {
 
 
 
-            {currentUser || isSuperAdmin() ? <Route path="/" element={<Home />} /> : <Route path="/" />}
+            {currentUser || isSuperAdmin() ? <Route path="/" exact element={<Home />} /> : <Route path="/" />}
 
-            {currentUser || isSuperAdmin() ? <Route path="admins" element={<Admins />} /> : <Route path="/" />}
+            {currentUser || isSuperAdmin() ? <Route path="admins" exact element={<Admins />} /> : <Route path="/" />}
 
-            {currentUser || isSuperAdmin() ? <Route path="createcollection" element={<CreateCollection />} /> : <Route path="/" />}
+            {currentUser || isSuperAdmin() ? <Route path="createcollection" exact  element={<CreateCollection />} /> : <Route path="/" />}
 
-            {currentUser || isSuperAdmin() ? <Route path="createnfts" element={<CreateNFTs />} /> : <Route path="/" />}
+            {currentUser || isSuperAdmin() ? <Route path="createnfts" exact element={<CreateNFTs />} /> : <Route path="/" />}
 
-            {currentUser || isSuperAdmin() ? <Route path="createbrands" element={<CreateBrands />} /> : <Route path="/" />}
+            {currentUser || isSuperAdmin() ? <Route path="createbrands" exact element={<CreateBrands />} /> : <Route path="/" />}
 
-            {currentUser || isSuperAdmin() ? <Route path="login" element={<Login />} /> : <Route path="/" />}
+            {currentUser || isSuperAdmin() ? <Route path="login" exact element={<Login />} /> : <Route path="/" />}
 
-            {currentUser || isSuperAdmin() ? <Route path="register" element={<Register />} /> : <Route path="/" />}
+            {currentUser || isSuperAdmin() ? <Route path="register" exact element={<Register />} /> : <Route path="/" />}
 
-            {currentUser || isSuperAdmin() ? <Route path="importedNfts/:address/:id" element={<NftDetail />} /> : <Route path="/" />}
+            {currentUser || isSuperAdmin() ? <Route path="importedNfts/:address/:id" exact element={<NftDetail />} /> : <Route path="/" />}
 
             {currentUser || isSuperAdmin() ? <Route
               path="createcategories"
+              exact
               showNotificationPopup={() => { }}
               element={<CreateCategories />}
             /> : <Route path="/" />}
 
             {currentUser || isSuperAdmin() ? <Route
               path="notificationpopup"
+              exact
               notificationpopup={notificationpopup}
               element={<NotificationPopup />}
             /> : <Route path="/" />}
@@ -127,6 +129,7 @@ function App() {
 
           <Route
             path="*"
+            exact
             element={<Error404 />}
           />
 

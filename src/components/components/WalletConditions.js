@@ -4,9 +4,6 @@ import { onboard } from "../menu/header";
 export const WalletConditions = () => {
     const cookies = document.cookie;
     let str = cookies;
-    let isLocked = false;
-    let cCheck = true;
-    let aCheck = true;
 
     str = str.split('; ');
     const result = {};
@@ -15,29 +12,34 @@ export const WalletConditions = () => {
         result[cur[0]] = cur[1];
     }
 
+    if (result.selected_account === undefined || result.selected_account === "") {
+        return "notConnected";
+        
+    }
+    
+        const state = onboard.state.get();
+        if (state.wallets?.length > 0) {
+            const cWalletAccount = state.wallets[0].accounts[0].address;
+            const cWalletChainID = state.wallets[0].chains[0].id;
 
-    const state = onboard.state.get();
-
-    if (state.wallets?.length > 0) {
-        const cWalletAccount = state.wallets[0].accounts[0].address;
-        const cWalletChainID = state.wallets[0].chains[0].id;
-
-        if (cWalletChainID !== result.chain_id) {
-               cCheck = false;
-        }
-        else
-            if (cWalletAccount !== result.selected_account) {
-                aCheck = false;
+            if (cWalletChainID !== result.chain_id) {
+                return "chainId";
+                
             }
-         
-        return {
-            isLocked, cCheck, aCheck, cWalletAccount, sAccount: result.selected_account, cWalletChainID, sChain: result.chain_id
-        }
-    }
+            else
+                if (cWalletAccount !== result.selected_account) {
+                    return "account";
+                  
+                }
 
-    return {
-        isLocked: true, sAccount: result.selected_account
-    }
+
+        }
+            else {
+                return"locked";
+  
+        }
+
+    
 
 }
 

@@ -224,16 +224,11 @@ const Header = function () {
 
   const userAuth = async (primaryWallet, address, signature, message) => {
 
-    try {
-      let res = await CheckIfBlocked({ "walletAddress": address })
-
-    } catch (e) {
-      console.log(e)
-    }
+ 
 
     try {
-      let res = await CheckIfBlocked({ "walletAddress": address })
-      if (!res) {
+      // let res = await CheckIfBlocked({ "walletAddress": address })
+      // if (!res) {
         const isUserExist = await checkuseraddress(address);
         if (isUserExist === "User not found") {
           try {
@@ -295,11 +290,11 @@ const Header = function () {
             return;
           }
         }
-      }
-      else {
-        NotificationManager.error("User is Blocked", "", 800);
-        return;
-      }
+      // }
+      // else {
+      //   NotificationManager.error("User is Blocked", "", 800);
+      //   return;
+      // }
     } catch (e) {
       console.log(e);
     }

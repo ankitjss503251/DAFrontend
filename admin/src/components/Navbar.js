@@ -288,7 +288,7 @@ const Navbar = (props) => {
     window.sessionStorage.removeItem("role");
     refreshState();
     // NotificationManager.success("User Logged out Successfully", "", 800);
-    slowRefresh(1000);
+    slowRefresh(1000)
   };
 
 

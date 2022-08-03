@@ -173,29 +173,10 @@ function NFTlisting(props) {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
 
-
-              if (currentUser === undefined || currentUser === "") {
-                setShowAlert("notConnected");
-                return;
-              }
-
               const wCheck = WalletConditions();
-              setWalletVariable(wCheck)
-
-              if (wCheck.isLocked) {
-                setShowAlert("locked");
+              if (wCheck !== undefined) {
+                setShowAlert(wCheck);
                 return;
-              }
-
-              if (!wCheck.isLocked) {
-                if (!wCheck.cCheck) {
-                  setShowAlert("chainId");
-                  return;
-                }
-                if (!wCheck.aCheck) {
-                  setShowAlert("account")
-                  return;
-                }
               }
 
               const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
@@ -333,23 +314,10 @@ function NFTlisting(props) {
             onClick={async () => {
               setIsBuyNowModal(false);
               const wCheck = WalletConditions();
-              setWalletVariable(wCheck)
-
-              if (wCheck.isLocked) {
-                setShowAlert("locked");
-                return;
-              }
-
-              if (!wCheck.isLocked) {
-                if (!wCheck.cCheck) {
-                  setShowAlert("chainId");
-                  return;
-                }
-                if (!wCheck.aCheck) {
-                  setShowAlert("account")
-                  return;
-                }
-              }
+                        if (wCheck !== undefined) {
+                          setShowAlert(wCheck);
+                          return;
+                        }
               setLoading(true);
               try {
 
@@ -417,7 +385,7 @@ function NFTlisting(props) {
             <div >
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {walletVariable.sChain}
+                {cookies.chain_id}
               </span>
 
             </div>
@@ -442,7 +410,7 @@ function NFTlisting(props) {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {currentUser}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -461,7 +429,7 @@ function NFTlisting(props) {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {currentUser}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -586,25 +554,11 @@ function NFTlisting(props) {
                                   to={"/"}
                                   className="small_yellow_btn small_btn mr-3"
                                   onClick={async () => {
-                                    console.log("order details", o)
                                     const wCheck = WalletConditions();
-                                    setWalletVariable(wCheck)
-
-                                    if (wCheck.isLocked) {
-                                      setShowAlert("locked");
-                                      return;
-                                    }
-
-                                    if (!wCheck.isLocked) {
-                                      if (!wCheck.cCheck) {
-                                        setShowAlert("chainId");
-                                        return;
-                                      }
-                                      if (!wCheck.aCheck) {
-                                        setShowAlert("account")
-                                        return;
-                                      }
-                                    }
+                        if (wCheck !== undefined) {
+                          setShowAlert(wCheck);
+                          return;
+                        }
                                     setLoading(true);
                                     await handleRemoveFromSale(o._id, currentUser);
 
@@ -636,29 +590,11 @@ function NFTlisting(props) {
                                     className="small_border_btn small_btn"
                                     onClick={async () => {
 
-                                      if (currentUser === undefined || currentUser === "") {
-                                        setShowAlert("notConnected");
-                                        return;
-                                      }
-
                                       const wCheck = WalletConditions();
-                                      setWalletVariable(wCheck)
-
-                                      if (wCheck.isLocked) {
-                                        setShowAlert("locked");
-                                        return;
-                                      }
-
-                                      if (!wCheck.isLocked) {
-                                        if (!wCheck.cCheck) {
-                                          setShowAlert("chainId");
-                                          return;
-                                        }
-                                        if (!wCheck.aCheck) {
-                                          setShowAlert("account")
-                                          return;
-                                        }
-                                      }
+                        if (wCheck !== undefined) {
+                          setShowAlert(wCheck);
+                          return;
+                        }
                                       if (
                                         moment.utc(o?.deadline * 1000).local().format() < moment(new Date()).format()
                                       ) {
