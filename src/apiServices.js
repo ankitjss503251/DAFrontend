@@ -66,7 +66,7 @@ export const Login = async (account, signature, message) => {
     body: JSON.stringify({
       walletAddress: account,
       signature: signature,
-      message: message,
+      message: message
     }),
   };
   try {
@@ -974,6 +974,33 @@ export const fetchOfferReceived = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
+    return datas.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+
+export const CheckIfBlocked = async (data) => {
+  const requestOptions = {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data)
+  };
+
+  try {
+    let response = await fetch(
+      process.env.REACT_APP_API_BASE_URL + "/user/checkIfBlocked",
+      requestOptions
+    );
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const datas = isJson && (await response.json());
+
     return datas.data;
   } catch (err) {
     return err;

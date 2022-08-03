@@ -96,7 +96,7 @@ function Marketplacecollection() {
 
   const handleCategoryChange = async (category) => {
     setLoader(true);
-
+    setActiveCat([]);
     try {
       let temp2 = activeCat;
       const reqBody = {
@@ -110,7 +110,6 @@ function Marketplacecollection() {
       if (ind.length > 0) {
         setLoadMoreDisabled("");
         temp2 = [...temp2, ind];
-        // temp2 = [ind]
         setActiveCat(temp2);
       }
       if (ind?.length <= 0 && activeCat) {
@@ -181,14 +180,15 @@ function Marketplacecollection() {
                       <li className="nav-item" role="presentation" key={key}>
                         <button
                           className="nav-link"
-                          id={cat.name}
+                          id={cat._id}
                           data-bs-toggle="pill"
-                          data-bs-target={`#${cat.name}`}
+                          data-bs-target={`#${cat._id}`}
                           type="button"
                           role="tab"
-                          aria-controls={`#${cat.name}`}
+                          aria-controls={`#${cat._id}`}
                           aria-selected="true"
                           onClick={(e) => {
+                            handleCategoryChange(cat);
                             setActiveCat([]);
                             // setLoadMoreDisabledAll("");
                             // setLoadMoreDisabled("");
@@ -196,7 +196,7 @@ function Marketplacecollection() {
                             // setLoader(true);
                             setCardCount(0);
                             setCurrPage(1);
-                            handleCategoryChange(cat);
+                            
                           }}
                         >
                           {cat.name}
@@ -302,9 +302,9 @@ function Marketplacecollection() {
             </div>
             <div
               className={`tab-pane fade ${showTab}`}
-              id={`#${activeCat.name}`}
+              id={`${activeCat._id}`}
               role="tabpanel"
-              aria-labelledby={activeCat.name}
+              aria-labelledby={activeCat._id}
             >
               <div className="row">
                 {loader ? (

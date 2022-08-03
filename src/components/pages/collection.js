@@ -216,7 +216,7 @@ function Collection() {
               {/* <img
               alt=''
               src={"../img/collections/check.png"}
-              class='img-fluid check_img'
+              className='img-fluid check_img'
             /> */}
             </div>
             <h1 className="collection_title text-center">
