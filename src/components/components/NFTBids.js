@@ -237,15 +237,16 @@ function NFTBids(props) {
                     createdBy: localStorage.getItem("userId"),
                   };
                   await InsertHistory(historyReqData);
-                  setReloadContent(!reloadContent);
-                  await props.refreshState()
+                  slowRefresh(1000)
+                  // setReloadContent(!reloadContent);
+                  // await props.refreshState()
                   NotificationManager.success(
                     "Bid Updated Successfully",
                     "",
                     800
                   );
                   setLoading(false);
-                  // slowRefresh(1000);
+                  slowRefresh(1000);
                 }
                 else {
                   setLoading(false);
@@ -470,8 +471,9 @@ function NFTBids(props) {
                                     else {
                                       setLoading(false);
                                     }
-                                    await props.refreshState()
-                                    setReloadContent(!reloadContent);
+                                    slowRefresh(1000)
+                                    // await props.refreshState()
+                                    // setReloadContent(!reloadContent);
                                   }}
                                 >
                                   Accept
@@ -517,8 +519,9 @@ function NFTBids(props) {
                                     };
                                     await InsertHistory(historyReqData);
 
-                                    setReloadContent(!reloadContent);
-                                    await props.refreshState()
+                                    // setReloadContent(!reloadContent);
+                                    // await props.refreshState()
+                                    slowRefresh(1000)
                                   }}
                                 >
                                   Reject
@@ -590,9 +593,9 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-                                    setReloadContent(!reloadContent);
-                                    await props.refreshState()
-
+                                    // setReloadContent(!reloadContent);
+                                    // await props.refreshState()
+                                    slowRefresh(1000)
                                   }}
 
                                 >

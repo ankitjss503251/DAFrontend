@@ -47,38 +47,35 @@ function NFTlisting(props) {
     }
   }, [cookies.selected_account]);
 
-  useEffect(() => {
-    console.log("props.reloadContent", props.refreshState);
-    if (props.id)
-      fetch();
-  }, [props.id, props.refreshState]);
+  // useEffect(() => {
+  //   if (props.id)
+  //     fetch();
+  // }, [props.id, props.refreshState]);
 
   const fetch = async () => {
     if (props.id) {
       const _orders = await getOrderByNftID({ nftID: props.id });
       setOrders(_orders?.results);
+      let searchParams = {
+        nftID: props.id,
+        buyerID: localStorage.getItem("userId"),
+        bidStatus: "All",
+        orderID: "All",
+      };
+
+      let _data = await fetchBidNft(searchParams);
+
+      if (_data && _data.data.length > 0) {
+        setHaveBid(true);
+      }
     }
   };
 
   useEffect(() => {
-    if (props.id)
-      fetchListing();
-  }, [props.id]);
+    fetch()
+  }, [props.id, props.refreshState]);
 
-  const fetchListing = async () => {
-    let searchParams = {
-      nftID: props.id,
-      buyerID: localStorage.getItem("userId"),
-      bidStatus: "All",
-      orderID: "All",
-    };
 
-    let _data = await fetchBidNft(searchParams);
-
-    if (_data && _data.data.length > 0) {
-      setHaveBid(true);
-    }
-  };
 
   useEffect(() => {
     var body = document.body;
@@ -234,13 +231,14 @@ function NFTlisting(props) {
                   await InsertHistory(historyReqData);
                   NotificationManager.success("Bid Placed Successfully", "", 800);
                   setLoading(false);
-                  await props.refreshState()
-                  // slowRefresh(1000);
+
+                  slowRefresh(1000);
                 } else {
                   setLoading(false);
                   return;
                 }
-
+                // await props.refreshState()
+                // await fetch()
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
               }
@@ -361,15 +359,19 @@ function NFTlisting(props) {
                     createdBy: localStorage.getItem("userId"),
                   };
                   await InsertHistory(historyReqData);
-                  await fetchListing()
+                  // await fetch()
+                  slowRefresh(1000);
                   setLoading(false);
-                  await props.refreshState()
+
                 }
                 else {
                   setLoading(false);
-                  // slowRefresh(1000);
+
                   return;
                 }
+                // await fetch()
+                // await props.refreshState()
+
               }
               catch (e) {
                 console.log("Error", e)
