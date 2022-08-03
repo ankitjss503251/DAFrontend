@@ -162,6 +162,12 @@ const Header = function () {
 
   const getUserProfile = async () => {
     const profile = await getProfile();
+    if (profile?.statusCode === 200) {
+      localStorage.setItem("userId", profile?.data?._id)
+    }else{
+      NotificationManager.error(profile?.message);
+      
+    }
     setUserDetails(profile?.data);
 
   };
@@ -227,7 +233,7 @@ const Header = function () {
       }
     }
     catch (e) {
-      console.log("ee", e)
+      NotificationManager.error("Please refresh", "", 800);
     }
     // try {
     //   userAuth(primaryWallet, address);
@@ -238,7 +244,6 @@ const Header = function () {
   };
 
   const userAuth = async (primaryWallet, address, signature, message) => {
-
 
 
     try {
@@ -255,7 +260,7 @@ const Header = function () {
             NotificationManager.error(res?.message);
             return;
           } else {
-            localStorage.setItem("userId", res?.data?.userId);
+
             setAccount(primaryWallet.accounts[0].address);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
@@ -286,7 +291,7 @@ const Header = function () {
             NotificationManager.error(res?.message);
             return;
           } else {
-            localStorage.setItem("userId", res?.data?.userId);
+
             setAccount(primaryWallet.accounts[0]?.address);
             setCookie("selected_account", address, { path: "/" });
             setCookie("label", primaryWallet.label, { path: "/" });
