@@ -164,9 +164,9 @@ const Header = function () {
     const profile = await getProfile();
     if (profile?.statusCode === 200) {
       localStorage.setItem("userId", profile?.data?._id)
-    }else{
+    } else {
       NotificationManager.error(profile?.message);
-      
+
     }
     setUserDetails(profile?.data);
 
@@ -462,7 +462,7 @@ const Header = function () {
                       All NFTs
                     </NavLink>
                   </li>
-                  {catg.length > 0
+                  {/* {catg.length > 0
                     ? catg?.map((c, key) => {
                       return (
                         <li key={key}>
@@ -476,7 +476,7 @@ const Header = function () {
                         </li>
                       );
                     })
-                    : ""}
+                    : ""} */}
                 </ul>
               </li>
               <li className="nav-item">

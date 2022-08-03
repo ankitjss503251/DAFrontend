@@ -41,20 +41,22 @@ function NFTBids(props) {
     if (cookies.selected_account) setCurrentUser(cookies.selected_account);
   }, [cookies.selected_account]);
 
-  useEffect(() => {
-    const fetch = async () => {
-      let searchParams = {
-        nftID: props.id,
-        buyerID: "All",
-        bidStatus: "Bid",
-        orderID: "All",
-      };
-
-      let _data = await fetchBidNft(searchParams);
-      if (_data && _data.data.length > 0) {
-        setBids(_data.data);
-      }
+  const fetch = async () => {
+    let searchParams = {
+      nftID: props.id,
+      buyerID: "All",
+      bidStatus: "Bid",
+      orderID: "All",
     };
+
+    let _data = await fetchBidNft(searchParams);
+    if (_data && _data.data.length > 0) {
+      setBids(_data.data);
+    }
+  };
+
+  useEffect(() => {
+
     fetch();
   }, [props.id, reloadContent, props.refreshState]);
 
@@ -327,10 +329,10 @@ function NFTBids(props) {
               }}>
               Connect Wallet
             </button>
-          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
-              <div className='bid_user_details my-4'>
-                <img src={Logo} alt='' />
-                {/* <div className='bid_user_address align-items-center'>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              {/* <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
                     {walletVariable.sAccount}
@@ -338,17 +340,17 @@ function NFTBids(props) {
                   <span className='badge badge-success'>Connected</span>
                 </div>
               </div> */}
-                <h4 className="mb-3">Please connect your wallet. </h4>
-              </div>
-              <button
-                className='btn-main mt-2' onClick={() => {
-                  setShowAlert("");
-                  setIsUpdateBidModal(false);
-                  evt.emit("connectWallet")
-                }}>
-                Connect Wallet
-              </button>
-            </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+              <h4 className="mb-3">Please connect your wallet. </h4>
+            </div>
+            <button
+              className='btn-main mt-2' onClick={() => {
+                setShowAlert("");
+                setIsUpdateBidModal(false);
+                evt.emit("connectWallet")
+              }}>
+              Connect Wallet
+            </button>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
 
       {loading ? <Spinner /> : ""}
       {isUpdateBidModal ? updateBidModal : ""}
@@ -419,13 +421,13 @@ function NFTBids(props) {
                             : "Open for Bids"}</td>
                           <td>
                             {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format() ? <Clock
-                              deadline={moment.utc(b.bidDeadline * 1000).local().format()}></Clock> : " --:--:--"}
+                              deadline={moment.utc(b.bidDeadline * 1000).local().format()} fetch={fetch}></Clock> : " --:--:--"}
 
 
                           </td>
                           <td className={moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
-                              ? "red_text"
-                              : "green_text"}>
+                            ? "red_text"
+                            : "green_text"}>
                             {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                               ? "Ended"
                               : "Active"}
@@ -479,10 +481,10 @@ function NFTBids(props) {
                                   className="small_border_btn small_btn"
                                   onClick={async () => {
                                     const wCheck = WalletConditions();
-                        if (wCheck !== undefined) {
-                          setShowAlert(wCheck);
-                          return;
-                        }
+                                    if (wCheck !== undefined) {
+                                      setShowAlert(wCheck);
+                                      return;
+                                    }
                                     await handleUpdateBidStatus(
                                       b._id,
                                       "Rejected"
@@ -520,10 +522,10 @@ function NFTBids(props) {
                                   className="small_yellow_btn small_btn mb-2"
                                   onClick={() => {
                                     const wCheck = WalletConditions();
-                        if (wCheck !== undefined) {
-                          setShowAlert(wCheck);
-                          return;
-                        }
+                                    if (wCheck !== undefined) {
+                                      setShowAlert(wCheck);
+                                      return;
+                                    }
                                     setCurrentBid(b);
                                     setPrice(
                                       Number(
@@ -546,10 +548,10 @@ function NFTBids(props) {
                                   className="small_border_btn small_btn"
                                   onClick={async () => {
                                     const wCheck = WalletConditions();
-                        if (wCheck !== undefined) {
-                          setShowAlert(wCheck);
-                          return;
-                        }
+                                    if (wCheck !== undefined) {
+                                      setShowAlert(wCheck);
+                                      return;
+                                    }
                                     await handleUpdateBidStatus(
                                       b._id,
                                       "Cancelled"

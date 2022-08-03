@@ -44,8 +44,14 @@ function Marketplacecollection() {
   useEffect(() => {
     const fetch = async () => {
       setLoader(true);
-
       try {
+        let isanyActive = 0;
+        console.log("Search Text", searchedText)
+        // if (searchedText === undefined) {
+        //   setAllActiveTab("active");
+        //   setAllActive("show active");
+        // }
+        // console.log("isanyActive", isanyActive)
         const res1 = await getCategory();
         if (res1.length > 0) {
           for (const myCat of res1) {
@@ -53,12 +59,14 @@ function Marketplacecollection() {
             myCat.loadmore = "";
             myCat.isActiveTab = "";
             myCat.isActive = "";
-            if (searchedText === myCat.name) {
-              myCat.isActiveTab = "active";
-              myCat.isActive = "show active";
-              setAllActiveTab("");
-              setAllActive("");
-            }
+            // if (searchedText === myCat.name && isanyActive === 0) {
+            //   console.log("Active cat", myCat.name)
+            //   myCat.isActiveTab = "active";
+            //   myCat.isActive = "show active";
+            //   setAllActiveTab("");
+            //   setAllActive("");
+            //   isanyActive = 1;
+            // }
             try {
               const reqBody = {
                 page: currPage,
@@ -84,42 +92,19 @@ function Marketplacecollection() {
         res1?.map((r) => {
           t = [...t, r.name];
         });
-        if (!t.includes(searchedText) && !showTab) {
-          let temp = allCollections;
-          const reqData = {
-            page: currPageAll,
-            limit: 12,
-            searchText: searchedText ? searchedText : "",
-            isOnMarketplace: 1,
-          };
-          const res = await getCollections(reqData);
-          setCardCount(cardCount + res.length);
-          if (res.length > 0) {
-            setLoadMoreDisabledAll("");
-            temp = [...temp, res];
-            setAllCollections(temp);
-          }
-
-          if (allCollections && res.length <= 0) {
-            setLoader(false);
-            setLoadMoreDisabledAll("disabled");
-            return;
-          }
-        } else {
-          setLoader(true);
-          try {
-            setShowTab("show active");
-            if (searchedText) {
-              document.getElementById(searchedText).classList.add("active");
-            }
-            const res1 = await getCategory({
-              name: searchedText,
-            });
-            handleCategoryChange(res1[0]);
-          } catch (e) {
-            console.log("Error", e);
-          }
-          setLoader(false);
+        let temp = [];
+        const reqData = {
+          page: currPageAll,
+          limit: 12,
+          searchText: "",
+          isOnMarketplace: 1,
+        };
+        const res = await getCollections(reqData);
+        setCardCount(cardCount + res.length);
+        if (res.length > 0) {
+          setLoadMoreDisabledAll("");
+          temp = [...temp, res];
+          setAllCollections(temp);
         }
       } catch (e) {
         console.log("Error in fetching all collections list", e);
@@ -129,37 +114,7 @@ function Marketplacecollection() {
     fetch();
   }, [loadMore, searchedText, showTab]);
 
-  const handleCategoryChange = async (category) => {
-    setLoader(true);
 
-    setActiveCat([]);
-    try {
-      let temp2 = activeCat;
-      const reqBody = {
-        page: currPage,
-        limit: 12,
-        categoryID: category._id,
-        isOnMarketplace: 1,
-      };
-      const ind = await getCollections(reqBody);
-      console.log("loading catefory")
-      setCardCount(cardCount + ind.length);
-      if (ind.length > 0) {
-        setLoadMoreDisabled("");
-        //temp2 = [...temp2, ind];
-        temp2 = [ind];
-        setActiveCat(temp2);
-      }
-      if (ind?.length <= 0 && activeCat) {
-        setLoader(false);
-        setLoadMoreDisabled("disabled");
-        return;
-      }
-    } catch (e) {
-      console.log("Error", e);
-    }
-    setLoader(false);
-  };
 
   return (
     <div>
@@ -281,7 +236,7 @@ function Marketplacecollection() {
               ? categories.map((cat, key) => {
                 return (
                   <>
-                    <div className={`tab-pane fade ${cat?.isActiveTab}`} id={`pills-${cat._id}`} role="tabpanel" aria-labelledby={`pills-${cat._id}-tab`} key={key}>
+                    <div className={`tab-pane fade ${cat?.isActive}`} id={`pills-${cat._id}`} role="tabpanel" aria-labelledby={`pills-${cat._id}-tab`} key={key}>
                       <div className="row">
                         {cat?.CollectionData?.length > 0 ? cat.CollectionData.map((card, key1) => {
                           return (

@@ -314,10 +314,10 @@ function NFTlisting(props) {
             onClick={async () => {
               setIsBuyNowModal(false);
               const wCheck = WalletConditions();
-                        if (wCheck !== undefined) {
-                          setShowAlert(wCheck);
-                          return;
-                        }
+              if (wCheck !== undefined) {
+                setShowAlert(wCheck);
+                return;
+              }
               setLoading(true);
               try {
 
@@ -536,6 +536,7 @@ function NFTlisting(props) {
 
                               <Clock
                                 deadline={moment.utc(o.deadline * 1000).local().format()}
+                                fetch={fetch}
                               ></Clock>
                             )}
                           </td>
@@ -555,10 +556,10 @@ function NFTlisting(props) {
                                   className="small_yellow_btn small_btn mr-3"
                                   onClick={async () => {
                                     const wCheck = WalletConditions();
-                        if (wCheck !== undefined) {
-                          setShowAlert(wCheck);
-                          return;
-                        }
+                                    if (wCheck !== undefined) {
+                                      setShowAlert(wCheck);
+                                      return;
+                                    }
                                     setLoading(true);
                                     await handleRemoveFromSale(o._id, currentUser);
 
@@ -591,10 +592,10 @@ function NFTlisting(props) {
                                     onClick={async () => {
 
                                       const wCheck = WalletConditions();
-                        if (wCheck !== undefined) {
-                          setShowAlert(wCheck);
-                          return;
-                        }
+                                      if (wCheck !== undefined) {
+                                        setShowAlert(wCheck);
+                                        return;
+                                      }
                                       if (
                                         moment.utc(o?.deadline * 1000).local().format() < moment(new Date()).format()
                                       ) {
