@@ -18,7 +18,6 @@ import { useCookies } from "react-cookie";
 import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import { slowRefresh } from "./../../helpers/NotifyStatus";
-import PopupModal from "./../components/AccountModal/popupModal";
 import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
