@@ -20,7 +20,7 @@ import { useCookies } from "react-cookie";
 import { slowRefresh } from "./../helpers/NotifyStatus";
 import evt from "../events/events";
 import LandingPage from "../LandingPage";
-import crypto from "crypto";
+var CryptoJS = require("crypto-js");
 
 const Web3 = require('web3');
 // web3 lib instance
@@ -190,7 +190,12 @@ const Navbar = (props) => {
 
       if (web3.eth) {
         const siteUrl = process.env.REACT_APP_SITE_URL;
-        const nonce = crypto.randomBytes(16).toString('hex');
+        let nonce = "";
+        await web3.eth.getTransactionCount(address).then(async (result) => {
+            console.log("encryptedData", result)
+            nonce =  CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
+            console.log("encryptedData", nonce)
+        })
         const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
         
         console.log(web3.utils.fromUtf8(message));
