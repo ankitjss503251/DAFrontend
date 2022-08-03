@@ -300,6 +300,14 @@ function CreateNFTs() {
 
           try {
             createdNft = await createNft(formdata);
+            let metaDatahash="https://decryptnft.mypinata.cloud/ipfs/"+createdNft.metaDatahash
+           
+             let tokenId=parseInt(createdNft.tokenID,10)
+            
+             let uri=await NFTcontract.setCustomTokenUri(tokenId,metaDatahash);
+             let uriResult=await uri.wait()
+           
+              
             // NotificationManager.success("NFT created successfully", "", 800);
             // setLoading(false);
             // slowRefresh(1000);
@@ -623,14 +631,13 @@ function CreateNFTs() {
                       ) : (
                         ""
                       )}
-
                       {fileType === "3D" ? (
                         <GLTFModel
                           height='280'
                           width='220'
                           position={{ x: 0, y: 0, z: 0 }}
-                          anitialias={false}
-                          //enableZoom={false}
+                          //anitialias={false}
+                          enableZoom={false}
                           ref={uploadedImage}
                           className='img-fluid profile_circle_img'
                           key={img}
@@ -642,16 +649,14 @@ function CreateNFTs() {
                             color={0xffffff}
                             position={{ x: 100, y: 200, z: 100 }}
                           />
-                          <DirectionLight
-                            color={0xff00ff}
-                            position={{ x: -100, y: 200, z: -100 }}
-                          />
                         </GLTFModel>
                       ) : (
                         ""
                       )}
+                     
                     </div>
                   </div>
+                 
                 </div>
 
                 {needPreview &&

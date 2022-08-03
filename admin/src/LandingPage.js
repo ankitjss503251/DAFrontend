@@ -30,7 +30,7 @@ function LandingPage(props) {
       <div className="connect_wallet">
         <div className="connect_wallet_col">
           <img src="../images/logo.svg" className="img-fluid d-block" alt="" />
-          <h4 class="text-light text-center font-24 text-uppercase font-700 my-4">Connect Your Wallet</h4>
+          <h4 className="text-light text-center font-24 text-uppercase font-700 my-4">Connect Your Wallet</h4>
           <button className='round-btn montserrat text-light text-decoration-none connect_wallet_btn mt-3' onClick={() => connectWalletEvent()}>
             Connect Wallet
           </button>

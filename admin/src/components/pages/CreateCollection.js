@@ -66,6 +66,8 @@ function CreateCollection(props) {
   const [showAlert, setShowAlert] = useState("");
   const [walletVariable, setWalletVariable] = useState({});
 
+
+
   useEffect(() => {
     if (cookies.da_selected_account)
       setCurrentUser(cookies.da_selected_account);
@@ -79,7 +81,8 @@ function CreateCollection(props) {
         page: 1,
         limit: 12,
       };
-      let data
+      let data;
+      console.log("check")
       if (isSuperAdmin()) {
         data = await GetMyCollectionsList(reqBody);
       }
