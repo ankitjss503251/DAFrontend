@@ -230,74 +230,71 @@ const Header = function () {
 
   const userAuth = async (primaryWallet, address, signature, message) => {
 
- 
 
     try {
       // let res = await CheckIfBlocked({ "walletAddress": address })
       // if (!res) {
-        const isUserExist = await checkuseraddress(address);
-        if (isUserExist === "User not found") {
-          try {
-            const res = await Register(address);
-            console.log("register response", res);
-            if (res?.message === "Wallet Address required") {
-              NotificationManager.info(res?.message);
-              return;
-            } else if (res?.message === "User already exists") {
-              NotificationManager.error(res?.message);
-              return;
-            } else {
-              localStorage.setItem("userId", res?.data?.userId);
-              setAccount(primaryWallet.accounts[0].address);
-              setCookie("selected_account", address, { path: "/" });
-              setCookie("label", primaryWallet.label, { path: "/" });
-              setCookie(
-                "chain_id",
-                primaryWallet.chains[0].id,
-                { path: "/" }
-              );
-              getUserProfile();
-              NotificationManager.success(res.message);
-              slowRefresh(1000);
-              return;
-            }
-          } catch (e) {
-            NotificationManager.error(e);
+      const isUserExist = await checkuseraddress(address);
+      if (isUserExist === "User not found") {
+        try {
+          const res = await Register(address);
+          if (res?.message === "Wallet Address required") {
+            NotificationManager.info(res?.message);
+            return;
+          } else if (res?.message === "User already exists") {
+            NotificationManager.error(res?.message);
+            return;
+          } else {
+            localStorage.setItem("userId", res?.data?.userId);
+            setAccount(primaryWallet.accounts[0].address);
+            setCookie("selected_account", address, { path: "/" });
+            setCookie("label", primaryWallet.label, { path: "/" });
+            setCookie(
+              "chain_id",
+              primaryWallet.chains[0].id,
+              { path: "/" }
+            );
+            getUserProfile();
+            NotificationManager.success(res.message);
+            slowRefresh(1000);
             return;
           }
-        } else {
-          try {
-            const res = await Login(address, signature, message);
-            console.log("Login response", res);
-            if (res?.message === "Wallet Address required") {
-              NotificationManager.info(res?.message);
-              return;
-            } else if (
-              res?.message === "User not found" ||
-              res?.message === "Login Invalid"
-            ) {
-              NotificationManager.error(res?.message);
-              return;
-            } else {
-              localStorage.setItem("userId", res?.data?.userId);
-              setAccount(primaryWallet.accounts[0]?.address);
-              setCookie("selected_account", address, { path: "/" });
-              setCookie("label", primaryWallet.label, { path: "/" });
-              setCookie(
-                "chain_id",
-                primaryWallet.chains[0]?.id,
-                { path: "/" }
-              );
-              getUserProfile();
-              NotificationManager.success(res?.message, "", 800);
-              slowRefresh(1000);
-              return;
-            }
-          } catch (e) {
-            NotificationManager.error(e);
-            return;
-          }
+        } catch (e) {
+          NotificationManager.error(e);
+          return;
         }
+      } else {
+        try {
+          const res = await Login(address, signature, message);
+          if (res?.message === "Wallet Address required") {
+            NotificationManager.info(res?.message);
+            return;
+          } else if (
+            res?.message === "User not found" ||
+            res?.message === "Login Invalid"
+          ) {
+            NotificationManager.error(res?.message);
+            return;
+          } else {
+            localStorage.setItem("userId", res?.data?.userId);
+            setAccount(primaryWallet.accounts[0]?.address);
+            setCookie("selected_account", address, { path: "/" });
+            setCookie("label", primaryWallet.label, { path: "/" });
+            setCookie(
+              "chain_id",
+              primaryWallet.chains[0]?.id,
+              { path: "/" }
+            );
+            getUserProfile();
+            NotificationManager.success(res?.message, "", 800);
+            slowRefresh(1000);
+            return;
+          }
+        } catch (e) {
+          NotificationManager.error(e);
+          return;
+        }
+      }
       // }
       // else {
       //   NotificationManager.error("User is Blocked", "", 800);
