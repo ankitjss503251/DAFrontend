@@ -18,7 +18,6 @@ import { useCookies } from "react-cookie";
 import AllNFTs from "../SVG/AllNFTs";
 import Firearmsvg from "../SVG/Firearmsvg";
 import { slowRefresh } from "./../../helpers/NotifyStatus";
-import PopupModal from "./../components/AccountModal/popupModal";
 import "./../components-css/App.css";
 import { getCollections, getNFTs } from "../../helpers/getterFunctions";
 import { getCategory } from "./../../helpers/getterFunctions";
@@ -175,51 +174,58 @@ const Header = function () {
   }, [account, userDetails]);
 
   const connectWallet = async () => {
-    const wallets = await onboard.connectWallet();
-    if (wallets.length !== 0) {
+    console.log("11");
+    try {
+      const wallets = await onboard.connectWallet();
+      if (wallets.length !== 0) {
 
-      await onboard.setChain({
-        chainId: process.env.REACT_APP_CHAIN_ID,
-      });
+        await onboard.setChain({
+          chainId: process.env.REACT_APP_CHAIN_ID,
+        });
 
-      const primaryWallet = wallets[0];
-      const address = primaryWallet.accounts[0].address;
+        const primaryWallet = wallets[0];
+        const address = primaryWallet.accounts[0].address;
 
 
-      if (web3.eth) {
-        const siteUrl = process.env.REACT_APP_SITE_URL;
-        let nonce = "";
-        await web3.eth.getTransactionCount(address).then(async (result) => {
-          console.log("encryptedData", result)
-          nonce = CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
-          console.log("encryptedData", nonce)
-        })
-        const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
+        if (web3.eth) {
+          const siteUrl = process.env.REACT_APP_SITE_URL;
+          let nonce = "";
+          await web3.eth.getTransactionCount(address).then(async (result) => {
+            console.log("encryptedData", result)
+            nonce = CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
+            console.log("encryptedData", nonce)
+          })
+          const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
 
-        console.log(web3.utils.fromUtf8(message));
+          console.log(web3.utils.fromUtf8(message));
 
-        web3.eth.currentProvider.sendAsync({
-          method: 'personal_sign',
-          params: [message, address],
-          from: address,
-        }, async function (err, signature) {
-          if (!err) {
-            console.log("Signature", signature);
-            try {
-              userAuth(primaryWallet, address, signature.result, message);
-            } catch (e) {
-              console.log("Error in user auth", e);
+          web3.eth.currentProvider.sendAsync({
+            method: 'personal_sign',
+            params: [message, address],
+            from: address,
+          }, async function (err, signature) {
+            if (!err) {
+              console.log("Signature", signature);
+              try {
+                userAuth(primaryWallet, address, signature.result, message);
+              } catch (e) {
+                console.log("Error in user auth", e);
+              }
             }
-          }
-          console.log("Error is", err);
-        })
+            console.log("Error is", err);
+          })
+        }
       }
-      // try {
-      //   userAuth(primaryWallet, address);
-      // } catch (e) {
-      //   console.log("Error in user auth", e);
-      // }
     }
+    catch (e) {
+      console.log("ee", e)
+    }
+    // try {
+    //   userAuth(primaryWallet, address);
+    // } catch (e) {
+    //   console.log("Error in user auth", e);
+    // }
+
   };
 
   const userAuth = async (primaryWallet, address, signature, message) => {
@@ -233,6 +239,7 @@ const Header = function () {
         if (isUserExist === "User not found") {
           try {
             const res = await Register(address);
+            console.log("register response", res);
             if (res?.message === "Wallet Address required") {
               NotificationManager.info(res?.message);
               return;
@@ -261,6 +268,7 @@ const Header = function () {
         } else {
           try {
             const res = await Login(address, signature, message);
+            console.log("Login response", res);
             if (res?.message === "Wallet Address required") {
               NotificationManager.info(res?.message);
               return;
@@ -517,6 +525,7 @@ const Header = function () {
                 <>
                   <li className="nav-item">
                     <button
+
                       onClick={!account ? connectWallet : disconnectWallet}
                       className='main_btn'
                       tabIndex='-1'>

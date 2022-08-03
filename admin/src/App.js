@@ -100,7 +100,7 @@ function App() {
 
             {currentUser || isSuperAdmin() ? <Route path="admins" exact element={<Admins />} /> : <Route path="/" />}
 
-            {currentUser || isSuperAdmin() ? <Route path="createcollection" exact  element={<CreateCollection />} /> : <Route path="/" />}
+            {currentUser || isSuperAdmin() ? <Route path="createcollection" exact element={<CreateCollection />} /> : <Route path="/" />}
 
             {currentUser || isSuperAdmin() ? <Route path="createnfts" exact element={<CreateNFTs />} /> : <Route path="/" />}
 
