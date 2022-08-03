@@ -109,8 +109,8 @@ function Marketplacecollection() {
       setCardCount(cardCount + ind.length);
       if (ind.length > 0) {
         setLoadMoreDisabled("");
-        temp2 = [...temp2, ind];
-        // temp2 = [ind]
+        //temp2 = [...temp2, ind];
+         temp2 = [ind];
         setActiveCat(temp2);
       }
       if (ind?.length <= 0 && activeCat) {
