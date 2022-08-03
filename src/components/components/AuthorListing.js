@@ -1,8 +1,8 @@
-import React,{useRef,Suspense} from "react";
+import React, { useRef, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import {
-  Canvas,useFrame,
+  Canvas, useFrame,
   extend,
   useThree,
 } from "@react-three/fiber";
@@ -11,24 +11,24 @@ import * as THREE from "three"
 
 //extend({OrbitControls});
 
-const CameraControls=() => {
+const CameraControls = () => {
   // Get a reference to the Three.js Camera, and the canvas html element.
   // We need these to setup the OrbitControls component.
   // https://threejs.org/docs/#examples/en/controls/OrbitControls
   const {
     camera,
-    gl: {domElement},
-  }=useThree();
+    gl: { domElement },
+  } = useThree();
   // Ref to the controls, so that we can update them on every frame using useFrame
-  const controls=useRef();
+  const controls = useRef();
   useFrame((state) => controls.current.update());
-  return <orbitControls ref={controls} args={[camera,domElement]} />;
+  return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
 
 function AuthorListing(props) {
-  
- 
-  
+
+
+
   function Model(props) {
     const { scene } = useGLTF(props?.image);
     return <primitive object={scene} />;
@@ -37,46 +37,55 @@ function AuthorListing(props) {
     <Link to={props.link}>
       <div className='collection_items'>
         <div class="collection__img">
-          {props && props.fileType === "Image" ? ( 
-                            <img
-                              src={props?.image}
-                              className='img-fluid items_img w-100'
-                              alt=''
-                              onError={(e) => {
-                                e.target.src = "../img/collections/list4.png";
-                              }}
-                            />
-                          ) : (
-                            ""
-                          )}
-                          {props && props.fileType === "Video" ? (
-                            <video
-                              className='img-fluid items_img w-100'
-                              controls>
-                              <source src={props?.image} type='video/mp4' />
-                            </video>
-                          ) : (
-                            ""
-                          )}
+          {props && props.fileType === "Image" ? (
+            <img
+              src={props?.image}
+              className='img-fluid items_img w-100'
+              alt=''
+              onError={(e) => {
+                e.target.src = "../img/collections/list4.png";
+              }}
+            />
+          ) : (
+            ""
+          )}
+          {props && props.fileType === "Video" ? (
+            <video
+              className='img-fluid items_img w-100'
+              controls>
+              <source src={props?.image} type='video/mp4' />
+            </video>
+          ) : (
+            ""
+          )}
 
-                          {props && props.fileType === "3D" ? (
-                            <Canvas
-                              className='img-fluid items_img w-100'
-                              camera={{ position: [10, 100, 100], fov: 1 }}>
-                              <pointLight
-                                position={[10, 10, 10]}
-                                intensity={1.3}
-                              />
-                              <Suspense fallback={null}>
-                                <Model image={props.image} />
-                              </Suspense>
-                              <CameraControls/>
-                            </Canvas>
-                          ) : (
-                            ""
-                          )}
+          {props && props.fileType === "3D" ? (
+            // <Canvas
+            //   className='img-fluid items_img w-100'
+            //   camera={{ position: [10, 100, 100], fov: 1 }}>
+            //   <pointLight
+            //     position={[10, 10, 10]}
+            //     intensity={1.3}
+            //   />
+            //   <Suspense fallback={null}>
+            //     <Model image={props.image} />
+            //   </Suspense>
+            //   <CameraControls/>
+            // </Canvas>
 
-          </div>
+            <img
+              src={props?.image}
+              className='img-fluid items_img w-100'
+              alt=''
+              onError={(e) => {
+                e.target.src = props?.previewImg;
+              }}
+            />
+          ) : (
+            ""
+          )}
+
+        </div>
         <div className='coll_itemstext'>
           <div className='collection_row mb-3'>
             <div className='collection_col'>
@@ -93,9 +102,9 @@ function AuthorListing(props) {
                 {props?.bttn === 0
                   ? "Buy Now"
                   : props?.bttn === 1
-                  ? "Place Bid"
-                  : "View"}
-                
+                    ? "Place Bid"
+                    : "View"}
+
               </Link>
             </div>
             <div className='collection_col text-end'>

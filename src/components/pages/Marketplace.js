@@ -611,18 +611,27 @@ function Marketplace() {
                           )}
 
                           {card && card.fileType === "3D" ? (
-                            <Canvas
+                            // <Canvas
+                            //   className='img-fluid items_img w-100 my-3'
+                            //   camera={{ position: [10, 100, 100], fov: 1 }}>
+                            //   <pointLight
+                            //     position={[5, 10, 10]}
+                            //     intensity={1.1}
+                            //   />
+                            //   <Suspense fallback={null}>
+                            //     <Model image={card.image} />
+                            //   </Suspense>
+                            //   <CameraControls />
+                            // </Canvas>
+                            <img
+                              src={card?.image}
                               className='img-fluid items_img w-100 my-3'
-                              camera={{ position: [10, 100, 100], fov: 1 }}>
-                              <pointLight
-                                position={[5, 10, 10]}
-                                intensity={1.1}
-                              />
-                              <Suspense fallback={null}>
-                                <Model image={card.image} />
-                              </Suspense>
-                              <CameraControls />
-                            </Canvas>
+                              alt=''
+                              onError={(e) => {
+                                console.log("image error is--->", e);
+                                e.target.src = card.previewImg;
+                              }}
+                            />
                           ) : (
                             ""
                           )}
@@ -699,7 +708,7 @@ function Marketplace() {
               </div>
             )}
           </div>
-          {allNFTs[0]?.length > 12 ? (
+          {allNFTs[0]?.length >= 12 ? (
             <div className='row'>
               <div className='col-md-12 text-center mt-5'>
                 <button

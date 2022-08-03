@@ -412,7 +412,7 @@ export const createNft = async (data) => {
       ?.includes("application/json");
     const datas = isJson && (await response.json());
 
-    return datas;
+    return datas.data;
   } catch (err) {
     return err;
   }
@@ -725,7 +725,7 @@ export const adminLogin = ({ username, password }) => {
       deleteCookie("chain_id")
       window.sessionStorage.removeItem("role")
       setCookie("connect.auth", token, 100);
-      setCookie("selected_account", "superadmin", 100);
+      setCookie("sadmin_selected_account", "superadmin", 100);
 
       return res;
     }

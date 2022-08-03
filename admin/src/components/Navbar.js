@@ -133,7 +133,6 @@ const Navbar = (props) => {
     const fetch = async () => {
       if (cookies.da_selected_account || account) {
         let res = await CheckIfBlocked({ "walletAddress": account ? account : cookies.da_selected_account })
-        console.log("ress", res);
         if (res === false) {
           window.sessionStorage.setItem("role", "admin")
         }
@@ -238,27 +237,32 @@ const Navbar = (props) => {
           ) {
             NotificationManager.error(res?.message);
             return;
-          } else {
-            setAccount(primaryWallet.accounts[0].address);
-            setLabel(primaryWallet.label);
-            window.sessionStorage.setItem("role", res?.data?.userType);
-            setCookie("da_selected_account", address, { path: "/" });
-            setCookie("da_label", primaryWallet.label, { path: "/" });
-            setCookie(
-              "da_chain_id",
-              primaryWallet.chains[0].id,
-              {
+          } else
+            if (res?.message === "Admin Account is blocked") {
+              NotificationManager.error(res?.message);
+              return;
+            }
+            else {
+              setAccount(primaryWallet.accounts[0].address);
+              setLabel(primaryWallet.label);
+              window.sessionStorage.setItem("role", res?.data?.userType);
+              setCookie("da_selected_account", address, { path: "/" });
+              setCookie("da_label", primaryWallet.label, { path: "/" });
+              setCookie(
+                "da_chain_id",
+                primaryWallet.chains[0].id,
+                {
+                  path: "/",
+                }
+              );
+              setCookie("balance", primaryWallet.accounts[0].balance, {
                 path: "/",
-              }
-            );
-            setCookie("balance", primaryWallet.accounts[0].balance, {
-              path: "/",
-            });
-            getUserProfile();
-            NotificationManager.success(res?.message);
-            slowRefresh(1000);
-            return;
-          }
+              });
+              getUserProfile();
+              NotificationManager.success(res?.message);
+              slowRefresh(1000);
+              return;
+            }
         } catch (e) {
           NotificationManager.error("Something went wrong", "", 800);
           return;
@@ -282,10 +286,7 @@ const Navbar = (props) => {
     slowRefresh(1000);
   };
 
-  evt.setMaxListeners(1)
-  evt.on("disconnectWallet", () => {
-    disconnectWallet();
-  });
+
 
   if ((!account && !isSuperAdmin()) || isBlocked) {
     return <LandingPage connectWallet={connectWallet} />
@@ -336,7 +337,7 @@ const Navbar = (props) => {
               ) : (
                 <>
                   <Wallet />
-                  {account.slice(0, 4) + "..." + account.slice(38, 42)}
+                  {account?.slice(0, 4) + "..." + account?.slice(38, 42)}
                 </>
               )}
             </button>

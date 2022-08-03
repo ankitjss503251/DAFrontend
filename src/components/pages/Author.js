@@ -130,6 +130,7 @@ function Author() {
         const onsale = await getOnSaleItems(reqBody);
         setOnSaleCount(onsale?.length);
         setOnSaleNFTs(onsale);
+
       } catch (e) {
         console.log("Error in fetching onSale Items", e);
       }
@@ -345,7 +346,7 @@ function Author() {
                 id='dropdownMenuLink'
                 data-bs-toggle='dropdown'
                 aria-expanded='false'
-               
+
               >
                 Offers
               </button>
@@ -359,7 +360,7 @@ function Author() {
                     aria-controls='pills-NFToffer'
                     aria-selected='true'
                     onClick={() => setShowFilter(false)}
-                    >
+                  >
                     <DownloadSVG /> Offer Received
                   </button>
                 </li>
@@ -372,7 +373,7 @@ function Author() {
                     aria-controls='pills-NFTmade'
                     aria-selected='true'
                     onClick={() => setShowFilter(false)}
-                    >
+                  >
                     <OffermadeSVG /> Offer Made
                   </button>
                 </li>
@@ -634,6 +635,7 @@ function Author() {
                       <AuthorListing
                         fileType={card?.fileType}
                         image={card?.image}
+                        previewImg={card?.previewImg}
                         card={card}
                         link={`/nftDetails/${card?._id}`}
                       />
@@ -661,6 +663,7 @@ function Author() {
                         <AuthorListing
                           fileType={card?.fileType}
                           image={card.image}
+                          previewImg={card?.previewImg}
                           card={card}
                           link={`/nftDetails/${card._id}`}
                           bttn={card.OrderData[0].salesType}
@@ -677,7 +680,7 @@ function Author() {
               role='tabpanel'
               aria-labelledby='pills-Favourited-tab'>
               <div className='row'>
-                {AuthorCard.map((card, key) => (
+                {/* {AuthorCard.map((card, key) => (
                   <div className={grid} key={key}>
                     <AuthorListing
                       fileType="Image"
@@ -690,7 +693,7 @@ function Author() {
                       link={card.Like}
                     />
                   </div>
-                ))}
+                ))} */}
               </div>
             </div>
             <div

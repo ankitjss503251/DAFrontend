@@ -307,7 +307,6 @@ const Home = () => {
                                 fill="#428BC1"
                               />
                             </svg>
-                            {console.log("stt", st, moment.utc(st).local().format() === "Invalid date", new Date())}
                             {moment.utc(st).local().format() == "Invalid date" ? " --:--:--" : <Clock
                               deadline={moment.utc(st).local().format()
                               }
@@ -584,7 +583,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="container pdd_8 Most-recent">
+      <section className="marketplacecollection container pdd_8 Most-recent">
         <div className="row">
           <div className="col-lg-12">
             <div className="text-center">
