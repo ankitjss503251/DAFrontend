@@ -56,7 +56,7 @@ function NFTBids(props) {
       }
     };
     fetch();
-  }, [props.id, reloadContent]);
+  }, [props.id, reloadContent, props.reloadContent]);
 
   useEffect(() => {
     var body = document.body;
@@ -237,14 +237,15 @@ function NFTBids(props) {
                     createdBy: localStorage.getItem("userId"),
                   };
                   await InsertHistory(historyReqData);
-
+                  setReloadContent(!reloadContent);
+                  await props.refreshState()
                   NotificationManager.success(
                     "Bid Updated Successfully",
                     "",
                     800
                   );
                   setLoading(false);
-                  slowRefresh(1000);
+                  // slowRefresh(1000);
                   setReloadContent(!reloadContent);
                 }
                 else {
@@ -403,7 +404,7 @@ function NFTBids(props) {
                           <td>
                             {moment(b.createdOn).format("DD/MM/YYYY")}{" "}
                             <span className="nft_time">
-                              {moment(b.createdOn).format("LT")}
+                              {moment(b.createdOn).format("hh:mm A")}
                             </span>
                           </td>
                           <td>{b?.orderID[0]?.salesType === 1 && b.deadline !== GENERAL_TIMESTAMP
@@ -450,8 +451,8 @@ function NFTBids(props) {
                                       b,
                                       props.NftDetails.type
                                     );
-
-                                    if (resp !== false || resp !== undefined) {
+                                    // console.log("accept bid res", resp);
+                                    if (resp !== false) {
                                       let historyReqData = {
                                         nftID: b.nftID,
                                         sellerID: localStorage.getItem('userId'),
@@ -465,15 +466,14 @@ function NFTBids(props) {
                                       };
                                       await InsertHistory(historyReqData);
                                       setLoading(false);
-                                      setReloadContent(!reloadContent);
+
                                     }
                                     else {
                                       setLoading(false);
-                                      setReloadContent(!reloadContent);
-                                    
-                                  }}}
-
-
+                                    }
+                                    await props.refreshState()
+                                    setReloadContent(!reloadContent);
+                                  }}
                                 >
                                   Accept
                                 </button>
@@ -517,9 +517,10 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-
+                                    await props.refreshState()
 
                                     setReloadContent(!reloadContent);
+                                    await props.refreshState()
                                   }}
                                 >
                                   Reject
@@ -591,9 +592,8 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-
-
                                     setReloadContent(!reloadContent);
+                                    await props.refreshState()
 
                                   }}
 
@@ -606,7 +606,7 @@ function NFTBids(props) {
                                 to={"/"}
                                 className="small_border_btn small_btn"
                                 disabled={
-                                  moment.utc(b.bidDeadline * 1000).local().format() > moment(new Date()).format()
+                                  moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                 }
                               >
                                 Place Bid

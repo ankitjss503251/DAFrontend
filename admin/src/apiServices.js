@@ -725,7 +725,7 @@ export const adminLogin = ({ username, password }) => {
       deleteCookie("chain_id")
       window.sessionStorage.removeItem("role")
       setCookie("connect.auth", token, 100);
-      setCookie("selected_account", "superadmin", 100);
+      setCookie("sadmin_selected_account", "superadmin", 100);
 
       return res;
     }
