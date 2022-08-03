@@ -324,6 +324,10 @@ const Header = function () {
     await onboard.disconnectWallet({ label: cookies["label"] });
     await Logout(cookies["selected_account"]);
     refreshState();
+    if(window.location.pathname === '/myNfts' || window.location.pathname === '/userprofile')
+    {
+      window.location.href = "/"
+    }
     // NotificationManager.success("User Logged out Successfully", "", 800);
     slowRefresh(1000);
   };
