@@ -297,7 +297,6 @@ function CreateNFTs() {
           );
           formdata.append("hash", mintRes.hash)
           formdata.append("hashStatus", 0)
-
           try {
             createdNft = await createNft(formdata);
             let metaDatahash="https://decryptnft.mypinata.cloud/ipfs/"+createdNft.metaDatahash
