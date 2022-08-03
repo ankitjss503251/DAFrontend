@@ -411,6 +411,7 @@ export const createNft = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
+    console.log("create nft datass in api servive 414---->",datas.data);
 
     return datas.data;
   } catch (err) {

@@ -300,6 +300,14 @@ function CreateNFTs() {
 
           try {
             createdNft = await createNft(formdata);
+            let metaDatahash="https://decryptnft.mypinata.cloud/ipfs/"+createdNft.metaDatahash
+           
+             let tokenId=parseInt(createdNft.tokenID,10)
+            
+             let uri=await NFTcontract.setCustomTokenUri(tokenId,metaDatahash);
+             let uriResult=await uri.wait()
+           
+              
             // NotificationManager.success("NFT created successfully", "", 800);
             // setLoading(false);
             // slowRefresh(1000);

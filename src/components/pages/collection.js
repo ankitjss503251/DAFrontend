@@ -206,7 +206,7 @@ function Collection() {
             <img
               alt=""
               src={collectionDetails?.brand?.logoImage}
-              class="img-fluid collection_profile"
+              className="img-fluid collection_profile"
               onError={(e) => {
                 e.target.src =
                   "../img/collections/list4.png";
@@ -215,38 +215,38 @@ function Collection() {
             {/* <img
               alt=''
               src={"../img/collections/check.png"}
-              class='img-fluid check_img'
+              className='img-fluid check_img'
             /> */}
           </div>
           <h1 className="collection_title text-center">
             {collectionDetails?.name}
           </h1>
-          <ul class="collection_social mb-4">
+          <ul className="collection_social mb-4">
             <li>
               <a href={"/"}>
-                <i class="fa fa-facebook fa-lg"></i>
+                <i className="fa fa-facebook fa-lg"></i>
               </a>
             </li>
             <li>
               <a href={"/"}>
-                <i class="fa fa-twitter fa-lg"></i>
+                <i className="fa fa-twitter fa-lg"></i>
               </a>
             </li>
             <li>
               <a href={"/"}>
-                <i class="fa fa-linkedin fa-lg"></i>
+                <i className="fa fa-linkedin fa-lg"></i>
               </a>
             </li>
             <li>
               <a href={"/"}>
-                <i class="fa fa-pinterest fa-lg"></i>
+                <i className="fa fa-pinterest fa-lg"></i>
               </a>
             </li>
           </ul>
 
           <div className="coppycode text-center">
             <span className="ctc">
-              <img alt="" src={"../img/favicon.png"} class="img-fluid" />
+              <img alt="" src={"../img/favicon.png"} className="img-fluid" />
               <div className="">
                 {collectionDetails?.contractAddress
                   ? collectionDetails?.contractAddress?.slice(0, 4) +
@@ -316,7 +316,7 @@ function Collection() {
           <div className="collection_description text-center">
             <p>{collectionDetails?.desc}</p>
             <span className="top_arrow">
-              <img alt="" src={"../img/top_arrow.png"} class="img-fluid" />
+              <img alt="" src={"../img/top_arrow.png"} className="img-fluid" />
             </span>
           </div>
 
@@ -370,9 +370,9 @@ function Collection() {
               <div className="row">
                 <div className="col-lg-12">
                   <div className="market_search_form mb-4">
-                    <form class="d-flex marketplace_form">
+                    <form className="d-flex marketplace_form">
                       <input
-                        class=" me-2"
+                        className=" me-2"
                         type="search"
                         placeholder="Search item here..."
                         aria-label="Search"
@@ -385,12 +385,12 @@ function Collection() {
                           setLoadMoreDisabled("");
                         }}
                       />
-                      <button class="market_btn" type="button">
+                      <button className="market_btn" type="button">
                         <img src="../img/search.svg" alt="" />
                       </button>
                     </form>
                     <select
-                      class="market_select_form form-select"
+                      className="market_select_form form-select"
                       aria-label="Default select example"
                       style={bgImgarrow}
                       onChange={(e) => {
@@ -409,7 +409,7 @@ function Collection() {
                       <option value='2'>Not for Sale</option>
                     </select>
                     <select
-                      class="market_select_form form-select"
+                      className="market_select_form form-select"
                       aria-label="Default select example"
                       style={bgImgarrow}
                       onChange={(e) => {
@@ -468,9 +468,9 @@ function Collection() {
                 )}
 
                 {nftList.length > 12 ? (
-                  <div class="col-md-12 text-center mt-5">
+                  <div className="col-md-12 text-center mt-5">
                     <button
-                      class={`btn view_all_bdr ${loadMoreDisabled}`}
+                      className={`btn view_all_bdr ${loadMoreDisabled}`}
                       onClick={() => {
                         setCurrPage(currPage + 1);
                         setLoadMore(!loadMore);
@@ -493,7 +493,7 @@ function Collection() {
               <div className="row">
                 <div className="col-md-6 d-md-inline-flex">
                   <select
-                    class="action_select_form form-select mr-3"
+                    className="action_select_form form-select mr-3"
                     aria-label="Default select example"
                     style={bgImgarrow}
                   >
@@ -503,7 +503,7 @@ function Collection() {
                     <option value="3">Listings Items 3</option>
                   </select>
                   <select
-                    class="action_select_form form-select"
+                    className="action_select_form form-select"
                     aria-label="Default select example"
                     style={bgImgarrow}
                   >
@@ -515,7 +515,7 @@ function Collection() {
                 </div>
                 <div className="col-md-6 d-flex justify-content-end">
                   <select
-                    class="action_select_form form-select"
+                    className="action_select_form form-select"
                     aria-label="Default select example"
                     style={bgImgarrow}
                   >
@@ -532,13 +532,13 @@ function Collection() {
                     <img
                       alt=""
                       src={"../img/collections/graph.png"}
-                      class="img-fluid"
+                      className="img-fluid"
                     />
                   </div>
                 </div>
                 <div className="row mt-5">
                   <div className="col-md-12">
-                    <div class="table-responsive">
+                    <div className="table-responsive">
                       <table className=" Action_table text-center">
                       <thead>
                         <tr className="">
@@ -575,7 +575,7 @@ function Collection() {
                               <img
                                 alt=""
                                 src={"../img/collections/bxs_purchase-tag.png"}
-                                class="img-fluid"
+                                className="img-fluid"
                               />{" "}
                               {h.action}
                             </td>
@@ -584,7 +584,7 @@ function Collection() {
                               <img
                                 alt=""
                                 src={h.nftImg}
-                                class="img-fluid"
+                                className="img-fluid"
                                 onError={(e) => {
                                   e.target.src = "../img/collections/item1.png"
                                 }}
@@ -649,8 +649,8 @@ function Collection() {
                   </div>
                 </div>
                { history?.length > 12 && <div className="row mt-5">
-                  <div class="col-md-12 text-center ">
-                    <a class="view_all_bdr" href="/" disabled={historyLoadMore ? "disabled" : ""} onClick={() => {
+                  <div className="col-md-12 text-center ">
+                    <a className="view_all_bdr" href="/" disabled={historyLoadMore ? "disabled" : ""} onClick={() => {
                       setCurrHistoryPage(currHistoryPage + 1);
                     }}>
                       Load More

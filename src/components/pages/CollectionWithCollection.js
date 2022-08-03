@@ -785,7 +785,7 @@ function CollectionWithCollection() {
                                         <img
                                           alt=""
                                           src={"../img/collections/bxs_purchase-tag.png"}
-                                          class="img-fluid"
+                                          className="img-fluid"
                                         />{" "}
                                         {h.action}
                                       </td>
@@ -794,7 +794,7 @@ function CollectionWithCollection() {
                                           <img
                                             alt=""
                                             src={h.nftImg}
-                                            class="img-fluid"
+                                            className="img-fluid"
                                             onError={(e) => {
                                               e.target.src = "../img/collections/item1.png"
                                             }}
@@ -859,8 +859,8 @@ function CollectionWithCollection() {
                     </div>
                   </div>
                   {history?.length > 12 && <div className="row mt-5">
-                    <div class="col-md-12 text-center ">
-                      <a class="view_all_bdr" href="/">
+                    <div className="col-md-12 text-center ">
+                      <a className="view_all_bdr" href="/">
                         Load More
                       </a>
                     </div>
