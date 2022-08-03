@@ -1095,10 +1095,13 @@ function NFTDetails() {
               )}
             </div>
             <div className='col-lg-6 nft_details'>
+            <a href={`/collection/${collection._id}`}>
               <p className='mb-0'>
+                
                 {collection?.name} Collection{" "}
-                <img src={"../img/check.png"} className='img-fluid' alt='' />
+                {/* <img src={"../img/check.png"} className='img-fluid' alt='' /> */}
               </p>
+              </a>
               <h1 className='mb-3'>{NFTDetails?.name}</h1>
               <div className='owner_by mb-4'>
                 <p>
@@ -1291,8 +1294,6 @@ function NFTDetails() {
                         setLoading(true);
                         console.log("loader Start");
                         const res = await handleRemoveFromSale(orders[0]._id, currentUser);
-
-                        console.log("response", res)
                         if (res === false) {
                           setLoading(false);
                           return;
@@ -1468,7 +1469,7 @@ function NFTDetails() {
             {allNFTs.length > 1 ? (
               <>
                 <div className='col-md-12 '>
-                  <h3 className='title_36 mb-4'>
+                  <h3 className='title_36 mb-5'>
                     More from {collection?.name} Collection
                   </h3>
                   <FirearmsCollection

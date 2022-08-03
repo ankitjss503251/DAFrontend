@@ -5514,3 +5514,9 @@ display: none;
 .drop_down_tlt.collapsed svg {
  transform: rotate(180deg);
 }
+
+.form-control:disabled {
+  /* background-color: #e9ecef; */
+  opacity: 0.7;
+  cursor: not-allowed;
+}
