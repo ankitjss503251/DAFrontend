@@ -95,12 +95,10 @@ function Marketplacecollection() {
   }, [loadMore, searchedText, showTab]);
 
   const handleCategoryChange = async (category) => {
-    console.log("active Cat before", activeCat);
     setLoader(true);
     setActiveCat([]);
-    console.log("active Cat", activeCat);
     try {
-      
+      let temp2 = activeCat;
       const reqBody = {
         page: currPage,
         limit: 12,
@@ -119,7 +117,6 @@ function Marketplacecollection() {
         setLoadMoreDisabled("disabled");
         return;
       }
-      console.log("category change after", temp2, activeCat)
     } catch (e) {
       console.log("Error", e);
     }
