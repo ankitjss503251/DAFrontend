@@ -541,7 +541,7 @@ function NFTlisting(props) {
                           </td>
                           <td>
                             <div className="text-center">
-                              {currentUser ? (o.sellerID?.walletAddress?.toLowerCase() ===
+                              {(o.sellerID?.walletAddress?.toLowerCase() ===
                                 currentUser?.toLowerCase() ? (
                                 <button
                                   to={"/"}
@@ -654,7 +654,7 @@ function NFTlisting(props) {
                                         : ""}
                                   </button> : ""
 
-                              )) : ""}
+                              ))}
                             </div>
                           </td>
                         </tr>
