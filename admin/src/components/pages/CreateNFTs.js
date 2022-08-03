@@ -311,7 +311,6 @@ function CreateNFTs() {
           }
           console.log("createdNft", createdNft._id);
           res1 = await mintRes.wait();
-          console.log("res1", res1);
           if (res1.status === 0) {
             NotificationManager.error("Transaction failed", "", 800);
             return;

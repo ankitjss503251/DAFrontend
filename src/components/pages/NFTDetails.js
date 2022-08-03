@@ -967,10 +967,13 @@ function NFTDetails() {
               )}
             </div>
             <div className='col-lg-6 nft_details'>
+            <a href={`/collection/${collection._id}`}>
               <p className='mb-0'>
+                
                 {collection?.name} Collection{" "}
-                <img src={"../img/check.png"} className='img-fluid' alt='' />
+                {/* <img src={"../img/check.png"} className='img-fluid' alt='' /> */}
               </p>
+              </a>
               <h1 className='mb-3'>{NFTDetails?.name}</h1>
               <div className='owner_by mb-4'>
                 <p>
@@ -1188,6 +1191,7 @@ function NFTDetails() {
                   ""
                 }
 
+<<<<<<< HEAD
                 {
                   !currentUser && orders !== "none" && orders?.length > 0 ?
                     orders[0]?.salesType === 0 ?
@@ -1203,6 +1207,38 @@ function NFTDetails() {
                         type='button'
                         disabled={
                           moment.utc(orders[0].deadline * 1000).local().format() < moment(new Date()).format()
+=======
+                      if (!wCheck.isLocked) {
+                        if (!wCheck.cCheck) {
+                          setShowAlert("chainId");
+                          return;
+                        }
+                        if (!wCheck.aCheck) {
+                          setShowAlert("account")
+                          return;
+                        }
+                      }
+                      try {
+                        setLoading(true);
+                        console.log("loader Start");
+                        const res = await handleRemoveFromSale(orders[0]._id, currentUser);
+                        if (res === false) {
+                          setLoading(false);
+                          return;
+                        }
+                        else {
+                          let historyReqData = {
+                            nftID: NFTDetails.id,
+                            sellerID: localStorage.getItem("userId"),
+                            action: "RemoveFromSale",
+                            price: orders[0].price?.$numberDecimal,
+                            paymentToken: orders[0].paymentToken,
+                            createdBy: localStorage.getItem("userId"),
+                          };
+                          await InsertHistory(historyReqData);
+                          setLoading(false);
+                          setReloadContent(!reloadContent)
+>>>>>>> 129b895f0f8fb64c4da75d87cb2b580b58f98b6c
                         }
                         className='title_color buy_now'
                         onClick={() => {
@@ -1377,7 +1413,7 @@ function NFTDetails() {
             {allNFTs.length > 1 ? (
               <>
                 <div className='col-md-12 '>
-                  <h3 className='title_36 mb-4'>
+                  <h3 className='title_36 mb-5'>
                     More from {collection?.name} Collection
                   </h3>
                   <FirearmsCollection
