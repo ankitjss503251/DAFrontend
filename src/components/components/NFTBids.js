@@ -442,7 +442,9 @@ function NFTBids(props) {
 
 
                           </td>
-                          <td className="blue_text">
+                          <td className={moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
+                              ? "red_text"
+                              : "green_text"}>
                             {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                               ? "Ended"
                               : "Active"}

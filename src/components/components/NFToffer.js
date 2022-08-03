@@ -98,7 +98,7 @@ function NFToffer(props) {
     }
 
 
-   
+
 
     if (offerPrice === "" || offerPrice === undefined) {
       NotificationManager.error("Enter Offer Price");
@@ -244,8 +244,8 @@ function NFToffer(props) {
               }}>
               Connect Wallet
             </button>
-          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : 
-          showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+            showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
               <div className='bid_user_details my-4'>
                 <img src={Logo} alt='' />
                 {/* <div className='bid_user_address align-items-center'>
@@ -326,7 +326,7 @@ function NFToffer(props) {
                           ></Clock>
                         </td>
                         <td className={moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "red_text" :
-                              b.bidStatus === "MakeOffer" ? "white_text" :"blue_text"}>
+                          b.bidStatus === "MakeOffer" ? "green_text" : "red_text"}>
                           {" "}
                           {
                             moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "Ended" :
@@ -470,15 +470,15 @@ function NFToffer(props) {
                                     setShowAlert("notConnected");
                                     return;
                                   }
-                              
+
                                   const wCheck = WalletConditions();
                                   setWalletVariable(wCheck)
-                              
+
                                   if (wCheck.isLocked) {
                                     setShowAlert("locked");
                                     return;
                                   }
-                              
+
                                   if (!wCheck.isLocked) {
                                     if (!wCheck.cCheck) {
                                       setShowAlert("chainId");

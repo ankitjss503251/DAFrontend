@@ -173,20 +173,20 @@ function NFTlisting(props) {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
 
-             
+
               if (currentUser === undefined || currentUser === "") {
                 setShowAlert("notConnected");
                 return;
               }
-          
+
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
-          
+
               if (wCheck.isLocked) {
                 setShowAlert("locked");
                 return;
               }
-          
+
               if (!wCheck.isLocked) {
                 if (!wCheck.cCheck) {
                   setShowAlert("chainId");
@@ -197,7 +197,7 @@ function NFTlisting(props) {
                   return;
                 }
               }
-              
+
               const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
               if ((bal / 10 ** 18) <= Number(price)) {
                 NotificationManager.error("Insufficient Balance", "", 800);
@@ -214,7 +214,7 @@ function NFTlisting(props) {
                   800
                 );
                 setIsPlaceBidModal(true);
-               
+
                 return;
               }
               setLoading(true);
@@ -475,9 +475,9 @@ function NFTlisting(props) {
               Connect Wallet
             </button>
           </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
-              <div className='bid_user_details my-4'>
-                <img src={Logo} alt='' />
-                {/* <div className='bid_user_address align-items-center'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              {/* <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
                     {walletVariable.sAccount}
@@ -485,16 +485,16 @@ function NFTlisting(props) {
                   <span className='badge badge-success'>Connected</span>
                 </div>
               </div> */}
-                <h4 className="mb-3">Please connect your wallet. </h4>
-              </div>
-              <button
-                className='btn-main mt-2' onClick={() => {
-                  setShowAlert("")
-                  evt.emit("connectWallet")
-                }}>
-                Connect Wallet
-              </button>
-            </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+              <h4 className="mb-3">Please connect your wallet. </h4>
+            </div>
+            <button
+              className='btn-main mt-2' onClick={() => {
+                setShowAlert("")
+                evt.emit("connectWallet")
+              }}>
+              Connect Wallet
+            </button>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
 
       {loading ? <Spinner /> : ""}
       {isPlaceBidModal ? placeBidModal : ""}
@@ -571,7 +571,9 @@ function NFTlisting(props) {
                               ></Clock>
                             )}
                           </td>
-                          <td className="blue_text">
+                          <td className={moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
+                            ? "green_text"
+                            : "red_text"}>
                             {moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
                               ? "Active"
                               : "Ended"}
@@ -638,15 +640,15 @@ function NFTlisting(props) {
                                         setShowAlert("notConnected");
                                         return;
                                       }
-                                  
+
                                       const wCheck = WalletConditions();
                                       setWalletVariable(wCheck)
-                                  
+
                                       if (wCheck.isLocked) {
                                         setShowAlert("locked");
                                         return;
                                       }
-                                  
+
                                       if (!wCheck.isLocked) {
                                         if (!wCheck.cCheck) {
                                           setShowAlert("chainId");
