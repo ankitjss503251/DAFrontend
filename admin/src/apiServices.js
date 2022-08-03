@@ -411,6 +411,7 @@ export const createNft = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
+    console.log("create nft datass in api servive 414---->", datas.data);
 
     return datas.data;
   } catch (err) {
@@ -725,7 +726,7 @@ export const adminLogin = ({ username, password }) => {
       deleteCookie("chain_id")
       window.sessionStorage.removeItem("role")
       setCookie("connect.auth", token, 100);
-      setCookie("selected_account", "superadmin", 100);
+      setCookie("sadmin_selected_account", "superadmin", 100);
 
       return res;
     }
@@ -733,7 +734,8 @@ export const adminLogin = ({ username, password }) => {
 };
 export function logoutSuperAdmin() {
   deleteIsAdmin();
-  window.location.reload()
+  window.location.href = "/sadmin"
+  // window.location.reload()
 }
 export const adminUsers = (page) => {
   let limit = 12;

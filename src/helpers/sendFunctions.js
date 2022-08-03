@@ -327,10 +327,8 @@ export const handleBuyNft = async (
     return false;
   }
 
-
-
   NotificationManager.success("NFT Purchased Successfully");
-  slowRefresh(1000);
+  // slowRefresh(1000);
 };
 
 export const handleApproveToken = async (userAddress, tokenAddress) => {
@@ -477,7 +475,7 @@ export const putOnMarketplace = async (account, orderData) => {
     await createOrder(reqParams);
 
     NotificationManager.success("Order created successfully");
-    slowRefresh(1000);
+    // slowRefresh(1000);
   } catch (err) {
     console.log("error in Api", err);
     return false;
@@ -527,7 +525,8 @@ export const handleRemoveFromSale = async (orderId, account) => {
       orderID: orderId,
     });
     NotificationManager.success("Removed from sale successfully");
-    slowRefresh(1000);
+
+    // slowRefresh(1000);
   } catch (e) {
     console.log("error while updating database", e);
     return false;
@@ -671,6 +670,7 @@ export const createBid = async (
     console.log("error in api", e);
     return false;
   }
+  return true
 };
 
 export const createOffer = async (
@@ -753,7 +753,7 @@ export const createOffer = async (
           let offer = await createOfferNFT(reqParams);
           if (!isEmptyObject(offer)) {
             NotificationManager.success("Offer Placed Successfully");
-            slowRefresh(1000);
+            // slowRefresh(1000);
           } else {
             NotificationManager.error("Something Went Wrong!");
             return false;
@@ -923,9 +923,10 @@ export const handleAcceptBids = async (
         await UpdateStatus(req)
       }
       catch (e) {
-        return
+        return false
       }
       completeOrder = await completeOrder.wait();
+
       if (completeOrder.status === 0) {
         // NotificationManager.error("Transaction Failed");
         return false;
@@ -954,7 +955,7 @@ export const handleAcceptBids = async (
         await UpdateStatus(req)
       }
       catch (e) {
-        return
+        return false
       }
       if (
         Number(details.quantity_sold) + Number(bidData.bidQuantity) >=
@@ -973,21 +974,10 @@ export const handleAcceptBids = async (
           await UpdateStatus(req)
         }
         catch (e) {
-          return
+          return false
         }
       }
-      let req1 = {
-        "recordID": bidData.orderID,
-        "DBCollection": "Order",
-        "hashStatus": 1,
-        "hash": completeOrder.hash
-      }
-      try {
-        await UpdateStatus(req1)
-      }
-      catch (e) {
-        return
-      }
+
     } catch (e) {
       console.log("error in updating order data", e);
       return false;
@@ -1003,7 +993,7 @@ export const handleAcceptBids = async (
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-
+  return true;
 };
 
 export const handleAcceptOffers = async (bidData, props, account) => {
@@ -1203,7 +1193,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
       await UpdateStatus(req)
     }
     catch (e) {
-      return
+      return false
     }
   } catch (e) {
     console.log("error in contract function calling", e);
@@ -1214,6 +1204,7 @@ export const handleAcceptOffers = async (bidData, props, account) => {
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
+  return true;
   // slowRefresh(1000);
 };
 
@@ -1227,7 +1218,7 @@ export const handleUpdateBidStatus = async (
       action: action, //Delete, Cancelled, Rejected
     };
     const response = await updateBidNft(reqParams);
-    NotificationManager.success(`Bid ${action} Successfully`);
+    NotificationManager.success(`${action} Successfully`);
     // slowRefresh(1000);
   } catch (e) {
     console.log("error in api", e);

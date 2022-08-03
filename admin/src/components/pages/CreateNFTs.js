@@ -35,6 +35,7 @@ function CreateNFTs() {
   const [collection, setCollection] = useState();
   const [currentUser, setCurrentUser] = useState();
   const uploadedImage = React.useRef(null);
+  const uploadedPreviewImage = React.useRef(null);
   const imageUploader = React.useRef(null);
   const [cookies] = useCookies([]);
   const [collections, setCollections] = useState([]);
@@ -51,6 +52,8 @@ function CreateNFTs() {
   const [img, setImg] = useState();
   const [showAlert, setShowAlert] = useState("");
   const [walletVariable, setWalletVariable] = useState({});
+  const [needPreview, setNeedPreview] = useState(false)
+  const [nftPreviewImage, setNftPreviewImage] = useState()
 
   const handleImageUpload = (e) => {
     const [file] = e.target.files;
@@ -65,26 +68,65 @@ function CreateNFTs() {
       };
       reader.readAsDataURL(file);
       if (e.target.files && e.target.files[0]) {
-        if (url == "mp4") {
-          setFileType("Video");
-          let blobURL = URL.createObjectURL(e.target.files[0]);
-          console.log(blobURL);
-          setNftImg(e.target.files[0]);
-          setImg(blobURL);
-        } else if (
-          url === "gif" ||
-          url === "jpeg" ||
-          url === "jpg" ||
-          url === "png"
-        ) {
-          setFileType("Image");
-          setNftImg(e.target.files[0]);
-        } else {
-          let blobURL = URL.createObjectURL(e.target.files[0]);
+        if (["mp4", "gif", "jpeg", "jpg", "png", "gltb", "gltf", "glb"].includes(url)) {
 
-          setImg(blobURL);
-          setNftImg(e.target.files[0]);
-          setFileType("3D");
+
+          if (url === "mp4") {
+            setFileType("Video");
+            let blobURL = URL.createObjectURL(e.target.files[0]);
+            console.log(blobURL);
+            setNftImg(e.target.files[0]);
+            setImg(blobURL);
+          } else if (
+            url === "gif" ||
+            url === "jpeg" ||
+            url === "jpg" ||
+            url === "png"
+          ) {
+            setFileType("Image");
+            setNftImg(e.target.files[0]);
+          } else if (
+            url === "glb" ||
+            url === "gltf" ||
+            url === "gltb" || url === "glTF"
+          ) {
+            setNeedPreview(true)
+            let blobURL = URL.createObjectURL(e.target.files[0]);
+
+            setImg(blobURL);
+            setNftImg(e.target.files[0]);
+            setFileType("3D");
+          }
+        }
+        else {
+          NotificationManager.error("Invalid format", "", 800)
+          return
+        }
+      }
+    }
+  };
+
+  const handlePreviewImageUpload = (e) => {
+    const [file] = e.target.files;
+
+    if (file) {
+      let url = e.target.files[0].name.split(/[#?]/)[0].split(".").pop().trim();
+      const reader = new FileReader();
+      const { current } = uploadedPreviewImage;
+      current.file = file;
+      reader.onload = (e) => {
+        current.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      if (e.target.files && e.target.files[0]) {
+        if (["gif", "jpeg", "jpg", "png"].includes(url)) {
+
+          setNftPreviewImage(e.target.files[0]);
+
+        }
+        else {
+          NotificationManager.error("Invalid format", "", 800)
+          return
         }
       }
     }
@@ -193,6 +235,7 @@ function CreateNFTs() {
         formdata.append("creatorAddress", currentUser.toLowerCase());
         formdata.append("name", title);
         formdata.append("nftFile", nftImg);
+        formdata.append("previewImg", nftPreviewImage);
         formdata.append("quantity", quantity);
         formdata.append("collectionID", JSON.parse(collection)._id);
         formdata.append("collectionAddress", collectionDetail.contractAddress);
@@ -254,9 +297,16 @@ function CreateNFTs() {
           );
           formdata.append("hash", mintRes.hash)
           formdata.append("hashStatus", 0)
-
           try {
             createdNft = await createNft(formdata);
+            let metaDatahash="https://decryptnft.mypinata.cloud/ipfs/"+createdNft.metaDatahash
+           
+             let tokenId=parseInt(createdNft.tokenID,10)
+            
+             let uri=await NFTcontract.setCustomTokenUri(tokenId,metaDatahash);
+             let uriResult=await uri.wait()
+           
+              
             // NotificationManager.success("NFT created successfully", "", 800);
             // setLoading(false);
             // slowRefresh(1000);
@@ -268,7 +318,6 @@ function CreateNFTs() {
           }
           console.log("createdNft", createdNft._id);
           res1 = await mintRes.wait();
-          console.log("res1", res1);
           if (res1.status === 0) {
             NotificationManager.error("Transaction failed", "", 800);
             return;
@@ -472,21 +521,21 @@ function CreateNFTs() {
                             className='profile_i'
                             alt=''
                             onError={(e) =>
-                              (e.target.src = "../images/login.jpg")
+                              (e.target.src = n.previewImg)
                             }
                           />
                         </td>
                         <td>
                           {n.name
-                            ? n.name?.length > 8
-                              ? n.name?.slice(0, 8) + "..."
+                            ? n.name?.length > 15
+                              ? n.name?.slice(0, 15) + "..."
                               : n.name
                             : "-"}
                         </td>
                         <td>
                           {n.description
-                            ? n.description?.length > 15
-                              ? n.description?.slice(0, 15) + "..."
+                            ? n.description?.length > 25
+                              ? n.description?.slice(0, 25) + "..."
                               : n.description
                             : "-"}
                         </td>
@@ -538,7 +587,7 @@ function CreateNFTs() {
                     }}>
                     <input
                       type='file'
-                      accept='.glTF,.gltf,.glb,.mp4,image/*'
+                      accept='.glTF,.gltf,gltb,.glb,.mp4,.gif, .png, .jpeg, .jpg'
                       onChange={handleImageUpload}
                       ref={imageUploader}
                       style={{
@@ -581,14 +630,13 @@ function CreateNFTs() {
                       ) : (
                         ""
                       )}
-
                       {fileType === "3D" ? (
                         <GLTFModel
                           height='280'
                           width='220'
                           position={{ x: 0, y: 0, z: 0 }}
-                          anitialias={false}
-                          //enableZoom={false}
+                          //anitialias={false}
+                          enableZoom={false}
                           ref={uploadedImage}
                           className='img-fluid profile_circle_img'
                           key={img}
@@ -600,18 +648,61 @@ function CreateNFTs() {
                             color={0xffffff}
                             position={{ x: 100, y: 200, z: 100 }}
                           />
-                          <DirectionLight
-                            color={0xff00ff}
-                            position={{ x: -100, y: 200, z: -100 }}
-                          />
                         </GLTFModel>
                       ) : (
                         ""
                       )}
+                     
                     </div>
                   </div>
+                 
                 </div>
 
+                {needPreview &&
+                  <div className='mb-1 col-md-4 offset-md-4'>
+                    <label for='recipient-name' className='col-form-label'>
+                      Upload Preview Image *
+                    </label>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}>
+                      <input
+                        type='file'
+                        accept='.gif, .png, .jpeg, .jpg'
+                        onChange={handlePreviewImageUpload}
+                        ref={imageUploader}
+                        style={{
+                          display: "none",
+                        }}
+                      />
+                      <div
+                        className='update_btn'
+                        style={{
+                          height: "100%",
+                          width: "100%",
+                          position: "relative",
+                        }}
+                        onClick={() => imageUploader.current.click()}>
+                        <p className='text-center'>Click here</p>
+
+                        <img
+                          alt=''
+                          ref={uploadedPreviewImage}
+                          key={img}
+                          src={"../images/upload.png"}
+                          className='img-fluid profile_circle_img admin_profile_img'
+                        />
+
+
+
+                      </div>
+                    </div>
+                  </div>
+                }
                 <div className='col-md-12 mb-1'>
                   <label for='recipient-name' className='col-form-label'>
                     Title *
@@ -649,7 +740,6 @@ function CreateNFTs() {
                   </select>
                 </div>
 
-                {console.log("collection?.type == 2", collection)}
                 {collection && JSON.parse(collection)?.type == 2 ? (
                   <div className='col-md-12 mb-1'>
                     <label for='recipient-name' className='col-form-label'>
@@ -767,8 +857,10 @@ function CreateNFTs() {
               <button
                 type='button'
                 className='btn-close'
-                data-bs-dismiss='modal'
-                aria-label='Close'></button>
+                data-bs-toggle='modal'
+                data-bs-target='#NftModal'
+                aria-label='Close'>
+              </button>
             </div>
             <div className='modal-body'>
               <form className='row justify-content-center '>

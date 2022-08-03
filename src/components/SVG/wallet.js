@@ -9,7 +9,7 @@ function wallet() {
         </g>
         <defs>
         <filter id="filter0_d_58_781" x="0" y="0.333008" width="33.7834" height="31.334" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feFlood floodOpacity="0" result="BackgroundImageFix"/>
         <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
         <feOffset dy="4"/>
         <feGaussianBlur stdDeviation="2"/>

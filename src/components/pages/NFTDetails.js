@@ -10,6 +10,7 @@ import {
   getCollections,
   getNFTs,
   getNFTDetails,
+  getUsersTokenBalance,
   // fetchWallet,
 } from "../../helpers/getterFunctions";
 
@@ -20,10 +21,9 @@ import {
   putOnMarketplace,
   handleBuyNft,
   createBid,
+  handleRemoveFromSale,
 } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
-import { GLTFModel, AmbientLight, DirectionLight } from "react-3d-viewer";
-import { handleRemoveFromSale } from "./../../helpers/sendFunctions";
 import contracts from "../../config/contracts";
 import { GENERAL_DATE } from "../../helpers/constants";
 import { NotificationManager } from "react-notifications";
@@ -50,148 +50,17 @@ import { onboard } from "../menu/header";
 import { WalletConditions } from "../components/WalletConditions";
 
 extend({ OrbitControls });
-function loadGLTFModel(scene, glbPath, options) {
-  const { receiveShadow, castShadow } = options;
-  return new Promise((resolve, reject) => {
-    const loader = new GLTFLoader();
-    loader.load(
-      glbPath,
-      (gltf) => {
-        const obj = gltf.scene;
-        obj.name = "dinosaur";
-        obj.position.y = 0;
-        obj.position.x = 0;
-        obj.receiveShadow = receiveShadow;
-        obj.castShadow = castShadow;
-        scene.add(obj);
 
-        obj.traverse(function (child) {
-          if (child.isMesh) {
-            child.castShadow = castShadow;
-            child.receiveShadow = receiveShadow;
-          }
-        });
 
-        resolve(obj);
-      },
-      undefined,
-      function (error) {
-        console.log(error);
-        reject(error);
-      }
-    );
-  });
-}
-function easeOutCirc(x) {
-  return Math.sqrt(1 - Math.pow(x - 1, 4));
-}
 
 const CameraControls = () => {
-  // Get a reference to the Three.js Camera, and the canvas html element.
-  // We need these to setup the OrbitControls component.
-  // https://threejs.org/docs/#examples/en/controls/OrbitControls
   const {
     camera,
     gl: { domElement },
   } = useThree();
-  // Ref to the controls, so that we can update them on every frame using useFrame
   const controls = useRef();
   useFrame((state) => controls.current.update());
   return <orbitControls ref={controls} args={[camera, domElement]} />;
-};
-
-const Show3DImage = () => {
-  const refContainer = useRef();
-  const [loading, setLoading] = useState(true);
-  const [renderer, setRenderer] = useState();
-
-  useEffect(() => {
-    const { current: container } = refContainer;
-    if (container && !renderer) {
-      const scW = container.clientWidth;
-      const scH = container.clientHeight;
-      const renderer = new THREE.WebGLRenderer({
-        antialias: true,
-        alpha: true,
-      });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(scW, scH);
-      renderer.outputEncoding = THREE.sRGBEncoding;
-      container.appendChild(renderer.domElement);
-      setRenderer(renderer);
-
-      const scene = new THREE.Scene();
-      const scale = 2;
-      const camera = new THREE.OrthographicCamera(
-        -scale,
-        scale,
-        scale,
-        -scale,
-        0.01,
-        50000
-      );
-      const target = new THREE.Vector3(-0.5, 1.2, 0);
-      const initialCameraPosition = new THREE.Vector3(
-        20 * Math.sin(0.2 * Math.PI),
-        10,
-        20 * Math.cos(0.2 * Math.PI)
-      );
-      const ambientLight = new THREE.AmbientLight(0xcccccc, 1);
-      scene.add(ambientLight);
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.autoRotate = true;
-      controls.target = target;
-
-      loadGLTFModel(scene, "https://hunter.techdigital.com.au/Parrot.glb", {
-        receiveShadow: false,
-        castShadow: false,
-      }).then(() => {
-        animate();
-        setLoading(false);
-      });
-
-      let req = null;
-      let frame = 0;
-      const animate = () => {
-        req = requestAnimationFrame(animate);
-        frame = frame <= 100 ? frame + 1 : frame;
-
-        if (frame <= 100) {
-          const p = initialCameraPosition;
-          const rotSpeed = -easeOutCirc(frame / 120) * Math.PI * 20;
-
-          camera.position.y = 10;
-          camera.position.x =
-            p.x * Math.cos(rotSpeed) + p.z * Math.sin(rotSpeed);
-          camera.position.z =
-            p.z * Math.cos(rotSpeed) - p.x * Math.sin(rotSpeed);
-          camera.lookAt(target);
-        } else {
-          controls.update();
-        }
-
-        renderer.render(scene, camera);
-      };
-
-      return () => {
-        cancelAnimationFrame(req);
-        renderer.dispose();
-      };
-    }
-  }, []);
-
-  return (
-    <div
-      style={{ height: "350px", width: "350px", position: "relative" }}
-      ref={refContainer}
-    >
-      {loading && (
-        <span style={{ position: "absolute", left: "50%", top: "50%" }}>
-          Loading...
-        </span>
-      )}
-    </div>
-  );
 };
 
 var textColor = {
@@ -225,7 +94,7 @@ function NFTDetails() {
   const [owned, setOwned] = useState("none");
   const [orders, setOrders] = useState("none");
   const [loading, setLoading] = useState(false);
-  const [modal, setModal] = useState(false);
+  const [isModal, setIsModal] = useState("");
   const [offerPrice, setOfferPrice] = useState();
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [isBuyNowModal, setIsBuyNowModal] = useState(false);
@@ -236,14 +105,33 @@ function NFTDetails() {
   const [haveBid, setHaveBid] = useState("none");
   const [haveOffer, setHaveOffer] = useState("none");
   const [ownedBy, setOwnedBy] = useState("");
-  const [bidStatus, setBidStatus] = useState("");
   const [modalImage, setModalImge] = useState("")
   const [showAlert, setShowAlert] = useState("");
   const [walletVariable, setWalletVariable] = useState({});
+  const [reloadContent, setReloadContent] = useState(false);
+  const [isMakeOffer, setIsMakeOffer] = useState(false);
+
+  const refreshVariables = () => {
+    setQty("");
+    setPrice("");
+    setOfferPrice(0);
+    setOfferQuantity(1);
+    setDatetime("");
+    setItem_bid(0);
+    setItemprice(0);
+  }
+
+  const refreshState = () => {
+    setReloadContent(!reloadContent)
+  }
 
   useEffect(() => {
+
     async function setUser() {
-      if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+      if (cookies.selected_account) {
+        setCurrentUser(cookies.selected_account);
+      }
+
     }
     setUser();
   }, [cookies.selected_account]);
@@ -267,6 +155,7 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
+        console.log(res[0].id, id)
         if (res[0].fileType === "3D") {
 
           let image = res[0].image.split("//");
@@ -289,6 +178,7 @@ function NFTDetails() {
         const nfts = await getNFTs(reqData1);
 
         setAllNFTs(nfts);
+        let isOwned = "none"
         if (
           currentUser &&
           res[0].ownedBy &&
@@ -299,11 +189,17 @@ function NFTDetails() {
               res[0]?.ownedBy[i]?.address?.toLowerCase() ===
               currentUser?.toLowerCase()
             ) {
-              setOwned(true);
+              isOwned = true
               break;
-            } else setOwned(false);
+            } else if (currentUser) isOwned = false;
           }
         }
+        else if (res[0].ownedBy && currentUser &&
+          res[0]?.ownedBy[0]?.address?.toLowerCase()) {
+          isOwned = false
+        }
+
+        setOwned(isOwned);
 
         if (id) {
           const _nft = await getNFTDetails({
@@ -320,7 +216,7 @@ function NFTDetails() {
       }
     };
     fetch();
-  }, [id, currentUser]);
+  }, [id, reloadContent, currentUser]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -337,47 +233,51 @@ function NFTDetails() {
         setHaveBid(true);
 
         setPrice(convertToEth(b?.bidPrice?.$numberDecimal));
-        setBidStatus(b?.bidStatus);
+
       } else {
         setHaveBid(false);
       }
+
     };
     fetch();
-  }, [NFTDetails]);
+  }, [NFTDetails, reloadContent, currentUser]);
 
   useEffect(() => {
     const fetch = async () => {
       let searchParams = {
-        nftID: NFTDetails.id,
+        nftID: id,
         buyerID: localStorage.getItem("userId"),
         bidStatus: "MakeOffer",
         orderID: "All",
       };
 
       let _data = await fetchOfferNft(searchParams);
-
+      console.log("fetch offer nft called", id, reloadContent)
       if (_data && _data?.data?.length > 0) {
         const b = _data.data[0];
+        console.log("_data", _data)
         setHaveOffer(true);
-
         setOfferPrice(convertToEth(b?.bidPrice?.$numberDecimal));
         setDatetime(moment(b?.bidDeadline * 1000).toISOString());
       } else {
         setHaveOffer(false);
       }
+
     };
     fetch();
-  }, [NFTDetails]);
+  }, [id, reloadContent, currentUser]);
 
   const PutMarketplace = async () => {
+    if (currentUser === undefined || currentUser === "") {
+      setShowAlert("notConnected");
+      return;
+    }
     const wCheck = WalletConditions();
     setWalletVariable(wCheck)
-
     if (wCheck.isLocked) {
       setShowAlert("locked");
       return;
     }
-
     if (!wCheck.isLocked) {
       if (!wCheck.cCheck) {
         setShowAlert("chainId");
@@ -388,33 +288,31 @@ function NFTDetails() {
         return;
       }
     }
-    setLoading(true);
 
     if (marketplaceSaleType === 0) {
       if (itemprice === undefined || itemprice === "" || itemprice <= 0) {
         NotificationManager.error("Please Enter a price", "", 800);
-        setLoading(false);
         return;
       }
     } else if (marketplaceSaleType === 1) {
       if (datetime === "" || datetime === undefined) {
         NotificationManager.error("Please Enter Expiration date", "", 800);
-        setLoading(false);
         return;
       }
       if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
         NotificationManager.error("Please Enter Minimum Bid", "", 800);
-        setLoading(false);
         return;
       }
     } else {
       if (item_bid === undefined || item_bid === "" || item_bid <= 0) {
         NotificationManager.error("Please Enter Minimum Bid", "", 800);
-        setLoading(false);
         return;
       }
     }
+    setLoading(true);
+    setIsModal("");
     try {
+
       let orderData = {
         nftId: NFTDetails.id,
         collection: NFTDetails.collectionAddress,
@@ -425,7 +323,6 @@ function NFTDetails() {
         endTime: datetime ? datetime : GENERAL_DATE,
         chosenType: marketplaceSaleType,
         minimumBid: item_bid !== "" ? item_bid : 0,
-        // auctionEndDate: endTime ? endTime : new Date(GENERAL_DATE),
         tokenAddress:
           marketplaceSaleType === 0
             ? contracts[selectedTokenFS]
@@ -443,7 +340,7 @@ function NFTDetails() {
           nftID: NFTDetails.id,
           sellerID: localStorage.getItem("userId"),
           action: "PutOnSale",
-          type: "List",
+          type: marketplaceSaleType === 0 ? "Fixed Sale" : marketplaceSaleType === 1 ? "Timed Auction" : "Open for Bids",
           price: ethers.utils.parseEther(itemprice.toString()).toString(),
           paymentToken: marketplaceSaleType === 0
             ? contracts[selectedTokenFS]
@@ -454,17 +351,23 @@ function NFTDetails() {
         await InsertHistory(historyReqData);
         setLoading(false);
 
+        refreshVariables();
+        setReloadContent(!reloadContent)
       }
 
     }
     catch (e) {
       console.log("Error in putOnMarketplace", e);
+      setLoading(false)
+      return
     }
   };
 
-
-
   const PlaceOffer = async () => {
+    if (currentUser === undefined || currentUser === "") {
+      setShowAlert("notConnected");
+      return;
+    }
     const wCheck = WalletConditions();
     setWalletVariable(wCheck)
 
@@ -483,20 +386,14 @@ function NFTDetails() {
         return;
       }
     }
-    setLoading(true);
-    // let wallet = await fetchWallet();
-    // if (wallet !== currentUser) {
-    //   console.log("wrong wallet")
-    // }
+
     if (currentUser === undefined || currentUser === "") {
       NotificationManager.error("Please Connect Metamask");
-      setLoading(false);
       return;
     }
 
     if (offerPrice === "" || offerPrice === undefined || offerPrice <= 0) {
       NotificationManager.error("Enter Offer Price");
-      setLoading(false);
       return;
     }
 
@@ -505,23 +402,24 @@ function NFTDetails() {
       (offerQuantity === undefined && NFTDetails.type !== 1)
     ) {
       NotificationManager.error("Enter Offer Quantity");
-      setLoading(false);
       return;
     }
     if (datetime === "") {
       NotificationManager.error("Enter Offer EndTime");
-      setLoading(false);
       return;
     }
-
+    const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
+    if ((bal / 10 ** 18) <= Number(offerPrice)) {
+      NotificationManager.error("Insufficient Balance", "", 800);
+      return;
+    }
+    setLoading(true);
+    setIsMakeOffer("")
 
     try {
 
       let deadline = moment(datetime).unix();
-      // let tokenAddress =
-      //   marketplaceSaleType === 0
-      //     ? contracts[selectedTokenFS]
-      //     : contracts[selectedToken];
+
       const res = await createOffer(
         NFTDetails?.tokenId,
         collection?.contractAddress,
@@ -551,14 +449,15 @@ function NFTDetails() {
         }
         await InsertHistory(historyReqData);
         setLoading(false);
-        slowRefresh(1000);
+        refreshVariables();
+        setReloadContent(!reloadContent)
       }
 
     }
     catch (e) {
       console.log("Error", e);
+      setLoading(false);
     }
-    //await putOnMarketplace(currentUser, orderData);
   };
 
   function Model(props) {
@@ -594,8 +493,6 @@ function NFTDetails() {
     document.getElementById("tab_opt_3").classList.add("put_show");
     document.getElementById("tab_opt_4").classList.remove("put_hide");
     document.getElementById("tab_opt_4").classList.add("put_show");
-    // document.getElementById("tab_opt_5").classList.remove("put_hide");
-    // document.getElementById("tab_opt_5").classList.add("put_show");
     document.getElementById("btn1").classList.remove("active");
     document.getElementById("btn2").classList.add("active");
     document.getElementById("btn3").classList.remove("active");
@@ -625,7 +522,7 @@ function NFTDetails() {
 
     const dt = ev.target["value"];
 
-    const ct = moment().add({ hours: 5, minutes: 30 }).toISOString();
+    const ct = moment(new Date()).format();
 
     if (dt < ct) {
       NotificationManager.error(
@@ -636,6 +533,14 @@ function NFTDetails() {
       return;
     }
     setDatetime(dt);
+  }
+
+  function checkLoaded() {
+    if (orders !== "none" && owned !== "none" && haveBid !== "none" && haveOffer !== "none") {
+      console.log("true")
+      return true;
+    }
+    return false
   }
 
   useEffect(() => {
@@ -735,26 +640,39 @@ function NFTDetails() {
           <button
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
-              setIsPlaceBidModal(false);
+              if (currentUser === undefined || currentUser === "") {
+                setShowAlert("notConnected");
+                return;
+              }
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
 
               if (wCheck.isLocked) {
                 setShowAlert("locked");
+                setIsPlaceBidModal(false);
                 return;
               }
 
               if (!wCheck.isLocked) {
                 if (!wCheck.cCheck) {
                   setShowAlert("chainId");
+                  setIsPlaceBidModal(false);
                   return;
                 }
                 if (!wCheck.aCheck) {
                   setShowAlert("account")
+                  setIsPlaceBidModal(false);
                   return;
                 }
               }
-              setLoading(true);
+
+              const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
+              if ((bal / 10 ** 18) <= Number(price)) {
+                NotificationManager.error("Insufficient Balance", "", 800);
+                setIsPlaceBidModal(true);
+                return;
+              }
+
               if (
                 Number(price) <
                 Number(convertToEth(orders[0].price?.$numberDecimal))
@@ -765,9 +683,10 @@ function NFTDetails() {
                   800
                 );
                 setIsPlaceBidModal(true);
-                setLoading(false);
                 return;
               }
+              setIsPlaceBidModal(false);
+              setLoading(true);
               try {
                 let res = await createBid(
                   orders[0].nftID,
@@ -797,8 +716,9 @@ function NFTDetails() {
                   };
                   await InsertHistory(historyReqData);
                   NotificationManager.success("Bid Placed Successfully", "", 800);
+                  setReloadContent(!reloadContent)
                   setLoading(false);
-                  slowRefresh(1000);
+                  // slowRefresh(1000);
                 }
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
@@ -883,6 +803,10 @@ function NFTDetails() {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
               setIsBuyNowModal(false);
+              if (currentUser === undefined || currentUser === "") {
+                setShowAlert("notConnected");
+                return;
+              }
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
 
@@ -926,7 +850,8 @@ function NFTDetails() {
                 await InsertHistory(historyReqData);
 
                 setLoading(false);
-                slowRefresh(1000);
+                setReloadContent(!reloadContent)
+                // slowRefresh(1000);
               }
               else {
                 setLoading(false);
@@ -1011,9 +936,36 @@ function NFTDetails() {
               className='btn-main mt-2' onClick={() => {
                 evt.emit("disconnectWallet")
               }}>
-              Connect Wallet
+              Disconnect Wallet
             </button>
-          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+            showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
+              <div className='bid_user_details my-4'>
+                <img src={Logo} alt='' />
+                {/* <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div> */}
+                <h4 className="mb-3">Please connect your wallet. </h4>
+              </div>
+              <button
+                className='btn-main mt-2' onClick={() => {
+                  setShowAlert("")
+                  setIsMakeOffer(false);
+                  setIsPlaceBidModal(false);
+                  setIsBuyNowModal(false);
+                  setIsModal("");
+                  evt.emit("connectWallet")
+                }}>
+                Connect Wallet
+              </button>
+            </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+
+
       {loading ? <Spinner /> : ""}
       {isPlaceBidModal ? placeBidModal : ""}
       {isBuyNowModal ? buyNowModal : ""}
@@ -1058,10 +1010,13 @@ function NFTDetails() {
               )}
             </div>
             <div className='col-lg-6 nft_details'>
-              <p className='mb-0'>
-                {collection?.name} Collection{" "}
-                <img src={"../img/check.png"} className='img-fluid' alt='' />
-              </p>
+              <a href={`/collection/${collection._id}`}>
+                <p className='mb-0'>
+
+                  {collection?.name} Collection{" "}
+                  {/* <img src={"../img/check.png"} className='img-fluid' alt='' /> */}
+                </p>
+              </a>
               <h1 className='mb-3'>{NFTDetails?.name}</h1>
               <div className='owner_by mb-4'>
                 <p>
@@ -1116,7 +1071,7 @@ function NFTDetails() {
                   <div className='row'>
                     {NFTDetails
                       ? NFTDetails?.attributes?.map((attr, key) => {
-                        const rarity = parseInt(attr?.rarity);
+                        const rarity = attr?.trait_type === "rarity" ? attr?.value : "";
                         return (
                           <div className='col-md-6 mb-4' key={key}>
                             <div className='tab_label'>
@@ -1176,43 +1131,174 @@ function NFTDetails() {
                 ) : (
                   ""
                 )}
-                {orders.length <= 0 && orders !== "none" && owned !== "none" ? (
-                  owned ? (
+
+
+
+                {currentUser && orders !== "none" && owned && owned !== "none" ?
+                  orders?.length > 0 ?
                     <button
+                      type="button"
+                      className="title_color buy_now"
+                      data-bs-toggle="modal"
+                      onClick={async () => {
+                        if (currentUser === undefined || currentUser === "") {
+                          setShowAlert("notConnected");
+                          return;
+                        }
+                        const wCheck = WalletConditions();
+                        setWalletVariable(wCheck)
+
+                        if (wCheck.isLocked) {
+                          setShowAlert("locked");
+                          return;
+                        }
+
+                        if (!wCheck.isLocked) {
+                          if (!wCheck.cCheck) {
+                            setShowAlert("chainId");
+                            return;
+                          }
+                          if (!wCheck.aCheck) {
+                            setShowAlert("account")
+                            return;
+                          }
+                        }
+                        try {
+                          setLoading(true);
+                          console.log("loader Start");
+                          const res = await handleRemoveFromSale(orders[0]._id, currentUser);
+
+                          console.log("response", res)
+                          if (res === false) {
+                            setLoading(false);
+                            return;
+                          }
+                          else {
+                            let historyReqData = {
+                              nftID: NFTDetails.id,
+                              sellerID: localStorage.getItem("userId"),
+                              action: "RemoveFromSale",
+                              price: orders[0].price?.$numberDecimal,
+                              paymentToken: orders[0].paymentToken,
+                              createdBy: localStorage.getItem("userId"),
+                            };
+                            await InsertHistory(historyReqData);
+                            setLoading(false);
+                            setReloadContent(!reloadContent)
+                          }
+                        }
+                        catch (e) {
+                          console.log("Error in remove from sale", e);
+                          setLoading(false)
+                          return
+                        }
+                      }}>
+                      Remove From Sale
+                    </button> :
+                    <button
+
                       type='button'
+
                       className='title_color buy_now'
-                      data-bs-toggle='modal'
-                      data-bs-target='#detailPop'>
+                      onClick={() => 
+                        
+                        {
+                          if (currentUser === undefined || currentUser === "") {
+                            setShowAlert("notConnected");
+                            return;
+                          }
+                      
+                          const wCheck = WalletConditions();
+                          setWalletVariable(wCheck)
+                      
+                          if (wCheck.isLocked) {
+                            setShowAlert("locked");
+                            return;
+                          }
+                      
+                          if (!wCheck.isLocked) {
+                            if (!wCheck.cCheck) {
+                              setShowAlert("chainId");
+                              return;
+                            }
+                            if (!wCheck.aCheck) {
+                              setShowAlert("account")
+                              return;
+                            }
+                          }
+                      
+                          setIsModal("active")}}
+                    >
                       Put On Marketplace
-                    </button>
-                  ) : (
-                    ""
-                  )
-                ) : !owned &&
-                  orders.length > 0 &&
-                  owned !== "none" &&
-                  haveBid !== "none" &&
-                  haveOffer !== "none" ? (
-                  orders[0].salesType === 0 ? (
+
+                    </button> : ""
+                }
+
+                {currentUser && orders !== "none" && orders?.length > 0 && owned == false && owned != "none" ?
+                  orders[0]?.salesType === 0 ?
                     <button
                       type='button'
                       className='title_color buy_now'
                       onClick={() => {
+                        if (currentUser === undefined || currentUser === "") {
+                          setShowAlert("notConnected");
+                          return;
+                        }
+                    
+                        const wCheck = WalletConditions();
+                        setWalletVariable(wCheck)
+                    
+                        if (wCheck.isLocked) {
+                          setShowAlert("locked");
+                          return;
+                        }
+                    
+                        if (!wCheck.isLocked) {
+                          if (!wCheck.cCheck) {
+                            setShowAlert("chainId");
+                            return;
+                          }
+                          if (!wCheck.aCheck) {
+                            setShowAlert("account")
+                            return;
+                          }
+                        }
+                    
                         setIsBuyNowModal(true);
                       }}>
                       Buy Now
-                    </button>
-                  ) : (
+                    </button> :
                     <button
                       type='button'
                       disabled={
-                        moment(new Date(orders[0].deadline * 1000)).subtract({
-                          hours: 5,
-                          minutes: 30,
-                        })._d < new Date()
+                        moment.utc(orders[0].deadline * 1000).local().format() < moment(new Date()).format()
                       }
                       className='title_color buy_now'
                       onClick={() => {
+                        if (currentUser === undefined || currentUser === "") {
+                          setShowAlert("notConnected");
+                          return;
+                        }
+                    
+                        const wCheck = WalletConditions();
+                        setWalletVariable(wCheck)
+                    
+                        if (wCheck.isLocked) {
+                          setShowAlert("locked");
+                          return;
+                        }
+                    
+                        if (!wCheck.isLocked) {
+                          if (!wCheck.cCheck) {
+                            setShowAlert("chainId");
+                            return;
+                          }
+                          if (!wCheck.aCheck) {
+                            setShowAlert("account")
+                            return;
+                          }
+                        }
+                    
                         setIsPlaceBidModal(true);
                       }}
                     >
@@ -1222,22 +1308,107 @@ function NFTDetails() {
                           : "Place Bid"
                         : ""}
                     </button>
-                  )
-                ) : owned && owned !== "none" ? (
+                  :
+                  ""
+                }
+
+                {
+                  !currentUser && orders !== "none" && orders?.length > 0 ?
+                    orders[0]?.salesType === 0 ?
+                      <button
+                        type='button'
+                        className='title_color buy_now'
+                        onClick={() => {
+                          if (currentUser === undefined || currentUser === "") {
+                            setShowAlert("notConnected");
+                            return;
+                          }
+                      
+                          const wCheck = WalletConditions();
+                          setWalletVariable(wCheck)
+                      
+                          if (wCheck.isLocked) {
+                            setShowAlert("locked");
+                            return;
+                          }
+                      
+                          if (!wCheck.isLocked) {
+                            if (!wCheck.cCheck) {
+                              setShowAlert("chainId");
+                              return;
+                            }
+                            if (!wCheck.aCheck) {
+                              setShowAlert("account")
+                              return;
+                            }
+                          }
+                      
+                          setIsBuyNowModal(true);
+                        }}>
+                        Buy Now
+                      </button> :
+                      <button
+                        type='button'
+                        disabled={
+                          moment.utc(orders[0].deadline * 1000).local().format() < moment(new Date()).format()
+                        }
+                        className='title_color buy_now'
+                        onClick={() => {
+                          if (currentUser === undefined || currentUser === "") {
+                            setShowAlert("notConnected");
+                            return;
+                          }
+                      
+                          const wCheck = WalletConditions();
+                          setWalletVariable(wCheck)
+                      
+                          if (wCheck.isLocked) {
+                            setShowAlert("locked");
+                            return;
+                          }
+                      
+                          if (!wCheck.isLocked) {
+                            if (!wCheck.cCheck) {
+                              setShowAlert("chainId");
+                              return;
+                            }
+                            if (!wCheck.aCheck) {
+                              setShowAlert("account")
+                              return;
+                            }
+                          }
+                      
+                          setIsPlaceBidModal(true);
+                        }}
+                      >
+                        {haveBid !== "none"
+                          ? haveBid
+                            ? "Update Bid"
+                            : "Place Bid"
+                          : ""}
+                      </button>
+                    :
+                    ""
+                }
+
+                {currentUser && !owned && owned !== "none" && haveOffer !== "none" ? (
                   <button
                     type="button"
-                    className="title_color buy_now"
-                    data-bs-toggle="modal"
-                    onClick={async () => {
-                      console.log("orders[0]", orders[0], orders);
+                    className="border_btn title_color"
+                    onClick={() => 
+                    {  if (currentUser === undefined || currentUser === "") {
+                        setShowAlert("notConnected");
+                        return;
+                      }
+                  
                       const wCheck = WalletConditions();
                       setWalletVariable(wCheck)
-
+                  
                       if (wCheck.isLocked) {
                         setShowAlert("locked");
                         return;
                       }
-
+                  
                       if (!wCheck.isLocked) {
                         if (!wCheck.cCheck) {
                           setShowAlert("chainId");
@@ -1248,52 +1419,57 @@ function NFTDetails() {
                           return;
                         }
                       }
-                      try {
-                        setLoading(true);
-                        console.log("loader Start");
-                        const res = await handleRemoveFromSale(orders[0]._id, currentUser);
-                        console.log("response", res)
-                        if (res === false) {
-                          setLoading(false);
-                          return;
-                        }
-                        else {
-                          let historyReqData = {
-                            nftID: NFTDetails.id,
-                            sellerID: localStorage.getItem("userId"),
-                            action: "RemoveFromSale",
-                            price: orders[0].price?.$numberDecimal,
-                            paymentToken: orders[0].paymentToken,
-                            createdBy: localStorage.getItem("userId"),
-                          };
-                          await InsertHistory(historyReqData);
-                          setLoading(false);
-                        }
-                      }
-                      catch (e) {
-                        console.log("Error in remove from sale", e);
-                        setLoading(false)
-                        return
-                      }
-                    }}>
-                    Remove From Sale
+                  
+                      setIsMakeOffer("active")}
+                    
+                    }
+                  >
+                    {haveOffer && haveOffer !== "none" ? "Update Offer" : "Make Offers"}
                   </button>
                 ) : (
                   ""
                 )}
-                {!owned && owned !== "none" && haveOffer !== "none" ? (
+
+                {!currentUser ? (
                   <button
                     type="button"
                     className="border_btn title_color"
-                    data-bs-toggle="modal"
-                    data-bs-target="#makeOfferModal"
-                    onClick={() => setModal("active")}
+                    onClick={() => 
+                      {if (currentUser === undefined || currentUser === "") {
+                        setShowAlert("notConnected");
+                        return;
+                      }
+                  
+                      const wCheck = WalletConditions();
+                      setWalletVariable(wCheck)
+                  
+                      if (wCheck.isLocked) {
+                        setShowAlert("locked");
+                        return;
+                      }
+                  
+                      if (!wCheck.isLocked) {
+                        if (!wCheck.cCheck) {
+                          setShowAlert("chainId");
+                          return;
+                        }
+                        if (!wCheck.aCheck) {
+                          setShowAlert("account")
+                          return;
+                        }
+                      }
+                  
+                      setIsMakeOffer("active")
+                    }
+                    }
                   >
-                    {haveOffer ? "Update Offer" : "Make Offers"}
+                    Make Offers
                   </button>
                 ) : (
                   ""
                 )}
+
+
               </div>
             </div>
           </div>
@@ -1395,31 +1571,33 @@ function NFTDetails() {
                 className='img-fluid box_shadow'
               />
             </div>
-            <div className='col-md-12 mb-5'>
+            <div className='col-md-12 pb-5 mb-5 border-bottom-5'>
               <h3 className='title_36 mb-4'>Listings</h3>
               {/* <div className='table-responsive'> */}
-              <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} />
+              <NFTlisting id={NFTDetails.id} NftDetails={NFTDetails} reloadContent={reloadContent} refreshState={refreshState} />
               {/* </div> */}
             </div>
 
-            <div className='col-md-12 mb-5'>
+            <div className='col-md-12 pb-5 mb-5 border-bottom-5'>
               <h3 className='title_36 mb-4'>Bids</h3>
 
-              <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} />
+              <NFTBids id={NFTDetails.id} NftDetails={NFTDetails} reloadContent={reloadContent} refreshState={refreshState} />
             </div>
-            <div className='col-md-12 mb-5'>
+            <div className='col-md-12 pb-5 mb-5 border-bottom-5'>
               <h3 className='title_36 mb-4'>Offers</h3>
 
               <NFToffer
                 id={NFTDetails.id}
                 NftDetails={NFTDetails}
                 collectionAddress={collection?.contractAddress}
+                reloadContent={reloadContent}
+                refreshState={refreshState}
               />
             </div>
-            <div className="col-md-12 mb-5">
+            <div className="col-md-12 pb-5 mb-5">
               <h3 className="title_36 mb-4">History</h3>
 
-              <NFThistory nftID={NFTDetails.id} />
+              <NFThistory nftID={NFTDetails.id} reloadContent={reloadContent} />
 
             </div>
             {allNFTs.length > 1 ? (
@@ -1453,16 +1631,20 @@ function NFTDetails() {
         </div>
       </section>
       {/* <!-- The Modal --> */}
-      <div className={`modal marketplace putOnMarketplace`} id='detailPop'>
+      <div className={`modal marketplace putOnMarketplace ${isModal}`} id='detailPop' >
         <div className='modal-dialog modal-lg modal-dialog-centered'>
           <div className='modal-content'>
             {/* <!-- Modal Header --> */}
             <div className='modal-header p-4'>
               <h4 className='text-light title_20 mb-0'>Put on Marketplace</h4>
               <button
+
                 type='button'
+
                 className='btn-close text-light'
-                data-bs-dismiss='modal'></button>
+                // data-bs-dismiss='modal'
+                onClick={() => setIsModal("")}
+              ></button>
             </div>
             {/* <!-- Modal body --> */}
             <div className='modal-body'>
@@ -1692,8 +1874,34 @@ function NFTDetails() {
                   <button
                     type='button'
                     className='square_yello'
+                    data-bs-dismiss="modal"
                     href='/mintcollectionlive'
-                    onClick={PutMarketplace}>
+                    onClick={() => {
+                      if (currentUser === undefined || currentUser === "") {
+                        setShowAlert("notConnected");
+                        return;
+                      }
+                  
+                      const wCheck = WalletConditions();
+                      setWalletVariable(wCheck)
+                  
+                      if (wCheck.isLocked) {
+                        setShowAlert("locked");
+                        return;
+                      }
+                  
+                      if (!wCheck.isLocked) {
+                        if (!wCheck.cCheck) {
+                          setShowAlert("chainId");
+                          return;
+                        }
+                        if (!wCheck.aCheck) {
+                          setShowAlert("account")
+                          return;
+                        }
+                      }
+                  
+                      PutMarketplace() }}>
                     Put On Marketplace
                   </button>
                 </div>
@@ -1705,7 +1913,7 @@ function NFTDetails() {
 
       {/*Bid/Offer Modal*/}
 
-      <div className='modal marketplace' id='makeOfferModal'>
+      <div className={`modal marketplace makeOffer ${isMakeOffer}`} id='makeOfferModal'>
         <div className='modal-dialog modal-lg modal-dialog-centered'>
           <div className='modal-content'>
             {/* <!-- Modal Header --> */}
@@ -1714,7 +1922,10 @@ function NFTDetails() {
               <button
                 type='button'
                 className='btn-close text-light'
-                data-bs-dismiss='modal'></button>
+                onClick={() => {
+                  refreshVariables();
+                  setIsMakeOffer("")
+                }}></button>
             </div>
 
             {/* <!-- Modal body --> */}

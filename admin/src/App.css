@@ -1198,8 +1198,14 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   top:0;
   bottom:0;left:0px;right:0px;
 }
-
 .notification-container {
   font-family: "Montserrat", sans-serif;
 }
 
+.modal.marketplace.putOnMarketplace.active{
+  display: block;
+}
+
+.modal.marketplace.putOnMarketplace{
+  display: none;
+}
