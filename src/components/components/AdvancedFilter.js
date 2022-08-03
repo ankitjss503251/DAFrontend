@@ -227,7 +227,7 @@ const AdvancedFilter = (props) => {
                       <div className='form-check form-check-inline' key={key}>
                         <input
                           type='radio'
-                          id={c.name}
+                          id={c._id}
                           name='radio-group'
                           key={c.name}
                           value={c._id}
@@ -239,7 +239,7 @@ const AdvancedFilter = (props) => {
                             });
                           }}
                         />
-                        <label htmlFor={c.name}>{c.name}</label>
+                        <label htmlFor={c._id}>{c.name}</label>
                       </div>
                     );
                   })
@@ -284,7 +284,7 @@ const AdvancedFilter = (props) => {
                         <div className='form-check form-check-inline' key={key}>
                           <input
                             type='radio'
-                            id={b.name}
+                            id={b._id}
                             name='radio-group'
                             key={b}
                             value={b._id}
@@ -302,7 +302,7 @@ const AdvancedFilter = (props) => {
                                 })
                             }}
                           />
-                          <label htmlFor={b.name}>{b.name}</label>
+                          <label htmlFor={b._id}>{b.name}</label>
                         </div>
                       );
                     })
