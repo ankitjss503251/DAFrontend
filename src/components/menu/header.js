@@ -27,6 +27,8 @@ import menuIcon from "../../assets/menu.png";
 import evt from "./../../events/events";
 import { CheckIfBlocked } from "../../apiServices";
 
+var CryptoJS = require("crypto-js");
+
 const Web3 = require('web3');
 // web3 lib instance
 const web3 = new Web3(window.ethereum);
@@ -36,6 +38,8 @@ setDefaultBreakpoints([{ xs: 0 }, { l: 1199 }, { xl: 1200 }]);
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule();
+
+
 
 export const onboard = Onboard({
   wallets: [walletConnect, injected],
@@ -123,7 +127,6 @@ const Header = function () {
     }
     setCategory();
   }, []);
-
   evt.on("disconnectWallet", () => {
     disconnectWallet()
   });
@@ -176,8 +179,14 @@ const Header = function () {
 
 
       if (web3.eth) {
-        const timestamp = new Date().getTime();
-        const message = `Digital Arms Marketplace uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address - ${timestamp}`;
+        const siteUrl = process.env.REACT_APP_SITE_URL;
+        let nonce = "";
+        await web3.eth.getTransactionCount(address).then(async (result) => {
+            console.log("encryptedData", result)
+            nonce =  CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
+            console.log("encryptedData", nonce)
+        })
+        const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
 
         console.log(web3.utils.fromUtf8(message));
 

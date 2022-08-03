@@ -66,7 +66,7 @@ export const Login = async (account, signature, message) => {
     body: JSON.stringify({
       walletAddress: account,
       signature: signature,
-      message: message,
+      message: message
     }),
   };
   try {
