@@ -98,7 +98,6 @@ function MintEventSlider(props) {
   const mintFunction = async (qty, price, user) => {
     let { testMint } = await contract;
     let result = await testMint(props.id, qty, price, user);
-    console.log(result);
     
   };
  
