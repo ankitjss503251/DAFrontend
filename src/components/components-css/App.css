@@ -5519,6 +5519,7 @@ display: none;
 .drop_down_tlt.collapsed svg {
  transform: rotate(180deg);
 }
+
 .slick-slider .slick-track {
   margin-left: 0;
 }
@@ -5540,3 +5541,9 @@ display: none;
 .box button.btn-main {
   color: #ef981d !important;
   }
+
+.form-control:disabled {
+  background-color: none !important;
+  opacity: 0.7;
+  cursor: not-allowed;
+}

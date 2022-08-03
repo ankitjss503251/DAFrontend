@@ -23,6 +23,8 @@ import { InsertHistory } from "./../../apiServices";
 import evt from "./../../events/events";
 import { onboard } from "../menu/header";
 import { WalletConditions } from "../components/WalletConditions";
+import { getUsersTokenBalance } from "../../helpers/getterFunctions";
+import contracts from "../../config/contracts";
 
 
 function NFTlisting(props) {
@@ -47,38 +49,35 @@ function NFTlisting(props) {
     }
   }, [cookies.selected_account]);
 
-  useEffect(() => {
-    console.log("props.reloadContent", props.reloadContent);
-    if (props.id)
-      fetch();
-  }, [props.id, props.reloadContent]);
+  // useEffect(() => {
+  //   if (props.id)
+  //     fetch();
+  // }, [props.id, props.refreshState]);
 
   const fetch = async () => {
     if (props.id) {
       const _orders = await getOrderByNftID({ nftID: props.id });
       setOrders(_orders?.results);
+      let searchParams = {
+        nftID: props.id,
+        buyerID: localStorage.getItem("userId"),
+        bidStatus: "All",
+        orderID: "All",
+      };
+
+      let _data = await fetchBidNft(searchParams);
+
+      if (_data && _data.data.length > 0) {
+        setHaveBid(true);
+      }
     }
   };
 
   useEffect(() => {
-    if (props.id)
-      fetchListing();
-  }, [props.id]);
+    fetch()
+  }, [props.id, props.refreshState]);
 
-  const fetchListing = async () => {
-    let searchParams = {
-      nftID: props.id,
-      buyerID: localStorage.getItem("userId"),
-      bidStatus: "All",
-      orderID: "All",
-    };
 
-    let _data = await fetchBidNft(searchParams);
-
-    if (_data && _data.data.length > 0) {
-      setHaveBid(true);
-    }
-  };
 
   useEffect(() => {
     var body = document.body;
@@ -174,7 +173,12 @@ function NFTlisting(props) {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
 
-              setIsPlaceBidModal(false);
+
+              if (currentUser === undefined || currentUser === "") {
+                setShowAlert("notConnected");
+                return;
+              }
+
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
 
@@ -193,7 +197,13 @@ function NFTlisting(props) {
                   return;
                 }
               }
-              setLoading(true);
+
+              const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
+              if ((bal / 10 ** 18) <= Number(price)) {
+                NotificationManager.error("Insufficient Balance", "", 800);
+                setIsPlaceBidModal(true);
+                return;
+              }
               if (
                 Number(price) <
                 Number(convertToEth(currentOrder.price?.$numberDecimal))
@@ -204,9 +214,11 @@ function NFTlisting(props) {
                   800
                 );
                 setIsPlaceBidModal(true);
-                setLoading(false);
+
                 return;
               }
+              setLoading(true);
+              setIsPlaceBidModal(false);
               try {
                 const res = await createBid(
                   currentOrder.nftID,
@@ -234,13 +246,14 @@ function NFTlisting(props) {
                   await InsertHistory(historyReqData);
                   NotificationManager.success("Bid Placed Successfully", "", 800);
                   setLoading(false);
-                  await props.refreshState()
-                  // slowRefresh(1000);
+
+                  slowRefresh(1000);
                 } else {
                   setLoading(false);
                   return;
                 }
-
+                // await props.refreshState()
+                // await fetch()
               } catch (e) {
                 NotificationManager.error("Something went wrong", "", 800);
               }
@@ -361,15 +374,19 @@ function NFTlisting(props) {
                     createdBy: localStorage.getItem("userId"),
                   };
                   await InsertHistory(historyReqData);
-                  await fetchListing()
+                  // await fetch()
+                  slowRefresh(1000);
                   setLoading(false);
-                  await props.refreshState()
+
                 }
                 else {
                   setLoading(false);
-                  // slowRefresh(1000);
+
                   return;
                 }
+                // await fetch()
+                // await props.refreshState()
+
               }
               catch (e) {
                 console.log("Error", e)
@@ -457,6 +474,26 @@ function NFTlisting(props) {
               }}>
               Connect Wallet
             </button>
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
+            <div className='bid_user_details my-4'>
+              <img src={Logo} alt='' />
+              {/* <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div> */}
+              <h4 className="mb-3">Please connect your wallet. </h4>
+            </div>
+            <button
+              className='btn-main mt-2' onClick={() => {
+                setShowAlert("")
+                evt.emit("connectWallet")
+              }}>
+              Connect Wallet
+            </button>
           </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
 
       {loading ? <Spinner /> : ""}
@@ -534,14 +571,16 @@ function NFTlisting(props) {
                               ></Clock>
                             )}
                           </td>
-                          <td className="blue_text">
+                          <td className={moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
+                            ? "green_text"
+                            : "red_text"}>
                             {moment.utc(o.deadline * 1000).local().format() > moment(new Date()).format()
                               ? "Active"
                               : "Ended"}
                           </td>
                           <td>
                             <div className="text-center">
-                              {currentUser ? (o.sellerID?.walletAddress?.toLowerCase() ===
+                              {(o.sellerID?.walletAddress?.toLowerCase() ===
                                 currentUser?.toLowerCase() ? (
                                 <button
                                   to={"/"}
@@ -596,6 +635,12 @@ function NFTlisting(props) {
                                     }
                                     className="small_border_btn small_btn"
                                     onClick={async () => {
+
+                                      if (currentUser === undefined || currentUser === "") {
+                                        setShowAlert("notConnected");
+                                        return;
+                                      }
+
                                       const wCheck = WalletConditions();
                                       setWalletVariable(wCheck)
 
@@ -654,7 +699,7 @@ function NFTlisting(props) {
                                         : ""}
                                   </button> : ""
 
-                              )) : ""}
+                              ))}
                             </div>
                           </td>
                         </tr>

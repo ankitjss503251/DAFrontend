@@ -670,6 +670,7 @@ export const createBid = async (
     console.log("error in api", e);
     return false;
   }
+  return true
 };
 
 export const createOffer = async (
@@ -992,7 +993,7 @@ export const handleAcceptBids = async (
     return false;
   }
   NotificationManager.success("Bid Accepted Successfully");
-   return true;
+  return true;
 };
 
 export const handleAcceptOffers = async (bidData, props, account) => {
@@ -1217,7 +1218,7 @@ export const handleUpdateBidStatus = async (
       action: action, //Delete, Cancelled, Rejected
     };
     const response = await updateBidNft(reqParams);
-    NotificationManager.success(`Bid ${action} Successfully`);
+    NotificationManager.success(`${action} Successfully`);
     // slowRefresh(1000);
   } catch (e) {
     console.log("error in api", e);

@@ -62,17 +62,17 @@ function ContactUs() {
                             <div className="contact_details contact_without_bg">
                                 <h4>Australia Office</h4>
                                 <ul>
-                                    <li><i class="fa fa-map-marker"></i> Office Address line, Line 2, line 3, etc.</li>
-                                    <li><Link to="tel:60 1234 5678" ><i class="fa fa-phone"></i> +60 1234 5678</Link></li>
-                                    <li><Link to="mailto:contact@example.com" ><i class="fa fa-envelope"></i> contact@example.com</Link></li>
+                                    <li><i className="fa fa-map-marker"></i> Office Address line, Line 2, line 3, etc.</li>
+                                    <li><Link to="tel:60 1234 5678" ><i className="fa fa-phone"></i> +60 1234 5678</Link></li>
+                                    <li><Link to="mailto:contact@example.com" ><i className="fa fa-envelope"></i> contact@example.com</Link></li>
                                 </ul>
                             </div>
                             <div className="contact_details contact_bg">
                             <h4>US Office</h4>
                                 <ul>
-                                    <li><i class="fa fa-map-marker"></i> Office Address line, Line 2, line 3, etc.</li>
-                                    <li><Link to="tel:60 1234 5678" ><i class="fa fa-phone"></i> +60 1234 5678</Link></li>
-                                    <li><Link to="mailto:contact@example.com" ><i class="fa fa-envelope"></i> contact@example.com</Link></li>
+                                    <li><i className="fa fa-map-marker"></i> Office Address line, Line 2, line 3, etc.</li>
+                                    <li><Link to="tel:60 1234 5678" ><i className="fa fa-phone"></i> +60 1234 5678</Link></li>
+                                    <li><Link to="mailto:contact@example.com" ><i className="fa fa-envelope"></i> contact@example.com</Link></li>
                                 </ul>
                             </div>
                         </div>

@@ -56,7 +56,7 @@ function NFTBids(props) {
       }
     };
     fetch();
-  }, [props.id, reloadContent, props.reloadContent]);
+  }, [props.id, reloadContent, props.refreshState]);
 
   useEffect(() => {
     var body = document.body;
@@ -174,14 +174,19 @@ function NFTBids(props) {
             onClick={async () => {
               console.log("current bid", currentBid)
               setIsUpdateBidModal(false);
+              if (currentUser === undefined || currentUser === "") {
+                setShowAlert("notConnected");
+                return;
+              }
+          
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
-
+          
               if (wCheck.isLocked) {
                 setShowAlert("locked");
                 return;
               }
-
+          
               if (!wCheck.isLocked) {
                 if (!wCheck.cCheck) {
                   setShowAlert("chainId");
@@ -237,16 +242,16 @@ function NFTBids(props) {
                     createdBy: localStorage.getItem("userId"),
                   };
                   await InsertHistory(historyReqData);
-                  setReloadContent(!reloadContent);
-                  await props.refreshState()
+                  slowRefresh(1000)
+                  // setReloadContent(!reloadContent);
+                  // await props.refreshState()
                   NotificationManager.success(
                     "Bid Updated Successfully",
                     "",
                     800
                   );
                   setLoading(false);
-                  // slowRefresh(1000);
-                  setReloadContent(!reloadContent);
+                  slowRefresh(1000);
                 }
                 else {
                   setLoading(false);
@@ -341,7 +346,28 @@ function NFTBids(props) {
               }}>
               Connect Wallet
             </button>
-          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
+              <div className='bid_user_details my-4'>
+                <img src={Logo} alt='' />
+                {/* <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div> */}
+                <h4 className="mb-3">Please connect your wallet. </h4>
+              </div>
+              <button
+                className='btn-main mt-2' onClick={() => {
+                  setShowAlert("");
+                  setIsUpdateBidModal(false);
+                  evt.emit("connectWallet")
+                }}>
+                Connect Wallet
+              </button>
+            </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
 
       {loading ? <Spinner /> : ""}
       {isUpdateBidModal ? updateBidModal : ""}
@@ -416,18 +442,24 @@ function NFTBids(props) {
 
 
                           </td>
-                          <td className="blue_text">
+                          <td className={moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
+                              ? "red_text"
+                              : "green_text"}>
                             {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                               ? "Ended"
                               : "Active"}
                           </td>
                           <td className="text-center">
-                            {bidOwner === currentUser?.toLowerCase() ? (
+                            {bidOwner === currentUser?.toLowerCase() && b.bidStatus === "Bid" ? (
                               <div className="d-flex flex-column justify-content-center align-items-center">
                                 <button
                                   to={"/"}
                                   className="small_yellow_btn small_btn mb-3"
                                   onClick={async () => {
+                                    if (currentUser === undefined || currentUser === "") {
+                                      setShowAlert("notConnected");
+                                      return;
+                                    }
                                     const wCheck = WalletConditions();
                                     setWalletVariable(wCheck)
 
@@ -471,8 +503,9 @@ function NFTBids(props) {
                                     else {
                                       setLoading(false);
                                     }
-                                    await props.refreshState()
-                                    setReloadContent(!reloadContent);
+                                    slowRefresh(1000)
+                                    // await props.refreshState()
+                                    // setReloadContent(!reloadContent);
                                   }}
                                 >
                                   Accept
@@ -481,6 +514,10 @@ function NFTBids(props) {
                                   to={"/"}
                                   className="small_border_btn small_btn"
                                   onClick={async () => {
+                                    if (currentUser === undefined || currentUser === "") {
+                                      setShowAlert("notConnected");
+                                      return;
+                                    }
                                     const wCheck = WalletConditions();
                                     setWalletVariable(wCheck)
 
@@ -517,17 +554,17 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-                                    await props.refreshState()
 
-                                    setReloadContent(!reloadContent);
-                                    await props.refreshState()
+                                    // setReloadContent(!reloadContent);
+                                    // await props.refreshState()
+                                    slowRefresh(1000)
                                   }}
                                 >
                                   Reject
                                 </button>
                               </div>
                             ) : bidOwner !== currentUser?.toLowerCase() &&
-                              bidder === currentUser?.toLowerCase() ? (
+                              bidder === currentUser?.toLowerCase() && b.bidStatus === "Bid" ? (
                               <div className="d-flex flex-column justify-content-center align-items-center ">
                                 <button
                                   disabled={
@@ -535,6 +572,29 @@ function NFTBids(props) {
                                   }
                                   className="small_yellow_btn small_btn mb-2"
                                   onClick={() => {
+                                    if (currentUser === undefined || currentUser === "") {
+                                      setShowAlert("notConnected");
+                                      return;
+                                    }
+                                
+                                    const wCheck = WalletConditions();
+                                    setWalletVariable(wCheck)
+                                
+                                    if (wCheck.isLocked) {
+                                      setShowAlert("locked");
+                                      return;
+                                    }
+                                
+                                    if (!wCheck.isLocked) {
+                                      if (!wCheck.cCheck) {
+                                        setShowAlert("chainId");
+                                        return;
+                                      }
+                                      if (!wCheck.aCheck) {
+                                        setShowAlert("account")
+                                        return;
+                                      }
+                                    }
                                     setCurrentBid(b);
                                     setPrice(
                                       Number(
@@ -556,6 +616,10 @@ function NFTBids(props) {
                                   }
                                   className="small_border_btn small_btn"
                                   onClick={async () => {
+                                    if (currentUser === undefined || currentUser === "") {
+                                      setShowAlert("notConnected");
+                                      return;
+                                    }
                                     const wCheck = WalletConditions();
                                     setWalletVariable(wCheck)
 
@@ -592,9 +656,9 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-                                    setReloadContent(!reloadContent);
-                                    await props.refreshState()
-
+                                    // setReloadContent(!reloadContent);
+                                    // await props.refreshState()
+                                    slowRefresh(1000)
                                   }}
 
                                 >
