@@ -215,6 +215,7 @@ const Navbar = (props) => {
             }
           }
           console.log("Error is", err);
+          // window.location.reload()
         })
       }
 
