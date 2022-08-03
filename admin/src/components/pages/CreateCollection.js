@@ -66,6 +66,8 @@ function CreateCollection(props) {
   const [showAlert, setShowAlert] = useState("");
   const [walletVariable, setWalletVariable] = useState({});
 
+
+
   useEffect(() => {
     if (cookies.da_selected_account)
       setCurrentUser(cookies.da_selected_account);
@@ -79,7 +81,8 @@ function CreateCollection(props) {
         page: 1,
         limit: 12,
       };
-      let data
+      let data;
+      console.log("check")
       if (isSuperAdmin()) {
         data = await GetMyCollectionsList(reqBody);
       }
@@ -96,10 +99,10 @@ function CreateCollection(props) {
     const fetch = async () => {
       let _brands = await GetBrand();
       setBrands(_brands);
-      setBrand(_brands[0]._id);
+      setBrand(_brands[0]?._id);
       let _cat = await getCategory();
       setCategories(_cat);
-      setCategory(_cat[0]._id);
+      setCategory(_cat[0]?._id);
     };
     fetch();
     console.log('create collection')
@@ -392,7 +395,7 @@ function CreateCollection(props) {
             contractAddress = await readReceipt(hash);
             let req = {
               "contractAddress": contractAddress,
-              "recordID": createdCollection._id,
+              "recordID": createdCollection?._id,
               "DBCollection": "Collection",
               "hashStatus": 1
             }
@@ -497,7 +500,7 @@ function CreateCollection(props) {
           resp.collectionAddress = importedAddress;
           resp.isOnMarketplace = 1;
           resp.isImported = 1;
-          resp.collectionID = res._id;
+          resp.collectionID = res?._id;
           resp.totalQuantity = 1;
           await importNft({ nftData: resp });
         } catch (e) {
@@ -761,7 +764,7 @@ function CreateCollection(props) {
                                   type="button"
                                   onClick={() => {
                                     blockUnblockColl(
-                                      item._id,
+                                      item?._id,
                                       item.status ? 0 : 1
                                     );
                                   }}
@@ -779,7 +782,7 @@ function CreateCollection(props) {
                                     data-bs-target="#exampleModal1"
                                     type="button"
                                     onClick={async () => {
-                                      setSelectedCollectionId(item._id);
+                                      setSelectedCollectionId(item?._id);
                                       setImportModal(true);
                                     }}
                                   >
@@ -795,11 +798,11 @@ function CreateCollection(props) {
                                   onClick={async () => {
                                     item.isOnMarketplace === 0
                                       ? await setShowOnMarketplace(
-                                        item._id,
+                                        item?._id,
                                         1
                                       )
                                       : await setShowOnMarketplace(
-                                        item._id,
+                                        item?._id,
                                         0
                                       );
                                   }}
@@ -817,20 +820,20 @@ function CreateCollection(props) {
                                   onClick={async () => {
                                     setIsEdit1(true);
                                     setIsEdit2(true);
-                                    setSelectedCollectionId(item._id);
+                                    setSelectedCollectionId(item?._id);
                                     setIsEditModal("active");
-                                    handleEditCollection(item._id);
+                                    handleEditCollection(item?._id);
                                   }}
                                 >
                                   Edit
                                 </button>
                                 <button
-                                  className={`btn p-1 exclusive-btn ${!item.isExclusive ? "active" : ""
+                                  className={`btn p-1 exclusive-btn ${!item?.isExclusive ? "active" : ""
                                     }`}
                                   type="button"
                                   onClick={() =>
                                     handleCollection(
-                                      item._id,
+                                      item?._id,
                                       "isExclusive",
                                       !item.isExclusive ? 1 : 0
                                     )
@@ -839,12 +842,12 @@ function CreateCollection(props) {
                                   Exclusive Collection
                                 </button>
                                 <button
-                                  className={`btn p-1  hot-btn ${!item.isHotCollection ? "active" : ""
+                                  className={`btn p-1  hot-btn ${!item?.isHotCollection ? "active" : ""
                                     }`}
                                   type="button"
                                   onClick={() =>
                                     handleCollection(
-                                      item._id,
+                                      item?._id,
                                       "isHotCollection",
                                       !item.isHotCollection ? 1 : 0
                                     )
@@ -856,36 +859,36 @@ function CreateCollection(props) {
                             )}
                           </td>
                           <td>
-                            {item.name
+                            {item?.name
                               ? item.name?.length > 8
                                 ? item.name?.slice(0, 8) + "..."
-                                : item.name
+                                : item?.name
                               : "-"}
                           </td>
-                          <td>{item.symbol ? item.symbol : "-"}</td>
+                          <td>{item?.symbol ? item?.symbol : "-"}</td>
                           <td>
-                            {item.description
-                              ? item.description?.length > 15
-                                ? item.description?.slice(0, 15) + "..."
-                                : item.description
+                            {item?.description
+                              ? item?.description?.length > 15
+                                ? item?.description?.slice(0, 15) + "..."
+                                : item?.description
                               : "-"}
                           </td>
 
-                          <td>{item.totalSupply ? item.totalSupply : "0"}</td>
+                          <td>{item?.totalSupply ? item?.totalSupply : "0"}</td>
                           <td>
-                            {item.price.$numberDecimal
+                            {item?.price?.$numberDecimal
                               ? Number(
-                                convertToEth(item.price.$numberDecimal)
+                                convertToEth(item?.price?.$numberDecimal)
                               ).toFixed(4)
                               : "-"}
                           </td>
                           <td>
-                            {item.categoryID?.name
-                              ? item.categoryID?.name
+                            {item?.categoryID?.name
+                              ? item?.categoryID?.name
                               : "-"}
                           </td>
                           <td>
-                            {item.brandID?.name ? item.brandID?.name : "-"}
+                            {item?.brandID?.name ? item?.brandID?.name : "-"}
                           </td>
                         </tr>
                         <br></br>
