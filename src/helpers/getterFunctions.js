@@ -26,11 +26,11 @@ import contracts from "../config/contracts";
 import erc20Abi from "./../config/abis/erc20.json";
 import erc721Abi from "./../config/abis/simpleERC721.json";
 import erc1155Abi from "./../config/abis/simpleERC1155.json";
-import Avatar from "./../assets/images/avatar5.jpg";
+
 // import { fetchBidNft } from "../apiServices";
 // import { GENERAL_DATE, GENERAL_TIMESTAMP } from "./constants";
 import NotificationManager from "react-notifications/lib/NotificationManager";
-import { onboard } from "../components/menu/header";
+
 
 // const ipfsAPI = require("ipfs-api");
 // const ipfs = ipfsAPI("ipfs.infura.io", "5001", {

@@ -143,6 +143,7 @@ const Navbar = (props) => {
   }, [account, cookies.da_selected_account])
 
   const init = async () => {
+    console.log("init")
     if (cookies["da_selected_account"]) {
       setAccount(cookies["da_selected_account"]);
       const s = await onboard.connectWallet({
@@ -192,12 +193,12 @@ const Navbar = (props) => {
         const siteUrl = process.env.REACT_APP_SITE_URL;
         let nonce = "";
         await web3.eth.getTransactionCount(address).then(async (result) => {
-            console.log("encryptedData", result)
-            nonce =  CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
-            console.log("encryptedData", nonce)
+          console.log("encryptedData", result)
+          nonce = CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
+          console.log("encryptedData", nonce)
         })
         const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
-        
+
         console.log(web3.utils.fromUtf8(message));
 
         web3.eth.currentProvider.sendAsync({
@@ -287,13 +288,14 @@ const Navbar = (props) => {
     await Logout(cookies["da_selected_account"]);
     window.sessionStorage.removeItem("role");
     refreshState();
+    window.location.href = "/"
     // NotificationManager.success("User Logged out Successfully", "", 800);
-    slowRefresh(1000);
+    // slowRefresh(1000);
   };
 
 
 
-  if ((!account && !isSuperAdmin()) || isBlocked) {
+  if ((!cookies.da_selected_account && !isSuperAdmin()) || isBlocked) {
     return <LandingPage connectWallet={connectWallet} />
   }
 

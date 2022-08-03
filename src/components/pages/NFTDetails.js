@@ -126,8 +126,11 @@ function NFTDetails() {
   }
 
   useEffect(() => {
+
     async function setUser() {
-      if (cookies.selected_account) setCurrentUser(cookies.selected_account);
+      if (cookies.selected_account) {
+        setCurrentUser(cookies.selected_account);
+      }
 
     }
     setUser();
@@ -265,6 +268,10 @@ function NFTDetails() {
   }, [id, reloadContent, currentUser]);
 
   const PutMarketplace = async () => {
+    if (currentUser === undefined || currentUser === "") {
+      setShowAlert("notConnected");
+      return;
+    }
     const wCheck = WalletConditions();
     setWalletVariable(wCheck)
     if (wCheck.isLocked) {
@@ -357,7 +364,10 @@ function NFTDetails() {
   };
 
   const PlaceOffer = async () => {
-
+    if (currentUser === undefined || currentUser === "") {
+      setShowAlert("notConnected");
+      return;
+    }
     const wCheck = WalletConditions();
     setWalletVariable(wCheck)
 
@@ -630,7 +640,10 @@ function NFTDetails() {
           <button
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
-
+              if (currentUser === undefined || currentUser === "") {
+                setShowAlert("notConnected");
+                return;
+              }
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
 
@@ -790,6 +803,10 @@ function NFTDetails() {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
               setIsBuyNowModal(false);
+              if (currentUser === undefined || currentUser === "") {
+                setShowAlert("notConnected");
+                return;
+              }
               const wCheck = WalletConditions();
               setWalletVariable(wCheck)
 
@@ -919,9 +936,34 @@ function NFTDetails() {
               className='btn-main mt-2' onClick={() => {
                 evt.emit("disconnectWallet")
               }}>
-              Connect Wallet
+              Disconnect Wallet
             </button>
-          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
+          </div>} handleClose={() => { setShowAlert(!showAlert) }} /> :
+            showAlert === "notConnected" ? <PopupModal content={<div className='popup-content1'>
+              <div className='bid_user_details my-4'>
+                <img src={Logo} alt='' />
+                {/* <div className='bid_user_address align-items-center'>
+                <div>
+                  <span className="adr text-muted">
+                    {walletVariable.sAccount}
+                  </span>
+                  <span className='badge badge-success'>Connected</span>
+                </div>
+              </div> */}
+                <h4 className="mb-3">Please connect your wallet. </h4>
+              </div>
+              <button
+                className='btn-main mt-2' onClick={() => {
+                  setShowAlert("")
+                  setIsMakeOffer(false);
+                  setIsPlaceBidModal(false);
+                  setIsBuyNowModal(false);
+                  setIsModal("");
+                  evt.emit("connectWallet")
+                }}>
+                Connect Wallet
+              </button>
+            </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
 
 
       {loading ? <Spinner /> : ""}
@@ -1099,7 +1141,10 @@ function NFTDetails() {
                       className="title_color buy_now"
                       data-bs-toggle="modal"
                       onClick={async () => {
-                        console.log("orders[0]", orders[0], orders);
+                        if (currentUser === undefined || currentUser === "") {
+                          setShowAlert("notConnected");
+                          return;
+                        }
                         const wCheck = WalletConditions();
                         setWalletVariable(wCheck)
 
@@ -1155,7 +1200,34 @@ function NFTDetails() {
                       type='button'
 
                       className='title_color buy_now'
-                      onClick={() => setIsModal("active")}
+                      onClick={() => 
+                        
+                        {
+                          if (currentUser === undefined || currentUser === "") {
+                            setShowAlert("notConnected");
+                            return;
+                          }
+                      
+                          const wCheck = WalletConditions();
+                          setWalletVariable(wCheck)
+                      
+                          if (wCheck.isLocked) {
+                            setShowAlert("locked");
+                            return;
+                          }
+                      
+                          if (!wCheck.isLocked) {
+                            if (!wCheck.cCheck) {
+                              setShowAlert("chainId");
+                              return;
+                            }
+                            if (!wCheck.aCheck) {
+                              setShowAlert("account")
+                              return;
+                            }
+                          }
+                      
+                          setIsModal("active")}}
                     >
                       Put On Marketplace
 
@@ -1168,6 +1240,30 @@ function NFTDetails() {
                       type='button'
                       className='title_color buy_now'
                       onClick={() => {
+                        if (currentUser === undefined || currentUser === "") {
+                          setShowAlert("notConnected");
+                          return;
+                        }
+                    
+                        const wCheck = WalletConditions();
+                        setWalletVariable(wCheck)
+                    
+                        if (wCheck.isLocked) {
+                          setShowAlert("locked");
+                          return;
+                        }
+                    
+                        if (!wCheck.isLocked) {
+                          if (!wCheck.cCheck) {
+                            setShowAlert("chainId");
+                            return;
+                          }
+                          if (!wCheck.aCheck) {
+                            setShowAlert("account")
+                            return;
+                          }
+                        }
+                    
                         setIsBuyNowModal(true);
                       }}>
                       Buy Now
@@ -1179,6 +1275,30 @@ function NFTDetails() {
                       }
                       className='title_color buy_now'
                       onClick={() => {
+                        if (currentUser === undefined || currentUser === "") {
+                          setShowAlert("notConnected");
+                          return;
+                        }
+                    
+                        const wCheck = WalletConditions();
+                        setWalletVariable(wCheck)
+                    
+                        if (wCheck.isLocked) {
+                          setShowAlert("locked");
+                          return;
+                        }
+                    
+                        if (!wCheck.isLocked) {
+                          if (!wCheck.cCheck) {
+                            setShowAlert("chainId");
+                            return;
+                          }
+                          if (!wCheck.aCheck) {
+                            setShowAlert("account")
+                            return;
+                          }
+                        }
+                    
                         setIsPlaceBidModal(true);
                       }}
                     >
@@ -1199,6 +1319,30 @@ function NFTDetails() {
                         type='button'
                         className='title_color buy_now'
                         onClick={() => {
+                          if (currentUser === undefined || currentUser === "") {
+                            setShowAlert("notConnected");
+                            return;
+                          }
+                      
+                          const wCheck = WalletConditions();
+                          setWalletVariable(wCheck)
+                      
+                          if (wCheck.isLocked) {
+                            setShowAlert("locked");
+                            return;
+                          }
+                      
+                          if (!wCheck.isLocked) {
+                            if (!wCheck.cCheck) {
+                              setShowAlert("chainId");
+                              return;
+                            }
+                            if (!wCheck.aCheck) {
+                              setShowAlert("account")
+                              return;
+                            }
+                          }
+                      
                           setIsBuyNowModal(true);
                         }}>
                         Buy Now
@@ -1210,6 +1354,30 @@ function NFTDetails() {
                         }
                         className='title_color buy_now'
                         onClick={() => {
+                          if (currentUser === undefined || currentUser === "") {
+                            setShowAlert("notConnected");
+                            return;
+                          }
+                      
+                          const wCheck = WalletConditions();
+                          setWalletVariable(wCheck)
+                      
+                          if (wCheck.isLocked) {
+                            setShowAlert("locked");
+                            return;
+                          }
+                      
+                          if (!wCheck.isLocked) {
+                            if (!wCheck.cCheck) {
+                              setShowAlert("chainId");
+                              return;
+                            }
+                            if (!wCheck.aCheck) {
+                              setShowAlert("account")
+                              return;
+                            }
+                          }
+                      
                           setIsPlaceBidModal(true);
                         }}
                       >
@@ -1227,9 +1395,36 @@ function NFTDetails() {
                   <button
                     type="button"
                     className="border_btn title_color"
-                    onClick={() => setIsMakeOffer("active")}
+                    onClick={() => 
+                    {  if (currentUser === undefined || currentUser === "") {
+                        setShowAlert("notConnected");
+                        return;
+                      }
+                  
+                      const wCheck = WalletConditions();
+                      setWalletVariable(wCheck)
+                  
+                      if (wCheck.isLocked) {
+                        setShowAlert("locked");
+                        return;
+                      }
+                  
+                      if (!wCheck.isLocked) {
+                        if (!wCheck.cCheck) {
+                          setShowAlert("chainId");
+                          return;
+                        }
+                        if (!wCheck.aCheck) {
+                          setShowAlert("account")
+                          return;
+                        }
+                      }
+                  
+                      setIsMakeOffer("active")}
+                    
+                    }
                   >
-                    {haveOffer ? "Update Offer" : "Make Offers"}
+                    {haveOffer && haveOffer !== "none" ? "Update Offer" : "Make Offers"}
                   </button>
                 ) : (
                   ""
@@ -1239,7 +1434,34 @@ function NFTDetails() {
                   <button
                     type="button"
                     className="border_btn title_color"
-                    onClick={() => setIsMakeOffer("active")}
+                    onClick={() => 
+                      {if (currentUser === undefined || currentUser === "") {
+                        setShowAlert("notConnected");
+                        return;
+                      }
+                  
+                      const wCheck = WalletConditions();
+                      setWalletVariable(wCheck)
+                  
+                      if (wCheck.isLocked) {
+                        setShowAlert("locked");
+                        return;
+                      }
+                  
+                      if (!wCheck.isLocked) {
+                        if (!wCheck.cCheck) {
+                          setShowAlert("chainId");
+                          return;
+                        }
+                        if (!wCheck.aCheck) {
+                          setShowAlert("account")
+                          return;
+                        }
+                      }
+                  
+                      setIsMakeOffer("active")
+                    }
+                    }
                   >
                     Make Offers
                   </button>
@@ -1654,7 +1876,32 @@ function NFTDetails() {
                     className='square_yello'
                     data-bs-dismiss="modal"
                     href='/mintcollectionlive'
-                    onClick={PutMarketplace}>
+                    onClick={() => {
+                      if (currentUser === undefined || currentUser === "") {
+                        setShowAlert("notConnected");
+                        return;
+                      }
+                  
+                      const wCheck = WalletConditions();
+                      setWalletVariable(wCheck)
+                  
+                      if (wCheck.isLocked) {
+                        setShowAlert("locked");
+                        return;
+                      }
+                  
+                      if (!wCheck.isLocked) {
+                        if (!wCheck.cCheck) {
+                          setShowAlert("chainId");
+                          return;
+                        }
+                        if (!wCheck.aCheck) {
+                          setShowAlert("account")
+                          return;
+                        }
+                      }
+                  
+                      PutMarketplace() }}>
                     Put On Marketplace
                   </button>
                 </div>

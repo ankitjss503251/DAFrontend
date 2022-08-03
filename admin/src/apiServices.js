@@ -411,7 +411,7 @@ export const createNft = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    console.log("create nft datass in api servive 414---->",datas.data);
+    console.log("create nft datass in api servive 414---->", datas.data);
 
     return datas.data;
   } catch (err) {
@@ -734,7 +734,8 @@ export const adminLogin = ({ username, password }) => {
 };
 export function logoutSuperAdmin() {
   deleteIsAdmin();
-  window.location.reload()
+  window.location.href = "/sadmin"
+  // window.location.reload()
 }
 export const adminUsers = (page) => {
   let limit = 12;
