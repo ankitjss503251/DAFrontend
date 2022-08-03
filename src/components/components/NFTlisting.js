@@ -48,10 +48,10 @@ function NFTlisting(props) {
   }, [cookies.selected_account]);
 
   useEffect(() => {
-    console.log("props.reloadContent", props.reloadContent);
+    console.log("props.reloadContent", props.refreshState);
     if (props.id)
       fetch();
-  }, [props.id, props.reloadContent]);
+  }, [props.id, props.refreshState]);
 
   const fetch = async () => {
     if (props.id) {

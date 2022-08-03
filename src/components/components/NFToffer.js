@@ -419,8 +419,10 @@ function NFToffer(props) {
                                 Reject
                               </button>
                             </div>
+
                           ) : bidOwner !== currentUser.toLowerCase() &&
-                            bidder === currentUser.toLowerCase() ? (
+                            bidder === currentUser.toLowerCase() && b.bidStatus === "MakeOffer" ? (
+
                             <div
                               className={`d-${b.bidStatus === "Accepted" ? "none" : "flex"
                                 } justify-content-center align-items-center`}
@@ -487,16 +489,7 @@ function NFToffer(props) {
                                 Cancel
                               </button>
                             </div>
-                          ) : bidder === currentUser.toLowerCase() ? (
-                            <button
-                              to={"/"}
-                              className="small_yellow_btn small_btn mr-3"
-                            >
-                              Update Offer
-                            </button>
-                          ) : (
-                            ""
-                          )}
+                          ) : ""}
                         </td>
                       </tr>
                     );

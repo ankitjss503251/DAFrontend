@@ -56,7 +56,7 @@ function NFTBids(props) {
       }
     };
     fetch();
-  }, [props.id, reloadContent, props.reloadContent]);
+  }, [props.id, reloadContent, props.refreshState]);
 
   useEffect(() => {
     var body = document.body;
@@ -246,7 +246,6 @@ function NFTBids(props) {
                   );
                   setLoading(false);
                   // slowRefresh(1000);
-                  setReloadContent(!reloadContent);
                 }
                 else {
                   setLoading(false);
@@ -422,7 +421,7 @@ function NFTBids(props) {
                               : "Active"}
                           </td>
                           <td className="text-center">
-                            {bidOwner === currentUser?.toLowerCase() ? (
+                            {bidOwner === currentUser?.toLowerCase() && b.bidStatus === "Bid" ? (
                               <div className="d-flex flex-column justify-content-center align-items-center">
                                 <button
                                   to={"/"}
@@ -517,7 +516,6 @@ function NFTBids(props) {
                                       createdBy: localStorage.getItem("userId"),
                                     };
                                     await InsertHistory(historyReqData);
-                                    await props.refreshState()
 
                                     setReloadContent(!reloadContent);
                                     await props.refreshState()
@@ -527,7 +525,7 @@ function NFTBids(props) {
                                 </button>
                               </div>
                             ) : bidOwner !== currentUser?.toLowerCase() &&
-                              bidder === currentUser?.toLowerCase() ? (
+                              bidder === currentUser?.toLowerCase() && b.bidStatus === "Bid" ? (
                               <div className="d-flex flex-column justify-content-center align-items-center ">
                                 <button
                                   disabled={
