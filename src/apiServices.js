@@ -683,6 +683,7 @@ export const createOfferNFT = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
+    
     return datas.data;
   } catch (err) {
     return err;
@@ -755,6 +756,9 @@ export const acceptBid = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
+    if (datas.statusCode === 401) {
+      console.log("Token expired")
+    }
     return datas.data;
   } catch (err) {
     return err;
