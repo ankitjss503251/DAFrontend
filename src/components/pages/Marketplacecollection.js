@@ -96,9 +96,10 @@ function Marketplacecollection() {
 
   const handleCategoryChange = async (category) => {
     setLoader(true);
-
+    let temp2 = [];
+   console.log("category change before", temp2, activeCat)
     try {
-      let temp2 = activeCat;
+      
       const reqBody = {
         page: currPage,
         limit: 12,
@@ -110,7 +111,6 @@ function Marketplacecollection() {
       if (ind.length > 0) {
         setLoadMoreDisabled("");
         temp2 = [...temp2, ind];
-        // temp2 = [ind]
         setActiveCat(temp2);
       }
       if (ind?.length <= 0 && activeCat) {
@@ -118,6 +118,7 @@ function Marketplacecollection() {
         setLoadMoreDisabled("disabled");
         return;
       }
+      console.log("category change after", temp2, activeCat)
     } catch (e) {
       console.log("Error", e);
     }

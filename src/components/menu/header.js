@@ -25,6 +25,7 @@ import { getCategory } from "./../../helpers/getterFunctions";
 import defaultProfile from "../../assets/images/favicon.png";
 import menuIcon from "../../assets/menu.png";
 import evt from "./../../events/events";
+import { CheckIfBlocked } from "../../apiServices";
 
 const Web3 = require('web3');
 // web3 lib instance
@@ -113,6 +114,7 @@ const Header = function () {
   const [searchedText, setShowSearchedText] = useState("");
   const [catg, setCatg] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
     async function setCategory() {
@@ -137,6 +139,8 @@ const Header = function () {
     }
     setCookies();
   }, []);
+
+ 
 
   const refreshState = () => {
     removeCookie("selected_account", { path: "/" });
@@ -202,7 +206,17 @@ const Header = function () {
   };
 
   const userAuth = async (primaryWallet, address, signature, message) => {
+  
+     try{
+      let res = await CheckIfBlocked({ "walletAddress": address })
+      
+     }catch(e){
+      console.log(e)
+     }
+   
     try {
+      let res = await CheckIfBlocked({ "walletAddress": address })
+      if(!res){
       const isUserExist = await checkuseraddress(address);
       if (isUserExist === "User not found") {
         try {
@@ -264,6 +278,11 @@ const Header = function () {
           return;
         }
       }
+    }
+    else{
+      NotificationManager.error("User is Blocked","",800);
+      return;
+    }
     } catch (e) {
       console.log(e);
     }

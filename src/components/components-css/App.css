@@ -5516,7 +5516,7 @@ display: none;
 }
 
 .form-control:disabled {
-  /* background-color: #e9ecef; */
+  background-color: none !important;
   opacity: 0.7;
   cursor: not-allowed;
 }
