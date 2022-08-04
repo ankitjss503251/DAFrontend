@@ -74,7 +74,7 @@ function NFTBids(props) {
     <PopupModal
       content={
         <div className="popup-content1">
-          <h3 className="modal_heading ">Complete Checkout</h3>
+          <h3 className="modal_heading ">Checkout</h3>
           <div className="bid_user_details my-4">
             <img src={Logo} alt="" />
 
@@ -267,15 +267,18 @@ function NFTBids(props) {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-
             <div >
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {cookies.chain_id}
+                {process.env.REACT_APP_NETWORK_ID}
               </span>
-
             </div>
-
+            <div >
+              <div className="mr-3">Required Network Name:</div>
+              <span className="adr">
+                {process.env.REACT_APP_NETWORK}
+              </span>
+            </div>
           </div>
         </div>
         <button
@@ -376,6 +379,7 @@ function NFTBids(props) {
                 <tbody>
                   {bids && bids.length > 0
                     ? bids.map((b, i) => {
+                      console.log("bb",b)
                       const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                       const bidder =
                         b?.bidderID?.walletAddress?.toLowerCase();
@@ -419,10 +423,16 @@ function NFTBids(props) {
                             ? "Auction"
                             : "Open for Bids"}</td>
                           <td>
-                            {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format() ? <Clock
-                              deadline={moment.utc(b.bidDeadline * 1000).local().format()} fetch={fetch}></Clock> : " --:--:--"}
-
-
+                            {/* {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format() ? <Clock
+                              deadline={moment.utc(b.bidDeadline * 1000).local().format()} fetch={fetch}></Clock> : "00:00:00"} */}
+                              {moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format() || b.bidDeadline === GENERAL_TIMESTAMP ? (
+                              "00:00:00"
+                            ) : (
+                              <Clock
+                                deadline={moment.utc(b.bidDeadline * 1000).local().format()}
+                                // fetch={fetch}
+                              ></Clock>
+                            )}
                           </td>
                           <td className={moment.utc(b.bidDeadline * 1000).local().format() < moment(new Date()).format()
                             ? "red_text"

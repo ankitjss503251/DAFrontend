@@ -94,7 +94,7 @@ function NFTlisting(props) {
     <PopupModal
       content={
         <div className='popup-content1'>
-          <h3 className='modal_heading '>Complete Checkout</h3>
+          <h3 className='modal_heading '>Checkout</h3>
           <div className='bid_user_details my-4'>
             <img src={Logo} alt='' />
             <div className='bid_user_address'>
@@ -258,7 +258,7 @@ function NFTlisting(props) {
     <PopupModal
       content={
         <div className='popup-content1'>
-          <h3 className='modal_heading '>Complete Checkout</h3>
+          <h3 className='modal_heading '>Checkout</h3>
           <div className='bid_user_details my-4'>
             <img src={Logo} alt='' />
             <div className='bid_user_address'>
@@ -377,15 +377,18 @@ function NFTlisting(props) {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-
             <div >
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {cookies.chain_id}
+                {process.env.REACT_APP_NETWORK_ID}
               </span>
-
             </div>
-
+            <div >
+              <div className="mr-3">Required Network Name:</div>
+              <span className="adr">
+                {process.env.REACT_APP_NETWORK}
+              </span>
+            </div>
           </div>
         </div>
         <button

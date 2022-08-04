@@ -180,7 +180,6 @@ const Header = function () {
   }, [account, userDetails]);
 
   const connectWallet = async () => {
-    console.log("11");
     try {
       const wallets = await onboard.connectWallet();
       if (wallets.length !== 0) {
@@ -478,7 +477,6 @@ const Header = function () {
                       );
                     })
                     : ""} */}
-                  {console.log("commenting")}
                 </ul>
               </li>
               <li className="nav-item">

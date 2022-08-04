@@ -294,7 +294,15 @@ const Navbar = (props) => {
     // slowRefresh(1000);
   };
 
-
+  evt.setMaxListeners(1)
+  evt.removeAllListeners("disconnectWallet");
+  evt.on("disconnectWallet", () => {
+    disconnectWallet()
+  });
+  evt.removeAllListeners("connectWallet");
+  evt.on("connectWallet", () => {
+    connectWallet()
+  });
 
   if ((!cookies.da_selected_account && !isSuperAdmin()) || isBlocked) {
     return <LandingPage connectWallet={connectWallet} />

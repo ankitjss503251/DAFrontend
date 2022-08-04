@@ -527,7 +527,7 @@ function NFTDetails() {
     <PopupModal
       content={
         <div className='popup-content1'>
-          <h3 className='modal_heading '>Complete Checkout</h3>
+          <h3 className='modal_heading '>Checkout</h3>
           <div className='bid_user_details my-4'>
             <img src={Logo} alt='' />
 
@@ -543,8 +543,10 @@ function NFTDetails() {
               <span className='pgn'>Polygon</span>
             </div>
           </div>
-          <h6 className='enter_quantity_heading required'>
-            Please Enter the Bid Quantity
+          <h6 className="enter_quantity_heading required">
+            {firstOrderNFT?.type === 1
+              ? "Quantity"
+              : "Please Enter the Quantity"}
           </h6>
           <input
             className="form-control checkout_input"
@@ -690,7 +692,7 @@ function NFTDetails() {
     <PopupModal
       content={
         <div className='popup-content1'>
-          <h3 className='modal_heading '>Complete Checkout</h3>
+          <h3 className='modal_heading '>Checkout</h3>
           <div className='bid_user_details my-4'>
             <img src={Logo} alt='' />
             <div className='bid_user_address'>
@@ -807,15 +809,18 @@ function NFTDetails() {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-
             <div >
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {cookies.chain_id}
+                {process.env.REACT_APP_NETWORK_ID}
               </span>
-
             </div>
-
+            <div >
+              <div className="mr-3">Required Network Name:</div>
+              <span className="adr">
+                {process.env.REACT_APP_NETWORK}
+              </span>
+            </div>
           </div>
         </div>
         <button
@@ -1047,7 +1052,7 @@ function NFTDetails() {
               <div className="price_box">
                 {orders?.length > 0 && orders !== "none" ? (
                   <>
-                    <h4>Price</h4>
+                    <h4>{orders[0]?.salesType === 0 ? "Fixed Price" : "Minimum Bid Price"}</h4>
                     <div className='price_div'>
                       <img
                         src={Tokens[orders[0].paymentToken]?.icon}

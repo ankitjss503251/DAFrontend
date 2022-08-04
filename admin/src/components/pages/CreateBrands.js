@@ -100,29 +100,16 @@ function CreateBrands() {
 
   const handleCreateBrand = async () => {
     const wCheck = WalletConditions();
-    setWalletVariable(wCheck)
-
-    if (wCheck.isLocked) {
-      setShowAlert("locked");
+    if (wCheck !== undefined) {
+      setShowAlert(wCheck);
       return;
     }
-
-    if (!wCheck.isLocked) {
-      if (!wCheck.cCheck) {
-        setShowAlert("chainId");
-        return;
-      }
-      if (!wCheck.aCheck) {
-        setShowAlert("account")
-        return;
-      }
-    }
-    setLoading(true);
-    setModal("");
+   
     if (handleValidationCheck() == false) {
-      setLoading(false);
       return;
     } else {
+      setLoading(true);
+      setModal("");
       var fd = new FormData();
       fd.append("name", title);
       fd.append("description", description);
@@ -154,15 +141,18 @@ function CreateBrands() {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-
-            <div className="d-flex">
-              <div className="mr-3">Required Network ID:&nbsp;</div>
+            <div >
+              <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {walletVariable.sChain}
+                {process.env.REACT_APP_NETWORK_ID}
               </span>
-
             </div>
-
+            <div >
+              <div className="mr-3">Required Network Name:</div>
+              <span className="adr">
+                {process.env.REACT_APP_NETWORK}
+              </span>
+            </div>
           </div>
         </div>
         <button
@@ -183,7 +173,7 @@ function CreateBrands() {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {cookies.da_selected_account}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -205,7 +195,7 @@ function CreateBrands() {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {cookies.da_selected_account}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -229,9 +219,15 @@ function CreateBrands() {
             <button
               className="btn btn-admin text-light"
               type="button"
-              data-bs-toggle="modal"
-              data-bs-target="#brandModal"
-              onClick={() => setModal("active")}
+              // data-bs-toggle="modal"
+              // data-bs-target="#brandModal"
+              onClick={() => {
+                const wCheck = WalletConditions();
+                if (wCheck !== undefined) {
+                  setShowAlert(wCheck);
+                  return;
+                }
+                setModal("active")}}
             >
               + Add Brand
             </button>
@@ -273,7 +269,7 @@ function CreateBrands() {
         </div>
       </div>
       <div
-        className={`modal fade createNft ${isModal}`}
+        className={`modal createBrand ${isModal}`}
         id="brandModal"
         tabIndex="-1"
         aria-labelledby="exampleModalLabel"
@@ -291,7 +287,8 @@ function CreateBrands() {
               <button
                 type="button"
                 className="btn-close"
-                data-bs-dismiss="modal"
+                // data-bs-dismiss="modal"
+                onClick={() => setModal("")}
                 aria-label="Close"
               ></button>
             </div>
