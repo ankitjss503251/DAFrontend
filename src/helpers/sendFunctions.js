@@ -866,7 +866,7 @@ export const handleAcceptBids = async (
       sellerOrder[0]
     );
     if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-      NotificationManager.error("Seller don't own that much quantity");
+      NotificationManager.error("Seller don't own this NFT anymore");
       return false;
     }
   }
