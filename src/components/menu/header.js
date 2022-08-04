@@ -182,14 +182,7 @@ const Header = function () {
   const connectWallet = async () => {
     console.log("11");
     try {
-<<<<<<< HEAD
       const wallets = await onboard.connectWallet();
-=======
-
-
-      const wallets = await onboard.connectWallet();
-
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
       if (wallets.length !== 0) {
 
         await onboard.setChain({
@@ -199,36 +192,6 @@ const Header = function () {
         const primaryWallet = wallets[0];
         const address = primaryWallet.accounts[0].address;
 
-<<<<<<< HEAD
-
-        if (web3.eth) {
-          const siteUrl = process.env.REACT_APP_SITE_URL;
-          let nonce = "";
-          await web3.eth.getTransactionCount(address).then(async (result) => {
-            console.log("encryptedData", result)
-            nonce = CryptoJS.AES.encrypt(JSON.stringify(result), 'DASecretKey').toString();
-            console.log("encryptedData", nonce)
-          })
-          const message = `Welcome to Digital Arms!\n\nClick to sign in and accept the Digital Arms Terms of Service: ${siteUrl}/\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\nWallet address:\n${address}\n\nNonce:\n${nonce}`;
-
-          console.log(web3.utils.fromUtf8(message));
-
-          web3.eth.currentProvider.sendAsync({
-            method: 'personal_sign',
-            params: [message, address],
-            from: address,
-          }, async function (err, signature) {
-            if (!err) {
-              console.log("Signature", signature);
-              try {
-                userAuth(primaryWallet, address, signature.result, message);
-              } catch (e) {
-                console.log("Error in user auth", e);
-              }
-            }
-            console.log("Error is", err);
-          })
-=======
         try {
           if (web3.eth) {
             const siteUrl = process.env.REACT_APP_SITE_URL;
@@ -263,16 +226,11 @@ const Header = function () {
         }
         catch (e) {
 
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
         }
       }
     }
     catch (e) {
-<<<<<<< HEAD
-      console.log("ee", e)
-=======
       NotificationManager.error("Please refresh", "", 800);
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
     }
     // try {
     //   userAuth(primaryWallet, address);
@@ -284,76 +242,6 @@ const Header = function () {
 
   const userAuth = async (primaryWallet, address, signature, message) => {
 
-<<<<<<< HEAD
-    try {
-      let res = await CheckIfBlocked({ "walletAddress": address })
-
-    } catch (e) {
-      console.log(e)
-    }
-
-    try {
-      let res = await CheckIfBlocked({ "walletAddress": address })
-      if (!res) {
-        const isUserExist = await checkuseraddress(address);
-        if (isUserExist === "User not found") {
-          try {
-            const res = await Register(address);
-            if (res?.message === "Wallet Address required") {
-              NotificationManager.info(res?.message);
-              return;
-            } else if (res?.message === "User already exists") {
-              NotificationManager.error(res?.message);
-              return;
-            } else {
-              localStorage.setItem("userId", res?.data?.userId);
-              setAccount(primaryWallet.accounts[0].address);
-              setCookie("selected_account", address, { path: "/" });
-              setCookie("label", primaryWallet.label, { path: "/" });
-              setCookie(
-                "chain_id",
-                primaryWallet.chains[0].id,
-                { path: "/" }
-              );
-              getUserProfile();
-              NotificationManager.success(res.message);
-              slowRefresh(1000);
-              return;
-            }
-          } catch (e) {
-            NotificationManager.error(e);
-            return;
-          }
-        } else {
-          try {
-            const res = await Login(address, signature, message);
-            if (res?.message === "Wallet Address required") {
-              NotificationManager.info(res?.message);
-              return;
-            } else if (
-              res?.message === "User not found" ||
-              res?.message === "Login Invalid"
-            ) {
-              NotificationManager.error(res?.message);
-              return;
-            } else {
-              localStorage.setItem("userId", res?.data?.userId);
-              setAccount(primaryWallet.accounts[0]?.address);
-              setCookie("selected_account", address, { path: "/" });
-              setCookie("label", primaryWallet.label, { path: "/" });
-              setCookie(
-                "chain_id",
-                primaryWallet.chains[0]?.id,
-                { path: "/" }
-              );
-              getUserProfile();
-              NotificationManager.success(res?.message, "", 800);
-              slowRefresh(1000);
-              return;
-            }
-          } catch (e) {
-            NotificationManager.error(e);
-=======
 
     try {
       // let res = await CheckIfBlocked({ "walletAddress": address })
@@ -412,23 +300,19 @@ const Header = function () {
             getUserProfile();
             NotificationManager.success(res?.message, "", 800);
             slowRefresh(1000);
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
             return;
           }
         }
+        catch (e) {
+          console.log("e", e)
+          return
+        }
       }
-<<<<<<< HEAD
-      else {
-        NotificationManager.error("User is Blocked", "", 800);
-        return;
-      }
-=======
       // }
       // else {
       //   NotificationManager.error("User is Blocked", "", 800);
       //   return;
       // }
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
     } catch (e) {
       console.log(e);
     }

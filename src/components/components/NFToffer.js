@@ -73,10 +73,10 @@ function NFToffer(props) {
   };
 
   const PlaceOffer = async () => {
-    if (currentUser === undefined || currentUser === "") {
-      setShowAlert("notConnected");
-      return;
-    }
+    // if (currentUser === undefined || currentUser === "") {
+    //   setShowAlert("notConnected");
+    //   return;
+    // }
 
     const wCheck = WalletConditions();
     if (wCheck !== undefined) {
@@ -84,22 +84,6 @@ function NFToffer(props) {
       return;
     }
 
-<<<<<<< HEAD
-    if (!wCheck.isLocked) {
-      if (!wCheck.cCheck) {
-        setShowAlert("chainId");
-        return;
-      }
-      if (!wCheck.aCheck) {
-        setShowAlert("account")
-        return;
-      }
-    }
-
-
-
-=======
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
 
     if (offerPrice === "" || offerPrice === undefined) {
       NotificationManager.error("Enter Offer Price");
@@ -138,7 +122,6 @@ function NFToffer(props) {
       if (res === false) {
         setLoading(false);
         return;
-<<<<<<< HEAD
       }
       else {
         let historyReqData = {
@@ -160,29 +143,6 @@ function NFToffer(props) {
     catch (e) {
       console.log("error", e)
     }
-=======
-      }
-      else {
-        let historyReqData = {
-          nftID: props.NftDetails?.id,
-          buyerID: localStorage.getItem("userId"),
-          action: "Offer",
-          type: "Updated",
-          price: ethers.utils.parseEther(offerPrice.toString()).toString(),
-          paymentToken: contracts[selectedToken],
-          quantity: offerQuantity,
-          createdBy: localStorage.getItem("userId"),
-        }
-        const d = await InsertHistory(historyReqData);
-        setLoading(false);
-        // await fetch()
-        slowRefresh(1000);
-      }
-    }
-    catch (e) {
-      console.log("error", e)
-    }
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
 
   };
 
@@ -465,37 +425,11 @@ function NFToffer(props) {
                                 // data-bs-toggle="modal"
                                 // data-bs-target="#brandModal"
                                 onClick={() => {
-<<<<<<< HEAD
-                                  if (currentUser === undefined || currentUser === "") {
-                                    setShowAlert("notConnected");
-                                    return;
-                                  }
-
-                                  const wCheck = WalletConditions();
-                                  setWalletVariable(wCheck)
-
-                                  if (wCheck.isLocked) {
-                                    setShowAlert("locked");
-                                    return;
-                                  }
-
-                                  if (!wCheck.isLocked) {
-                                    if (!wCheck.cCheck) {
-                                      setShowAlert("chainId");
-                                      return;
-                                    }
-                                    if (!wCheck.aCheck) {
-                                      setShowAlert("account")
-                                      return;
-                                    }
-                                  }
-=======
                                   const wCheck = WalletConditions();
                                   if (wCheck !== undefined) {
                                     setShowAlert(wCheck);
                                     return;
                                   }
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
                                   setModal("active");
                                   setOfferPrice(
                                     convertToEth(b?.bidPrice?.$numberDecimal)
@@ -519,20 +453,6 @@ function NFToffer(props) {
                                     setShowAlert(wCheck);
                                     return;
                                   }
-<<<<<<< HEAD
-
-                                  if (!wCheck.isLocked) {
-                                    if (!wCheck.cCheck) {
-                                      setShowAlert("chainId");
-                                      return;
-                                    }
-                                    if (!wCheck.aCheck) {
-                                      setShowAlert("account")
-                                      return;
-                                    }
-                                  }
-=======
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
                                   await handleUpdateBidStatus(
                                     b._id,
                                     "Cancelled"

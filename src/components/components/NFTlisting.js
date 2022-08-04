@@ -173,15 +173,6 @@ function NFTlisting(props) {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
 
-<<<<<<< HEAD
-
-              if (currentUser === undefined || currentUser === "") {
-                setShowAlert("notConnected");
-                return;
-              }
-
-=======
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
               const wCheck = WalletConditions();
               if (wCheck !== undefined) {
                 setShowAlert(wCheck);
@@ -194,16 +185,6 @@ function NFTlisting(props) {
                 setIsPlaceBidModal(true);
                 return;
               }
-<<<<<<< HEAD
-
-              const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
-              if ((bal / 10 ** 18) <= Number(price)) {
-                NotificationManager.error("Insufficient Balance", "", 800);
-                setIsPlaceBidModal(true);
-                return;
-              }
-=======
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
               if (
                 Number(price) <
                 Number(convertToEth(currentOrder.price?.$numberDecimal))
@@ -574,7 +555,6 @@ function NFTlisting(props) {
                                   to={"/"}
                                   className="small_yellow_btn small_btn mr-3"
                                   onClick={async () => {
-                                    console.log("order details", o)
                                     const wCheck = WalletConditions();
                                     if (wCheck !== undefined) {
                                       setShowAlert(wCheck);
@@ -610,17 +590,6 @@ function NFTlisting(props) {
                                     }
                                     className="small_border_btn small_btn"
                                     onClick={async () => {
-<<<<<<< HEAD
-
-                                      if (currentUser === undefined || currentUser === "") {
-                                        setShowAlert("notConnected");
-                                        return;
-                                      }
-
-                                      const wCheck = WalletConditions();
-                                      setWalletVariable(wCheck)
-=======
->>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
 
                                       const wCheck = WalletConditions();
                                       if (wCheck !== undefined) {
