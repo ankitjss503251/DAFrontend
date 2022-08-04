@@ -173,29 +173,19 @@ function NFTlisting(props) {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
 
+<<<<<<< HEAD
 
               if (currentUser === undefined || currentUser === "") {
                 setShowAlert("notConnected");
                 return;
               }
 
+=======
+>>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
               const wCheck = WalletConditions();
-              setWalletVariable(wCheck)
-
-              if (wCheck.isLocked) {
-                setShowAlert("locked");
+              if (wCheck !== undefined) {
+                setShowAlert(wCheck);
                 return;
-              }
-
-              if (!wCheck.isLocked) {
-                if (!wCheck.cCheck) {
-                  setShowAlert("chainId");
-                  return;
-                }
-                if (!wCheck.aCheck) {
-                  setShowAlert("account")
-                  return;
-                }
               }
 
               const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
@@ -204,6 +194,16 @@ function NFTlisting(props) {
                 setIsPlaceBidModal(true);
                 return;
               }
+<<<<<<< HEAD
+
+              const bal = await getUsersTokenBalance(currentUser, contracts.BUSD);
+              if ((bal / 10 ** 18) <= Number(price)) {
+                NotificationManager.error("Insufficient Balance", "", 800);
+                setIsPlaceBidModal(true);
+                return;
+              }
+=======
+>>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
               if (
                 Number(price) <
                 Number(convertToEth(currentOrder.price?.$numberDecimal))
@@ -333,22 +333,9 @@ function NFTlisting(props) {
             onClick={async () => {
               setIsBuyNowModal(false);
               const wCheck = WalletConditions();
-              setWalletVariable(wCheck)
-
-              if (wCheck.isLocked) {
-                setShowAlert("locked");
+              if (wCheck !== undefined) {
+                setShowAlert(wCheck);
                 return;
-              }
-
-              if (!wCheck.isLocked) {
-                if (!wCheck.cCheck) {
-                  setShowAlert("chainId");
-                  return;
-                }
-                if (!wCheck.aCheck) {
-                  setShowAlert("account")
-                  return;
-                }
               }
               setLoading(true);
               try {
@@ -417,7 +404,7 @@ function NFTlisting(props) {
             <div >
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {walletVariable.sChain}
+                {cookies.chain_id}
               </span>
 
             </div>
@@ -442,7 +429,7 @@ function NFTlisting(props) {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {currentUser}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -461,7 +448,7 @@ function NFTlisting(props) {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {currentUser}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -568,6 +555,7 @@ function NFTlisting(props) {
 
                               <Clock
                                 deadline={moment.utc(o.deadline * 1000).local().format()}
+                                fetch={fetch}
                               ></Clock>
                             )}
                           </td>
@@ -588,22 +576,9 @@ function NFTlisting(props) {
                                   onClick={async () => {
                                     console.log("order details", o)
                                     const wCheck = WalletConditions();
-                                    setWalletVariable(wCheck)
-
-                                    if (wCheck.isLocked) {
-                                      setShowAlert("locked");
+                                    if (wCheck !== undefined) {
+                                      setShowAlert(wCheck);
                                       return;
-                                    }
-
-                                    if (!wCheck.isLocked) {
-                                      if (!wCheck.cCheck) {
-                                        setShowAlert("chainId");
-                                        return;
-                                      }
-                                      if (!wCheck.aCheck) {
-                                        setShowAlert("account")
-                                        return;
-                                      }
                                     }
                                     setLoading(true);
                                     await handleRemoveFromSale(o._id, currentUser);
@@ -635,6 +610,7 @@ function NFTlisting(props) {
                                     }
                                     className="small_border_btn small_btn"
                                     onClick={async () => {
+<<<<<<< HEAD
 
                                       if (currentUser === undefined || currentUser === "") {
                                         setShowAlert("notConnected");
@@ -643,21 +619,13 @@ function NFTlisting(props) {
 
                                       const wCheck = WalletConditions();
                                       setWalletVariable(wCheck)
+=======
+>>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
 
-                                      if (wCheck.isLocked) {
-                                        setShowAlert("locked");
+                                      const wCheck = WalletConditions();
+                                      if (wCheck !== undefined) {
+                                        setShowAlert(wCheck);
                                         return;
-                                      }
-
-                                      if (!wCheck.isLocked) {
-                                        if (!wCheck.cCheck) {
-                                          setShowAlert("chainId");
-                                          return;
-                                        }
-                                        if (!wCheck.aCheck) {
-                                          setShowAlert("account")
-                                          return;
-                                        }
                                       }
                                       if (
                                         moment.utc(o?.deadline * 1000).local().format() < moment(new Date()).format()
