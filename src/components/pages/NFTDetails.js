@@ -107,12 +107,11 @@ function NFTDetails() {
   const [ownedBy, setOwnedBy] = useState("");
   const [modalImage, setModalImge] = useState("")
   const [showAlert, setShowAlert] = useState("");
-  const [walletVariable, setWalletVariable] = useState({});
   const [reloadContent, setReloadContent] = useState(false);
   const [isMakeOffer, setIsMakeOffer] = useState(false);
 
   const refreshVariables = () => {
-    setQty("");
+    setQty(1);
     setPrice("");
     setOfferPrice(0);
     setOfferQuantity(1);
@@ -771,7 +770,7 @@ function NFTDetails() {
                 firstOrderNFT?.collectionAddress?.toLowerCase()
               );
 
-              if (res !== false) {
+              if (res === false) {
                 let historyReqData = {
                   nftID: NFTDetails.id,
                   buyerID: localStorage.getItem('userId'),

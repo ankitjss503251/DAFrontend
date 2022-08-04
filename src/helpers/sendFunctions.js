@@ -328,7 +328,10 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
+<<<<<<< HEAD
+=======
   return true
+>>>>>>> 1cb852a8c860212de8ee431de79f8b8c5776a86b
   // slowRefresh(1000);
 };
 
