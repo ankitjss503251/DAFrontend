@@ -55,21 +55,24 @@ function NFToffer(props) {
   }, [props.id, props.reloadContent]);
 
   const fetch = async () => {
-    let searchParams = {
-      nftID: props.id,
-      buyerID: "All",
-      bidStatus: "All",
-      //orderID: "All",
-    };
+    if (props.id) {
+      let searchParams = {
+        nftID: props.id,
+        buyerID: "All",
+        bidStatus: "All",
+        //orderID: "All",
+      };
 
-    let _data = await fetchOfferNft(searchParams);
+      let _data = await fetchOfferNft(searchParams);
 
-    if (_data && _data.data.length > 0) {
-      let a = _data.data;
+      if (_data && _data.data.length > 0) {
+        let a = _data.data;
 
-      setOffer(a);
+        setOffer(a);
 
+      }
     }
+
   };
 
   const PlaceOffer = async () => {

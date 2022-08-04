@@ -890,20 +890,7 @@ export const handleAcceptBids = async (
       ) {
         DeleteOrder({ orderID: bidData.orderID[0]?._id });
       }
-      else {
-        let req = {
-          "recordID": bidData.orderID,
-          "DBCollection": "Order",
-          "hashStatus": 1,
-          "hash": completeOrder.hash
-        }
-        try {
-          await UpdateStatus(req, historyData)
-        }
-        catch (e) {
-          return false
-        }
-      }
+
 
     } catch (e) {
       console.log("error in updating order data", e);
