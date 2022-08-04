@@ -115,7 +115,6 @@ function Marketplacecollection() {
   }, [loadMore, searchedText, showTab]);
 
 
-
   return (
     <div>
       <section className="register_hd pdd_12" style={register_bg}>

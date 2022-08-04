@@ -58,7 +58,7 @@ function NFTBids(props) {
   useEffect(() => {
 
     fetch();
-  }, [props.id, reloadContent, props.refreshState]);
+  }, [props.id, props.reloadContent, props.refreshState]);
 
   useEffect(() => {
     var body = document.body;

@@ -73,6 +73,11 @@ function NFToffer(props) {
   };
 
   const PlaceOffer = async () => {
+    // if (currentUser === undefined || currentUser === "") {
+    //   setShowAlert("notConnected");
+    //   return;
+    // }
+
     const wCheck = WalletConditions();
     if (wCheck !== undefined) {
       setShowAlert(wCheck);
@@ -306,7 +311,7 @@ function NFToffer(props) {
                           ></Clock>
                         </td>
                         <td className={moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "red_text" :
-                          b.bidStatus === "MakeOffer" ? "green_text" : "red_text"}>
+                          b.bidStatus === "MakeOffer" || b.bidStatus === "Accepted" ? "green_text" : "red_text"}>
                           {" "}
                           {
                             moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "Ended" :
@@ -323,6 +328,10 @@ function NFToffer(props) {
                                   moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                 }
                                 onClick={async () => {
+                                  if (currentUser === undefined || currentUser === "") {
+                                    setShowAlert("notConnected");
+                                    return;
+                                  }
                                   const wCheck = WalletConditions();
                                   if (wCheck !== undefined) {
                                     setShowAlert(wCheck);
@@ -351,7 +360,7 @@ function NFToffer(props) {
                                   }
 
                                   setLoading(false);
-                                  // await props.refreshState()
+                                  await props.refreshState()
                                   // await fetch()
                                   slowRefresh(1000);
                                 }}
@@ -365,6 +374,10 @@ function NFToffer(props) {
                                   moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format()
                                 }
                                 onClick={async () => {
+                                  if (currentUser === undefined || currentUser === "") {
+                                    setShowAlert("notConnected");
+                                    return;
+                                  }
                                   const wCheck = WalletConditions();
                                   if (wCheck !== undefined) {
                                     setShowAlert(wCheck);
@@ -388,7 +401,7 @@ function NFToffer(props) {
                                   };
                                   await InsertHistory(historyReqData);
                                   // await fetch()
-                                  // props.refreshState()
+                                  props.refreshState()
 
                                   slowRefresh(1000);
 
@@ -431,6 +444,10 @@ function NFToffer(props) {
                               <button
                                 className="small_border_btn small_btn"
                                 onClick={async () => {
+                                  if (currentUser === undefined || currentUser === "") {
+                                    setShowAlert("notConnected");
+                                    return;
+                                  }
                                   const wCheck = WalletConditions();
                                   if (wCheck !== undefined) {
                                     setShowAlert(wCheck);
@@ -453,7 +470,7 @@ function NFToffer(props) {
                                   };
                                   await InsertHistory(historyReqData);
                                   // await fetch()
-                                  // await props.refreshState()
+                                  await props.refreshState()
                                   slowRefresh(1000)
                                 }}
                               >
