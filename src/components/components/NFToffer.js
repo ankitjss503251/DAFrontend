@@ -311,7 +311,7 @@ function NFToffer(props) {
                           ></Clock>
                         </td>
                         <td className={moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "red_text" :
-                          b.bidStatus === "MakeOffer" ? "green_text" : "red_text"}>
+                          b.bidStatus === "MakeOffer" || b.bidStatus === "Accepted" ? "green_text" : "red_text"}>
                           {" "}
                           {
                             moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "Ended" :

@@ -5537,7 +5537,7 @@ display: none;
     }
 
 .form-control:disabled {
-  background-color: #0d171e !important;
+  background-color: transparent !important;
   opacity: 0.7;
   cursor: not-allowed;
 }
