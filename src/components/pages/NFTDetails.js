@@ -351,10 +351,10 @@ function NFTDetails() {
   };
 
   const PlaceOffer = async () => {
-    if (currentUser === undefined || currentUser === "") {
-      setShowAlert("notConnected");
-      return;
-    }
+    // if (currentUser === undefined || currentUser === "") {
+    //   setShowAlert("notConnected");
+    //   return;
+    // }
     const wCheck = WalletConditions();
     if (wCheck !== undefined) {
       setShowAlert(wCheck);

@@ -360,7 +360,7 @@ function NFToffer(props) {
                                   }
 
                                   setLoading(false);
-                                  // await props.refreshState()
+                                  await props.refreshState()
                                   // await fetch()
                                   slowRefresh(1000);
                                 }}
@@ -401,7 +401,7 @@ function NFToffer(props) {
                                   };
                                   await InsertHistory(historyReqData);
                                   // await fetch()
-                                  // props.refreshState()
+                                  props.refreshState()
 
                                   slowRefresh(1000);
 
@@ -470,7 +470,7 @@ function NFToffer(props) {
                                   };
                                   await InsertHistory(historyReqData);
                                   // await fetch()
-                                  // await props.refreshState()
+                                  await props.refreshState()
                                   slowRefresh(1000)
                                 }}
                               >

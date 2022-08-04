@@ -75,7 +75,7 @@ function NFTlisting(props) {
 
   useEffect(() => {
     fetch()
-  }, [props.id, props.refreshState]);
+  }, [props.id, props.refreshState, props.reloadContent]);
 
 
 
