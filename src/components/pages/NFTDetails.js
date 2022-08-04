@@ -154,7 +154,6 @@ function NFTDetails() {
           return;
         }
         setNFTDetails(res[0]);
-        console.log(res[0].id, id)
         if (res[0].fileType === "3D") {
 
           let image = res[0].image.split("//");

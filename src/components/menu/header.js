@@ -478,7 +478,7 @@ const Header = function () {
                       );
                     })
                     : ""} */}
-                  {console.log("commenting")}
+                
                 </ul>
               </li>
               <li className="nav-item">
