@@ -56,9 +56,8 @@ function NFTBids(props) {
   };
 
   useEffect(() => {
-
     fetch();
-  }, [props.id, props.reloadContent, props.refreshState]);
+  }, [props.id, props.reloadContent]);
 
   useEffect(() => {
     var body = document.body;
@@ -445,30 +444,25 @@ function NFTBids(props) {
                                       return;
                                     }
                                     setLoading(true);
+                                    let historyData = {
+                                      nftID: b.nftID,
+                                      sellerID: localStorage.getItem('userId'),
+                                      buyerID: b?.bidderID?._id,
+                                      action: "Bid",
+                                      type: "Accepted",
+                                      price: b?.bidPrice?.$numberDecimal,
+                                      paymentToken: b?.orderID[0]?.paymentToken,
+                                      quantity: b?.bidQuantity,
+                                      createdBy: localStorage.getItem("userId"),
+                                    };
                                     const resp = await handleAcceptBids(
                                       b,
-                                      props.NftDetails.type
+                                      props.NftDetails.type,
+                                      0,
+                                      historyData
                                     );
-                                    // console.log("accept bid res", resp);
-                                    if (resp !== false) {
-                                      let historyReqData = {
-                                        nftID: b.nftID,
-                                        sellerID: localStorage.getItem('userId'),
-                                        buyerID: b?.bidderID?._id,
-                                        action: "Bid",
-                                        type: "Accepted",
-                                        price: b?.bidPrice?.$numberDecimal,
-                                        paymentToken: b?.orderID[0]?.paymentToken,
-                                        quantity: b?.bidQuantity,
-                                        createdBy: localStorage.getItem("userId"),
-                                      };
-                                      await InsertHistory(historyReqData);
-                                      setLoading(false);
 
-                                    }
-                                    else {
-                                      setLoading(false);
-                                    }
+                                    setLoading(false);
                                     slowRefresh(1000)
                                     // await props.refreshState()
                                     // setReloadContent(!reloadContent);

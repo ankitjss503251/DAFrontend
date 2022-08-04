@@ -75,7 +75,7 @@ function NFTlisting(props) {
 
   useEffect(() => {
     fetch()
-  }, [props.id, props.refreshState, props.reloadContent]);
+  }, [props.id, props.reloadContent]);
 
 
 
@@ -320,28 +320,24 @@ function NFTlisting(props) {
               }
               setLoading(true);
               try {
-
+                let historyData = {
+                  nftID: currentOrder.nftID,
+                  buyerID: localStorage.getItem('userId'),
+                  sellerID: currentOrder?.sellerID?._id,
+                  action: "Sold",
+                  price: ethers.utils.parseEther(price.toString()).toString(),
+                  paymentToken: currentOrder?.paymentToken,
+                  quantity: currentOrder?.total_quantity,
+                  createdBy: localStorage.getItem("userId"),
+                };
                 const hbn = await handleBuyNft(
                   currentOrder._id,
                   props?.NftDetails?.type === 1,
                   currentUser,
-                  cookies.balance,
                   currentOrder.total_quantity,
-                  false,
-                  props?.NftDetails?.collectionAddress?.toLowerCase()
+                  historyData
                 );
                 if (hbn !== false && hbn !== undefined) {
-                  let historyReqData = {
-                    nftID: currentOrder.nftID,
-                    buyerID: localStorage.getItem('userId'),
-                    sellerID: currentOrder?.sellerID?._id,
-                    action: "Sold",
-                    price: ethers.utils.parseEther(price.toString()).toString(),
-                    paymentToken: currentOrder?.paymentToken,
-                    quantity: currentOrder?.total_quantity,
-                    createdBy: localStorage.getItem("userId"),
-                  };
-                  await InsertHistory(historyReqData);
                   // await fetch()
                   slowRefresh(1000);
                   setLoading(false);
@@ -531,7 +527,7 @@ function NFTlisting(props) {
                           <td>
 
                             {moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format() || o.deadline === GENERAL_TIMESTAMP ? (
-                              "--:--:--"
+                              "00:00:00"
                             ) : (
 
                               <Clock
@@ -573,7 +569,8 @@ function NFTlisting(props) {
                                     };
                                     await InsertHistory(historyReqData);
                                     setLoading(false);
-                                    await props.refreshState()
+                                    slowRefresh(1000)
+                                    // await props.refreshState()
                                   }}
                                 >
                                   Remove From Sale

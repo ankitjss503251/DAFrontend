@@ -266,8 +266,6 @@ function NFTDetails() {
   }, [id, reloadContent, currentUser]);
 
   const PutMarketplace = async () => {
-
-
     const wCheck = WalletConditions();
     if (wCheck !== undefined) {
       setShowAlert(wCheck);
@@ -760,29 +758,27 @@ function NFTDetails() {
                 return;
               }
               setLoading(true);
+              let historyData = {
+                nftID: NFTDetails.id,
+                buyerID: localStorage.getItem('userId'),
+                sellerID: orders[0].sellerID,
+                action: "Sold",
+                price: orders[0]?.price?.$numberDecimal,
+                paymentToken: contracts[selectedTokenFS],
+                quantity: orders[0].total_quantity,
+                createdBy: localStorage.getItem("userId")
+              }
+
               let res = await handleBuyNft(
                 orders[0]._id,
                 firstOrderNFT.type === 1,
                 currentUser,
-                cookies.balance,
                 orders[0].total_quantity,
-                false,
-                firstOrderNFT?.collectionAddress?.toLowerCase()
+                historyData
               );
 
-              if (res === false) {
-                let historyReqData = {
-                  nftID: NFTDetails.id,
-                  buyerID: localStorage.getItem('userId'),
-                  sellerID: orders[0].sellerID,
-                  action: "Sold",
-                  price: orders[0]?.price?.$numberDecimal,
-                  paymentToken: contracts[selectedTokenFS],
-                  quantity: orders[0].total_quantity,
-                  createdBy: localStorage.getItem("userId"),
-                };
-                await InsertHistory(historyReqData);
 
+              if (res !== false) {
                 setLoading(false);
                 setReloadContent(!reloadContent)
                 // slowRefresh(1000);
@@ -907,7 +903,7 @@ function NFTDetails() {
         <div className="container">
           <div className="row mb-5">
             <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5 img_3d" >
-              {NFTDetails && NFTDetails.fileType == "Image" ? (
+              {NFTDetails && NFTDetails.fileType === "Image" ? (
                 <img
                   src={NFTDetails?.image}
                   className='img-fluid nftimg'
@@ -919,14 +915,14 @@ function NFTDetails() {
               ) : (
                 ""
               )}
-              {NFTDetails && NFTDetails.fileType == "Video" ? (
+              {NFTDetails && NFTDetails.fileType === "Video" ? (
                 <video className="img-fluid nftimg" controls>
                   <source src={NFTDetails?.image} type="video/mp4" />
                 </video>
               ) : (
                 ""
               )}
-              {NFTDetails && NFTDetails.fileType == "3D" ? (
+              {NFTDetails && NFTDetails.fileType === "3D" ? (
                 <Canvas>
                   <pointLight position={[100, 10, 10, 10]} intensity={1.5} />
                   <Suspense fallback={null} >

@@ -13,7 +13,6 @@ import CreateCategories1 from "./components/pages/CreateCategories";
 import NotificationPopup from "./components/components/NotificationPopup";
 import Admins1 from "./components/pages/admins";
 import { NotificationContainer } from "react-notifications";
-import NftDetail from "./components/pages/ImportedData/nftDetail";
 import withLogin from "./components/components/withLogin";
 import Error404 from "./components/pages/Error404";
 import Navbar from "./components/Navbar";
@@ -109,8 +108,6 @@ function App() {
             {currentUser || isSuperAdmin() ? <Route path="login" exact element={<Login />} /> : <Route path="/" />}
 
             {currentUser || isSuperAdmin() ? <Route path="register" exact element={<Register />} /> : <Route path="/" />}
-
-            {currentUser || isSuperAdmin() ? <Route path="importedNfts/:address/:id" exact element={<NftDetail />} /> : <Route path="/" />}
 
             {currentUser || isSuperAdmin() ? <Route
               path="createcategories"
