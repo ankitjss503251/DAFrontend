@@ -182,10 +182,7 @@ const Header = function () {
   const connectWallet = async () => {
     console.log("11");
     try {
-
-
       const wallets = await onboard.connectWallet();
-
       if (wallets.length !== 0) {
 
         await onboard.setChain({
@@ -305,9 +302,10 @@ const Header = function () {
             slowRefresh(1000);
             return;
           }
-        } catch (e) {
-          NotificationManager.error(e);
-          return;
+        }
+        catch (e) {
+          console.log("e", e)
+          return
         }
       }
       // }
@@ -324,8 +322,7 @@ const Header = function () {
     await onboard.disconnectWallet({ label: cookies["label"] });
     await Logout(cookies["selected_account"]);
     refreshState();
-    if(window.location.pathname === '/myNfts' || window.location.pathname === '/userprofile')
-    {
+    if (window.location.pathname === '/myNfts' || window.location.pathname === '/userprofile') {
       window.location.href = "/"
     }
     // NotificationManager.success("User Logged out Successfully", "", 800);
@@ -481,6 +478,7 @@ const Header = function () {
                       );
                     })
                     : ""} */}
+                
                 </ul>
               </li>
               <li className="nav-item">
