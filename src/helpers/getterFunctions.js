@@ -16,6 +16,7 @@ import {
   getBrandById,
   GetIndividualAuthorDetail,
   getCategories,
+  getCategoriesWithCollectionData,
   fetchOfferNft,
   fetchOfferMade,
   GetHistory,
@@ -596,6 +597,16 @@ export const fetchHistory = async (req) => {
   return formattedData;
 }
 
+export const getCategoryWithCollectionData = async (data) => {
+  let category = [];
+  try {
+    category = await getCategoriesWithCollectionData(data);
+  } catch (e) {
+    console.log("Error in getCategoryWithCollectionData API", e);
+  }
+
+  return category;
+};
 
 
 // export const getUsersNFTs = async (

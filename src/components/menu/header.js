@@ -218,6 +218,7 @@ const Header = function () {
       }
     }
     catch (e) {
+      NotificationManager.error(e);
       console.log("ee", e)
     }
     // try {
