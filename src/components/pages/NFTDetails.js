@@ -529,7 +529,7 @@ function NFTDetails() {
     <PopupModal
       content={
         <div className='popup-content1'>
-          <h3 className='modal_heading '>Checkout</h3>
+          <h3 className='modal_heading '>Place a Bid</h3>
           <div className='bid_user_details my-4'>
             <img src={Logo} alt='' />
 
@@ -694,7 +694,7 @@ function NFTDetails() {
     <PopupModal
       content={
         <div className='popup-content1'>
-          <h3 className='modal_heading '>Checkout</h3>
+          <h3 className='modal_heading '>Complete Checkout</h3>
           <div className='bid_user_details my-4'>
             <img src={Logo} alt='' />
             <div className='bid_user_address'>

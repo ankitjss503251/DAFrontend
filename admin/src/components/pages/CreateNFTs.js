@@ -772,13 +772,6 @@ function CreateNFTs() {
                     onChange={(e) => setDescription(e.target.value)}></textarea>
                 </div>
                 <div className='col-md-6 mt-2'>
-                  <button
-                    type='button'
-                    data-bs-toggle='modal'
-                    data-bs-target='#AttributeModal'
-                    className='btn btn-admin text-light mb-3'>
-                    Add Attributes
-                  </button>
                   {/* {attrKeys[0] === "" ? ( */}
                   <p className='attr_header'>Attributes</p>
                   {/* ) : (
@@ -803,66 +796,8 @@ function CreateNFTs() {
                   )}
                 </div>
 
-                {/* <div className="col-md-6 mb-1">
-                  <label for="recipient-name" className="col-form-label">
-                    Brand *
-                  </label>
-                  <select
-                    className="form-select"
-                    aria-label="Default select example"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                  >
-                    {brands && brands.length > 0
-                      ? brands.map((b, i) => {
-                          return (
-                            <option selected value="1">
-                              {b.name}
-                            </option>
-                          );
-                        })
-                      : ""}
-                  </select>
-                </div> */}
-              </form>
-            </div>
-            <div className='modal-footer justify-content-center'>
-              <button
-                type='button'
-                className='btn btn-admin text-light'
-                onClick={handleCreateNFT}>
-                Create NFT
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className='modal fade'
-        id='AttributeModal'
-        tabindex='-1'
-        aria-labelledby='attributeModal'
-        aria-hidden='true'
-        data-keyboard='false'
-        data-backdrop='static'>
-        <div className='modal-dialog modal-dialog-centered'>
-          <div className='modal-content'>
-            <div className='modal-header'>
-              <h5
-                className='modal-title text-yellow font-24 font-600'
-                id='exampleModalLabel'>
-                Properties
-              </h5>
-              <button
-                type='button'
-                className='btn-close'
-                data-bs-toggle='modal'
-                data-bs-target='#NftModal'
-                aria-label='Close'>
-              </button>
-            </div>
-            <div className='modal-body'>
-              <form className='row justify-content-center '>
+                <div className="col-md-12">
+                <form className='row justify-content-center '>
                 {" "}
                 <div className='col-md-6 mb-1'>
                   <input
@@ -921,33 +856,43 @@ function CreateNFTs() {
                   })
                   : ""}
               </div>
+                </div>
+                
+                {/* <div className="col-md-6 mb-1">
+                  <label for="recipient-name" className="col-form-label">
+                    Brand *
+                  </label>
+                  <select
+                    className="form-select"
+                    aria-label="Default select example"
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                  >
+                    {brands && brands.length > 0
+                      ? brands.map((b, i) => {
+                          return (
+                            <option selected value="1">
+                              {b.name}
+                            </option>
+                          );
+                        })
+                      : ""}
+                  </select>
+                </div> */}
+              </form>
             </div>
             <div className='modal-footer justify-content-center'>
               <button
                 type='button'
-                data-bs-toggle='modal'
-                data-bs-target='#NftModal'
                 className='btn btn-admin text-light'
-                onClick={() => {
-                  if (attrKeys.length > 0) {
-                    let metaData = [];
-
-                    for (let i = 0; i < attrKeys.length; i++) {
-                      if (attrKeys[i].trim() !== "" && attrValues[i].trim() !== "")
-                        metaData.push({
-                          trait_type: attrKeys[i],
-                          value: attrValues[i],
-                        });
-                    }
-                    setAttributes(metaData);
-                  }
-                }}>
-                Add Attributes
+                onClick={handleCreateNFT}>
+                Create NFT
               </button>
             </div>
           </div>
         </div>
       </div>
+     
     </div>
   );
 }
