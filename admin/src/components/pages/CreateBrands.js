@@ -141,13 +141,13 @@ function CreateBrands() {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-            <div >
+          <div className="d-flex">
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
                 {process.env.REACT_APP_NETWORK_ID}
               </span>
             </div>
-            <div >
+            <div className="d-flex">
               <div className="mr-3">Required Network Name:</div>
               <span className="adr">
                 {process.env.REACT_APP_NETWORK}

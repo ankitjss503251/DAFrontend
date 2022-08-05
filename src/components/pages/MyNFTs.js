@@ -640,6 +640,7 @@ function MyNFTs() {
                   ownedNFTs && ownedNFTs?.length > 0 ? ownedNFTs?.map((card, key) => (
                     <div className={grid} key={key}>
                       <AuthorListing
+                       previewImg={card?.previewImg}
                         image={card.image}
                         fileType={card.fileType}
                         card={card}
@@ -667,7 +668,7 @@ function MyNFTs() {
                     return (
                       <div className={grid} key={key}>
                         <AuthorListing
-
+                           previewImg={card?.previewImg}
                           image={card?.image}
                           fileType={card?.fileType}
                           card={card}

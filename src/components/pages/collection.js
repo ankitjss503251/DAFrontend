@@ -528,7 +528,7 @@ function Collection() {
                   </div>
                 </div>
                 <section className="collectionAction mb-5 pb-5 mt-5">
-                  <div className="row">
+                  {/* <div className="row">
                     <div className="col-md-12">
                       <img
                         alt=""
@@ -536,7 +536,7 @@ function Collection() {
                         class="img-fluid"
                       />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="row mt-5">
                     <div className="col-md-12">
                       <div class="table-responsive">

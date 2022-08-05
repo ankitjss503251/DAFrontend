@@ -47,7 +47,6 @@ function CreateNFTs() {
   const [currAttrValue, setCurrAttrValue] = useState("");
   const [attrKeys, setAttrKeys] = useState([]);
   const [attrValues, setAttrValues] = useState([]);
-  const [attributes, setAttributes] = useState([]);
   const [fileType, setFileType] = useState("Image");
   const [img, setImg] = useState();
   const [showAlert, setShowAlert] = useState("");
@@ -184,7 +183,20 @@ function CreateNFTs() {
   const handleCreateNFT = async () => {
     var formdata = new FormData();
     let createdNft;
+    let metaData = [];
+    if (attrKeys.length > 0) {
+     
 
+      for (let i = 0; i < attrKeys.length; i++) {
+        if (attrKeys[i].trim() !== "" && attrValues[i].trim() !== "")
+          metaData.push({
+            trait_type: attrKeys[i],
+            value: attrValues[i],
+          });
+      }
+      
+    }
+// console.log("attributes", attributes, metaData)
     const wCheck = WalletConditions();
     if (wCheck !== undefined) {
       setShowAlert(wCheck);
@@ -217,7 +229,7 @@ function CreateNFTs() {
         console.log("c1", collectionDetail);
         await UpdateTokenCount(collectionDetail.contractAddress);
 
-        formdata.append("attributes", JSON.stringify(attributes));
+        formdata.append("attributes", JSON.stringify(metaData));
         formdata.append("levels", JSON.stringify([]));
         formdata.append("creatorAddress", currentUser.toLowerCase());
         formdata.append("name", title);
@@ -400,13 +412,13 @@ function CreateNFTs() {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-            <div >
+            <div className="d-flex">
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
                 {process.env.REACT_APP_NETWORK_ID}
               </span>
             </div>
-            <div >
+            <div className="d-flex">
               <div className="mr-3">Required Network Name:</div>
               <span className="adr">
                 {process.env.REACT_APP_NETWORK}

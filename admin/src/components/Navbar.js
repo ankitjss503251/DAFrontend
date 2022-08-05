@@ -154,7 +154,7 @@ const Navbar = (props) => {
 
   const refreshState = () => {
     removeCookie("da_selected_account", { path: "/" });
-    removeCookie("da_chain_id", { path: "/" });
+    // removeCookie("da_chain_id", { path: "/" });
     removeCookie("balance", { path: "/" });
     removeCookie("da_label", { path: "/" });
     localStorage.clear();
@@ -186,8 +186,6 @@ const Navbar = (props) => {
     
       if(chain){
       const primaryWallet = wallets[0];
-      setChainId(primaryWallet.chains[0].id);
-      setProvider(primaryWallet.provider);
       const address = primaryWallet.accounts[0].address;
 
 
@@ -223,6 +221,7 @@ const Navbar = (props) => {
     }
     else{
       NotificationManager.error("Please switch Network","",800)
+      await onboard.disconnectWallet({ label: "MetaMask" });
       return;
     }
       // try {
@@ -261,13 +260,13 @@ const Navbar = (props) => {
               window.sessionStorage.setItem("role", res?.data?.userType);
               setCookie("da_selected_account", address, { path: "/" });
               setCookie("da_label", primaryWallet.label, { path: "/" });
-              setCookie(
-                "da_chain_id",
-                primaryWallet.chains[0].id,
-                {
-                  path: "/",
-                }
-              );
+              // setCookie(
+              //   "da_chain_id",
+              //   primaryWallet.chains[0].id,
+              //   {
+              //     path: "/",
+              //   }
+              // );
               setCookie("balance", primaryWallet.accounts[0].balance, {
                 path: "/",
               });

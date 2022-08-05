@@ -347,14 +347,16 @@ function NFTDetails() {
   };
 
   const PlaceOffer = async () => {
-    
+
+   
+
     const wCheck = WalletConditions();
     if (wCheck !== undefined) {
       setShowAlert(wCheck);
       return;
     }
 
-  
+
 
     if (offerPrice === "" || offerPrice === undefined || offerPrice <= 0) {
       NotificationManager.error("Enter Offer Price");
