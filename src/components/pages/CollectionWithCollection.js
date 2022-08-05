@@ -737,7 +737,7 @@ function CollectionWithCollection() {
               </div>
               <section className='collectionAction mb-5 pb-5 mt-5'>
                 <div className='container'>
-                  <div className='row'>
+                  {/* <div className='row'>
                     <div className='col-md-12'>
                       <img
                         alt=''
@@ -745,7 +745,7 @@ function CollectionWithCollection() {
                         className='img-fluid'
                       />
                     </div>
-                  </div>
+                  </div> */}
                   <div className='row mt-5'>
                     <div className='col-md-12'>
                       <div className='table-responsive'>
