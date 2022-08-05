@@ -683,7 +683,7 @@ export const createOfferNFT = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    
+
     return datas.data;
   } catch (err) {
     return err;
@@ -934,7 +934,7 @@ export const fetchOfferMade = async (data) => {
   }
 };
 
-export const UpdateStatus = async (data) => {
+export const UpdateStatus = async (data, historyData, key) => {
   const requestOptions = {
     method: "POST",
 
@@ -954,6 +954,12 @@ export const UpdateStatus = async (data) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
+    if (datas.statusCode !== 409 && historyData !== "" && historyData !== undefined) {
+      await InsertHistory(historyData)
+    }
+    if (datas.statusCode !== 200) {
+      return false
+    }
     return datas.data;
   } catch (err) {
     return err;
