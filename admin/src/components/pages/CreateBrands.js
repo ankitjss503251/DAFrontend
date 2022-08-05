@@ -385,6 +385,7 @@ function CreateBrands() {
                     className="form-control"
                     id="recipient-name"
                     value={title}
+                    autoComplete="off"
                     onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
@@ -396,6 +397,7 @@ function CreateBrands() {
                     className="form-control"
                     id="message-text"
                     value={description}
+                    autoComplete="off"
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
                 </div>

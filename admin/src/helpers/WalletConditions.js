@@ -16,7 +16,7 @@ export const WalletConditions = () => {
         return "notConnected";
 
     }
-
+   
     const state = onboard.state.get();
     console.log(state.wallets[0].chains[0].id,state.wallets[0].accounts[0].address)
     if (state.wallets?.length > 0) {

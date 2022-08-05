@@ -218,8 +218,8 @@ function Author() {
           </div> */}
 
           <h1 className='collection_title text-center'>
-            {profile?.username ? profile?.username : "John Doe"}{" "}
-            <img alt='' src={"../img/author/check.png"} className='img-fluid' />
+            {profile?.username ? profile?.username : "Unnamed"}{" "}
+            {/* <img alt='' src={"../img/author/check.png"} className='img-fluid' /> */}
           </h1>
 
           <div className='coppycode text-center mb-4'>

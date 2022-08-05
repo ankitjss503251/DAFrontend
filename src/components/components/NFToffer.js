@@ -524,6 +524,7 @@ function NFToffer(props) {
                     className="form-control input_design"
                     placeholder="Please Enter Price (MATIC)"
                     value={offerPrice}
+                    autoComplete="off"
                     onKeyPress={(e) => {
                       if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
                     }}
@@ -561,6 +562,7 @@ function NFToffer(props) {
                     name="item_qt"
                     id="item_qt"
                     min="1"
+                    autoComplete="off"
                     disabled={NFTDetails.type === 1 ? "disabled" : ""}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"

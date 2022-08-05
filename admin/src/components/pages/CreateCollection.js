@@ -1041,6 +1041,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       name="title"
                       value={title}
+                      autoComplete="off"
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
@@ -1080,6 +1081,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={maxSupply}
+                      autoComplete="off"
                       onChange={(e) => {
                         setMaxSupply(e.target.value);
                       }}
@@ -1097,6 +1099,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={price}
+                      autoComplete="off"
                       onChange={(e) => numberInputCheck(e)}
                       onKeyPress={(e) => {
                         if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -1148,6 +1151,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={symbol}
+                      autoComplete="off"
                       onChange={(e) => setSymbol(e.target.value)}
                     />
                   </div>
@@ -1159,6 +1163,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="message-text"
                       value={description}
+                      autoComplete="off"
                       onChange={(e) => setDescription(e.target.value)}
                     ></textarea>
                   </div>
@@ -1171,6 +1176,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       name="title"
+                      autoComplete="off"
                       value={importedCollectionLink}
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
@@ -1271,6 +1277,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       value={importedAddress}
                       name="address"
+                      autoComplete="off"
                       onChange={(e) => {
                         setImportedAddress(e.target.value);
                       }}
@@ -1287,6 +1294,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       value={importedCollectionLink}
                       name="address"
+                      autoComplete="off"
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
                       }}
@@ -1344,6 +1352,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       value={importedAddress}
                       name="address"
+                      autoComplete="off"
                       onChange={(e) => {
                         setImportedAddress(e.target.value);
                       }}
@@ -1360,6 +1369,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       value={importedCollectionLink}
                       name="address"
+                      autoComplete="off"
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
                       }}
@@ -1374,6 +1384,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={title}
+                      autoComplete="off"
                       name="title"
                       onChange={(e) => {
                         setTitle(e.target.value);
@@ -1516,6 +1527,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       name="title"
                       value={title}
+                      autoComplete="off"
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
@@ -1582,6 +1594,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={maxSupply}
+                      autoComplete="off"
                       onChange={(e) => {
                         setMaxSupply(e.target.value);
                       }}
@@ -1599,6 +1612,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={price}
+                      autoComplete="off"
                       onChange={(e) => numberInputCheck(e)}
                       onKeyPress={(e) => {
                         if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -1657,6 +1671,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={symbol}
+                      autoComplete="off"
                       onChange={(e) => setSymbol(e.target.value)}
                     />
                   </div>
@@ -1680,6 +1695,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={importedCollectionLink}
+                      autoComplete="off"
                       onChange={(e) =>
                         setImportedCollectionLink(e.target.value)
                       }

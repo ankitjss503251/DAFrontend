@@ -180,9 +180,11 @@ const Navbar = (props) => {
     const wallets = await onboard.connectWallet();
 
     if (wallets.length !== 0) {
-      await onboard.setChain({
+      const chain = await onboard.setChain({
         chainId: process.env.REACT_APP_CHAIN_ID,
       });
+    
+      if(chain){
       const primaryWallet = wallets[0];
       setChainId(primaryWallet.chains[0].id);
       setProvider(primaryWallet.provider);
@@ -218,7 +220,11 @@ const Navbar = (props) => {
           // window.location.reload()
         })
       }
-
+    }
+    else{
+      NotificationManager.error("Please switch Network","",800)
+      return;
+    }
       // try {
       //   userAuth(primaryWallet, address);
       // } catch (e) {

@@ -103,6 +103,7 @@ function NFTBids(props) {
             placeholder="Quantity e.g. 1,2,3..."
             disabled={props ? props.NftDetails.type === 1 : false}
             value={qty}
+            autoComplete="off"
             onKeyPress={(e) => {
               if (!/^\d*$/.test(e.key)) e.preventDefault();
             }}
@@ -126,6 +127,7 @@ function NFTBids(props) {
             className="form-control checkout_input"
             type="text"
             min="1"
+            autoComplete="off"
             placeholder="Price e.g. 0.001,1..."
             value={price}
             onKeyPress={(e) => {

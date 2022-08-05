@@ -117,6 +117,7 @@ function NFTlisting(props) {
             type='text'
             min='1'
             step='1'
+            autoComplete="off"
             placeholder='Quantity e.g. 1,2,3...'
             disabled={props ? props.NftDetails.type === 1 : false}
             value={qty}
@@ -142,6 +143,7 @@ function NFTlisting(props) {
             className='form-control checkout_input'
             type='text'
             min='1'
+            autoComplete="off"
             placeholder='Price e.g. 0.001,1...'
             value={price}
             onKeyPress={(e) => {
@@ -281,6 +283,7 @@ function NFTlisting(props) {
             type='text'
             min='1'
             step='1'
+            autoComplete="off"
             placeholder='Quantity e.g. 1,2,3...'
             disabled={props ? props.NftDetails.type === 1 : false}
             value={qty}
@@ -306,6 +309,7 @@ function NFTlisting(props) {
             className='form-control checkout_input'
             type='text'
             min='1'
+            autoComplete="off"
             placeholder='Price e.g. 0.001,1...'
             disabled={true}
             value={price}></input>

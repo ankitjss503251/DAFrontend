@@ -316,6 +316,7 @@ function CreateCategories() {
                     type="text"
                     className="form-control"
                     id="recipient-name"
+                    autoComplete="off"
                     value={CategorieName}
                     onChange={(e) => setCategorieName(e.target.value)}
                   />

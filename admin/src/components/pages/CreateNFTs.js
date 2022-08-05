@@ -710,6 +710,7 @@ function CreateNFTs() {
                     type='text'
                     className='form-control'
                     id='recipient-name'
+                    autoComplete="off"
                     value={title}
                     maxLength={25}
                     onChange={(e) => setTitle(e.target.value)}
@@ -748,6 +749,7 @@ function CreateNFTs() {
                       type='text'
                       className='form-control'
                       id='recipient-name'
+                      autoComplete="off"
                       value={quantity}
                       // disabled={collection.type == 1 ? true : false}
                       onKeyPress={(e) => {
@@ -777,7 +779,7 @@ function CreateNFTs() {
                   {/* ) : (
                     ""
                   )} */}
-                  {attrKeys.length > 0 && attrValues.length > 0 ? (
+                  {/* {attrKeys.length > 0 && attrValues.length > 0 ? (
                     attrKeys.map((attrKey, key) => {
 
                       return (
@@ -793,7 +795,7 @@ function CreateNFTs() {
                     })
                   ) : (
                     ""
-                  )}
+                  )} */}
                 </div>
 
                 <div className="col-md-12">
@@ -805,6 +807,7 @@ function CreateNFTs() {
                     className='form-control col-md-6'
                     id='attribute-key'
                     placeholder='e.g. Size'
+                    autoComplete="off"
                     value={currAttrKey}
                     onChange={(e) => setCurrAttrKey(e.target.value)}
                   />
@@ -816,6 +819,7 @@ function CreateNFTs() {
                     id='attribute-value'
                     placeholder='e.g. M'
                     value={currAttrValue}
+                    autoComplete="off"
                     onChange={(e) => setCurrAttrValue(e.target.value)}
                   />
                 </div>

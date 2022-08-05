@@ -147,21 +147,21 @@ export const handleBuyNft = async (
     }
   }
 
-  // try {
-  //   let usrHaveQuantity = await GetOwnerOfToken(
-  //     sellerOrder[1],
-  //     sellerOrder[2],
-  //     isERC721,
-  //     sellerOrder[0]
-  //   );
-  //   if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-  //     NotificationManager.error("Seller don't own that much quantity");
-  //     return false;
-  //   }
-  // } catch (e) {
-  //   console.log("error", e);
-  //   return false;
-  // }
+  try {
+    let usrHaveQuantity = await GetOwnerOfToken(
+      sellerOrder[1],
+      sellerOrder[2],
+      isERC721,
+      sellerOrder[0]
+    );
+    if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
+      NotificationManager.error("Seller don't own that much quantity");
+      return false;
+    }
+  } catch (e) {
+    console.log("error", e);
+    return false;
+  }
 
   // check if seller still owns that much quantity of current token id
   // check if seller still have approval for marketplace
@@ -361,7 +361,6 @@ export const handleApproveToken = async (userAddress, tokenAddress) => {
 };
 
 export const putOnMarketplace = async (account, orderData) => {
-  console.log("in put on marketplace buttong");
   if (!account) {
     return false;
   }
@@ -609,17 +608,17 @@ export const createBid = async (
         buyerOrder[5]
       );
 
-      // let usrHaveQuantity = await GetOwnerOfToken(
-      //   sellerOrder[1],
-      //   sellerOrder[2],
-      //   erc721,
-      //   sellerOrder[0]
-      // );
+      let usrHaveQuantity = await GetOwnerOfToken(
+        sellerOrder[1],
+        sellerOrder[2],
+        erc721,
+        sellerOrder[0]
+      );
 
-      // if (parseInt(usrHaveQuantity) < qty) {
-      //   NotificationManager.error("Not enough quantity", "", 800);
-      //   return false;
-      // }
+      if (parseInt(usrHaveQuantity) < parseInt(qty)) {
+        NotificationManager.error("Not enough quantity", "", 800);
+        return false;
+      }
 
       if (
         new BigNumber(bidPrice)
@@ -706,12 +705,16 @@ export const createOffer = async (
 
     let userTokenBal = await getUsersTokenBalance(buyerOrder[0], buyerOrder[5]);
 
-    // let usrHaveQuantity = await GetOwnerOfToken(
-    //   buyerOrder[1],
-    //   buyerOrder[2],
-    //   1,
-    //   buyerOrder[0]
-    // );
+    let usrHaveQuantity = await GetOwnerOfToken(
+      buyerOrder[1],
+      buyerOrder[2],
+      1,
+      ownerAccount.address
+    );
+    if (parseInt(usrHaveQuantity) < parseInt(qty)) {
+      NotificationManager.error("Not enough quantity", "", 800);
+      return false;
+    }
 
     if (
       new BigNumber(bidPrice)
