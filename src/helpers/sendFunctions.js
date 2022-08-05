@@ -262,7 +262,11 @@ export const handleBuyNft = async (
                 "hashStatus": 1
               }
               try {
-                await UpdateStatus(req, historyData)
+                let updateRes = await UpdateStatus(req, historyData)
+                if (updateRes === false) {
+                  console.log("data already inserted")
+                  return false
+                }
               }
               catch (e) {
                 return false
@@ -703,7 +707,6 @@ export const createOffer = async (
 export const handleAcceptBids = async (
   bidData,
   isERC721,
-  LazyMintingStatus = 0,
   historyData
 ) => {
   let order;
@@ -785,18 +788,17 @@ export const handleAcceptBids = async (
     contracts.MARKETPLACE
   );
 
-  if (!LazyMintingStatus) {
-    let usrHaveQuantity = await GetOwnerOfToken(
-      sellerOrder[1],
-      sellerOrder[2],
-      isERC721,
-      sellerOrder[0]
-    );
-    if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-      NotificationManager.error("Seller don't own this NFT anymore");
-      return false;
-    }
+  let usrHaveQuantity = await GetOwnerOfToken(
+    sellerOrder[1],
+    sellerOrder[2],
+    isERC721,
+    sellerOrder[0]
+  );
+  if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
+    NotificationManager.error("Seller don't own this NFT anymore");
+    return false;
   }
+
 
   if (!approval) {
     NotificationManager.error("Seller didn't approved marketplace");
@@ -862,7 +864,22 @@ export const handleAcceptBids = async (
       console.log("error in contract", e);
       return false;
     }
-
+    let req = {
+      "recordID": bidData.orderID[0]?._id,
+      "DBCollection": "Order",
+      "hashStatus": 1,
+      "hash": completeOrder.hash
+    }
+    try {
+      let updateRes = await UpdateStatus(req, historyData)
+      if (updateRes === false) {
+        console.log("data already inserted")
+        return false
+      }
+    }
+    catch (e) {
+      return false
+    }
     try {
       await UpdateOrder({
         orderID: bidData.orderID[0]?._id,
@@ -872,18 +889,7 @@ export const handleAcceptBids = async (
         qty_sold: Number(details.quantity_sold) + Number(bidData.bidQuantity),
         buyer: buyerOrder[0]?.toLowerCase(),
       });
-      let req = {
-        "recordID": bidData.orderID[0]?._id,
-        "DBCollection": "Order",
-        "hashStatus": 1,
-        "hash": completeOrder.hash
-      }
-      try {
-        await UpdateStatus(req, historyData)
-      }
-      catch (e) {
-        return false
-      }
+
       if (
         Number(details.quantity_sold) + Number(bidData.bidQuantity) >=
         details.total_quantity
@@ -1070,6 +1076,23 @@ export const handleAcceptOffers = async (bidData, props, account, historyData) =
     }
 
     try {
+      let req = {
+        "recordID": bidData._id,
+        "DBCollection": "Bids",
+        "hashStatus": 1,
+        "hash": completeOrder.hash
+      }
+      try {
+        let updateRes = await UpdateStatus(req, historyData)
+        if (updateRes === false) {
+          console.log("data already inserted")
+          return false
+        }
+      }
+      catch (e) {
+        return false
+      }
+
       let reqParams = {
         bidID: bidData._id,
         nftID: bidData?.nftID, //to make sure we update the quantity left : NFTid
@@ -1091,18 +1114,7 @@ export const handleAcceptOffers = async (bidData, props, account, historyData) =
       console.log("error in updating order data", e);
       return false;
     }
-    let req = {
-      "recordID": bidData._id,
-      "DBCollection": "Bids",
-      "hashStatus": 1,
-      "hash": completeOrder.hash
-    }
-    try {
-      await UpdateStatus(req, historyData)
-    }
-    catch (e) {
-      return false
-    }
+
   } catch (e) {
     console.log("error in contract function calling", e);
     if (e.code === 4001) {

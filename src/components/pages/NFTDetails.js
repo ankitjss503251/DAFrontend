@@ -625,7 +625,7 @@ function NFTDetails() {
                 Number(convertToEth(orders[0].price?.$numberDecimal))
               ) {
                 NotificationManager.error(
-                  "Bid Price must be greater than minimum bid",
+                  `Bid Price must be greater than ${Number(convertToEth(orders[0].price?.$numberDecimal))} BUSD`,
                   "",
                   800
                 );

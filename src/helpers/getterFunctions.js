@@ -79,7 +79,7 @@ export const GetOwnerOfToken = async (
     collection,
     isERC721 ? erc721Abi.abi : erc1155Abi.abi
   );
-  console.log("collectionInsatnce", collectionInstance, tokenId);
+  console.log("collectionInsatance", collectionInstance, tokenId);
   let balance = 0;
   console.log("isERC721", isERC721);
   if (isERC721) {
