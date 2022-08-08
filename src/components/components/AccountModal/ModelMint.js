@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import imagess from '../../components/images/check-mark.png';
-import cross from "../../components/images/cross-mark.png"
+import mint from '../../components/images/mint.png';
+import { nanoid } from 'nanoid';
 
 const ModelMint = ({ onRequestClose }) => {
 
+  const unique_id = nanoid();
 
 
 
   const datas = [
     {
       id: 1,
-      img: require("../../components/images/ether.png"),
-      des: "The only NFT marketplace where you can buy, sell and customize licensed firearms from the world's leading brands"
+      des: "1 The only NFT marketplace where you can buy, sell and customize licensed firearms from the world's leading brands"
     },
     {
       id: 2,
-      img: require("../../components/images/ether.png"),
-      des: "The only NFT marketplace where you can buy, sell and customize licensed firearms from the world's leading brands"
+      des: "2 The only NFT marketplace where you can buy, sell and customize licensed firearms from the world's leading brands"
+    }
+    ,
+    {
+      id: 3,
+      des: "3 The only NFT marketplace where you can buy, sell and customize licensed firearms from the world's leading brands"
     }
   ]
 
@@ -41,6 +46,9 @@ const ModelMint = ({ onRequestClose }) => {
     };
   });
 
+
+
+
   return (
     <div className="modal__backdrop">
       <div className="modal__container">
@@ -48,7 +56,16 @@ const ModelMint = ({ onRequestClose }) => {
         <ul className='minting'>
           {datas.map(data =>
             <li key={data.id}>
-              <img src={imagess} alt="" />{data.des}
+              {data.id == 2 ?
+                <p>
+                  <img src={imagess} alt="" />
+                </p>
+                :
+                <p>
+                  <img src={mint} alt="" className='mint_rotate' />
+                </p>
+              }
+              {data.des}
             </li>
           )}
         </ul>

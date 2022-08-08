@@ -8,14 +8,6 @@ import Arrow from '../SVG/Arrow';
 import { PartnersLogos } from '../../Data/dummyJSON';
 import { Link } from '@reach/router';
 
-var bgImgStyle = {
-    backgroundImage: "url(./img/background.jpg)",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPositionX: "center",
-    backgroundPositionY: "center",
-    backgroundColor: "#000",
-  };
   var bgImgStylesec1 = {
     backgroundImage: "url(./img/background/banner-home.jpg)",
     backgroundRepeat: "no-repeat",
@@ -27,7 +19,7 @@ var bgImgStyle = {
 
 function Partners() {
   return (
-    <div style={bgImgStyle}>
+    <div>
             <section style={bgImgStylesec1} className="jumbotron breadcumb no-bg h-vh pdd_8">
                 <PartnersBanner />
             </section>

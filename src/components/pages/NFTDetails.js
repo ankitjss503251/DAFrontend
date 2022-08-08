@@ -15,13 +15,7 @@ import {
 
 import { useParams } from "react-router-dom";
 import { convertToEth } from "../../helpers/numberFormatter";
-import {
-  createOffer,
-  putOnMarketplace,
-  handleBuyNft,
-  createBid,
-  handleRemoveFromSale,
-} from "../../helpers/sendFunctions";
+import { createOffer, putOnMarketplace, handleBuyNft, createBid, handleRemoveFromSale, } from "../../helpers/sendFunctions";
 import { useCookies } from "react-cookie";
 import contracts from "../../config/contracts";
 import { GENERAL_DATE } from "../../helpers/constants";
@@ -35,18 +29,12 @@ import Logo from "../../assets/images/logo.svg";
 import { fetchBidNft, InsertHistory } from "../../apiServices";
 import { fetchOfferNft } from "../../apiServices";
 import { useGLTF } from "@react-three/drei";
-import {
-  Canvas, useFrame, extend, useThree,
-} from "@react-three/fiber";
+import { Canvas, useFrame, extend, useThree, } from "@react-three/fiber";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import evt from "./../../events/events";
 import { onboard } from "../menu/header";
 import { WalletConditions } from "../components/WalletConditions";
-
 extend({ OrbitControls });
-
-
-
 const CameraControls = () => {
   const {
     camera,
@@ -56,11 +44,9 @@ const CameraControls = () => {
   useFrame((state) => controls.current.update());
   return <orbitControls ref={controls} args={[camera, domElement]} />;
 };
-
 var textColor = {
   textColor: "#EF981D",
 };
-
 function NFTDetails() {
   var bgImgStyle = {
     backgroundImage: `url(${BGImg})`,
@@ -70,9 +56,7 @@ function NFTDetails() {
     backgroundPositionY: "center",
     backgroundColor: "#000",
   };
-
   const { id } = useParams();
-
   const [NFTDetails, setNFTDetails] = useState([]);
   const [allNFTs, setAllNFTs] = useState([]);
   const [collection, setCollection] = useState([]);
@@ -158,15 +142,12 @@ function NFTDetails() {
         setOwnedBy(res[0]?.ownedBy[res[0]?.ownedBy?.length - 1]?.address);
         const c = await getCollections({ collectionID: res[0].collection });
         setCollection(c[0]);
-
         const reqData1 = {
           page: 1,
           limit: 12,
           collectionID: res[0].collection,
         };
-
         const nfts = await getNFTs(reqData1);
-
         setAllNFTs(nfts);
         let isOwned = "none"
         if (
@@ -188,9 +169,7 @@ function NFTDetails() {
           res[0]?.ownedBy[0]?.address?.toLowerCase()) {
           isOwned = false
         }
-
         setOwned(isOwned);
-
         if (id) {
           const _nft = await getNFTDetails({
             nftID: id,
@@ -423,7 +402,6 @@ function NFTDetails() {
   }
 
   // Popup
-
   const handleMpShow = () => {
     document.getElementById("tab_opt_1").classList.remove("put_hide");
     document.getElementById("tab_opt_1").classList.add("put_show");
@@ -476,11 +454,8 @@ function NFTDetails() {
   function handleChange(ev) {
     console.log("ev", ev, new Date(ev), moment.utc(ev));
     if (!ev.target["validity"].valid) return;
-
     const dt = ev.target["value"];
-
     const ct = moment(new Date()).format();
-
     if (dt < ct) {
       NotificationManager.error(
         "Start date should not be of past date",
@@ -516,7 +491,6 @@ function NFTDetails() {
   }, [loading, isPlaceBidModal, isBuyNowModal]);
 
   // Place Bid Checkout Modal
-
   const placeBidModal = (
     <PopupModal
       content={
@@ -683,7 +657,6 @@ function NFTDetails() {
   );
 
   // Buy Now Checkout Modal
-
   const buyNowModal = (
     <PopupModal
       content={
@@ -798,7 +771,6 @@ function NFTDetails() {
 
   return (
     <div>
-
       {showAlert === "chainId" ? <PopupModal content={<div className='popup-content1'>
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
@@ -1855,11 +1827,9 @@ function NFTDetails() {
           </div>
         </div>
       </div>
-
       {/*Bid/Offer Modal Ends*/}
       <Footer />
     </div>
   );
 }
-
 export default NFTDetails;

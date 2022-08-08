@@ -36,15 +36,6 @@ function Collection() {
     backgroundRepeat: "no-repeat",
   };
 
-  const bgImgStyle = {
-    backgroundImage: `url(${BGImg})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPositionX: "center",
-    backgroundPositionY: "center",
-    backgroundColor: "#000",
-  };
-
   const gridtwo = () => {
     setgrid("col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4");
     document.getElementById("gridtwo").classList.add("active");
@@ -189,7 +180,7 @@ function Collection() {
 
   return (
     <>
-      <div style={bgImgStyle}>
+      <div>
         {loadMoreDisabled && !nftList
           ? NotificationManager.info("No more items to load")
           : ""}
@@ -222,7 +213,7 @@ function Collection() {
             <h1 className="collection_title text-center">
               {collectionDetails?.name}
             </h1>
-            <ul class="collection_social mb-4">
+            {/* <ul class="collection_social mb-4">
               <li>
                 <a href={"/"}>
                   <i class="fa fa-facebook fa-lg"></i>
@@ -243,7 +234,7 @@ function Collection() {
                   <i class="fa fa-pinterest fa-lg"></i>
                 </a>
               </li>
-            </ul>
+            </ul> */}
 
             <div className="coppycode text-center">
               <span className="ctc">
