@@ -1609,8 +1609,8 @@ function NFTDetails() {
                         <option value={"BNB"} defaultValue>
                           BNB
                         </option>
-                        <option value={"HNTR"}>HNTR</option>
-                        <option value={"BUSD"}>BUSD</option>
+                        {/* <option value={"HNTR"}>HNTR</option>
+                        <option value={"BUSD"}>BUSD</option> */}
                       </select>
                     </>
                   ) : marketplaceSaleType === 1 ? (

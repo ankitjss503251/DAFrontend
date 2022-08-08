@@ -299,14 +299,14 @@ function CreateNFTs() {
           formdata.append("hashStatus", 0)
           try {
             createdNft = await createNft(formdata);
-            let metaDatahash="https://decryptnft.mypinata.cloud/ipfs/"+createdNft.metaDatahash
-           
-             let tokenId=parseInt(createdNft.tokenID,10)
-            
-             let uri=await NFTcontract.setCustomTokenUri(tokenId,metaDatahash);
-             let uriResult=await uri.wait()
-           
-              
+            let metaDatahash = "https://decryptnft.mypinata.cloud/ipfs/" + createdNft.metaDatahash
+
+            let tokenId = parseInt(createdNft.tokenID, 10)
+
+            let uri = await NFTcontract.setCustomTokenUri(tokenId, metaDatahash);
+            let uriResult = await uri.wait()
+
+
             // NotificationManager.success("NFT created successfully", "", 800);
             // setLoading(false);
             // slowRefresh(1000);
@@ -494,7 +494,7 @@ function CreateNFTs() {
                 data-bs-toggle='modal'
                 data-bs-target='#NftModal'
                 onClick={() => setModal("active")}>
-                + Add NFTs
+                + Create NFTs
               </button>
             )}
         </div>
@@ -652,10 +652,10 @@ function CreateNFTs() {
                       ) : (
                         ""
                       )}
-                     
+
                     </div>
                   </div>
-                 
+
                 </div>
 
                 {needPreview &&

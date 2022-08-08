@@ -14,6 +14,7 @@ import { getCollections } from "../../helpers/getterFunctions";
 import moment from "moment";
 import { convertToEth } from "../../helpers/numberFormatter";
 import { Tokens } from "../../helpers/tokensToSymbol";
+import { Button } from "../components/AccountModal/Button";
 
 const fadeInUp = keyframes`
   0% {
@@ -574,10 +575,11 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className="col-lg-2 col-md-12 d-flex align-items-end mt-4 mt-lg-0 mt-xl-0">
+            <div className="col-lg-2 col-md-12 d-flex align-items-end mt-4 mt-lg-0 mt-xl-0 flex-wrap">
               <Link to="" className="border_btn title_color">
                 Learn More
               </Link>
+              
             </div>
           </div>
         </div>

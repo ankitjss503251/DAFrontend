@@ -690,7 +690,7 @@ function CreateCollection(props) {
                     setModal("active");
                   }}
                 >
-                  + Add Collection
+                  + Create New Collection
                 </button>
               </div>
 
