@@ -308,7 +308,7 @@ const Home = () => {
                                 fill="#428BC1"
                               />
                             </svg>
-                            {moment.utc(st).local().format() == "Invalid date" ? " --:--:--" : <Clock
+                            {moment.utc(st).local().format() == "Invalid date" ? " 00:00:00" : <Clock
                               deadline={moment.utc(st).local().format()
                               }
                             ></Clock>}

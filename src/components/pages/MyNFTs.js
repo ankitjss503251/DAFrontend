@@ -223,8 +223,8 @@ function MyNFTs() {
           </div> */}
 
           <h1 className='collection_title text-center'>
-            {profile?.username ? profile?.username : "John Doe"}{" "}
-            <img alt='' src={"../img/author/check.png"} className='img-fluid' />
+            {profile?.username ? profile?.username : "Unnamed"}{" "}
+            {/* <img alt='' src={"../img/author/check.png"} className='img-fluid' /> */}
           </h1>
 
           <div className='coppycode text-center mb-4'>
@@ -640,6 +640,7 @@ function MyNFTs() {
                   ownedNFTs && ownedNFTs?.length > 0 ? ownedNFTs?.map((card, key) => (
                     <div className={grid} key={key}>
                       <AuthorListing
+                       previewImg={card?.previewImg}
                         image={card.image}
                         fileType={card.fileType}
                         card={card}
@@ -667,7 +668,7 @@ function MyNFTs() {
                     return (
                       <div className={grid} key={key}>
                         <AuthorListing
-
+                           previewImg={card?.previewImg}
                           image={card?.image}
                           fileType={card?.fileType}
                           card={card}

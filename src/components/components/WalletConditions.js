@@ -18,8 +18,9 @@ export const WalletConditions = () => {
     }
 
     const state = onboard.state.get();
+    
     if (state.wallets?.length > 0) {
-        console.log("state", state)
+
         const cWalletAccount = state.wallets[0].accounts[0].address;
         const cWalletChainID = state.wallets[0].chains[0].id;
 

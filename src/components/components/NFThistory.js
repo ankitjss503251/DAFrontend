@@ -12,22 +12,26 @@ import moment from "moment";
 const NFThistory = (props) => {
   const [history, setHistory] = useState([]);
 
+  const fetch = async (nftID, userID) => {
+    try {
+      const data = {
+        page: 1,
+        limit: 12,
+        nftID: nftID,
+        userID: userID
+      };
+      const hist = await fetchHistory(data);
+      setHistory(hist);
+    } catch (e) {
+      console.log("Error in fetching history", e);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async (nftID, userID) => {
-      try {
-        const data = {
-          page: 1,
-          limit: 12,
-          nftID: nftID,
-          userID: userID
-        };
-        const hist = await fetchHistory(data);
-        setHistory(hist);
-      } catch (e) {
-        console.log("Error in fetching history", e);
-      }
+    if (props.nftID) { fetch(props.nftID, "") }
+    else if (props.userID) {
+      fetch("", props.userID)
     };
-    if (props) fetch(props.nftID, props.userID);
   }, [props.nftID, props.userID, props.reloadContent]);
 
   return (
@@ -132,7 +136,7 @@ const NFThistory = (props) => {
                       )
                     }) : ""
                   }
-           
+
                 </tbody>
               </table>
             </div>

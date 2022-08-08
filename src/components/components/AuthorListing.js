@@ -2,10 +2,7 @@ import React, { useRef, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import {
-  Canvas, useFrame,
-  extend,
-  useThree,
-} from "@react-three/fiber";
+  Canvas, useFrame, extend, useThree} from "@react-three/fiber";
 import * as THREE from "three"
 
 
@@ -53,7 +50,9 @@ function AuthorListing(props) {
             <video
               className='img-fluid items_img w-100'
               controls>
-              <source src={props?.image} type='video/mp4' />
+              <source src={props?.image} type='video/mp4' 
+              
+              />
             </video>
           ) : (
             ""
@@ -74,13 +73,15 @@ function AuthorListing(props) {
             // </Canvas>
 
             <img
-              src={props?.image}
+              src={props?.previewImg}
               className='img-fluid items_img w-100'
               alt=''
               onError={(e) => {
                 e.target.src = props?.previewImg;
               }}
             />
+        
+         
           ) : (
             ""
           )}

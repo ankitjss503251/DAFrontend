@@ -31,6 +31,7 @@ const Clock = (props) => {
     let time = Date.parse(deadline) - Date.parse(new Date());
     if (time <= 0) {
       setState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      console.log("fetching..")
       if (props.fetch)
         await props.fetch()
     } else {

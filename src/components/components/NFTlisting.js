@@ -75,7 +75,7 @@ function NFTlisting(props) {
 
   useEffect(() => {
     fetch()
-  }, [props.id, props.refreshState, props.reloadContent]);
+  }, [props.id, props.reloadContent]);
 
 
 
@@ -94,7 +94,7 @@ function NFTlisting(props) {
     <PopupModal
       content={
         <div className='popup-content1'>
-          <h3 className='modal_heading '>Complete Checkout</h3>
+          <h3 className='modal_heading '>Place a Bid</h3>
           <div className='bid_user_details my-4'>
             <img src={Logo} alt='' />
             <div className='bid_user_address'>
@@ -117,6 +117,7 @@ function NFTlisting(props) {
             type='text'
             min='1'
             step='1'
+            autoComplete="off"
             placeholder='Quantity e.g. 1,2,3...'
             disabled={props ? props.NftDetails.type === 1 : false}
             value={qty}
@@ -142,6 +143,7 @@ function NFTlisting(props) {
             className='form-control checkout_input'
             type='text'
             min='1'
+            autoComplete="off"
             placeholder='Price e.g. 0.001,1...'
             value={price}
             onKeyPress={(e) => {
@@ -190,7 +192,7 @@ function NFTlisting(props) {
                 Number(convertToEth(currentOrder.price?.$numberDecimal))
               ) {
                 NotificationManager.error(
-                  "Bid Price must be greater than minimum bid",
+                  `Bid Price must be greater than ${Number(convertToEth(currentOrder.price?.$numberDecimal))} BUSD`,
                   "",
                   800
                 );
@@ -281,6 +283,7 @@ function NFTlisting(props) {
             type='text'
             min='1'
             step='1'
+            autoComplete="off"
             placeholder='Quantity e.g. 1,2,3...'
             disabled={props ? props.NftDetails.type === 1 : false}
             value={qty}
@@ -306,6 +309,7 @@ function NFTlisting(props) {
             className='form-control checkout_input'
             type='text'
             min='1'
+            autoComplete="off"
             placeholder='Price e.g. 0.001,1...'
             disabled={true}
             value={price}></input>
@@ -320,28 +324,24 @@ function NFTlisting(props) {
               }
               setLoading(true);
               try {
-
+                let historyData = {
+                  nftID: currentOrder.nftID,
+                  buyerID: localStorage.getItem('userId'),
+                  sellerID: currentOrder?.sellerID?._id,
+                  action: "Sold",
+                  price: ethers.utils.parseEther(price.toString()).toString(),
+                  paymentToken: currentOrder?.paymentToken,
+                  quantity: currentOrder?.total_quantity,
+                  createdBy: localStorage.getItem("userId"),
+                };
                 const hbn = await handleBuyNft(
                   currentOrder._id,
                   props?.NftDetails?.type === 1,
                   currentUser,
-                  cookies.balance,
                   currentOrder.total_quantity,
-                  false,
-                  props?.NftDetails?.collectionAddress?.toLowerCase()
+                  historyData
                 );
                 if (hbn !== false && hbn !== undefined) {
-                  let historyReqData = {
-                    nftID: currentOrder.nftID,
-                    buyerID: localStorage.getItem('userId'),
-                    sellerID: currentOrder?.sellerID?._id,
-                    action: "Sold",
-                    price: ethers.utils.parseEther(price.toString()).toString(),
-                    paymentToken: currentOrder?.paymentToken,
-                    quantity: currentOrder?.total_quantity,
-                    createdBy: localStorage.getItem("userId"),
-                  };
-                  await InsertHistory(historyReqData);
                   // await fetch()
                   slowRefresh(1000);
                   setLoading(false);
@@ -381,15 +381,18 @@ function NFTlisting(props) {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-
             <div >
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {cookies.chain_id}
+                {process.env.REACT_APP_NETWORK_ID}
               </span>
-
             </div>
-
+            <div >
+              <div className="mr-3">Required Network Name:</div>
+              <span className="adr">
+                {process.env.REACT_APP_NETWORK}
+              </span>
+            </div>
           </div>
         </div>
         <button
@@ -531,7 +534,7 @@ function NFTlisting(props) {
                           <td>
 
                             {moment.utc(o.deadline * 1000).local().format() < moment(new Date()).format() || o.deadline === GENERAL_TIMESTAMP ? (
-                              "--:--:--"
+                              "00:00:00"
                             ) : (
 
                               <Clock
@@ -573,7 +576,8 @@ function NFTlisting(props) {
                                     };
                                     await InsertHistory(historyReqData);
                                     setLoading(false);
-                                    await props.refreshState()
+                                    slowRefresh(1000)
+                                    // await props.refreshState()
                                   }}
                                 >
                                   Remove From Sale

@@ -11,6 +11,7 @@ import {
   getNFTs,
   getNFTDetails,
   getUsersTokenBalance,
+  GetOwnerOfToken
   // fetchWallet,
 } from "../../helpers/getterFunctions";
 
@@ -265,15 +266,12 @@ function NFTDetails() {
   }, [id, reloadContent, currentUser]);
 
   const PutMarketplace = async () => {
-
-
     const wCheck = WalletConditions();
     if (wCheck !== undefined) {
       setShowAlert(wCheck);
       setIsModal("");
       return;
     }
-
     if (marketplaceSaleType === 0) {
       if (itemprice === undefined || itemprice === "" || itemprice <= 0) {
         NotificationManager.error("Please Enter a price", "", 800);
@@ -349,15 +347,16 @@ function NFTDetails() {
   };
 
   const PlaceOffer = async () => {
-    // if (currentUser === undefined || currentUser === "") {
-    //   setShowAlert("notConnected");
-    //   return;
-    // }
+
+   
+
     const wCheck = WalletConditions();
     if (wCheck !== undefined) {
       setShowAlert(wCheck);
       return;
     }
+
+
 
     if (offerPrice === "" || offerPrice === undefined || offerPrice <= 0) {
       NotificationManager.error("Enter Offer Price");
@@ -528,7 +527,7 @@ function NFTDetails() {
     <PopupModal
       content={
         <div className='popup-content1'>
-          <h3 className='modal_heading '>Complete Checkout</h3>
+          <h3 className='modal_heading '>Place a Bid</h3>
           <div className='bid_user_details my-4'>
             <img src={Logo} alt='' />
 
@@ -544,14 +543,17 @@ function NFTDetails() {
               <span className='pgn'>Polygon</span>
             </div>
           </div>
-          <h6 className='enter_quantity_heading required'>
-            Please Enter the Bid Quantity
+          <h6 className="enter_quantity_heading required">
+            {firstOrderNFT?.type === 1
+              ? "Quantity"
+              : "Please Enter the Quantity"}
           </h6>
           <input
             className="form-control checkout_input"
             type="text"
             min="1"
             step="1"
+            autoComplete="off"
             placeholder="Quantity e.g. 1,2,3..."
             disabled={firstOrderNFT.type === 1 ? true : false}
             value={qty}
@@ -577,6 +579,7 @@ function NFTDetails() {
             className='form-control checkout_input'
             type='text'
             min='1'
+            autoComplete="off"
             placeholder='Price e.g. 0.001,1...'
             value={price}
             onKeyPress={(e) => {
@@ -624,7 +627,7 @@ function NFTDetails() {
                 Number(convertToEth(orders[0].price?.$numberDecimal))
               ) {
                 NotificationManager.error(
-                  "Bid Price must be greater than minimum bid",
+                  `Bid Price must be greater than ${Number(convertToEth(orders[0].price?.$numberDecimal))} BUSD`,
                   "",
                   800
                 );
@@ -715,6 +718,7 @@ function NFTDetails() {
             className="form-control checkout_input"
             type="text"
             min="1"
+            autoComplete="off"
             step="1"
             placeholder="Quantity e.g. 1,2,3..."
             disabled={firstOrderNFT?.type === 1 ? true : false}
@@ -739,6 +743,7 @@ function NFTDetails() {
             className='form-control checkout_input'
             type='text'
             min='1'
+            autoComplete="off"
             placeholder='Price e.g. 0.001,1...'
             disabled={true}
             value={Number(
@@ -749,39 +754,33 @@ function NFTDetails() {
             className='btn-main mt-2 btn-placeABid'
             onClick={async () => {
               setIsBuyNowModal(false);
-              if (currentUser === undefined || currentUser === "") {
-                setShowAlert("notConnected");
-                return;
-              }
               const wCheck = WalletConditions();
               if (wCheck !== undefined) {
                 setShowAlert(wCheck);
                 return;
               }
               setLoading(true);
+              let historyData = {
+                nftID: NFTDetails.id,
+                buyerID: localStorage.getItem('userId'),
+                sellerID: orders[0].sellerID,
+                action: "Sold",
+                price: orders[0]?.price?.$numberDecimal,
+                paymentToken: contracts[selectedTokenFS],
+                quantity: orders[0].total_quantity,
+                createdBy: localStorage.getItem("userId")
+              }
+
               let res = await handleBuyNft(
                 orders[0]._id,
                 firstOrderNFT.type === 1,
                 currentUser,
-                cookies.balance,
                 orders[0].total_quantity,
-                false,
-                firstOrderNFT?.collectionAddress?.toLowerCase()
+                historyData
               );
 
-              if (res === false) {
-                let historyReqData = {
-                  nftID: NFTDetails.id,
-                  buyerID: localStorage.getItem('userId'),
-                  sellerID: orders[0].sellerID,
-                  action: "Sold",
-                  price: orders[0]?.price?.$numberDecimal,
-                  paymentToken: contracts[selectedTokenFS],
-                  quantity: orders[0].total_quantity,
-                  createdBy: localStorage.getItem("userId"),
-                };
-                await InsertHistory(historyReqData);
 
+              if (res !== false) {
                 setLoading(false);
                 setReloadContent(!reloadContent)
                 // slowRefresh(1000);
@@ -810,15 +809,18 @@ function NFTDetails() {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-
             <div >
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {cookies.chain_id}
+                {process.env.REACT_APP_NETWORK_ID}
               </span>
-
             </div>
-
+            <div >
+              <div className="mr-3">Required Network Name:</div>
+              <span className="adr">
+                {process.env.REACT_APP_NETWORK}
+              </span>
+            </div>
           </div>
         </div>
         <button
@@ -906,7 +908,7 @@ function NFTDetails() {
         <div className="container">
           <div className="row mb-5">
             <div className="col-lg-6 mb-xl-5 mb-lg-5 mb-5 img_3d" >
-              {NFTDetails && NFTDetails.fileType == "Image" ? (
+              {NFTDetails && NFTDetails.fileType === "Image" ? (
                 <img
                   src={NFTDetails?.image}
                   className='img-fluid nftimg'
@@ -918,14 +920,14 @@ function NFTDetails() {
               ) : (
                 ""
               )}
-              {NFTDetails && NFTDetails.fileType == "Video" ? (
+              {NFTDetails && NFTDetails.fileType === "Video" ? (
                 <video className="img-fluid nftimg" controls>
                   <source src={NFTDetails?.image} type="video/mp4" />
                 </video>
               ) : (
                 ""
               )}
-              {NFTDetails && NFTDetails.fileType == "3D" ? (
+              {NFTDetails && NFTDetails.fileType === "3D" ? (
                 <Canvas>
                   <pointLight position={[100, 10, 10, 10]} intensity={1.5} />
                   <Suspense fallback={null} >
@@ -1050,7 +1052,7 @@ function NFTDetails() {
               <div className="price_box">
                 {orders?.length > 0 && orders !== "none" ? (
                   <>
-                    <h4>Price</h4>
+                    <h4>{orders[0]?.salesType === 0 ? "Fixed Price" : "Minimum Bid Price"}</h4>
                     <div className='price_div'>
                       <img
                         src={Tokens[orders[0].paymentToken]?.icon}
@@ -1081,10 +1083,7 @@ function NFTDetails() {
                         }
                         try {
                           setLoading(true);
-                          console.log("loader Start");
                           const res = await handleRemoveFromSale(orders[0]._id, currentUser);
-
-                          console.log("response", res)
                           if (res === false) {
                             setLoading(false);
                             return;
@@ -1352,7 +1351,7 @@ function NFTDetails() {
                 </li>
               </ul>
             </div>
-            <div className='col-md-12 mb-5'>
+            {/* <div className='col-md-12 mb-5'>
               <h3 className='title_36 mb-4'>
                 Trading History for Meta Marines
               </h3>
@@ -1361,7 +1360,7 @@ function NFTDetails() {
                 alt=''
                 className='img-fluid box_shadow'
               />
-            </div>
+            </div> */}
             <div className='col-md-12 pb-5 mb-5 border-bottom-5'>
               <h3 className='title_36 mb-4'>Listings</h3>
               {/* <div className='table-responsive'> */}
@@ -1488,6 +1487,7 @@ function NFTDetails() {
                       id='item_price'
                       min='0'
                       max='18'
+                      autoComplete="off"
                       className='form-control input_design'
                       placeholder='Please Enter Price (MATIC)'
                       value={itemprice}
@@ -1528,6 +1528,7 @@ function NFTDetails() {
                     type="text"
                     name="item_qt"
                     id="item_qt"
+                    autoComplete="off"
                     min="1"
                     disabled={NFTDetails.type === 1 ? "disabled" : ""}
                     className="form-control input_design"
@@ -1559,6 +1560,7 @@ function NFTDetails() {
                     id='item_bid'
                     min='0'
                     max='18'
+                    autoComplete="off"
                     className='form-control input_design'
                     placeholder='Enter Minimum Bid'
                     value={item_bid}
@@ -1686,7 +1688,7 @@ function NFTDetails() {
           <div className='modal-content'>
             {/* <!-- Modal Header --> */}
             <div className='modal-header p-4'>
-              <h4 className='text-light title_20 mb-0'>Offer</h4>
+              <h4 className='text-light title_20 mb-0'>Make an Offer</h4>
               <button
                 type='button'
                 className='btn-close text-light'
@@ -1701,7 +1703,7 @@ function NFTDetails() {
               <div className='tab-content'>
                 <div className='mb-3' id='tab_opt_1'>
                   <label htmlFor='item_price' className='form-label'>
-                    Price
+                    Offer Price
                   </label>
                   <input
                     type='text'
@@ -1711,6 +1713,7 @@ function NFTDetails() {
                     max='18'
                     className='form-control input_design'
                     placeholder='Please Enter Price'
+                    autoComplete="off"
                     value={offerPrice}
                     onKeyPress={(e) => {
                       if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -1750,6 +1753,7 @@ function NFTDetails() {
                     disabled={NFTDetails.type === 1 ? true : false}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"
+                    autoComplete="off"
                     value={offerQuantity}
                     onChange={(event) => {
                       if (NFTDetails.type === 1 && event.target.value > 1) {
@@ -1838,6 +1842,7 @@ function NFTDetails() {
                     //value={datetime}
                     onChange={handleChange}
                     className='input_design'
+                    autoComplete="off"
                   />
                 </div>
                 <div className='mt-5 mb-3 text-center'>

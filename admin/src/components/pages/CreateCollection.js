@@ -50,7 +50,7 @@ function CreateCollection(props) {
   const [brands, setBrands] = useState([]);
   const [myCollections, setMyCollections] = useState([]);
   const [nftType, setNftType] = useState("1");
-  const [isModal, setModal] = useState(false);
+  const [isModal, setIsModal] = useState("");
   const [importModal, setImportModal] = useState(false);
   const [importedAddress, setImportedAddress] = useState("");
   const [isOffChain, setIsOffChain] = useState("No");
@@ -65,6 +65,7 @@ function CreateCollection(props) {
   const [isEdit2, setIsEdit2] = useState(false);
   const [showAlert, setShowAlert] = useState("");
   const [walletVariable, setWalletVariable] = useState({});
+  const [addNew, setAddNew] = useState(false);
 
 
 
@@ -82,7 +83,6 @@ function CreateCollection(props) {
         limit: 12,
       };
       let data;
-      console.log("check")
       if (isSuperAdmin()) {
         data = await GetMyCollectionsList(reqBody);
       }
@@ -215,9 +215,7 @@ function CreateCollection(props) {
   };
 
   const handleValidationCheck = () => {
-    if (!currentUser) {
-      return false;
-    }
+
 
     if (logoImg === "" || logoImg === undefined) {
       NotificationManager.error("Please Upload Logo Image", "", 800);
@@ -265,26 +263,13 @@ function CreateCollection(props) {
     let res1;
     let creator;
     const wCheck = WalletConditions();
-    setWalletVariable(wCheck)
-
-    if (wCheck.isLocked) {
-      setShowAlert("locked");
+    if (wCheck !== undefined) {
+      setShowAlert(wCheck);
       return;
-    }
-
-    if (!wCheck.isLocked) {
-      if (!wCheck.cCheck) {
-        setShowAlert("chainId");
-        return;
-      }
-      if (!wCheck.aCheck) {
-        setShowAlert("account")
-        return;
-      }
     }
     if (handleValidationCheck()) {
       setLoading(true);
-      setModal("");
+      setIsModal("");
       setIsEditModal("");
       let contractAddress = "0x";
       if (isUpdate) {
@@ -604,15 +589,18 @@ function CreateCollection(props) {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-
             <div className="d-flex">
-              <div className="mr-3">Required Network ID:&nbsp;</div>
+              <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {walletVariable.sChain}
+                {process.env.REACT_APP_NETWORK_ID}
               </span>
-
             </div>
-
+            <div className="d-flex">
+              <div className="mr-3">Required Network Name:</div>
+              <span className="adr">
+                {process.env.REACT_APP_NETWORK}
+              </span>
+            </div>
           </div>
         </div>
         <button
@@ -633,7 +621,7 @@ function CreateCollection(props) {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {cookies.da_selected_account}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -642,7 +630,6 @@ function CreateCollection(props) {
 
               <button
                 className='btn-main mt-2' onClick={() => {
-                  console.log("logout btn click");
                   evt.emit("disconnectWallet")
                 }}>
                 {"Logout"}
@@ -655,7 +642,7 @@ function CreateCollection(props) {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {cookies.da_selected_account}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -683,14 +670,19 @@ function CreateCollection(props) {
                 <button
                   className="btn btn-admin text-light"
                   type="button"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
+                  // data-bs-toggle="modal"
+                  // data-bs-target="#exampleModal"
                   onClick={() => {
+                    const wCheck = WalletConditions();
+                    if (wCheck !== undefined) {
+                      setShowAlert(wCheck);
+                      return;
+                    }
                     clearState();
-                    setModal("active");
+                    setIsModal("active");
                   }}
                 >
-                  + Create New Collection
+                  Create New Collection
                 </button>
               </div>
 
@@ -814,8 +806,8 @@ function CreateCollection(props) {
                                 <button
                                   className="btn p-1  text-light"
                                   type="button"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#editModal"
+                                  // data-bs-toggle="modal"
+                                  // data-bs-target="#editModal"
                                   onClick={async () => {
                                     setIsEdit1(true);
                                     setIsEdit2(true);
@@ -901,11 +893,9 @@ function CreateCollection(props) {
         </div>
 
         <div
-          className={`modal fade createNft ${isModal}`}
-          id="exampleModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
+          className={`modal createCol ${isModal}`}
+          // id="exampleModal"
+          // tabindex="-1"
         >
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
@@ -919,7 +909,8 @@ function CreateCollection(props) {
                 <button
                   type="button"
                   className="btn-close"
-                  data-bs-dismiss="modal"
+                  // data-bs-dismiss="modal"
+                  onClick={() => setIsModal("")}
                   aria-label="Close"
                 ></button>
               </div>
@@ -1050,6 +1041,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       name="title"
                       value={title}
+                      autoComplete="off"
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
@@ -1089,6 +1081,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={maxSupply}
+                      autoComplete="off"
                       onChange={(e) => {
                         setMaxSupply(e.target.value);
                       }}
@@ -1106,6 +1099,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={price}
+                      autoComplete="off"
                       onChange={(e) => numberInputCheck(e)}
                       onKeyPress={(e) => {
                         if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -1157,6 +1151,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={symbol}
+                      autoComplete="off"
                       onChange={(e) => setSymbol(e.target.value)}
                     />
                   </div>
@@ -1168,6 +1163,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="message-text"
                       value={description}
+                      autoComplete="off"
                       onChange={(e) => setDescription(e.target.value)}
                     ></textarea>
                   </div>
@@ -1180,6 +1176,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       name="title"
+                      autoComplete="off"
                       value={importedCollectionLink}
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
@@ -1280,6 +1277,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       value={importedAddress}
                       name="address"
+                      autoComplete="off"
                       onChange={(e) => {
                         setImportedAddress(e.target.value);
                       }}
@@ -1296,6 +1294,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       value={importedCollectionLink}
                       name="address"
+                      autoComplete="off"
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
                       }}
@@ -1353,6 +1352,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       value={importedAddress}
                       name="address"
+                      autoComplete="off"
                       onChange={(e) => {
                         setImportedAddress(e.target.value);
                       }}
@@ -1369,6 +1369,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       value={importedCollectionLink}
                       name="address"
+                      autoComplete="off"
                       onChange={(e) => {
                         setImportedCollectionLink(e.target.value);
                       }}
@@ -1383,6 +1384,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={title}
+                      autoComplete="off"
                       name="title"
                       onChange={(e) => {
                         setTitle(e.target.value);
@@ -1408,7 +1410,7 @@ function CreateCollection(props) {
         </div>
 
         <div
-          className={`modal fade createNft ${isEditModal}`}
+          className={`modal createCol ${isEditModal}`}
           id="editModal"
           tabindex="-1"
           aria-labelledby="editModalLabel"
@@ -1426,8 +1428,9 @@ function CreateCollection(props) {
                 <button
                   type="button"
                   className="btn-close"
-                  data-bs-dismiss="modal"
+                  // data-bs-dismiss="modal"
                   aria-label="Close"
+                  onClick={() => setIsEditModal("")}
                 ></button>
               </div>
               <div className="modal-body">
@@ -1524,6 +1527,7 @@ function CreateCollection(props) {
                       id="recipient-name"
                       name="title"
                       value={title}
+                      autoComplete="off"
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
@@ -1590,6 +1594,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={maxSupply}
+                      autoComplete="off"
                       onChange={(e) => {
                         setMaxSupply(e.target.value);
                       }}
@@ -1607,6 +1612,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={price}
+                      autoComplete="off"
                       onChange={(e) => numberInputCheck(e)}
                       onKeyPress={(e) => {
                         if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
@@ -1665,6 +1671,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={symbol}
+                      autoComplete="off"
                       onChange={(e) => setSymbol(e.target.value)}
                     />
                   </div>
@@ -1688,6 +1695,7 @@ function CreateCollection(props) {
                       className="form-control"
                       id="recipient-name"
                       value={importedCollectionLink}
+                      autoComplete="off"
                       onChange={(e) =>
                         setImportedCollectionLink(e.target.value)
                       }
