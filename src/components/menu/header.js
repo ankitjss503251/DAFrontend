@@ -468,7 +468,7 @@ if(chain){
                       All NFTs
                     </NavLink>
                   </li>
-                  {/* {catg.length > 0
+                  {catg.length > 0
                     ? catg?.map((c, key) => {
                       return (
                         <li key={key}>
@@ -482,7 +482,7 @@ if(chain){
                         </li>
                       );
                     })
-                    : ""} */}
+                    : ""} 
                 
                 </ul>
               </li>
