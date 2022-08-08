@@ -1033,13 +1033,13 @@ function NFTDetails() {
                   ""
                 )}
 
-                {(orders === "none" || owned === "none" || haveBid === "none" || haveOffer === "none") ? <button
+                {/* {(orders === "none" || owned === "none" || haveBid === "none" || haveOffer === "none") ? <button
                   type='button'
                   className='title_color buy_now'
 
                 >
                   Loading...
-                </button> : ""}
+                </button> : ""} */}
 
                 {currentUser && orders !== "none" && owned && owned !== "none" ?
                   orders?.length > 0 ?
@@ -1100,7 +1100,7 @@ function NFTDetails() {
                 }
 
                 {currentUser && orders !== "none" && orders?.length > 0 && owned === false && owned !== "none" ?
-                  orders[0]?.salesType === 0 && moment.utc(orders[0].deadline * 1000).local().format() > moment(new Date()).format() ?
+                  orders[0]?.salesType === 0 ?
                     <button
                       type='button'
                       className='title_color buy_now'
