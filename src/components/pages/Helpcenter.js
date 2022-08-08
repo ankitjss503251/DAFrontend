@@ -3,16 +3,6 @@ import Footer from '../components/footer';
 import { Link } from '@reach/router';
 import { createGlobalStyle } from 'styled-components';
 
-
-var bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
-
 const GlobalStyles = createGlobalStyle`
   .background {
     background-size: cover;
@@ -22,7 +12,7 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const Helpcenter= () => (
-<div style={bgImgStyle}>
+<div>
 <GlobalStyles/>
 
   <section className="jumbotron pdd_12 background" style={{backgroundImage: `url(${'./img/background/bg.jpg'})`}}>

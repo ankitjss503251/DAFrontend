@@ -2,19 +2,9 @@ import React from 'react';
 import Footer from '../components/footer';
 import { Link } from '@reach/router';
 
-
-var bgImgStyle = {
-    backgroundImage: "url(./img/background.jpg)",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPositionX: "center",
-    backgroundPositionY: "center",
-    backgroundColor: "#000",
-  };
-
 function HelpCenterDetail() {
   return (
-    <div style={bgImgStyle}>
+    <div>
         <section className="pdd_8">
           <div className="container">
             <div className="row mb-5">

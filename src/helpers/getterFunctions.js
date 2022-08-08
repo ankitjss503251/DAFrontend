@@ -16,10 +16,12 @@ import {
   getBrandById,
   GetIndividualAuthorDetail,
   getCategories,
+  getCategoriesWithCollectionData,
   fetchOfferNft,
   fetchOfferMade,
   GetHistory,
   fetchOfferReceived,
+  getAllCollectionTabs,
 } from "../apiServices";
 import { ethers } from "ethers";
 import contracts from "../config/contracts";
@@ -79,18 +81,19 @@ export const GetOwnerOfToken = async (
     collection,
     isERC721 ? erc721Abi.abi : erc1155Abi.abi
   );
-  console.log("collectionInsatnce", collectionInstance, tokenId);
+  
   let balance = 0;
-  console.log("isERC721", isERC721);
   if (isERC721) {
-    console.log("is 721");
     let owner = await collectionInstance.ownerOf(tokenId);
     if (owner.toLowerCase() === account.toLowerCase()) {
       balance = "1";
     }
+    console.log("owner", owner)
+  } else {
+    balance = await collectionInstance.balanceOf(account, tokenId);
     console.log("balance", balance.toString());
-  } else balance = await collectionInstance.balanceOf(account, tokenId);
-  console.log("balance", balance.toString());
+  }
+ 
   return balance.toString();
 };
 
@@ -281,6 +284,7 @@ export const getCollections = async (req) => {
         createdBy: coll.createdBy,
         link: coll.link,
         volumeTraded: coll.volumeTraded,
+        count: data.count,
       };
     })
     : (formattedData[0] = {});
@@ -387,7 +391,7 @@ export const getNFTDetails = async (req) => {
         totalQuantity: nft.totalQuantity,
         fileType: nft.fileType,
         collectionData: nft.CollectionData,
-        OrderData: nft.OrderData,
+        OrderData: nft.OrderData
       };
     })
     : (formattedData[0] = {});
@@ -595,6 +599,44 @@ export const fetchHistory = async (req) => {
     : (formattedData[0] = {});
   return formattedData;
 }
+
+export const getCategoryWithCollectionData = async (data) => {
+  let category = [];
+  try {
+    category = await getCategoriesWithCollectionData(data);
+  } catch (e) {
+    console.log("Error in getCategoryWithCollectionData API", e);
+  }
+  return category;
+};
+
+export const getCollectionTabs = async (req) => {
+  let data = [];
+  try {
+    let reqBody = {
+      page: req.page,
+      limit: req.limit,
+      collectionID: req.collectionID,
+      userID: req.userID,
+      categoryID: req.categoryID,
+      brandID: req.brandID,
+      ERCType: req.ERCType,
+      searchText: req.searchText,
+      filterString: req.filterString,
+      isMinted: req.isMinted,
+      isHotCollection: req.isHotCollection,
+      isExclusive: req.isExclusive,
+      isOnMarketplace: req.isOnMarketplace,
+    };
+    data = await getAllCollectionTabs(reqBody);
+  } catch (e) {
+    console.log("Error in getCollections API--->", e);
+  }
+  return data;
+};
+
+
+
 
 
 

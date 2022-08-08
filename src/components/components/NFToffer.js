@@ -37,7 +37,6 @@ function NFToffer(props) {
   const [modal, setModal] = useState(false);
   const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
   const [showAlert, setShowAlert] = useState("");
-  const [walletVariable, setWalletVariable] = useState({});
 
 
 
@@ -55,21 +54,22 @@ function NFToffer(props) {
   }, [props.id, props.reloadContent]);
 
   const fetch = async () => {
-    let searchParams = {
-      nftID: props.id,
-      buyerID: "All",
-      bidStatus: "All",
-      //orderID: "All",
-    };
+    if (props.id) {
+      let searchParams = {
+        nftID: props.id,
+        buyerID: "All",
+        bidStatus: "All",
+        //orderID: "All",
+      };
 
-    let _data = await fetchOfferNft(searchParams);
+      let _data = await fetchOfferNft(searchParams);
 
-    if (_data && _data.data.length > 0) {
+    if (_data && _data?.data?.length > 0) {
       let a = _data.data;
-
-      setOffer(a);
-
+        setOffer(a);
+      }
     }
+
   };
 
   const PlaceOffer = async () => {
@@ -168,15 +168,18 @@ function NFToffer(props) {
         <div className='bid_user_details my-4'>
           <img src={Logo} alt='' />
           <div className='bid_user_address'>
-
             <div >
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {cookies.chain_id}
+                {process.env.REACT_APP_NETWORK_ID}
               </span>
-
             </div>
-
+            <div >
+              <div className="mr-3">Required Network Name:</div>
+              <span className="adr">
+                {process.env.REACT_APP_NETWORK}
+              </span>
+            </div>
           </div>
         </div>
         <button
@@ -254,7 +257,7 @@ function NFToffer(props) {
             </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
 
       {loading ? <Spinner /> : ""}
-      {offer && offer.length <= 0 ? <div className="col-md-12">
+      {offer && offer?.length <= 0 ? <div className="col-md-12">
         <h4 className="no_data_text text-muted">No Offers Available</h4>
       </div> : <div className="table-responsive">
         <div className="col-md-12">
@@ -271,7 +274,7 @@ function NFToffer(props) {
                 </tr>
               </thead>
               <tbody>
-                {offer && offer.length > 0
+                {offer && offer?.length > 0
                   ? offer.map((b, i) => {
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
@@ -305,16 +308,18 @@ function NFToffer(props) {
                           </span>
                         </td>
                         <td>
-                          <Clock
-                            deadline={moment.utc(b.bidDeadline * 1000).local().format()}
-                            fetch={fetch}
-                          ></Clock>
+                          {Date.parse(moment.utc(b.bidDeadline * 1000).local().format()) - Date.parse(new Date()) <= 0 ? "00:00:00" :
+                            <Clock
+                              deadline={moment.utc(b.bidDeadline * 1000).local().format()}
+                              fetch={fetch}
+                            ></Clock>
+                          }
                         </td>
-                        <td className={moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "red_text" :
+                        <td className={b.bidStatus === "Accepted" ? "blue_text" : moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "red_text" :
                           b.bidStatus === "MakeOffer" || b.bidStatus === "Accepted" ? "green_text" : "red_text"}>
                           {" "}
                           {
-                            moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "Ended" :
+                            b.bidStatus === "Accepted" ? b.bidStatus : moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "Ended" :
                               b.bidStatus === "MakeOffer" ? "Active" : b.bidStatus}
                         </td>
                         <td className="text-center">
@@ -338,29 +343,26 @@ function NFToffer(props) {
                                     return;
                                   }
                                   setLoading(true);
+                                  let historyData = {
+                                    nftID: b?.nftID,
+                                    sellerID: localStorage.getItem('userId'),
+                                    buyerID: b?.bidderID?._id,
+                                    action: "Offer",
+                                    type: "Accepted",
+                                    price: b?.bidPrice?.$numberDecimal,
+                                    paymentToken: b?.paymentToken,
+                                    quantity: b?.bidQuantity,
+                                    createdBy: localStorage.getItem("userId"),
+                                  };
                                   const resp = await handleAcceptOffers(
                                     b,
                                     props,
-                                    currentUser.toLowerCase()
+                                    currentUser.toLowerCase(),
+                                    historyData
                                   );
-                                  if (resp !== false) {
-                                    let historyReqData = {
-                                      nftID: b?.nftID,
-                                      sellerID: localStorage.getItem('userId'),
-                                      buyerID: b?.bidderID?._id,
-                                      action: "Offer",
-                                      type: "Accepted",
-                                      price: b?.bidPrice?.$numberDecimal,
-                                      paymentToken: b?.paymentToken,
-                                      quantity: b?.bidQuantity,
-                                      createdBy: localStorage.getItem("userId"),
-                                    };
-                                    await InsertHistory(historyReqData);
-
-                                  }
 
                                   setLoading(false);
-                                  await props.refreshState()
+                                  // await props.refreshState()
                                   // await fetch()
                                   slowRefresh(1000);
                                 }}
@@ -401,7 +403,7 @@ function NFToffer(props) {
                                   };
                                   await InsertHistory(historyReqData);
                                   // await fetch()
-                                  props.refreshState()
+                                  // props.refreshState()
 
                                   slowRefresh(1000);
 
@@ -470,7 +472,7 @@ function NFToffer(props) {
                                   };
                                   await InsertHistory(historyReqData);
                                   // await fetch()
-                                  await props.refreshState()
+                                  // await props.refreshState()
                                   slowRefresh(1000)
                                 }}
                               >
@@ -521,6 +523,7 @@ function NFToffer(props) {
                     className="form-control input_design"
                     placeholder="Please Enter Price (MATIC)"
                     value={offerPrice}
+                    autoComplete="off"
                     onKeyPress={(e) => {
                       if (!/^\d*\.?\d*$/.test(e.key)) e.preventDefault();
                     }}
@@ -531,15 +534,15 @@ function NFToffer(props) {
                       if (e.target.value === "" || re.test(e.target.value)) {
                         const numStr = String(val);
                         if (numStr.includes(".")) {
-                          if (numStr.split(".")[1].length > 8) {
+                          if (numStr.split(".")[1]?.length > 8) {
                           } else {
-                            if (val.split(".").length > 2) {
+                            if (val.split(".")?.length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
 
                           }
                         } else {
-                          if (val.split(".").length > 2) {
+                          if (val.split(".")?.length > 2) {
                             val = val.replace(/\.+$/, "");
                           }
 
@@ -558,6 +561,7 @@ function NFToffer(props) {
                     name="item_qt"
                     id="item_qt"
                     min="1"
+                    autoComplete="off"
                     disabled={NFTDetails.type === 1 ? "disabled" : ""}
                     className="form-control input_design"
                     placeholder="Please Enter Quantity"

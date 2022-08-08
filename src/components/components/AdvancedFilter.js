@@ -182,6 +182,10 @@ const AdvancedFilter = (props) => {
                       key={i}
                       value={i._id}
                       onChange={(e) => {
+                        setCFlag(true);
+                        setBFlag(true);
+                        props.onAdvSearch({ type: "brand", value: "" });
+                        props.onAdvSearch({ type: "category", value: "" });
                         props.onAdvSearch({
                           type: "collection",
                           value: e.target.value,
@@ -250,18 +254,26 @@ const AdvancedFilter = (props) => {
         </div>
       </div>
       <div className='filtercol'>
+      {
+                  props.brandName ? 
         <button
           type='button'
           className='drop_down_tlt mb-4'
           data-bs-toggle='collapse'
           data-bs-target='#demo5'>
+          Brand <UpArrow />
+        </button> :  <button
+          type='button'
+          className='drop_down_tlt mb-4'
+          data-bs-toggle='collapse'
+          data-bs-target='#demo5'>
           Brands <UpArrow />
-        </button>
+        </button> }
         <div id='demo5' className='collapse show'>
           <ul>
             <li>
               <form action='#' className='checked_form'>
-                <div className='form-check form-check-inline'>
+              {!props.brandName ? <div className='form-check form-check-inline'>
                   <input
                     type='radio'
                     id='allBrands'
@@ -276,37 +288,49 @@ const AdvancedFilter = (props) => {
                     }
                   />
                   <label htmlFor='allBrands'>All</label>
-                </div>
+                </div> : ""
+}
                 {
-                  props.brandName ? props.brands.length > 0
-                    ? props.brands?.map((b, key) => {
-                      return (
-                        <div className='form-check form-check-inline' key={key}>
-                          <input
+                  props.brandName ? 
+                  <div className='form-check form-check-inline'>
+                   <input
                             type='radio'
-                            id={b._id}
+                            id={props.brandName}
                             name='radio-group'
-                            key={b}
-                            value={b._id}
-                            checked={
-                              b.name === props.brandName
-                            }
-                            onChange={(e) => {
-                              setBFlag(false)
-                              props.brandName
-                                ? e.preventDefault()
-                                :
-                                props.onAdvSearch({
-                                  type: "brand",
-                                  value: e.target.value,
-                                })
-                            }}
+                            checked
+                            value={props.brandName}
                           />
-                          <label htmlFor={b._id}>{b.name}</label>
-                        </div>
-                      );
-                    })
-                    : ""
+                          <label htmlFor={props.brandName}>{props.brandName}</label>
+                  </div>
+                  // props.brands.length > 0
+                  //   ? props.brands?.map((b, key) => {
+                  //     return (
+                  //       <div className='form-check form-check-inline' key={key}>
+                  //         <input
+                  //           type='radio'
+                  //           id={b._id}
+                  //           name='radio-group'
+                  //           key={b}
+                  //           value={b._id}
+                  //           checked={
+                  //             b.name === props.brandName
+                  //           }
+                  //           onChange={(e) => {
+                  //             setBFlag(false)
+                  //             props.brandName
+                  //               ? e.preventDefault()
+                  //               :
+                  //               props.onAdvSearch({
+                  //                 type: "brand",
+                  //                 value: e.target.value,
+                  //               })
+                  //           }}
+                  //         />
+                  //         <label htmlFor={b._id}>{b.name}</label>
+                  //       </div>
+                  //     );
+                  //   })
+                    
                     :
                     props.brands.length > 0
                       ? props.brands?.map((b, key) => {

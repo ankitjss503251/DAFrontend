@@ -180,15 +180,15 @@ const Header = function () {
   }, [account, userDetails]);
 
   const connectWallet = async () => {
-    console.log("11");
     try {
       const wallets = await onboard.connectWallet();
       if (wallets.length !== 0) {
 
-        await onboard.setChain({
+        const chain = await onboard.setChain({
           chainId: process.env.REACT_APP_CHAIN_ID,
         });
-
+        console.log("gfgh",chain)
+if(chain){
         const primaryWallet = wallets[0];
         const address = primaryWallet.accounts[0].address;
 
@@ -225,10 +225,15 @@ const Header = function () {
           }
         }
         catch (e) {
-
+          console.log("Error", e);
         }
       }
+      else{
+        NotificationManager.error("Please switch Network","",800)
+        return;
+      }
     }
+  }
     catch (e) {
       NotificationManager.error("Please refresh", "", 800);
     }
@@ -463,7 +468,7 @@ const Header = function () {
                       All NFTs
                     </NavLink>
                   </li>
-                  {/* {catg.length > 0
+                  {catg.length > 0
                     ? catg?.map((c, key) => {
                       return (
                         <li key={key}>
@@ -477,8 +482,8 @@ const Header = function () {
                         </li>
                       );
                     })
-                    : ""} */}
-                  {console.log("commenting")}
+                    : ""} 
+                
                 </ul>
               </li>
               <li className="nav-item">

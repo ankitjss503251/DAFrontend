@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../components/footer";
-import { getCategory, getCollections } from "../../helpers/getterFunctions";
+import { getCategoryWithCollectionData, getCollections, getCollectionTabs } from "../../helpers/getterFunctions";
 import { useParams } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
 import BGImg from "./../../assets/images/background.jpg";
 import MarketplaceBGIamge from "../../assets/marketplace-bg.jpg";
 import CollectionSkeletonCard from "../components/Skeleton/CollectionSkeletonCard";
 import { Link } from "@reach/router";
+import $ from 'jquery';
 
 function Marketplacecollection() {
   var register_bg = {
@@ -26,94 +27,146 @@ function Marketplacecollection() {
   };
 
   const [allCollections, setAllCollections] = useState([]);
-  const [currPageAll, setCurrPageAll] = useState(1);
-  const [currPage, setCurrPage] = useState(1);
-  const [loadMore, setLoadMore] = useState(false);
-  const [loadMoreDisabled, setLoadMoreDisabled] = useState("");
+  const [listCount, setListCount] = useState(12);
   const [loadMoreDisabledAll, setLoadMoreDisabledAll] = useState("");
   const [categories, setCategories] = useState([]);
-  const [showTab, setShowTab] = useState("");
   const [allActiveTab, setAllActiveTab] = useState("active");
   const [allActive, setAllActive] = useState("show active");
-  const [activeCat, setActiveCat] = useState([]);
   const { searchedText } = useParams();
   const [loader, setLoader] = useState(false);
   const [cardCount, setCardCount] = useState(0);
-  const [daDisabledClass, setDaDisabledClass] = useState()
+  const [currPage, setCurrPage] = useState(1);
+  const [isPageChange, setIsPageChange] = useState(0);
+  const [tabCatID, setTabCatID] = useState("");
+  const [tabCatIndex, setTabCatIndex] = useState(0);
+  const [tabPageCount, setTabPageCount] = useState(1);
 
   useEffect(() => {
     const fetch = async () => {
       setLoader(true);
       try {
-        let isanyActive = 0;
-        console.log("Search Text", searchedText)
-        // if (searchedText === undefined) {
-        //   setAllActiveTab("active");
-        //   setAllActive("show active");
-        // }
-        // console.log("isanyActive", isanyActive)
-        const res1 = await getCategory();
-        if (res1.length > 0) {
-          for (const myCat of res1) {
-            myCat.CollectionData = [];
-            myCat.loadmore = "";
-            myCat.isActiveTab = "";
-            myCat.isActive = "";
-            // if (searchedText === myCat.name && isanyActive === 0) {
-            //   console.log("Active cat", myCat.name)
-            //   myCat.isActiveTab = "active";
-            //   myCat.isActive = "show active";
-            //   setAllActiveTab("");
-            //   setAllActive("");
-            //   isanyActive = 1;
-            // }
-            try {
-              const reqBody = {
-                page: currPage,
-                limit: 12,
-                categoryID: myCat._id,
-                isOnMarketplace: 1,
-              };
-              const ind = await getCollections(reqBody);
-              myCat.CollectionData = ind;
-              if (ind.length > 0) {
-                myCat.loadmore = "";
-              } else {
-                myCat.loadmore = "Disable";
-              }
-            } catch (e) {
-              console.log("Error", e);
-            }
-          }
-        }
-        console.log("Cate Data", res1);
-        setCategories(res1);
-        let t = [];
-        res1?.map((r) => {
-          t = [...t, r.name];
-        });
-        let temp = [];
-        const reqData = {
-          page: currPageAll,
-          limit: 12,
-          searchText: "",
-          isOnMarketplace: 1,
-        };
-        const res = await getCollections(reqData);
-        setCardCount(cardCount + res.length);
-        if (res.length > 0) {
-          setLoadMoreDisabledAll("");
-          temp = [...temp, res];
-          setAllCollections(temp);
-        }
+        setCurrPage(1);
+        setIsPageChange(0);
+        resetClasses();
+        getCollectionData();
+        getCategory();
       } catch (e) {
         console.log("Error in fetching all collections list", e);
       }
       setLoader(false);
     };
     fetch();
-  }, [loadMore, searchedText, showTab]);
+  }, [searchedText]);
 
+  useEffect(() => {
+    const fetch = async () => {
+      setLoader(true);
+      try {
+        getCategory();
+      } catch (e) {
+        console.log("Error in fetching all Category list", e);
+      }
+      setLoader(false);
+    };
+    fetch();
+  }, [currPage, isPageChange]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      setLoader(true);
+      try {
+        await getCollectionPagination();
+      } catch (e) {
+        console.log("Error in tabs Pagination", e);
+      }
+      setLoader(false);
+    };
+    fetch();
+  }, [tabPageCount]);
+
+  async function resetClasses() {
+    console.log("Function Called");
+    $("#pills-tab .nav-link").removeClass("active");
+    $("#pills-tabContent .tab-pane.fade").removeClass("active");
+    $("#pills-tabContent .tab-pane.fade").removeClass("show");
+  }
+
+  async function getCategory() {
+    const reqData = {
+      page: currPage,
+      limit: listCount,
+      isOnMarketplace: 1,
+    };
+    const res = await getCollections(reqData);
+    setCardCount(cardCount + res.length);
+    if (isPageChange === 0) {
+      setAllCollections(Object.assign([], [res]))
+    } else {
+      let temp = [...allCollections[0], ...res];
+      setAllCollections([temp]);
+    }
+  }
+
+  async function updateCategoryCollection(catID = "", catIndex = 0){
+    setTabCatID(catID);
+    setTabCatIndex(catIndex);
+    setTabPageCount(parseInt(categories[catIndex].currPage)+1);
+  }  
+
+  async function getCollectionPagination(){
+    const reqData = {
+      page: tabPageCount,
+      limit: listCount,
+      isOnMarketplace: 1,
+      categoryID:tabCatID
+    };
+    const res = await getCollectionTabs(reqData);
+    console.log("CollectionData Before", categories[tabCatIndex].CollectionData)
+    categories[tabCatIndex].currPage++;
+    let temp = [...categories[tabCatIndex].CollectionData, ...res.results];
+    categories[tabCatIndex].CollectionData = temp;
+    console.log("CollectionData After", categories[tabCatIndex].CollectionData);
+    setCategories(categories);
+  }
+
+  async function getCollectionData(catID = "All") {
+    console.log("searchedText", searchedText);
+    console.log("Cat ID", catID);
+    let isanyActive = 0;
+    if (searchedText === undefined) {
+      setAllActiveTab("active");
+      setAllActive("show active");
+    }
+    console.log("isanyActive", isanyActive);
+    const reqData = {
+      page: currPage,
+      limit: listCount,
+      isOnMarketplace: 1,
+    };
+    if (catID !== "All" && catID !== "" && searchedText === undefined) {
+      console.log("Here")
+      reqData.categoryID = catID;
+    }
+    const res1 = await getCategoryWithCollectionData(reqData);
+    if (res1.length > 0) {
+      for (const myCat of res1) {
+        console.log("Loop cat", myCat.name)
+        myCat.loadmore = "";
+        myCat.isActiveTab = "";
+        myCat.isActive = "";
+        myCat.currPage = 1;
+        if (searchedText === myCat.name && isanyActive === 0) {
+          console.log("Active cat", myCat.name)
+          myCat.isActiveTab = "active";
+          myCat.isActive = "show active";
+          setAllActiveTab("");
+          setAllActive("");
+          isanyActive = 1;
+        }
+      }
+    }
+    setCategories(res1);
+  }
 
   return (
     <div>
@@ -156,8 +209,8 @@ function Marketplacecollection() {
                     <CollectionSkeletonCard cards={cardCount} />
                   ) : allCollections?.length > 0 ? (
                     allCollections.map((oIndex) => {
-                      return oIndex.map((card, key) => (
-                        <div className="col-lg-4 col-md-6 mb-5" key={key}>
+                      return oIndex.map((card) => (
+                        <div className="col-lg-4 col-md-6 mb-5">
                           <div className="collection_slide">
                             <a href={`/collection/${card?._id}`}>
                               <div className="mint_img">
@@ -211,14 +264,14 @@ function Marketplacecollection() {
                       <h4 className="no_data_text text-muted">No Collections Available</h4>
                     </div>
                   )}
-                  {allCollections[0]?.length > 12 ? (
+                  {allCollections[0]?.[0]?.count > allCollections[0]?.length ? (
                     <div className="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
                       <button
                         type="button"
                         className={`btn view_all_bdr ${loadMoreDisabledAll}`}
                         onClick={() => {
-                          setCurrPageAll(currPageAll + 1);
-                          setLoadMore(!loadMore);
+                          setCurrPage(currPage + 1);
+                          setIsPageChange(1);
                         }}
                       >
                         Load More
@@ -235,18 +288,18 @@ function Marketplacecollection() {
               ? categories.map((cat, key) => {
                 return (
                   <>
-                    <div className={`tab-pane fade ${cat?.isActive}`} id={`pills-${cat._id}`} role="tabpanel" aria-labelledby={`pills-${cat._id}-tab`} key={key}>
+                    <div className={`tab-pane fade ${cat?.isActive}`} id={`pills-${cat._id}`} role="tabpanel" aria-labelledby={`pills-${cat._id}-tab`} >
                       <div className="row">
-                        {cat?.CollectionData?.length > 0 ? cat.CollectionData.map((card, key1) => {
+                        {cat?.CollectionData?.length > 0 ? cat.CollectionData.map((card) => {
                           return (
                             <>
-                              <div className="col-lg-4 col-md-6 mb-5" key={key1}>
+                              <div className="col-lg-4 col-md-6 mb-5" >
                                 <div className="collection_slide">
                                   <a href={`/collection/${card?._id}`}>
                                     <div className="mint_img">
                                       <img
                                         className="img-fluid w-100"
-                                        src={card?.coverImg}
+                                        src={card?.coverImage}
                                         onError={(e) => {
                                           e.target.src = "../img/collections/list4.png";
                                         }}
@@ -259,12 +312,12 @@ function Marketplacecollection() {
                                       <div className="rotater_border profile_img">
                                         <a
                                           className="rounded-circle"
-                                          href={`/collectionwithcollection/${card?.brand?._id}`}
+                                          href={`/collectionwithcollection/${card?.BrandData[0]?._id}`}
                                         >
                                           <img
                                             alt=""
                                             className=""
-                                            src={card.brand?.logoImage}
+                                            src={card.BrandData[0]?.logoImage}
                                             onError={(e) => {
                                               e.target.src =
                                                 "../img/collections/list4.png";
@@ -280,16 +333,33 @@ function Marketplacecollection() {
                                         : card.name}
                                     </h4>
                                     <p>
-                                      {card.desc?.length > 15
-                                        ? card.desc?.slice(0, 15) + "..."
-                                        : card.desc}
+                                      {card.description?.length > 15
+                                        ? card.description?.slice(0, 15) + "..."
+                                        : card.description}
                                     </p>
                                   </div>
                                 </div>
                               </div>
                             </>
                           )
-                        }) : ("errlr")}
+                        }) : ("Something Went Wrong")}
+
+                        {cat?.CollectionData2[0]?.count > cat?.CollectionData?.length ? (
+                          <div className="col-md-12 text-center mt-0 mt-lg-5 mt-xl-5 mt-md-5">
+                            <button
+                              type="button"
+                              className={`btn view_all_bdr tabss ${loadMoreDisabledAll}`}
+                              onClick={() => {
+                                updateCategoryCollection(cat._id, key)
+                              }}
+                            >
+                              Load More
+                            </button>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                        
                       </div>
                     </div>
                   </>
