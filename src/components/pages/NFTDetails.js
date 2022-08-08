@@ -11,8 +11,6 @@ import {
   getNFTs,
   getNFTDetails,
   getUsersTokenBalance,
-  GetOwnerOfToken
-  // fetchWallet,
 } from "../../helpers/getterFunctions";
 
 import { useParams } from "react-router-dom";
@@ -320,7 +318,7 @@ function NFTDetails() {
 
   const PlaceOffer = async () => {
 
-   
+
 
     const wCheck = WalletConditions();
     if (wCheck !== undefined) {
@@ -470,11 +468,14 @@ function NFTDetails() {
   }
 
   function checkLoaded() {
-    if (orders !== "none" && owned !== "none" && haveBid !== "none" && haveOffer !== "none") {
+    console.log("dataa", orders == "none" || owned == "none" || haveBid == "none" || haveOffer == "none",
+      orders, owned, haveBid, haveOffer);
+    if (orders === "none" || owned === "none" || haveBid === "none" || haveOffer === "none") {
       console.log("true")
-      return true;
+      return false;
     }
-    return false
+    else
+      return true
   }
 
   useEffect(() => {
@@ -1032,7 +1033,13 @@ function NFTDetails() {
                   ""
                 )}
 
+                {(orders === "none" || owned === "none" || haveBid === "none" || haveOffer === "none") ? <button
+                  type='button'
+                  className='title_color buy_now'
 
+                >
+                  Loading...
+                </button> : ""}
 
                 {currentUser && orders !== "none" && owned && owned !== "none" ?
                   orders?.length > 0 ?
@@ -1048,24 +1055,21 @@ function NFTDetails() {
                         }
                         try {
                           setLoading(true);
-                          const res = await handleRemoveFromSale(orders[0]._id, currentUser);
+                          let historyData = {
+                            nftID: NFTDetails.id,
+                            sellerID: localStorage.getItem("userId"),
+                            action: "RemoveFromSale",
+                            price: orders[0].price?.$numberDecimal,
+                            paymentToken: orders[0].paymentToken,
+                            createdBy: localStorage.getItem("userId"),
+                          };
+                          const res = await handleRemoveFromSale(orders[0]._id, currentUser, historyData);
                           if (res === false) {
                             setLoading(false);
                             return;
                           }
-                          else {
-                            let historyReqData = {
-                              nftID: NFTDetails.id,
-                              sellerID: localStorage.getItem("userId"),
-                              action: "RemoveFromSale",
-                              price: orders[0].price?.$numberDecimal,
-                              paymentToken: orders[0].paymentToken,
-                              createdBy: localStorage.getItem("userId"),
-                            };
-                            await InsertHistory(historyReqData);
-                            setLoading(false);
-                            setReloadContent(!reloadContent)
-                          }
+                          setLoading(false);
+                          setReloadContent(!reloadContent)
                         }
                         catch (e) {
                           console.log("Error in remove from sale", e);
@@ -1095,8 +1099,8 @@ function NFTDetails() {
                     </button> : ""
                 }
 
-                {currentUser && orders !== "none" && orders?.length > 0 && owned == false && owned != "none" ?
-                  orders[0]?.salesType === 0 ?
+                {currentUser && orders !== "none" && orders?.length > 0 && owned === false && owned !== "none" ?
+                  orders[0]?.salesType === 0 && moment.utc(orders[0].deadline * 1000).local().format() > moment(new Date()).format() ?
                     <button
                       type='button'
                       className='title_color buy_now'
@@ -1137,46 +1141,45 @@ function NFTDetails() {
                   ""
                 }
 
-                {
-                  !currentUser && orders !== "none" && orders?.length > 0 ?
-                    orders[0]?.salesType === 0 ?
-                      <button
-                        type='button'
-                        className='title_color buy_now'
-                        onClick={() => {
-                          const wCheck = WalletConditions();
-                          if (wCheck !== undefined) {
-                            setShowAlert(wCheck);
-                            return;
-                          }
-                          setIsBuyNowModal(true);
-                        }}>
-                        Buy Now
-                      </button> :
-                      <button
-                        type='button'
-                        disabled={
-                          moment.utc(orders[0].deadline * 1000).local().format() < moment(new Date()).format()
+                {!currentUser && orders !== "none" && orders?.length > 0 ?
+                  orders[0]?.salesType === 0 ?
+                    <button
+                      type='button'
+                      className='title_color buy_now'
+                      onClick={() => {
+                        const wCheck = WalletConditions();
+                        if (wCheck !== undefined) {
+                          setShowAlert(wCheck);
+                          return;
                         }
-                        className='title_color buy_now'
-                        onClick={() => {
-                          const wCheck = WalletConditions();
-                          if (wCheck !== undefined) {
-                            setShowAlert(wCheck);
-                            return;
-                          }
+                        setIsBuyNowModal(true);
+                      }}>
+                      Buy Now
+                    </button> :
+                    <button
+                      type='button'
+                      disabled={
+                        moment.utc(orders[0].deadline * 1000).local().format() < moment(new Date()).format()
+                      }
+                      className='title_color buy_now'
+                      onClick={() => {
+                        const wCheck = WalletConditions();
+                        if (wCheck !== undefined) {
+                          setShowAlert(wCheck);
+                          return;
+                        }
 
-                          setIsPlaceBidModal(true);
-                        }}
-                      >
-                        {haveBid !== "none"
-                          ? haveBid
-                            ? "Update Bid"
-                            : "Place Bid"
-                          : ""}
-                      </button>
-                    :
-                    ""
+                        setIsPlaceBidModal(true);
+                      }}
+                    >
+                      {haveBid !== "none"
+                        ? haveBid
+                          ? "Update Bid"
+                          : "Place Bid"
+                        : ""}
+                    </button>
+                  :
+                  ""
                 }
 
                 {currentUser && !owned && owned !== "none" && haveOffer !== "none" ? (
