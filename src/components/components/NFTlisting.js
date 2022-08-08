@@ -564,9 +564,7 @@ function NFTlisting(props) {
                                       return;
                                     }
                                     setLoading(true);
-                                    await handleRemoveFromSale(o._id, currentUser);
-
-                                    let historyReqData = {
+                                    let historyData = {
                                       nftID: o?.nftID,
                                       sellerID: localStorage.getItem("userId"),
                                       action: "RemoveFromSale",
@@ -574,7 +572,10 @@ function NFTlisting(props) {
                                       paymentToken: o?.paymentToken,
                                       createdBy: localStorage.getItem("userId"),
                                     };
-                                    await InsertHistory(historyReqData);
+                                    await handleRemoveFromSale(o._id, currentUser, historyData);
+
+
+
                                     setLoading(false);
                                     slowRefresh(1000)
                                     // await props.refreshState()

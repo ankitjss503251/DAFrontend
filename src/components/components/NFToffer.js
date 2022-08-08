@@ -37,7 +37,6 @@ function NFToffer(props) {
   const [modal, setModal] = useState(false);
   const [marketplaceSaleType, setmarketplaceSaleType] = useState(0);
   const [showAlert, setShowAlert] = useState("");
-  const [walletVariable, setWalletVariable] = useState({});
 
 
 
@@ -67,9 +66,7 @@ function NFToffer(props) {
 
     if (_data && _data?.data?.length > 0) {
       let a = _data.data;
-
         setOffer(a);
-
       }
     }
 

@@ -24,6 +24,7 @@ import {
   updateBidNft,
   acceptOffer,
   UpdateStatus,
+  InsertHistory,
 } from "../apiServices";
 import marketPlaceABI from "./../config/abis/marketplace.json";
 import contracts from "./../config/contracts";
@@ -486,7 +487,38 @@ export const putOnMarketplace = async (account, orderData) => {
   }
 };
 
-export const handleRemoveFromSale = async (orderId) => {
+export const handleRemoveFromSale = async (orderId, account, historyData) => {
+  // let marketplace;
+  // let order;
+  // let details;
+  // try {
+  //   marketplace = await exportInstance(
+  //     contracts.MARKETPLACE,
+  //     marketPlaceABI.abi
+  //   );
+  //   const options = {
+  //     from: account,
+  //     gasPrice: 10000000000,
+  //     gasLimit: 9000000,
+  //     value: "0",
+  //   };
+  //   order = await buildSellOrder(orderId);
+  //   details = await getOrderDetails({ orderID: orderId });
+  //   console.log("order", order);
+  //   let res = await marketplace.cancelOrder(order, details.signature, options);
+  //   res = await res.wait();
+  //   if (res.status === 0) {
+  //     NotificationManager.error("Transaction failed");
+  //     return false;
+  //   }
+  // } catch (e) {
+  //   console.log("error in contract function call", e);
+  //   if (e.code === 4001) {
+  //     NotificationManager.error("User denied ");
+  //     return false;
+  //   }
+  //   return false;
+  // }
   try {
     await DeleteOrder({
       orderID: orderId,
@@ -496,6 +528,13 @@ export const handleRemoveFromSale = async (orderId) => {
     console.log("error while updating database", e);
     return false;
   }
+  try {
+    await InsertHistory(historyData);
+  }
+  catch (e) {
+    console.log("error", e);
+  }
+  return true
 };
 
 export const createBid = async (
