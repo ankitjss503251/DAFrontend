@@ -36,6 +36,7 @@ import AccountSupport from "./pages/AccountSupport";
 import Earnings from "./pages/Earnings";
 import Header from "./menu/header";
 import MyNFTs from "./pages/MyNFTs";
+import ModalPage from './pages/ModalPage'
 
 // import {DUMMY_COLLECTIONS} from "../dummyJSON";
 
@@ -83,6 +84,7 @@ const App = (props) => {
           <Route path="/Notifications" element={<Notifications />} />
           <Route path="/NotificationsArea" element={<NotificationsArea />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/modalpage" element={<ModalPage />} />
           <Route path="/blogcontent" element={<BlogContent />} />
           <Route path="/blogtagged" element={<BlogTagged />} />
           <Route path="/contact" element={<ContactUs />} />

@@ -260,7 +260,7 @@ function NFToffer(props) {
             </div>} handleClose={() => { setShowAlert(!showAlert) }} /> : ""}
 
       {loading ? <Spinner /> : ""}
-      {offer && offer.length <= 0 ? <div className="col-md-12">
+      {offer && offer?.length <= 0 ? <div className="col-md-12">
         <h4 className="no_data_text text-muted">No Offers Available</h4>
       </div> : <div className="table-responsive">
         <div className="col-md-12">
@@ -277,7 +277,7 @@ function NFToffer(props) {
                 </tr>
               </thead>
               <tbody>
-                {offer && offer.length > 0
+                {offer && offer?.length > 0
                   ? offer.map((b, i) => {
                     const bidOwner = b?.owner?.walletAddress?.toLowerCase();
                     const bidder = b?.bidderID?.walletAddress?.toLowerCase();
@@ -537,15 +537,15 @@ function NFToffer(props) {
                       if (e.target.value === "" || re.test(e.target.value)) {
                         const numStr = String(val);
                         if (numStr.includes(".")) {
-                          if (numStr.split(".")[1].length > 8) {
+                          if (numStr.split(".")[1]?.length > 8) {
                           } else {
-                            if (val.split(".").length > 2) {
+                            if (val.split(".")?.length > 2) {
                               val = val.replace(/\.+$/, "");
                             }
 
                           }
                         } else {
-                          if (val.split(".").length > 2) {
+                          if (val.split(".")?.length > 2) {
                             val = val.replace(/\.+$/, "");
                           }
 

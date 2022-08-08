@@ -27,7 +27,7 @@ function CarouselCollection() {
   , []);
 
   var settings = {
-    infinite: false,
+    infinite: true,
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
@@ -38,7 +38,6 @@ function CarouselCollection() {
         settings: {
           slidesToShow: 4,
           slidesToScroll: 1,
-          infinite: false,
         },
       },
       {
@@ -46,7 +45,6 @@ function CarouselCollection() {
         settings: {
           slidesToShow: 4,
           slidesToScroll: 1,
-          infinite: false,
         },
       },
       {
@@ -54,7 +52,6 @@ function CarouselCollection() {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
-          infinite: false,
         },
       },
       {
