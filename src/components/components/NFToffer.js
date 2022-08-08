@@ -73,31 +73,16 @@ function NFToffer(props) {
   };
 
   const PlaceOffer = async () => {
-    if (currentUser === undefined || currentUser === "") {
-      setShowAlert("notConnected");
-      return;
-    }
+    // if (currentUser === undefined || currentUser === "") {
+    //   setShowAlert("notConnected");
+    //   return;
+    // }
 
     const wCheck = WalletConditions();
-    setWalletVariable(wCheck)
-
-    if (wCheck.isLocked) {
-      setShowAlert("locked");
+    if (wCheck !== undefined) {
+      setShowAlert(wCheck);
       return;
     }
-
-    if (!wCheck.isLocked) {
-      if (!wCheck.cCheck) {
-        setShowAlert("chainId");
-        return;
-      }
-      if (!wCheck.aCheck) {
-        setShowAlert("account")
-        return;
-      }
-    }
-
-
 
 
     if (offerPrice === "" || offerPrice === undefined) {
@@ -187,7 +172,7 @@ function NFToffer(props) {
             <div >
               <div className="mr-3">Required Network ID:</div>
               <span className="adr">
-                {walletVariable.sChain}
+                {cookies.chain_id}
               </span>
 
             </div>
@@ -212,7 +197,7 @@ function NFToffer(props) {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {currentUser}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -231,7 +216,7 @@ function NFToffer(props) {
               <div className='bid_user_address align-items-center'>
                 <div>
                   <span className="adr text-muted">
-                    {walletVariable.sAccount}
+                    {currentUser}
                   </span>
                   <span className='badge badge-success'>Connected</span>
                 </div>
@@ -326,7 +311,7 @@ function NFToffer(props) {
                           ></Clock>
                         </td>
                         <td className={moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "red_text" :
-                          b.bidStatus === "MakeOffer" ? "green_text" : "red_text"}>
+                          b.bidStatus === "MakeOffer" || b.bidStatus === "Accepted" ? "green_text" : "red_text"}>
                           {" "}
                           {
                             moment.utc(b?.bidDeadline * 1000).local().format() < moment(new Date()).format() ? "Ended" :
@@ -348,22 +333,9 @@ function NFToffer(props) {
                                     return;
                                   }
                                   const wCheck = WalletConditions();
-                                  setWalletVariable(wCheck)
-
-                                  if (wCheck.isLocked) {
-                                    setShowAlert("locked");
+                                  if (wCheck !== undefined) {
+                                    setShowAlert(wCheck);
                                     return;
-                                  }
-
-                                  if (!wCheck.isLocked) {
-                                    if (!wCheck.cCheck) {
-                                      setShowAlert("chainId");
-                                      return;
-                                    }
-                                    if (!wCheck.aCheck) {
-                                      setShowAlert("account")
-                                      return;
-                                    }
                                   }
                                   setLoading(true);
                                   const resp = await handleAcceptOffers(
@@ -388,7 +360,7 @@ function NFToffer(props) {
                                   }
 
                                   setLoading(false);
-                                  // await props.refreshState()
+                                  await props.refreshState()
                                   // await fetch()
                                   slowRefresh(1000);
                                 }}
@@ -407,22 +379,9 @@ function NFToffer(props) {
                                     return;
                                   }
                                   const wCheck = WalletConditions();
-                                  setWalletVariable(wCheck)
-
-                                  if (wCheck.isLocked) {
-                                    setShowAlert("locked");
+                                  if (wCheck !== undefined) {
+                                    setShowAlert(wCheck);
                                     return;
-                                  }
-
-                                  if (!wCheck.isLocked) {
-                                    if (!wCheck.cCheck) {
-                                      setShowAlert("chainId");
-                                      return;
-                                    }
-                                    if (!wCheck.aCheck) {
-                                      setShowAlert("account")
-                                      return;
-                                    }
                                   }
                                   await handleUpdateBidStatus(
                                     b._id,
@@ -442,7 +401,7 @@ function NFToffer(props) {
                                   };
                                   await InsertHistory(historyReqData);
                                   // await fetch()
-                                  // props.refreshState()
+                                  props.refreshState()
 
                                   slowRefresh(1000);
 
@@ -466,28 +425,10 @@ function NFToffer(props) {
                                 // data-bs-toggle="modal"
                                 // data-bs-target="#brandModal"
                                 onClick={() => {
-                                  if (currentUser === undefined || currentUser === "") {
-                                    setShowAlert("notConnected");
-                                    return;
-                                  }
-
                                   const wCheck = WalletConditions();
-                                  setWalletVariable(wCheck)
-
-                                  if (wCheck.isLocked) {
-                                    setShowAlert("locked");
+                                  if (wCheck !== undefined) {
+                                    setShowAlert(wCheck);
                                     return;
-                                  }
-
-                                  if (!wCheck.isLocked) {
-                                    if (!wCheck.cCheck) {
-                                      setShowAlert("chainId");
-                                      return;
-                                    }
-                                    if (!wCheck.aCheck) {
-                                      setShowAlert("account")
-                                      return;
-                                    }
                                   }
                                   setModal("active");
                                   setOfferPrice(
@@ -508,22 +449,9 @@ function NFToffer(props) {
                                     return;
                                   }
                                   const wCheck = WalletConditions();
-                                  setWalletVariable(wCheck)
-
-                                  if (wCheck.isLocked) {
-                                    setShowAlert("locked");
+                                  if (wCheck !== undefined) {
+                                    setShowAlert(wCheck);
                                     return;
-                                  }
-
-                                  if (!wCheck.isLocked) {
-                                    if (!wCheck.cCheck) {
-                                      setShowAlert("chainId");
-                                      return;
-                                    }
-                                    if (!wCheck.aCheck) {
-                                      setShowAlert("account")
-                                      return;
-                                    }
                                   }
                                   await handleUpdateBidStatus(
                                     b._id,
@@ -542,7 +470,7 @@ function NFToffer(props) {
                                   };
                                   await InsertHistory(historyReqData);
                                   // await fetch()
-                                  // await props.refreshState()
+                                  await props.refreshState()
                                   slowRefresh(1000)
                                 }}
                               >

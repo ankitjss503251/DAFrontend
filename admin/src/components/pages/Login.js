@@ -76,10 +76,10 @@ function Login(props) {
                   <label forhtml="exampleInputPassword1" className="form-label text-light font-600">Password</label>
                   <input type="password" required onInput={e => setState(state => ({ ...state, 'password': e.target.value }))} defaultValue={state.password} className="form-control" id="exampleInputPassword1" />
                 </div>
-                <div className="mb-3 form-check">
+                {/* <div className="mb-3 form-check">
                   <input type="checkbox" className="form-check-input" id="exampleCheck1" />
                   <label className="form-check-label text-light font-600" forhtml="exampleCheck1">Check me out</label>
-                </div>
+                </div> */}
                 {state?.error
                   ? <div className="alert alert-danger" role="alert">
                     {state?.error}
@@ -89,9 +89,9 @@ function Login(props) {
                 <div className='text-center'>
                   <button type="submit" className="round-btn montserrat text-light text-decoration-none login_btn" >Login</button>
                 </div>
-                <div className="text-center pt-5">
+                {/* <div className="text-center pt-5">
                   <Link className="txt1 text-light" to={"/"}>Forgot Password?</Link>
-                </div>
+                </div> */}
               </form>
             </div>
           </div>

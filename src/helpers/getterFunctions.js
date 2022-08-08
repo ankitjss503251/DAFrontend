@@ -21,6 +21,7 @@ import {
   fetchOfferMade,
   GetHistory,
   fetchOfferReceived,
+  getAllCollectionTabs,
 } from "../apiServices";
 import { ethers } from "ethers";
 import contracts from "../config/contracts";
@@ -282,6 +283,7 @@ export const getCollections = async (req) => {
         createdBy: coll.createdBy,
         link: coll.link,
         volumeTraded: coll.volumeTraded,
+        count: data.count,
       };
     })
     : (formattedData[0] = {});
@@ -604,8 +606,32 @@ export const getCategoryWithCollectionData = async (data) => {
   } catch (e) {
     console.log("Error in getCategoryWithCollectionData API", e);
   }
-
   return category;
+};
+
+export const getCollectionTabs = async (req) => {
+  let data = [];
+  try {
+    let reqBody = {
+      page: req.page,
+      limit: req.limit,
+      collectionID: req.collectionID,
+      userID: req.userID,
+      categoryID: req.categoryID,
+      brandID: req.brandID,
+      ERCType: req.ERCType,
+      searchText: req.searchText,
+      filterString: req.filterString,
+      isMinted: req.isMinted,
+      isHotCollection: req.isHotCollection,
+      isExclusive: req.isExclusive,
+      isOnMarketplace: req.isOnMarketplace,
+    };
+    data = await getAllCollectionTabs(reqBody);
+  } catch (e) {
+    console.log("Error in getCollections API--->", e);
+  }
+  return data;
 };
 
 

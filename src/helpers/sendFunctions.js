@@ -143,7 +143,7 @@ export const handleBuyNft = async (
       }
     } catch (err) {
       console.log("error", err);
-      return;
+      return false;
     }
   }
 
@@ -212,7 +212,7 @@ export const handleBuyNft = async (
         await UpdateStatus(req)
       }
       catch (e) {
-        return
+        return false
       }
       try {
         if (isERC721) {
@@ -292,7 +292,7 @@ export const handleBuyNft = async (
                 await UpdateStatus(req)
               }
               catch (e) {
-                return
+                return false
               }
             }
           }
@@ -314,9 +314,9 @@ export const handleBuyNft = async (
       if (JSON.stringify(e).includes(`"reason":"Not an owner"`)) {
         alert("Not an owner");
         console.log("error in contract function calling", e);
-        return;
+        return false;
       }
-      return;
+      return false;
     }
   } catch (e) {
     console.log("error in contract function calling", e);
@@ -328,6 +328,7 @@ export const handleBuyNft = async (
   }
 
   NotificationManager.success("NFT Purchased Successfully");
+  return true
   // slowRefresh(1000);
 };
 
@@ -865,7 +866,7 @@ export const handleAcceptBids = async (
       sellerOrder[0]
     );
     if (Number(usrHaveQuantity) < Number(buyerOrder[3])) {
-      NotificationManager.error("Seller don't own that much quantity");
+      NotificationManager.error("Seller don't own this NFT anymore");
       return false;
     }
   }
