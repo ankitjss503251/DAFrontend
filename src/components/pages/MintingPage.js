@@ -1,16 +1,6 @@
 import React from 'react';
 import Footer from '../components/footer';
-import MintEvent from "../components/MintEvent"
-
-
-const bgImgStyle = {
-    backgroundImage: "url(./img/background.jpg)",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPositionX: "center",
-    backgroundPositionY: "center",
-    backgroundColor: "#000",
-  };
+import MintEvent from "../components/MintEvent";
   
   const bgImage = {
     backgroundImage: "url(./img/collections/collection_bg.jpg)",
@@ -21,7 +11,7 @@ const bgImgStyle = {
   
 function MintingPage() {
   return (
-    <div style={bgImgStyle}>
+    <div>
         <section className="collection_banner pdd_8" style={bgImage}>
         
         </section>

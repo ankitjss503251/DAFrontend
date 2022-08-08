@@ -81,18 +81,19 @@ export const GetOwnerOfToken = async (
     collection,
     isERC721 ? erc721Abi.abi : erc1155Abi.abi
   );
-  console.log("collectionInsatnce", collectionInstance, tokenId);
+  
   let balance = 0;
-  console.log("isERC721", isERC721);
   if (isERC721) {
-    console.log("is 721");
     let owner = await collectionInstance.ownerOf(tokenId);
     if (owner.toLowerCase() === account.toLowerCase()) {
       balance = "1";
     }
+    console.log("owner", owner)
+  } else {
+    balance = await collectionInstance.balanceOf(account, tokenId);
     console.log("balance", balance.toString());
-  } else balance = await collectionInstance.balanceOf(account, tokenId);
-  console.log("balance", balance.toString());
+  }
+ 
   return balance.toString();
 };
 
@@ -390,7 +391,7 @@ export const getNFTDetails = async (req) => {
         totalQuantity: nft.totalQuantity,
         fileType: nft.fileType,
         collectionData: nft.CollectionData,
-        OrderData: nft.OrderData,
+        OrderData: nft.OrderData
       };
     })
     : (formattedData[0] = {});
@@ -633,6 +634,10 @@ export const getCollectionTabs = async (req) => {
   }
   return data;
 };
+
+
+
+
 
 
 // export const getUsersNFTs = async (

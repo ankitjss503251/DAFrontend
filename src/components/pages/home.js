@@ -14,6 +14,7 @@ import { getCollections } from "../../helpers/getterFunctions";
 import moment from "moment";
 import { convertToEth } from "../../helpers/numberFormatter";
 import { Tokens } from "../../helpers/tokensToSymbol";
+import { Button } from "../components/AccountModal/Button";
 
 const fadeInUp = keyframes`
   0% {
@@ -36,14 +37,6 @@ const fadeInUp = keyframes`
 //   }
 // `;
 
-var bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
 var bgImgStylesec1 = {
   backgroundImage: "url(./img/background/banner-home.jpg)",
   backgroundRepeat: "no-repeat",
@@ -85,7 +78,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div style={bgImgStyle}>
+    <div>
       <section
         style={bgImgStylesec1}
         className="jumbotron breadcumb no-bg h-vh pdd_8"
@@ -123,10 +116,9 @@ const Home = () => {
                       />
                     </svg>
                   </div>
-                  <h4>#1 Buy NFT’s </h4>
+                  <h4>Buy NFT’s </h4>
                   <p className="textdes">
-                    Be the first to mint a new collection, with a chance to
-                    score a “Legendary“ firearm
+                    Be the first to mint a new collection.
                   </p>
                 </div>
               </div>
@@ -146,10 +138,9 @@ const Home = () => {
                       />
                     </svg>
                   </div>
-                  <h4>#2 Customize NFT’s (coming soon) </h4>
+                  <h4>Customize NFT’s </h4>
                   <p className="textdes">
-                    Win, earn or purchase accessories and exclusive skins. Forge
-                    them to your NFT firearms increasing the rarity and value.
+                    Upgrade your NFT firearms, forging skins and accessories.
                   </p>
                 </div>
               </div>
@@ -169,7 +160,7 @@ const Home = () => {
                       />
                     </svg>
                   </div>
-                  <h4>#3 Sell NFT’s </h4>
+                  <h4>Sell NFT’s </h4>
                   <p className="textdes">
                     List your NFT’s on the secondary marketplace
                   </p>
@@ -307,7 +298,7 @@ const Home = () => {
                                 fill="#428BC1"
                               />
                             </svg>
-                            {moment.utc(st).local().format() == "Invalid date" ? " --:--:--" : <Clock
+                            {moment.utc(st).local().format() == "Invalid date" ? " 00:00:00" : <Clock
                               deadline={moment.utc(st).local().format()
                               }
                             ></Clock>}
@@ -574,10 +565,11 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className="col-lg-2 col-md-12 d-flex align-items-end mt-4 mt-lg-0 mt-xl-0">
+            <div className="col-lg-2 col-md-12 d-flex align-items-end mt-4 mt-lg-0 mt-xl-0 flex-wrap">
               <Link to="" className="border_btn title_color">
                 Learn More
               </Link>
+              
             </div>
           </div>
         </div>

@@ -27,26 +27,24 @@ function CarouselCollection() {
   , []);
 
   var settings = {
-    infinite: false,
+    infinite: true,
     speed: 500,
-    slidesToShow: 4,
+    slidesToShow: 3,
     slidesToScroll: 1,
     initialSlide: 0,
     responsive: [
       {
         breakpoint: 1900,
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
           slidesToScroll: 1,
-          infinite: false,
         },
       },
       {
         breakpoint: 1600,
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 3,
           slidesToScroll: 1,
-          infinite: false,
         },
       },
       {
@@ -54,7 +52,6 @@ function CarouselCollection() {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
-          infinite: false,
         },
       },
       {

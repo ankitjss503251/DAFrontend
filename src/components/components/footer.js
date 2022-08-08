@@ -82,7 +82,7 @@ const Footer = function () {
                     <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12">
                         <div className="widget newsletter-widget">
                             <h5 className="mb-4">Newsletter</h5>
-                            <p>Signup for our newsletter to get the latest news in your inbox</p>
+                            <p>Don't miss an NFT drop, signup for the latest news </p>
                             <form action="#" className="form-dark mb-1" id="form_subscribe" method="post" name="form_subscribe">
                                 <div className="newsletter_box">
                                     <input className="form-control" id="txt_subscribe" name="txt_subscribe" placeholder="enter your email" type="text" />
@@ -110,8 +110,8 @@ const Footer = function () {
                         <div className='col-lg-3 col-md-6 col-sm-12 col-xs-12'></div>
                         <div className='col-lg-3 col-md-6 col-sm-12 col-xs-12'>
                             <ul className="social-icons">
-                                <li><Link to="https://www.facebook.com/digitalarmsnft"><i className="fa fa-facebook fa-lg"></i></Link></li>
-                                <li><Link to="https://twitter.com/DigitalArmsNFT"><i className="fa fa-twitter fa-lg"></i></Link></li>
+                                <li><a href="https://www.facebook.com/digitalarmsnft"><i className="fa fa-facebook fa-lg"></i></a></li>
+                                <li><a href="https://twitter.com/DigitalArmsNFT"><i className="fa fa-twitter fa-lg"></i></a></li>
                                 <li><Link to=""><i className="fa fa-linkedin fa-lg"></i></Link></li>
                                 <li><Link to=""><i className="fa fa-gamepad fa-lg"></i></Link></li>
                             </ul>

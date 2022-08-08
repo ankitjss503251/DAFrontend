@@ -71,7 +71,7 @@ function ItemsList() {
         },
       },
       {
-        breakpoint: 1024,
+        breakpoint: 1224,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,

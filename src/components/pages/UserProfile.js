@@ -7,17 +7,6 @@ import GeneralOffer from '../components/GeneralOffer';
 import { useCookies } from "react-cookie";
 import { getOfferMade, getOfferReceived } from '../../helpers/getterFunctions';
 
-const bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
-
-
-
 const Userprofile = () => {
 
   const [cookies] = useCookies([]);
@@ -49,7 +38,7 @@ useEffect(() => {
     
   
   return (
-    <div style={bgImgStyle}>
+    <div>
       <div className="container">
         <div className="row userinfo">
           <div className="col-lg-3 usersidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
