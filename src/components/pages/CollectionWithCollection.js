@@ -52,14 +52,14 @@ const CameraControls = () => {
 
 
 function CollectionWithCollection() {
-  const bgImgStyle = {
-    backgroundImage: `url(${BGImg})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPositionX: "center",
-    backgroundPositionY: "center",
-    backgroundColor: "#000",
-  };
+  // const bgImgStyle = {
+  //   backgroundImage: `url(${BGImg})`,
+  //   backgroundRepeat: "no-repeat",
+  //   backgroundSize: "cover",
+  //   backgroundPositionX: "center",
+  //   backgroundPositionY: "center",
+  //   backgroundColor: "#000",
+  // };
 
   const { brandID } = useParams();
   const [brandDetails, setBrandDetails] = useState([]);
@@ -246,7 +246,7 @@ function CollectionWithCollection() {
   };
 
   return (
-    <div style={bgImgStyle}>
+    <div>
       {/* {loadMoreDisabled 
         ? NotificationManager.info("No more items to load", "", 800)
         : ""} */}
@@ -267,28 +267,6 @@ function CollectionWithCollection() {
             /> */}
           </div>
           <h1 className='collection_title text-center'>{brandDetails?.name}</h1>
-          <ul className='collection_social mb-4'>
-            <li>
-              <a href='/'>
-                <i className='fa fa-facebook fa-lg'></i>
-              </a>
-            </li>
-            <li>
-              <a href='/'>
-                <i className='fa fa-twitter fa-lg'></i>
-              </a>
-            </li>
-            <li>
-              <a href='/'>
-                <i className='fa fa-linkedin fa-lg'></i>
-              </a>
-            </li>
-            <li>
-              <a href='/'>
-                <i className='fa fa-pinterest fa-lg'></i>
-              </a>
-            </li>
-          </ul>
           {/* <div className='coppycode text-center'>
             <span className='ctc'>
               <img alt='' src={"../img/favicon.png"} className='img-fluid' />

@@ -29,14 +29,6 @@ async function lazyImport(addr) {
 }
 
 function MultiMintingPage(props) {
-  const bgImgStyle = {
-    backgroundImage: `url(${BGImg})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPositionX: "center",
-    backgroundPositionY: "center",
-    backgroundColor: "#000",
-  };
 
   const params = useParams();
 
@@ -194,7 +186,7 @@ function MultiMintingPage(props) {
   }
 
   return (
-    <div style={bgImgStyle}>
+    <div>
       {loading ? <Spinner /> : ""}
       <section className="collection_banner pdd_8" style={bgImage}></section>
       <section className="collection_info">
@@ -214,7 +206,7 @@ function MultiMintingPage(props) {
           <h1 className="collection_title text-center">
             {collectionDetails?.name}
           </h1>
-          <ul className="collection_social mb-4">
+          {/* <ul className="collection_social mb-4">
             <li>
               <a href="/">
                 <i className="fa fa-facebook fa-lg"></i>
@@ -240,7 +232,7 @@ function MultiMintingPage(props) {
                 <i className="fa fa-rss fa-lg"></i>
               </a>
             </li>
-          </ul>
+          </ul> */}
           <ul className="collection_status mt-5 mb-5">
             <li>
               <h4>{totalSupply}</h4>
@@ -251,10 +243,39 @@ function MultiMintingPage(props) {
               <p>HNTR</p>
             </li>
             <li>
-              <h4>Open</h4>
+              <h4>TBA</h4>
               <p>Status</p>
             </li>
           </ul>
+          <div className="collection_description text-center">
+            <h4 className='hunter-market'>THE POWERHOUSE RIFLE.</h4>
+            <h6 className='font_24'>The Model 82 is where the Barrett legacy began.</h6>
+            <p>Engineered as the first shoulder fired semi-automatic 50 BMG rifle, the Model 82A1 has been proven in combat in every environment from the snow covered mountains, to the desolate deserts, and everything in between. Its low felt recoil and reliable repower delivers on target with every pull of the trigger. More than just a rifle, the Model 82 is an American icon.</p>
+            <p>This is a blind drop, when minting you will receive a random collectable from this series. </p>
+            <ul>
+              <li>GOLD - Legendary - 100 items</li>
+              <li>DIGICAM - Epic - 400 items</li>
+              <li>GREY - Ultra-rare - 600 item</li>
+              <li>OD Green - Rare - 1100 items</li>
+              <li>FDE - Rare - 1100 items</li>
+              <li>Black - Classic - 2000 items </li>
+            </ul>
+            <ul>
+              <li>BRAND 	Barrett</li>
+              <li>MODEL 	Model 82A1</li>
+              <li>LICENSE	Barrett </li>
+              <li>SERIES	Firearms series #1</li>
+              <li>NAME / alias 	Anti-Material Rifle</li>
+              <li>DESIGNED BY 	Ron Barrett</li>
+              <li>SPECS 	57" (1448 mm)</li>
+              <li>CALIBRE 	50 BMG</li>
+              <li>ACTION 	Recoil Operated, Semi-Automatic</li>
+              <li>WEIGHT	32.7 lbs. (14.8 kg)</li>
+              <li>ORIGIN 	USA</li>
+              <li>MAG CAPACITY	10</li>
+              <li>RATE OF FIRE 	416</li>
+            </ul>
+          </div>
           <div className="collection_description text-center">
             <p>{collectionDetails?.description}</p>
             <span className="top_arrow">

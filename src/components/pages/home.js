@@ -37,14 +37,6 @@ const fadeInUp = keyframes`
 //   }
 // `;
 
-var bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
 var bgImgStylesec1 = {
   backgroundImage: "url(./img/background/banner-home.jpg)",
   backgroundRepeat: "no-repeat",
@@ -86,7 +78,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div style={bgImgStyle}>
+    <div>
       <section
         style={bgImgStylesec1}
         className="jumbotron breadcumb no-bg h-vh pdd_8"
@@ -124,10 +116,9 @@ const Home = () => {
                       />
                     </svg>
                   </div>
-                  <h4>#1 Buy NFT’s </h4>
+                  <h4>Buy NFT’s </h4>
                   <p className="textdes">
-                    Be the first to mint a new collection, with a chance to
-                    score a “Legendary“ firearm
+                    Be the first to mint a new collection.
                   </p>
                 </div>
               </div>
@@ -147,10 +138,9 @@ const Home = () => {
                       />
                     </svg>
                   </div>
-                  <h4>#2 Customize NFT’s (coming soon) </h4>
+                  <h4>Customize NFT’s </h4>
                   <p className="textdes">
-                    Win, earn or purchase accessories and exclusive skins. Forge
-                    them to your NFT firearms increasing the rarity and value.
+                    Upgrade your NFT firearms, forging skins and accessories.
                   </p>
                 </div>
               </div>
@@ -170,7 +160,7 @@ const Home = () => {
                       />
                     </svg>
                   </div>
-                  <h4>#3 Sell NFT’s </h4>
+                  <h4>Sell NFT’s </h4>
                   <p className="textdes">
                     List your NFT’s on the secondary marketplace
                   </p>
