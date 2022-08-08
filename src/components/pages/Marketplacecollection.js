@@ -27,7 +27,7 @@ function Marketplacecollection() {
   };
 
   const [allCollections, setAllCollections] = useState([]);
-  const [listCount, setListCount] = useState(1);
+  const [listCount, setListCount] = useState(12);
   const [loadMoreDisabledAll, setLoadMoreDisabledAll] = useState("");
   const [categories, setCategories] = useState([]);
   const [allActiveTab, setAllActiveTab] = useState("active");
