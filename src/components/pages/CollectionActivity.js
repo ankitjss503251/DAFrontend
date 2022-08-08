@@ -4,16 +4,6 @@ import { Link, NavLink } from 'react-router-dom';
 import ItemSVG from "../SVG/ItemSVG"
 import ActivitySVG from "../SVG/ActivitySVG"
 
-
-const bgImgStyle = {
-  backgroundImage: "url(./img/background.jpg)",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "cover",
-  backgroundPositionX: "center",
-  backgroundPositionY: "center",
-  backgroundColor: "#000",
-};
-
 const bgImage = {
   backgroundImage: "url(./img/collections/collection_bg.jpg)",
   backgroundSize: "cover",
@@ -26,7 +16,7 @@ var bgImgarrow = {
 
 function CollectionActivity() {
   return (
-    <div style={bgImgStyle}>
+    <div>
       <section className="collection_banner pdd_8" style={bgImage}>
         
       </section>

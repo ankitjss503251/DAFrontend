@@ -54,15 +54,6 @@ function MyNFTs() {
     backgroundRepeat: "no-repeat",
   };
 
-  const bgImgStyle = {
-    backgroundImage: `url(${BGImg})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPositionX: "center",
-    backgroundPositionY: "center",
-    backgroundColor: "#000",
-  };
-
   const filterToggle = () => {
     console.log("filter", togglemode);
     if (togglemode === "filterhide") {
@@ -180,7 +171,7 @@ function MyNFTs() {
   const [grid, setgrid] = useState("col-md-3 mb-4");
 
   return (
-    <div style={bgImgStyle}>
+    <div>
       <section
         className='collection_banner pdd_8 d-flex align-items-center justify-content-center'
         style={bgImage}></section>

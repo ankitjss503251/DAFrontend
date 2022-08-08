@@ -3,19 +3,9 @@ import Footer from '../components/footer';
 import Star from '../SVG/Star';
 import { Link } from 'react-router-dom';
 
-
-var bgImgStyle = {
-    backgroundImage: "url(./img/background.jpg)",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPositionX: "center",
-    backgroundPositionY: "center",
-    backgroundColor: "#000",
-  };
-
 function HelpCenterQuery() {
   return (
-    <div style={bgImgStyle}>
+    <div>
         <section className="pdd_8">
             <div className="container">
                 <div className="row">
