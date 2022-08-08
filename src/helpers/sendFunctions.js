@@ -214,6 +214,21 @@ export const handleBuyNft = async (
           if (res.status === 0) {
             return false;
           }
+          let req = {
+            "recordID": id,
+            "DBCollection": "Order",
+            "hashStatus": 1
+          }
+          // try {
+          //   let updateRes = await UpdateStatus(req, historyData)
+          //   if (updateRes === false) {
+          //     console.log("data already inserted")
+          //     return false
+          //   }
+          // }
+          // catch (e) {
+          //   return false
+          // }
           try {
             await UpdateOrder({
               orderID: id,
@@ -244,6 +259,21 @@ export const handleBuyNft = async (
           if (res.status === 0) {
             return false;
           }
+          let req = {
+            "recordID": id,
+            "DBCollection": "Order",
+            "hashStatus": 1
+          }
+          try {
+            let updateRes = await UpdateStatus(req, historyData)
+            if (updateRes === false) {
+              console.log("data already inserted")
+              return false
+            }
+          }
+          catch (e) {
+            return false
+          }
           try {
             await UpdateOrder({
               orderID: id,
@@ -273,23 +303,6 @@ export const handleBuyNft = async (
               } catch (e) {
                 console.log("error in updating order data", e);
                 return false;
-              }
-            }
-            else {
-              let req = {
-                "recordID": id,
-                "DBCollection": "Order",
-                "hashStatus": 1
-              }
-              try {
-                let updateRes = await UpdateStatus(req, historyData)
-                if (updateRes === false) {
-                  console.log("data already inserted")
-                  return false
-                }
-              }
-              catch (e) {
-                return false
               }
             }
           }

@@ -954,10 +954,12 @@ export const UpdateStatus = async (data, historyData, key) => {
       .get("content-type")
       ?.includes("application/json");
     const datas = isJson && (await response.json());
-    if (datas.statusCode !== 409 && historyData !== "" && historyData !== undefined) {
+    console.log("datas.statusCode", datas.statusCode)
+    if (datas.statusCode !== 409 && historyData !== "" && historyData !== undefined && datas.statusCode !== 404) {
       await InsertHistory(historyData)
     }
-    if (datas.statusCode !== 200) {
+    if (datas.statusCode === 409) {
+      console.log("falsee")
       return false
     }
     return datas.data;

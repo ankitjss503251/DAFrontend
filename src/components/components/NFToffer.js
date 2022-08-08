@@ -65,8 +65,8 @@ function NFToffer(props) {
 
       let _data = await fetchOfferNft(searchParams);
 
-      if (_data && _data.data.length > 0) {
-        let a = _data.data;
+    if (_data && _data?.data?.length > 0) {
+      let a = _data.data;
 
         setOffer(a);
 
